@@ -8,8 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import se.alipsa.renjinstudio.code.CodeWindow;
-import se.alipsa.renjinstudio.console.ConsoleWindow;
+import se.alipsa.renjinstudio.code.CodeComponent;
+import se.alipsa.renjinstudio.console.ConsoleComponent;
 import se.alipsa.renjinstudio.menu.MainMenuBar;
 
 public class RenjinStudio extends Application {
@@ -33,8 +33,8 @@ public class RenjinStudio extends Application {
         SplitPane leftSplitPane = new SplitPane();
         leftSplitPane.setOrientation(Orientation.VERTICAL);
 
-
-        leftSplitPane.getItems().addAll(new CodeWindow(), new ConsoleWindow());
+        ConsoleComponent console = new ConsoleComponent();
+        leftSplitPane.getItems().addAll(new CodeComponent(console), console);
 
 
         SplitPane rightSplitPane = new SplitPane();
