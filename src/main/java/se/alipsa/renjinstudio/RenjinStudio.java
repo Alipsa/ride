@@ -10,6 +10,8 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import se.alipsa.renjinstudio.code.CodeComponent;
 import se.alipsa.renjinstudio.console.ConsoleComponent;
+import se.alipsa.renjinstudio.environment.EnvironmentComponent;
+import se.alipsa.renjinstudio.inout.InoutComponent;
 import se.alipsa.renjinstudio.menu.MainMenuBar;
 
 public class RenjinStudio extends Application {
@@ -40,21 +42,8 @@ public class RenjinStudio extends Application {
         SplitPane rightSplitPane = new SplitPane();
         rightSplitPane.setOrientation(Orientation.VERTICAL);
 
-        TabPane northEasttp = new TabPane();
-        Tab northEastTab = new Tab();
-        TextArea northEast = new TextArea();
-        northEast.setText("Environment");
-        northEastTab.setContent(northEast);
-        northEasttp.getTabs().add(northEastTab);
 
-        TabPane southEasttp = new TabPane();
-        Tab southEastTab = new Tab();
-        TextArea southEast = new TextArea();
-        southEast.setText("InOut");
-        southEastTab.setContent(southEast);
-        southEasttp.getTabs().add(southEastTab);
-
-        rightSplitPane.getItems().addAll(northEasttp, southEasttp);
+        rightSplitPane.getItems().addAll(new EnvironmentComponent(), new InoutComponent());
 
         SplitPane splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.HORIZONTAL);
