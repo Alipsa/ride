@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FileUtils {
+
   private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
   /**
@@ -79,32 +80,7 @@ public class FileUtils {
   }
 
 
-  /**
-   * finds the dir where files are located (recursing down the tree).
-   * 
-   * @param dir the starting dir
-   * @param ext the file extension to look for
-   * @return the dir where there are files
-   */
-  public static File findDirWithExt(File dir, String ext) {
-    logger.debug("Looking for " + ext + " in " + dir);
-    if (dir == null) {
-      throw new IllegalArgumentException("dir parameter cannot be null!");
-    }
-    File targetDir = null;
-    File[] files = dir.listFiles();
-    for (File file : files) {
-      if (file.isFile()) {
-        if (file.getName().toLowerCase().endsWith(ext)) {
-          targetDir = file.getAbsoluteFile().getParentFile();
-          return targetDir;
-        }
-      } else if (file.isDirectory() && targetDir == null) {
-        targetDir = findDirWithExt(file, ext);
-      }
-    }
-    return targetDir;
-  }
+
 
   /** fetch a list of files for the dir specified and the extension specified
    * extension in not case sensitive

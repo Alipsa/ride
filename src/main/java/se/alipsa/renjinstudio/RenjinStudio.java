@@ -13,6 +13,7 @@ import se.alipsa.renjinstudio.console.ConsoleComponent;
 import se.alipsa.renjinstudio.environment.EnvironmentComponent;
 import se.alipsa.renjinstudio.inout.InoutComponent;
 import se.alipsa.renjinstudio.menu.MainMenuBar;
+import se.alipsa.renjinstudio.utils.FileUtils;
 
 public class RenjinStudio extends Application {
 
@@ -31,6 +32,7 @@ public class RenjinStudio extends Application {
         root.setTop(new MainMenuBar());
 
         Scene scene = new Scene(root, 1024, 768);
+        scene.getStylesheets().add(FileUtils.getResourceUrl("R-keywords.css").toExternalForm());
 
         SplitPane leftSplitPane = new SplitPane();
         leftSplitPane.setOrientation(Orientation.VERTICAL);

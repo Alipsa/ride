@@ -12,7 +12,7 @@ import se.alipsa.renjinstudio.console.ConsoleComponent;
 public class CodeComponent extends BorderPane {
 
     private ConsoleComponent console;
-    private TextArea code;
+    private CodeTextArea code;
 
     public CodeComponent(ConsoleComponent console) {
         this.console = console;
@@ -27,8 +27,7 @@ public class CodeComponent extends BorderPane {
         TabPane codetp = new TabPane();
         setCenter(codetp);
         Tab codeTab = new Tab();
-        code = new TextArea();
-        code.setText("Code");
+        code = new CodeTextArea();
         codeTab.setContent(code);
         codetp.getTabs().add(codeTab);
     }
