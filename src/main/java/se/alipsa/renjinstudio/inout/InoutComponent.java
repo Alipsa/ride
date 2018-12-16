@@ -9,9 +9,9 @@ public class InoutComponent extends TabPane {
     public InoutComponent() {
         Tab files = new Tab();
         files.setText("Files");
-        TextArea southEast = new TextArea();
-        southEast.setText("Files");
-        files.setContent(southEast);
+
+        FileTree fileTree = new FileTree();
+        files.setContent(fileTree);
         getTabs().add(files);
 
         Tab plots = new Tab();
