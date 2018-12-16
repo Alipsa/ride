@@ -4,14 +4,27 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.alipsa.renjinstudio.code.CodeComponent;
 import se.alipsa.renjinstudio.utils.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.List;
 
 public class FileTree extends TreeView {
 
-    public FileTree() {
+    CodeComponent codeComponent;
+
+    Logger log = LoggerFactory.getLogger(FileTree.class);
+
+    public FileTree(CodeComponent codeComponent) {
+        this.codeComponent = codeComponent;
 
         String currentPath = new File(".").getAbsolutePath();
         File current = new File(currentPath).getParentFile();
@@ -31,6 +44,8 @@ public class FileTree extends TreeView {
                 }
             }
         });
+
+        setOnMouseClicked(this::handleClick);
     }
 
     private TreeItem<File> createTree(File file) {
@@ -47,5 +62,25 @@ public class FileTree extends TreeView {
             item.setGraphic(new ImageView(url.toExternalForm()));
         }
         return item;
+    }
+
+    private void handleClick(MouseEvent event) {
+        if(event.getClickCount() == 2) {
+            TreeItem<File> item = (TreeItem) getSelectionModel().getSelectedItem();
+            File file = item.getValue();
+            if (file.isFile() && file.getName().toUpperCase().endsWith("R")) {
+                List<String> lines;
+                try {
+                    lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+                    String content = String.join("\n", lines);
+                    codeComponent.addTab(file.getName(), content);
+                } catch (IOException e) {
+                    // TODO show a nice error screen here
+                    e.printStackTrace();
+                }
+            } else {
+                log.warn("Unknown file type, not sure what to do with {}", file.getName());
+            }
+        }
     }
 }

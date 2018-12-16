@@ -17,6 +17,9 @@ import se.alipsa.renjinstudio.utils.FileUtils;
 
 public class RenjinStudio extends Application {
 
+    ConsoleComponent console;
+    CodeComponent codeComponent;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -37,15 +40,16 @@ public class RenjinStudio extends Application {
         SplitPane leftSplitPane = new SplitPane();
         leftSplitPane.setOrientation(Orientation.VERTICAL);
 
-        ConsoleComponent console = new ConsoleComponent();
-        leftSplitPane.getItems().addAll(new CodeComponent(console), console);
+        console = new ConsoleComponent(this);
+        codeComponent = new CodeComponent(this);
+        leftSplitPane.getItems().addAll(codeComponent, console);
 
 
         SplitPane rightSplitPane = new SplitPane();
         rightSplitPane.setOrientation(Orientation.VERTICAL);
 
 
-        rightSplitPane.getItems().addAll(new EnvironmentComponent(), new InoutComponent());
+        rightSplitPane.getItems().addAll(new EnvironmentComponent(this), new InoutComponent(this));
 
         SplitPane splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.HORIZONTAL);
@@ -59,5 +63,11 @@ public class RenjinStudio extends Application {
         primaryStage.show();
     }
 
+    public ConsoleComponent getConsoleComponent() {
+        return console;
+    }
 
+    public CodeComponent getCodeComponent() {
+        return codeComponent;
+    }
 }

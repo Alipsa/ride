@@ -2,6 +2,7 @@ package se.alipsa.renjinstudio.console;
 
 import javafx.scene.control.TextArea;
 import org.renjin.script.RenjinScriptEngineFactory;
+import se.alipsa.renjinstudio.RenjinStudio;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,7 +14,7 @@ public class ConsoleComponent extends TextArea {
 
     private ScriptEngine engine;
 
-    public ConsoleComponent() {
+    public ConsoleComponent(RenjinStudio gui) {
         setText("Console");
         initRenjin();
     }

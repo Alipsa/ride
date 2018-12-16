@@ -1,21 +1,21 @@
 package se.alipsa.renjinstudio.code;
 
 import javafx.event.ActionEvent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import se.alipsa.renjinstudio.RenjinStudio;
 import se.alipsa.renjinstudio.console.ConsoleComponent;
+
+import java.io.File;
 
 public class CodeComponent extends BorderPane {
 
     private ConsoleComponent console;
-    private CodeTextArea code;
+    private TabPane pane;
 
-    public CodeComponent(ConsoleComponent console) {
-        this.console = console;
+    public CodeComponent(RenjinStudio gui) {
+        this.console = gui.getConsoleComponent();
         FlowPane buttonPane = new FlowPane();
         setTop(buttonPane);
 
@@ -24,15 +24,32 @@ public class CodeComponent extends BorderPane {
         runButton.setOnAction(this::handleRunAction);
         buttonPane.getChildren().add(runButton);
 
-        TabPane codetp = new TabPane();
-        setCenter(codetp);
+        pane = new TabPane();
+        setCenter(pane);
+        createAndAddTab("Untitled");
+    }
+
+    private CodeTextArea createAndAddTab(String title) {
         Tab codeTab = new Tab();
-        code = new CodeTextArea();
+        codeTab.setText(title);
+        CodeTextArea code = new CodeTextArea();
         codeTab.setContent(code);
-        codetp.getTabs().add(codeTab);
+        pane.getTabs().add(codeTab);
+        SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
+        selectionModel.select(codeTab);
+        return code;
     }
 
     private void handleRunAction (ActionEvent event) {
+        // TODO get code from active tab
+        SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
+        Tab selected = selectionModel.getSelectedItem();
+        CodeTextArea code = (CodeTextArea)selected.getContent();
         console.runScript(code.getText());
+    }
+
+    public void addTab(String title, String content) {
+        CodeTextArea code = createAndAddTab(title);
+        code.replaceText(0,0, content);
     }
 }

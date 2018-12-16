@@ -2,15 +2,15 @@ package se.alipsa.renjinstudio.inout;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
+import se.alipsa.renjinstudio.RenjinStudio;
 
 public class InoutComponent extends TabPane {
 
-    public InoutComponent() {
+    public InoutComponent(RenjinStudio gui) {
         Tab files = new Tab();
         files.setText("Files");
 
-        FileTree fileTree = new FileTree();
+        FileTree fileTree = new FileTree(gui.getCodeComponent());
         files.setContent(fileTree);
         getTabs().add(files);
 
