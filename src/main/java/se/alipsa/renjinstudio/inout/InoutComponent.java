@@ -4,13 +4,17 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import se.alipsa.renjinstudio.RenjinStudio;
 
+import java.io.File;
+
 public class InoutComponent extends TabPane {
+
+    FileTree fileTree;
 
     public InoutComponent(RenjinStudio gui) {
         Tab files = new Tab();
         files.setText("Files");
 
-        FileTree fileTree = new FileTree(gui.getCodeComponent());
+        fileTree = new FileTree(gui.getCodeComponent());
         files.setContent(fileTree);
         getTabs().add(files);
 
@@ -33,5 +37,9 @@ public class InoutComponent extends TabPane {
         viewer.setText("Viewer");
 
         getTabs().add(viewer);
+    }
+
+    public void fileAdded(File file) {
+        fileTree.refresh(file);
     }
 }

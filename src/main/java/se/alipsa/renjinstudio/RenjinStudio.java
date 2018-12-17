@@ -3,10 +3,13 @@ package se.alipsa.renjinstudio;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import se.alipsa.renjinstudio.code.CodeComponent;
 import se.alipsa.renjinstudio.console.ConsoleComponent;
@@ -19,6 +22,9 @@ public class RenjinStudio extends Application {
 
     ConsoleComponent console;
     CodeComponent codeComponent;
+    EnvironmentComponent environmentComponent;
+    InoutComponent inoutComponent;
+    Stage primaryStage;
 
     public static void main(String[] args) {
         launch(args);
@@ -27,29 +33,41 @@ public class RenjinStudio extends Application {
     @Override
     public void start(Stage primaryStage) {
 
+        this.primaryStage = primaryStage;
+
         BorderPane root = new BorderPane();
-        HBox main = new HBox();
+        VBox main = new VBox();
         main.setAlignment(Pos.CENTER);
+        main.setFillWidth(true);
+
         root.setCenter(main);
 
         root.setTop(new MainMenuBar(this));
 
-        Scene scene = new Scene(root, 1024, 768);
+        Scene scene = new Scene(root, 1366, 768);
         scene.getStylesheets().add(FileUtils.getResourceUrl("R-keywords.css").toExternalForm());
 
         SplitPane leftSplitPane = new SplitPane();
         leftSplitPane.setOrientation(Orientation.VERTICAL);
 
         console = new ConsoleComponent(this);
+        stretch(console, root);
+
         codeComponent = new CodeComponent(this);
+        stretch(codeComponent, root);
         leftSplitPane.getItems().addAll(codeComponent, console);
 
 
         SplitPane rightSplitPane = new SplitPane();
         rightSplitPane.setOrientation(Orientation.VERTICAL);
 
+        environmentComponent = new EnvironmentComponent(this);
+        stretch(environmentComponent, root);
 
-        rightSplitPane.getItems().addAll(new EnvironmentComponent(this), new InoutComponent(this));
+        inoutComponent = new InoutComponent(this);
+        stretch(inoutComponent, root);
+
+        rightSplitPane.getItems().addAll(environmentComponent, inoutComponent);
 
         SplitPane splitPane = new SplitPane();
         splitPane.setOrientation(Orientation.HORIZONTAL);
@@ -63,11 +81,33 @@ public class RenjinStudio extends Application {
         primaryStage.show();
     }
 
+    private void stretch(Pane component, Pane root) {
+        component.prefHeightProperty().bind(root.heightProperty());
+        component.prefWidthProperty().bind(root.widthProperty());
+    }
+
+    private void stretch(Control component, Pane root) {
+        component.prefHeightProperty().bind(root.heightProperty());
+        component.prefWidthProperty().bind(root.widthProperty());
+    }
+
     public ConsoleComponent getConsoleComponent() {
         return console;
     }
 
     public CodeComponent getCodeComponent() {
         return codeComponent;
+    }
+
+    public EnvironmentComponent getEnvironmentComponent() {
+        return environmentComponent;
+    }
+
+    public InoutComponent getInoutComponent() {
+        return inoutComponent;
+    }
+
+    public Stage getStage() {
+        return primaryStage;
     }
 }

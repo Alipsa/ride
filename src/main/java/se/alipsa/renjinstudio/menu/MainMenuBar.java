@@ -1,10 +1,12 @@
 package se.alipsa.renjinstudio.menu;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.renjinstudio.RenjinStudio;
@@ -13,8 +15,10 @@ import se.alipsa.renjinstudio.utils.Alerts;
 import se.alipsa.renjinstudio.utils.ExceptionAlert;
 import se.alipsa.renjinstudio.utils.FileUtils;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class MainMenuBar extends MenuBar {
 
@@ -51,15 +55,23 @@ public class MainMenuBar extends MenuBar {
     private void saveContent(ActionEvent event) {
         CodeTextArea codeArea = gui.getCodeComponent().getActiveCodeTextArea();
         File file = codeArea.getFile();
-        if (file != null) {
-            try {
-                FileUtils.writeToFile(file, codeArea.getText());
-                log.info("File {} save", file.getAbsolutePath());
-            } catch (FileNotFoundException e) {
-                ExceptionAlert.showAlert("Failed to save file " + file, e);
+        if (file == null)  {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save File");
+            file = fileChooser.showSaveDialog(gui.getStage());
+            if (file == null) {
+                return;
             }
-        } else {
-            Alerts.info("Not yet implemented", "Should show a Save as dialog here..");
         }
+
+        try {
+            FileUtils.writeToFile(file, codeArea.getText());
+            log.info("File {} saved", file.getAbsolutePath());
+            gui.getInoutComponent().fileAdded(file);
+            gui.getCodeComponent().fileSaved(file);
+        } catch (FileNotFoundException e) {
+            ExceptionAlert.showAlert("Failed to save file " + file, e);
+        }
+
     }
 }

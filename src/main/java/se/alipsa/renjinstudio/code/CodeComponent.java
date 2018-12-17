@@ -52,14 +52,18 @@ public class CodeComponent extends BorderPane {
     private void handleRunAction (ActionEvent event) {
         CodeTextArea code = getActiveCodeTextArea();
         String rCode = code.getText();
-        log.info("Running r code {}", rCode);
+        log.debug("Running r code {}", rCode);
         console.runScript(rCode);
     }
 
     public CodeTextArea getActiveCodeTextArea() {
-        SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
-        Tab selected = selectionModel.getSelectedItem();
+        Tab selected = getActiveTab();
         return (CodeTextArea)selected.getContent();
+    }
+
+    private Tab getActiveTab() {
+        SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
+        return selectionModel.getSelectedItem();
     }
 
     public CodeTextArea addTab(String title, String content) {
@@ -78,5 +82,10 @@ public class CodeComponent extends BorderPane {
         } catch (IOException e) {
             ExceptionAlert.showAlert("Failed to read content of file " + file, e);
         }
+    }
+
+    public void fileSaved(File file) {
+        CodeTextArea area = getActiveCodeTextArea();
+        getActiveTab().setText(file.getName());
     }
 }

@@ -1,6 +1,11 @@
 package se.alipsa.renjinstudio.console;
 
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.renjin.aether.AetherFactory;
 import org.renjin.aether.AetherPackageLoader;
@@ -19,9 +24,11 @@ import java.util.List;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
-public class ConsoleComponent extends TextArea {
+public class ConsoleComponent extends BorderPane {
 
     private ScriptEngine engine;
+
+    TextArea console;
 
     static RemoteRepository mavenCentral() {
         return new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build();
@@ -32,8 +39,20 @@ public class ConsoleComponent extends TextArea {
     }
 
     public ConsoleComponent(RenjinStudio gui) {
-        setText("Console");
+        Button clearButton = new Button("Clear");
+        clearButton.setOnAction(this::clearConsole);
+        FlowPane topPane = new FlowPane();
+        topPane.getChildren().add(clearButton);
+        setTop(topPane);
+
+        console = new TextArea();
+        setCenter(console);
+        console.setText("Console");
         initRenjin();
+    }
+
+    private void clearConsole(ActionEvent actionEvent) {
+        console.clear();
     }
 
     private void initRenjin() {
@@ -54,20 +73,21 @@ public class ConsoleComponent extends TextArea {
     }
 
     public void runScript(String script) {
-
-        StringWriter outputWriter = new StringWriter();
-        engine.getContext().setWriter(outputWriter);
-        engine.getContext().setErrorWriter(outputWriter);
-        try {
-            engine.eval(script);
-        } catch (ScriptException | EvalException e) {
-            ExceptionAlert.showAlert("Error running R code", e);
-        }
-        setText(getText() + "\n" + outputWriter.toString());
-        try {
-            outputWriter.close();
-        } catch (IOException e) {
-            ExceptionAlert.showAlert("Failed to close writer capturing renjin results", e);
-        }
+        Platform.runLater(() -> {
+            StringWriter outputWriter = new StringWriter();
+            engine.getContext().setWriter(outputWriter);
+            engine.getContext().setErrorWriter(outputWriter);
+            try {
+                engine.eval(script);
+            } catch (ScriptException | EvalException e) {
+                ExceptionAlert.showAlert("Error running R code", e);
+            }
+            console.setText(console.getText() + "\n" + outputWriter.toString());
+            try {
+                outputWriter.close();
+            } catch (IOException e) {
+                ExceptionAlert.showAlert("Failed to close writer capturing renjin results", e);
+            }
+        });
     }
 }
