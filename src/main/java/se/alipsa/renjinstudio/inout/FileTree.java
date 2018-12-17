@@ -1,5 +1,6 @@
 package se.alipsa.renjinstudio.inout;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -8,6 +9,7 @@ import javafx.scene.input.MouseEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.renjinstudio.code.CodeComponent;
+import se.alipsa.renjinstudio.utils.Alerts;
 import se.alipsa.renjinstudio.utils.FileUtils;
 
 import java.io.File;
@@ -68,18 +70,15 @@ public class FileTree extends TreeView {
         if(event.getClickCount() == 2) {
             TreeItem<File> item = (TreeItem) getSelectionModel().getSelectedItem();
             File file = item.getValue();
-            if (file.isFile() && file.getName().toUpperCase().endsWith("R")) {
-                List<String> lines;
-                try {
-                    lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
-                    String content = String.join("\n", lines);
-                    codeComponent.addTab(file.getName(), content);
-                } catch (IOException e) {
-                    // TODO show a nice error screen here
-                    e.printStackTrace();
+
+            if (file.isFile()) {
+                String fileNameUpper = file.getName().toUpperCase();
+                if (fileNameUpper.endsWith(".R") || fileNameUpper.endsWith(".S")) {
+                    codeComponent.addTab(file);
+                } else {
+                    Alerts.info("Unknown file type",
+                        "Unknown file type, not sure what to do with " + file.getName());
                 }
-            } else {
-                log.warn("Unknown file type, not sure what to do with {}", file.getName());
             }
         }
     }

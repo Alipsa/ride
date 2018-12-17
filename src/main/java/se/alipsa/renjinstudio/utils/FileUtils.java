@@ -191,5 +191,17 @@ public class FileUtils {
     
   }
 
-
+  /**
+   *
+   * @param file the file to write to
+   * @param content the content to write
+   * @throws FileNotFoundException If the given file object does not denote an existing, writable regular file
+   * and a new regular file of that name cannot be created,
+   * or if some other error occurs while opening or creating the file
+   */
+  public static void writeToFile(File file, String content) throws FileNotFoundException {
+    try (PrintStream out = new PrintStream(file)) {
+      out.print(content);
+    }
+  }
 }

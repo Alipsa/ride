@@ -21,6 +21,16 @@
             <artifactId>renjin-script-engine</artifactId>
             <version>RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>org.renjin</groupId>
+            <artifactId>tools</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.renjin</groupId>
+            <artifactId>renjin-aether-package-loader</artifactId>
+            <version>RELEASE</version>
+        </dependency>
 
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>

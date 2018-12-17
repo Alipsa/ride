@@ -1,5 +1,6 @@
 package se.alipsa.renjinstudio.code;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +13,9 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 
 public class CodeTextArea extends CodeArea {
+
+    File file;
+
     private static final String[] KEYWORDS = new String[] {
             "if", "else", "repeat", "while", "function",
             "for", "in", "next", "break", "TRUE",
@@ -77,4 +81,11 @@ public class CodeTextArea extends CodeArea {
         return spansBuilder.create();
     }
 
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
 }

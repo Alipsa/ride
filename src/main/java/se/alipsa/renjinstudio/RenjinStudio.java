@@ -32,7 +32,7 @@ public class RenjinStudio extends Application {
         main.setAlignment(Pos.CENTER);
         root.setCenter(main);
 
-        root.setTop(new MainMenuBar());
+        root.setTop(new MainMenuBar(this));
 
         Scene scene = new Scene(root, 1024, 768);
         scene.getStylesheets().add(FileUtils.getResourceUrl("R-keywords.css").toExternalForm());

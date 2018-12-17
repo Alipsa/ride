@@ -4,15 +4,24 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.alipsa.renjinstudio.RenjinStudio;
 import se.alipsa.renjinstudio.console.ConsoleComponent;
+import se.alipsa.renjinstudio.utils.ExceptionAlert;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.List;
 
 public class CodeComponent extends BorderPane {
 
     private ConsoleComponent console;
     private TabPane pane;
+
+    private Logger log = LoggerFactory.getLogger(CodeComponent.class);
 
     public CodeComponent(RenjinStudio gui) {
         this.console = gui.getConsoleComponent();
@@ -41,15 +50,33 @@ public class CodeComponent extends BorderPane {
     }
 
     private void handleRunAction (ActionEvent event) {
-        // TODO get code from active tab
-        SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
-        Tab selected = selectionModel.getSelectedItem();
-        CodeTextArea code = (CodeTextArea)selected.getContent();
-        console.runScript(code.getText());
+        CodeTextArea code = getActiveCodeTextArea();
+        String rCode = code.getText();
+        log.info("Running r code {}", rCode);
+        console.runScript(rCode);
     }
 
-    public void addTab(String title, String content) {
+    public CodeTextArea getActiveCodeTextArea() {
+        SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
+        Tab selected = selectionModel.getSelectedItem();
+        return (CodeTextArea)selected.getContent();
+    }
+
+    public CodeTextArea addTab(String title, String content) {
         CodeTextArea code = createAndAddTab(title);
         code.replaceText(0,0, content);
+        return code;
+    }
+
+    public void addTab(File file) {
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+            String content = String.join("\n", lines);
+            CodeTextArea code = addTab(file.getName(), content);
+            code.setFile(file);
+        } catch (IOException e) {
+            ExceptionAlert.showAlert("Failed to read content of file " + file, e);
+        }
     }
 }
