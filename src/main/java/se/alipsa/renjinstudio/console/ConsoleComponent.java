@@ -79,6 +79,7 @@ public class ConsoleComponent extends BorderPane {
             engine.getContext().setErrorWriter(outputWriter);
             try {
                 engine.eval(script);
+                // TODO send variable result to EnvironmentComponent, see http://docs.renjin.org/en/latest/library/capture.html
             } catch (ScriptException | EvalException e) {
                 ExceptionAlert.showAlert("Error running R code", e);
             }

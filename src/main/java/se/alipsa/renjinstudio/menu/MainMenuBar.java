@@ -55,6 +55,7 @@ public class MainMenuBar extends MenuBar {
     private void saveContent(ActionEvent event) {
         CodeTextArea codeArea = gui.getCodeComponent().getActiveCodeTextArea();
         File file = codeArea.getFile();
+        boolean fileExists = file != null && file.exists();
         if (file == null)  {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save File");
@@ -67,7 +68,9 @@ public class MainMenuBar extends MenuBar {
         try {
             FileUtils.writeToFile(file, codeArea.getText());
             log.info("File {} saved", file.getAbsolutePath());
-            gui.getInoutComponent().fileAdded(file);
+            if (!fileExists) {
+                gui.getInoutComponent().fileAdded(file);
+            }
             gui.getCodeComponent().fileSaved(file);
         } catch (FileNotFoundException e) {
             ExceptionAlert.showAlert("Failed to save file " + file, e);
