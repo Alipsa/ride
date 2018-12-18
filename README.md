@@ -1,6 +1,10 @@
 # renjinStudio
 A RStudio like gui for Renjin 
 
+It is functional i.e. it is possible to create, open, save and execute R scripts 
+but it is far from all the rich functionality of RStudio at this point. 
+
+To create a runnable jar do `mvn package` and then run it with `java -jar renjinStudio-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
 ## 3:rd party software used
 
