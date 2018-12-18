@@ -80,8 +80,12 @@ public class ConsoleComponent extends BorderPane {
             try {
                 engine.eval(script);
                 // TODO send variable result to EnvironmentComponent, see http://docs.renjin.org/en/latest/library/capture.html
+            } catch (org.renjin.parser.ParseException pe) {
+                ExceptionAlert.showAlert("Error parsing R script: " + pe.getMessage(), pe);
             } catch (ScriptException | EvalException e) {
-                ExceptionAlert.showAlert("Error running R code", e);
+                ExceptionAlert.showAlert("Error running R script: " + e.getMessage(), e);
+            } catch (RuntimeException re) {
+                ExceptionAlert.showAlert("An unknown error occurred running R script: " + re.getMessage(), re);
             }
             console.setText(console.getText() + "\n" + outputWriter.toString());
             try {

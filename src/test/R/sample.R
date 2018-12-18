@@ -12,7 +12,7 @@ for (i in 1:25) {
 print(j)
 
 # Exercise #4
-# The cars dataset is available in base R. You can type cars to see it. Use the class function to determine what type of object is cars.
+print("# The cars dataset is available in base R. You can type cars to see it. Use the class function to determine what type of object is cars.")
 class(cars)
 
 str(cars)
