@@ -28,7 +28,7 @@ public class CodeTextArea extends CodeArea {
     private static final String ASSIGNMENT_PATTERN = "\\-\\>|\\<\\-|\\=|\\~|\\%\\>\\%";
     private static final String BRACKET_PATTERN = "\\[|\\]|\\{|\\}|\\(|\\)";
     private static final String DIGIT_PATTERN = "\\b\\d+";
-    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
+    private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"|\'([^\'\\\\]|\\\\.)*\'";
     private static final String COMMENT_PATTERN = "#[^\n]*";
 
     private static final Pattern PATTERN = Pattern.compile(
@@ -43,15 +43,15 @@ public class CodeTextArea extends CodeArea {
 
     public CodeTextArea() {
         setParagraphGraphicFactory(LineNumberFactory.get(this));
-        // recompute the syntax highlighting 500 ms after user stops editing area
+        // recompute the syntax highlighting 400 ms after user stops editing area
 
         // plain changes = ignore style changes that are emitted when syntax highlighting is reapplied
         // multi plain changes = save computation by not rerunning the code multiple times
         //   when making multiple changes (e.g. renaming a method at multiple parts in file)
         multiPlainChanges()
 
-        // do not emit an event until 500 ms have passed since the last emission of previous stream
-        .successionEnds(Duration.ofMillis(500))
+        // do not emit an event until 400 ms have passed since the last emission of previous stream
+        .successionEnds(Duration.ofMillis(400))
 
         // run the following code block when previous stream emits an event
         .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
