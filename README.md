@@ -6,7 +6,7 @@ A RStudio like gui for Renjin
 
 ### org.renjin:renjin-script-engine
 The component that actually does something ;) i.e. executes R code
-Copyright (C) 1989, 1991 Free Software Foundation, Inc. under GNU General Public License v2.0
+Copyright © 2010-2018 BeDataDriven Groep B.V. and contributors under GNU General Public License v2.0
 
 ### org.fxmisc.richtext:richtextfx
 Used to color R code
