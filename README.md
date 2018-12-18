@@ -4,8 +4,8 @@ A RStudio like gui for Renjin
 
 ## 3:rd party software used
 
-### org.renjin:renjin-script-engine
-The component that actually does something ;) i.e. executes R code.
+### org.renjin:renjin-script-engine, tools, and renjin-aether-package-loader
+The components that actually does something ;) i.e. executes R code.
 
 Copyright © 2010-2018 BeDataDriven Groep B.V. and contributors under GNU General Public License v2.0
 
