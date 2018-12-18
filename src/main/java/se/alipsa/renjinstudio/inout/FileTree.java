@@ -95,13 +95,33 @@ public class FileTree extends TreeView {
         }
     }
 
-    public void refresh(File file) {
+    public void addFile(File file) {
         TreeItem<File> item = findTreeViewItem(this.getRoot(), file.getParentFile());
 
         TreeItem<File> fileItem = new TreeItem<>(file);
         fileItem.setGraphic(new ImageView(fileUrl));
         item.getChildren().add(fileItem);
         item.getChildren().sort(treeItemComparator);
+    }
+
+    public void refresh(File dir) {
+        if (dir == null) {
+            Alerts.warn("Dir is missing (null)", "Cannot refresh file tree when dir specified is missing");
+        }
+        if (dir.isFile()) {
+            dir = dir.getParentFile();
+        }
+        setRoot(createTree(dir));
+        sortTree(getRoot());
+        getRoot().setExpanded(true);
+    }
+
+    public void refresh() {
+        File current = (File)getRoot().getValue();
+        setRoot(createTree(current));
+        sortTree(getRoot());
+        getRoot().setExpanded(true);
+
     }
 
     private TreeItem<File> findTreeViewItem(TreeItem<File> item , File value) {
@@ -143,4 +163,6 @@ public class FileTree extends TreeView {
             return fileTreeItem.getValue().getName().compareTo(t1.getValue().getName());
         }
     }
+
+
 }
