@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.renjinstudio.RenjinStudio;
@@ -41,8 +42,10 @@ public class CodeComponent extends BorderPane {
     private CodeTextArea createAndAddTab(String title) {
         Tab codeTab = new Tab();
         codeTab.setText(title);
+
         CodeTextArea code = new CodeTextArea();
-        codeTab.setContent(code);
+        VirtualizedScrollPane vPane = new VirtualizedScrollPane<>(code);
+        codeTab.setContent(vPane);
         pane.getTabs().add(codeTab);
         SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
         selectionModel.select(codeTab);

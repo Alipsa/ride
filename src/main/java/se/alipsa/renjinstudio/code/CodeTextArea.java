@@ -56,6 +56,7 @@ public class CodeTextArea extends CodeArea {
         // run the following code block when previous stream emits an event
         .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
 
+
     }
 
 
