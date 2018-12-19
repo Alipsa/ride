@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.alipsa.renjinstudio.RenjinStudio;
 import se.alipsa.renjinstudio.code.CodeComponent;
 import se.alipsa.renjinstudio.utils.Alerts;
 import se.alipsa.renjinstudio.utils.FileUtils;
@@ -22,6 +23,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 public class FileTree extends TreeView {
 
@@ -29,6 +31,8 @@ public class FileTree extends TreeView {
 
     TreeItemComparator treeItemComparator = new TreeItemComparator();
     FileComparator fileComparator = new FileComparator();
+
+    private final String WORKING_DIR_PREF = "FileTree.WorkingDir";
 
 
     final String folderUrl = FileUtils.getResourceUrl("image/folder.png").toExternalForm();
@@ -39,7 +43,7 @@ public class FileTree extends TreeView {
     public FileTree(CodeComponent codeComponent) {
         this.codeComponent = codeComponent;
 
-        String currentPath = new File(".").getAbsolutePath();
+        String currentPath = new File(getWorkingDirPref()).getAbsolutePath();
         File current = new File(currentPath).getParentFile();
 
         setRoot(createTree(current));
@@ -64,7 +68,19 @@ public class FileTree extends TreeView {
         setOnMouseClicked(this::handleClick);
     }
 
-    private TreeItem<File> createTree(File file) {
+  private String getWorkingDirPref() {
+      return getPrefs().get(WORKING_DIR_PREF, ".");
+  }
+
+  private Preferences getPrefs() {
+    return Preferences.userRoot().node(RenjinStudio.class.getName());
+  }
+
+  private void setWorkingDirPref(File dir) {
+    getPrefs().put(WORKING_DIR_PREF, dir.getAbsolutePath());
+  }
+
+  private TreeItem<File> createTree(File file) {
         TreeItem<File> item = new TreeItem<>(file);
         File[] childs = file.listFiles();
         if (childs != null) {
@@ -114,6 +130,7 @@ public class FileTree extends TreeView {
         setRoot(createTree(dir));
         sortTree(getRoot());
         getRoot().setExpanded(true);
+        setWorkingDirPref(dir);
     }
 
     public void refresh() {
