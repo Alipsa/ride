@@ -56,20 +56,31 @@ public class MainMenuBar extends MenuBar {
     }
 
     private Menu createFileMenu() {
-        Menu fileMenu = new Menu("File");
+        Menu menu = new Menu("File");
+
+        Menu fileMenu = new Menu("New File");
+
+        MenuItem nRScript = new MenuItem("R Script");
+        nRScript.setOnAction(this::nRScript);
+        fileMenu.getItems().add(nRScript);
+
         MenuItem save = new MenuItem("Save");
         save.setOnAction(this::saveContent);
-        fileMenu.getItems().add(save);
+        menu.getItems().addAll(fileMenu, save);
 
-        return fileMenu;
+        return menu;
+    }
+
+    private void nRScript(ActionEvent actionEvent) {
+        gui.getCodeComponent().addTab("Unknown", "");
     }
 
     private void saveContent(ActionEvent event) {
         CodeTextArea codeArea = gui.getCodeComponent().getActiveCodeTextArea();
         File file = codeArea.getFile();
-        boolean fileExists = file != null && file.exists();
         if (file == null)  {
             FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(gui.getInoutComponent().getRootDir());
             fileChooser.setTitle("Save File");
             file = fileChooser.showSaveDialog(gui.getStage());
             if (file == null) {
@@ -78,9 +89,10 @@ public class MainMenuBar extends MenuBar {
         }
 
         try {
+            boolean fileExisted = file.exists();
             FileUtils.writeToFile(file, codeArea.getText());
             log.info("File {} saved", file.getAbsolutePath());
-            if (!fileExists) {
+            if (!fileExisted) {
                 gui.getInoutComponent().fileAdded(file);
             }
             gui.getCodeComponent().fileSaved(file);

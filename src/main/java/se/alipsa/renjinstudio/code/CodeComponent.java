@@ -61,7 +61,8 @@ public class CodeComponent extends BorderPane {
 
     public CodeTextArea getActiveCodeTextArea() {
         Tab selected = getActiveTab();
-        return (CodeTextArea)selected.getContent();
+        VirtualizedScrollPane vPane = (VirtualizedScrollPane)selected.getContent();
+        return (CodeTextArea)vPane.getContent();
     }
 
     private Tab getActiveTab() {
@@ -88,7 +89,6 @@ public class CodeComponent extends BorderPane {
     }
 
     public void fileSaved(File file) {
-        CodeTextArea area = getActiveCodeTextArea();
         getActiveTab().setText(file.getName());
     }
 }

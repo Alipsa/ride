@@ -68,8 +68,9 @@ public class InoutComponent extends TabPane {
     }
 
     private void handleChangeDir(ActionEvent actionEvent) {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        File selectedDirectory = directoryChooser.showDialog(gui.getStage());
+        DirectoryChooser dirChooser = new DirectoryChooser();
+        dirChooser.setInitialDirectory(gui.getInoutComponent().getRootDir());
+        File selectedDirectory = dirChooser.showDialog(gui.getStage());
 
         if (selectedDirectory == null){
             log.info("No Directory selected");
@@ -84,5 +85,9 @@ public class InoutComponent extends TabPane {
 
     public void fileAdded(File file) {
         fileTree.addFile(file);
+    }
+
+    public File getRootDir() {
+        return fileTree.getRootDir();
     }
 }

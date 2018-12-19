@@ -1,8 +1,6 @@
 package se.alipsa.renjinstudio.inout;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -16,13 +14,7 @@ import se.alipsa.renjinstudio.utils.Alerts;
 import se.alipsa.renjinstudio.utils.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.prefs.Preferences;
 
 public class FileTree extends TreeView {
@@ -44,18 +36,18 @@ public class FileTree extends TreeView {
         this.codeComponent = codeComponent;
 
         String currentPath = new File(getWorkingDirPref()).getAbsolutePath();
-        File current = new File(currentPath).getParentFile();
+        File current = new File(currentPath);
 
         setRoot(createTree(current));
 
         sortTree(getRoot());
 
         getRoot().setExpanded(true);
-        setCellFactory((e) -> new TreeCell<File>(){
+        setCellFactory((e) -> new TreeCell<File>() {
             @Override
             protected void updateItem(File item, boolean empty) {
                 super.updateItem(item, empty);
-                if(item != null) {
+                if (item != null) {
                     setText(item.getName());
                     setGraphic(getTreeItem().getGraphic());
                 } else {
@@ -68,19 +60,24 @@ public class FileTree extends TreeView {
         setOnMouseClicked(this::handleClick);
     }
 
-  private String getWorkingDirPref() {
-      return getPrefs().get(WORKING_DIR_PREF, ".");
-  }
 
-  private Preferences getPrefs() {
-    return Preferences.userRoot().node(RenjinStudio.class.getName());
-  }
+    public File getRootDir() {
+        return (File) getRoot().getValue();
+    }
 
-  private void setWorkingDirPref(File dir) {
-    getPrefs().put(WORKING_DIR_PREF, dir.getAbsolutePath());
-  }
+    private String getWorkingDirPref() {
+        return getPrefs().get(WORKING_DIR_PREF, ".");
+    }
 
-  private TreeItem<File> createTree(File file) {
+    private Preferences getPrefs() {
+        return Preferences.userRoot().node(RenjinStudio.class.getName());
+    }
+
+    private void setWorkingDirPref(File dir) {
+        getPrefs().put(WORKING_DIR_PREF, dir.getAbsolutePath());
+    }
+
+    private TreeItem<File> createTree(File file) {
         TreeItem<File> item = new TreeItem<>(file);
         File[] childs = file.listFiles();
         if (childs != null) {
@@ -95,7 +92,7 @@ public class FileTree extends TreeView {
     }
 
     private void handleClick(MouseEvent event) {
-        if(event.getClickCount() == 2) {
+        if (event.getClickCount() == 2) {
             TreeItem<File> item = (TreeItem) getSelectionModel().getSelectedItem();
             File file = item.getValue();
 
@@ -105,7 +102,7 @@ public class FileTree extends TreeView {
                     codeComponent.addTab(file);
                 } else {
                     Alerts.info("Unknown file type",
-                        "Unknown file type, not sure what to do with " + file.getName());
+                            "Unknown file type, not sure what to do with " + file.getName());
                 }
             }
         }
@@ -118,11 +115,13 @@ public class FileTree extends TreeView {
         fileItem.setGraphic(new ImageView(fileUrl));
         item.getChildren().add(fileItem);
         item.getChildren().sort(treeItemComparator);
+        item.setExpanded(true);
     }
 
     public void refresh(File dir) {
         if (dir == null) {
             Alerts.warn("Dir is missing (null)", "Cannot refresh file tree when dir specified is missing");
+            return;
         }
         if (dir.isFile()) {
             dir = dir.getParentFile();
@@ -134,21 +133,21 @@ public class FileTree extends TreeView {
     }
 
     public void refresh() {
-        File current = (File)getRoot().getValue();
+        File current = (File) getRoot().getValue();
         setRoot(createTree(current));
         sortTree(getRoot());
         getRoot().setExpanded(true);
 
     }
 
-    private TreeItem<File> findTreeViewItem(TreeItem<File> item , File value) {
+    private TreeItem<File> findTreeViewItem(TreeItem<File> item, File value) {
         if (item != null && item.getValue().equals(value)) {
             return item;
         }
 
-        for (TreeItem<File> child : item.getChildren()){
+        for (TreeItem<File> child : item.getChildren()) {
             TreeItem<File> s = findTreeViewItem(child, value);
-            if( s != null) {
+            if (s != null) {
                 return s;
             }
 
@@ -159,7 +158,7 @@ public class FileTree extends TreeView {
     private void sortTree(TreeItem<File> item) {
         ObservableList<TreeItem<File>> children = item.getChildren();
         children.sort(treeItemComparator);
-        for (TreeItem<File> child : item.getChildren()){
+        for (TreeItem<File> child : item.getChildren()) {
             sortTree(child);
         }
     }
