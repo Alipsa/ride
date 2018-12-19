@@ -6,6 +6,9 @@ but it is far from all the rich functionality of RStudio at this point.
 
 To create a runnable jar do `mvn package` and then run it with `java -jar renjinStudio-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
+
+![alt text](https://raw.githubusercontent.com/perNyfelt/renjinStudio/master/docs/Screenshot.png "Screenshot")
+
 ## 3:rd party software used
 
 ### org.renjin:renjin-script-engine, tools, and renjin-aether-package-loader
