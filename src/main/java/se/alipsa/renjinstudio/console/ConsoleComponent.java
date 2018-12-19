@@ -7,6 +7,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.renjin.RenjinVersion;
 import org.renjin.aether.AetherPackageLoader;
 import org.renjin.eval.EvalException;
 import org.renjin.eval.Session;
@@ -16,6 +17,7 @@ import org.renjin.sexp.Environment;
 import se.alipsa.renjinstudio.RenjinStudio;
 import se.alipsa.renjinstudio.utils.ExceptionAlert;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ public class ConsoleComponent extends BorderPane {
     private ScriptEngine engine;
     private Session session;
 
-    private TextArea console;
+    private ConsoleTextArea console;
     private RenjinStudio gui;
 
     static RemoteRepository mavenCentral() {
@@ -47,9 +49,8 @@ public class ConsoleComponent extends BorderPane {
         topPane.getChildren().add(clearButton);
         setTop(topPane);
 
-        console = new TextArea();
+        console = new ConsoleTextArea();
         setCenter(console);
-        console.setText("Console");
         initRenjin();
     }
 
@@ -72,6 +73,25 @@ public class ConsoleComponent extends BorderPane {
             .build();
 
         engine = factory.getScriptEngine(session);
+        String greeting = "* Renjin " + RenjinVersion.getVersionName() + " *";
+        String surround = getStars(greeting.length());
+        console.append(surround, true);
+        console.append(greeting);
+        console.append(surround + "\n");
+    }
+
+    private String getStars(int length) {
+        StringBuffer buf = new StringBuffer(length);
+        for (int i = 0; i < length; i++) {
+            buf.append("*");
+        }
+        return buf.toString();
+    }
+
+    public void restartR() {
+        console.append("Restarting Renjin..\n");
+        initRenjin();
+        gui.getEnvironmentComponent().clearEnvironment();
     }
 
     public void runScript(String script) {
@@ -83,7 +103,7 @@ public class ConsoleComponent extends BorderPane {
                 engine.getContext().setWriter(outputWriter);
                 engine.getContext().setErrorWriter(outputWriter);
                 engine.eval(script);
-                console.setText(console.getText() + "\n" + outputWriter.toString());
+                console.append(outputWriter.toString());
                 Environment global = session.getGlobalEnvironment();
                 gui.getEnvironmentComponent().setEnvironment(global, session.getTopLevelContext());
 

@@ -33,7 +33,7 @@ public class MainMenuBar extends MenuBar {
         Menu menuCode = new Menu("Code");
         Menu menuView = new Menu("View");
         Menu menuPlots = new Menu("Plots");
-        Menu menuSession = new Menu("Session");
+        Menu menuSession = createSessionMenu();
         Menu menuBuild = new Menu("Build");
         Menu menuDebug = new Menu("Debug");
         Menu menuProfile = new Menu("Profile");
@@ -41,6 +41,18 @@ public class MainMenuBar extends MenuBar {
         Menu menuHelp = new Menu("Help");
         getMenus().addAll(menuFile, menuEdit, menuCode, menuView, menuPlots, menuSession,
                 menuBuild, menuDebug, menuProfile, menuTools, menuHelp);
+    }
+
+    private Menu createSessionMenu() {
+        Menu sessionMenu = new Menu("Session");
+        MenuItem restart = new MenuItem("Restart R");
+        restart.setOnAction(this::restartR);
+        sessionMenu.getItems().add(restart);
+        return sessionMenu;
+    }
+
+    private void restartR(ActionEvent evt) {
+        gui.getConsoleComponent().restartR();
     }
 
     private Menu createFileMenu() {

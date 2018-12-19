@@ -42,4 +42,8 @@ public class EnvironmentComponent extends TabPane {
         }
         envTA.setText(buf.toString());
     }
+
+    public void clearEnvironment() {
+        envTA.setText("");
+    }
 }
