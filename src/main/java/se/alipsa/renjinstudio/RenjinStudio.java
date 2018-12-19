@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -77,6 +78,7 @@ public class RenjinStudio extends Application {
 
 
         primaryStage.setTitle("Renjin Studio");
+        primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
         primaryStage.setScene(scene);
         primaryStage.show();
     }
