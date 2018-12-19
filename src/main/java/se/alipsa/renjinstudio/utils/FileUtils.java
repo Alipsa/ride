@@ -32,15 +32,20 @@ public class FileUtils {
    * @throws FileNotFoundException if the resource cannot be found.
    */
   public static File getResource(String name, String... encodingOpt) throws FileNotFoundException {
-    String encoding = encodingOpt.length > 0 ? encodingOpt[0] : "UTF-8";
-    URL url = getResourceUrl(name);
     File file;
     try {
-      file = new File(URLDecoder.decode(url.getFile(), encoding));
+      String path = getResourcePath(name, encodingOpt);
+      file = new File(path);
     } catch (UnsupportedEncodingException e) {
-      throw new FileNotFoundException("Failed to find resource " + name + ", url is " + url);
+      throw new FileNotFoundException("Failed to find resource " + name);
     }
     return file;
+  }
+
+  public static String getResourcePath(String name, String... encodingOpt) throws UnsupportedEncodingException {
+    String encoding = encodingOpt.length > 0 ? encodingOpt[0] : "UTF-8";
+    URL url = getResourceUrl(name);
+    return URLDecoder.decode(url.getFile(), encoding);
   }
 
   /**

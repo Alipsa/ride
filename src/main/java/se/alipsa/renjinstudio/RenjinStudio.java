@@ -11,6 +11,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.alipsa.renjinstudio.code.CodeComponent;
 import se.alipsa.renjinstudio.console.ConsoleComponent;
 import se.alipsa.renjinstudio.environment.EnvironmentComponent;
@@ -26,6 +28,8 @@ public class RenjinStudio extends Application {
     private InoutComponent inoutComponent;
     private Stage primaryStage;
     private Scene scene;
+
+    Logger log = LoggerFactory.getLogger(RenjinStudio.class);
 
     public static void main(String[] args) {
         launch(args);
