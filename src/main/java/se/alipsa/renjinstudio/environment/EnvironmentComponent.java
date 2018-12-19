@@ -37,7 +37,7 @@ public class EnvironmentComponent extends TabPane {
         for (String varName : names) {
             buf.append(varName);
             buf.append("\t");
-            buf.append(env.getVariable(ctx, varName));
+            buf.append(env.getVariable(ctx, varName).toString());
             buf.append("\n");
         }
         envTA.setText(buf.toString());
