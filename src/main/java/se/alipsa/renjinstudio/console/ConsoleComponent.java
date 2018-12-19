@@ -1,23 +1,22 @@
 package se.alipsa.renjinstudio.console;
 
-import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.eclipse.aether.repository.RemoteRepository;
-import org.renjin.aether.AetherFactory;
 import org.renjin.aether.AetherPackageLoader;
 import org.renjin.eval.EvalException;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
 import org.renjin.script.RenjinScriptEngineFactory;
+import org.renjin.sexp.Environment;
 import se.alipsa.renjinstudio.RenjinStudio;
 import se.alipsa.renjinstudio.utils.ExceptionAlert;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +26,10 @@ import javax.script.ScriptException;
 public class ConsoleComponent extends BorderPane {
 
     private ScriptEngine engine;
+    private Session session;
 
-    TextArea console;
+    private TextArea console;
+    private RenjinStudio gui;
 
     static RemoteRepository mavenCentral() {
         return new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build();
@@ -39,6 +40,7 @@ public class ConsoleComponent extends BorderPane {
     }
 
     public ConsoleComponent(RenjinStudio gui) {
+        this.gui = gui;
         Button clearButton = new Button("Clear");
         clearButton.setOnAction(this::clearConsole);
         FlowPane topPane = new FlowPane();
@@ -64,7 +66,7 @@ public class ConsoleComponent extends BorderPane {
 
         AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, repositories);
 
-        Session session = new SessionBuilder()
+        session = new SessionBuilder()
             .withDefaultPackages()
             .setPackageLoader(loader)
             .build();
@@ -73,26 +75,38 @@ public class ConsoleComponent extends BorderPane {
     }
 
     public void runScript(String script) {
-        Platform.runLater(() -> {
-            StringWriter outputWriter = new StringWriter();
-            engine.getContext().setWriter(outputWriter);
-            engine.getContext().setErrorWriter(outputWriter);
-            try {
+        gui.setWaitCursor();
+        Task<Void> task = new Task<Void>() {
+            @Override
+            public Void call() throws Exception {
+            try (StringWriter outputWriter = new StringWriter(); StringWriter envWriter = new StringWriter()){
+                engine.getContext().setWriter(outputWriter);
+                engine.getContext().setErrorWriter(outputWriter);
                 engine.eval(script);
-                // TODO send variable result to EnvironmentComponent, see http://docs.renjin.org/en/latest/library/capture.html
-            } catch (org.renjin.parser.ParseException pe) {
-                ExceptionAlert.showAlert("Error parsing R script: " + pe.getMessage(), pe);
-            } catch (ScriptException | EvalException e) {
-                ExceptionAlert.showAlert("Error running R script: " + e.getMessage(), e);
-            } catch (RuntimeException re) {
-                ExceptionAlert.showAlert("An unknown error occurred running R script: " + re.getMessage(), re);
+                console.setText(console.getText() + "\n" + outputWriter.toString());
+                Environment global = session.getGlobalEnvironment();
+                gui.getEnvironmentComponent().setEnvironment(global);
             }
-            console.setText(console.getText() + "\n" + outputWriter.toString());
-            try {
-                outputWriter.close();
-            } catch (IOException e) {
-                ExceptionAlert.showAlert("Failed to close writer capturing renjin results", e);
+            return null ;
             }
+        };
+
+        task.setOnSucceeded(e -> gui.setNormalCursor());
+        task.setOnFailed(e -> {
+            gui.setNormalCursor();
+            Throwable ex = task.getException();
+            String msg = "";
+            if (ex instanceof org.renjin.parser.ParseException){
+                msg = "Error parsing R script: ";
+            } else if (ex instanceof ScriptException || ex instanceof EvalException ){
+                msg = "Error running R script: ";
+            } else if (ex instanceof RuntimeException ) {
+                msg = "An unknown error occurred running R script: ";
+            } else if (ex instanceof IOException){
+                msg = "Failed to close writer capturing renjin results";
+            }
+            ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
         });
+        new Thread(task).start();
     }
 }

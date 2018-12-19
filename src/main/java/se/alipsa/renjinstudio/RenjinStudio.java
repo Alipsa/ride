@@ -3,6 +3,7 @@ package se.alipsa.renjinstudio;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -18,11 +19,12 @@ import se.alipsa.renjinstudio.utils.FileUtils;
 
 public class RenjinStudio extends Application {
 
-    ConsoleComponent console;
-    CodeComponent codeComponent;
-    EnvironmentComponent environmentComponent;
-    InoutComponent inoutComponent;
-    Stage primaryStage;
+    private ConsoleComponent console;
+    private CodeComponent codeComponent;
+    private EnvironmentComponent environmentComponent;
+    private InoutComponent inoutComponent;
+    private Stage primaryStage;
+    private Scene scene;
 
     public static void main(String[] args) {
         launch(args);
@@ -42,7 +44,7 @@ public class RenjinStudio extends Application {
 
         root.setTop(new MainMenuBar(this));
 
-        Scene scene = new Scene(root, 1366, 768);
+        scene = new Scene(root, 1366, 768);
         scene.getStylesheets().add(FileUtils.getResourceUrl("R-keywords.css").toExternalForm());
 
         SplitPane leftSplitPane = new SplitPane();
@@ -107,5 +109,13 @@ public class RenjinStudio extends Application {
 
     public Stage getStage() {
         return primaryStage;
+    }
+
+    public void setWaitCursor() {
+        scene.setCursor(Cursor.WAIT);
+    }
+
+    public void setNormalCursor() {
+        scene.setCursor(Cursor.DEFAULT);
     }
 }
