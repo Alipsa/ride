@@ -3,6 +3,7 @@ package se.alipsa.renjinstudio.environment;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
+import org.renjin.eval.Context;
 import org.renjin.sexp.Environment;
 import org.renjin.sexp.StringVector;
 import se.alipsa.renjinstudio.RenjinStudio;
@@ -30,13 +31,13 @@ public class EnvironmentComponent extends TabPane {
         getTabs().add(connections);
     }
 
-    public void setEnvironment(Environment env) {
+    public void setEnvironment(Environment env, Context ctx) {
         StringVector names = env.getNames();
         StringBuffer buf = new StringBuffer();
         for (String varName : names) {
             buf.append(varName);
             buf.append("\t");
-            buf.append(env.getVariableUnsafe(varName));
+            buf.append(env.getVariable(ctx, varName));
             buf.append("\n");
         }
         envTA.setText(buf.toString());

@@ -85,7 +85,8 @@ public class ConsoleComponent extends BorderPane {
                 engine.eval(script);
                 console.setText(console.getText() + "\n" + outputWriter.toString());
                 Environment global = session.getGlobalEnvironment();
-                gui.getEnvironmentComponent().setEnvironment(global);
+                gui.getEnvironmentComponent().setEnvironment(global, session.getTopLevelContext());
+
             }
             return null ;
             }
