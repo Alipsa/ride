@@ -1,4 +1,4 @@
-package se.alipsa.renjinstudio.code;
+package se.alipsa.ride.code;
 
 import java.io.File;
 import java.time.Duration;

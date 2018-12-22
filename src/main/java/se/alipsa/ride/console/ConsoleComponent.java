@@ -1,9 +1,8 @@
-package se.alipsa.renjinstudio.console;
+package se.alipsa.ride.console;
 
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -14,10 +13,9 @@ import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.Environment;
-import se.alipsa.renjinstudio.RenjinStudio;
-import se.alipsa.renjinstudio.utils.ExceptionAlert;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.utils.ExceptionAlert;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -31,7 +29,7 @@ public class ConsoleComponent extends BorderPane {
     private Session session;
 
     private ConsoleTextArea console;
-    private RenjinStudio gui;
+    private Ride gui;
 
     static RemoteRepository mavenCentral() {
         return new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build();
@@ -41,7 +39,7 @@ public class ConsoleComponent extends BorderPane {
         return new RemoteRepository.Builder("renjin", "default", "https://nexus.bedatadriven.com/content/groups/public/").build();
     }
 
-    public ConsoleComponent(RenjinStudio gui) {
+    public ConsoleComponent(Ride gui) {
         this.gui = gui;
         Button clearButton = new Button("Clear");
         clearButton.setOnAction(this::clearConsole);

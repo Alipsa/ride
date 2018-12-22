@@ -1,4 +1,4 @@
-package se.alipsa.renjinstudio.utils;
+package se.alipsa.ride.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

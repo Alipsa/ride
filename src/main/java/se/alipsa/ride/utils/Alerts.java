@@ -1,4 +1,4 @@
-package se.alipsa.renjinstudio.utils;
+package se.alipsa.ride.utils;
 
 import javafx.scene.control.Alert;
 

@@ -1,4 +1,4 @@
-package se.alipsa.renjinstudio.inout;
+package se.alipsa.ride.inout;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeCell;
@@ -8,10 +8,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.alipsa.renjinstudio.RenjinStudio;
-import se.alipsa.renjinstudio.code.CodeComponent;
-import se.alipsa.renjinstudio.utils.Alerts;
-import se.alipsa.renjinstudio.utils.FileUtils;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.CodeComponent;
+import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
 import java.util.Comparator;
@@ -70,7 +70,7 @@ public class FileTree extends TreeView {
     }
 
     private Preferences getPrefs() {
-        return Preferences.userRoot().node(RenjinStudio.class.getName());
+        return Preferences.userRoot().node(Ride.class.getName());
     }
 
     private void setWorkingDirPref(File dir) {

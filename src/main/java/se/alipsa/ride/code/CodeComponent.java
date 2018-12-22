@@ -1,4 +1,4 @@
-package se.alipsa.renjinstudio.code;
+package se.alipsa.ride.code;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -7,9 +7,9 @@ import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.alipsa.renjinstudio.RenjinStudio;
-import se.alipsa.renjinstudio.console.ConsoleComponent;
-import se.alipsa.renjinstudio.utils.ExceptionAlert;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.console.ConsoleComponent;
+import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class CodeComponent extends BorderPane {
 
     private Logger log = LoggerFactory.getLogger(CodeComponent.class);
 
-    public CodeComponent(RenjinStudio gui) {
+    public CodeComponent(Ride gui) {
         this.console = gui.getConsoleComponent();
         FlowPane buttonPane = new FlowPane();
         setTop(buttonPane);

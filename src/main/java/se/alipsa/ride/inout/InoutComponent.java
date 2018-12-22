@@ -1,4 +1,4 @@
-package se.alipsa.renjinstudio.inout;
+package se.alipsa.ride.inout;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
@@ -9,7 +9,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.DirectoryChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.alipsa.renjinstudio.RenjinStudio;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.inout.plot.PlotCanvas;
 
 import java.io.File;
 
@@ -17,11 +18,11 @@ public class InoutComponent extends TabPane {
 
     FileTree fileTree;
 
-    RenjinStudio gui;
+    Ride gui;
 
     Logger log = LoggerFactory.getLogger(InoutComponent.class);
 
-    public InoutComponent(RenjinStudio gui) {
+    public InoutComponent(Ride gui) {
 
         this.gui = gui;
 
@@ -48,6 +49,7 @@ public class InoutComponent extends TabPane {
 
         Tab plots = new Tab();
         plots.setText("Plots");
+        plots.setContent(new PlotCanvas());
 
         getTabs().add(plots);
 

@@ -1,32 +1,27 @@
-package se.alipsa.renjinstudio.menu;
+package se.alipsa.ride.menu;
 
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.alipsa.renjinstudio.RenjinStudio;
-import se.alipsa.renjinstudio.code.CodeTextArea;
-import se.alipsa.renjinstudio.utils.Alerts;
-import se.alipsa.renjinstudio.utils.ExceptionAlert;
-import se.alipsa.renjinstudio.utils.FileUtils;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.CodeTextArea;
+import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.FileUtils;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class MainMenuBar extends MenuBar {
 
-    RenjinStudio gui;
+    Ride gui;
 
     Logger log = LoggerFactory.getLogger(MainMenuBar.class);
 
-    public MainMenuBar(RenjinStudio gui) {
+    public MainMenuBar(Ride gui) {
         this.gui = gui;
         Menu menuFile = createFileMenu();
         Menu menuEdit = new Menu("Edit");

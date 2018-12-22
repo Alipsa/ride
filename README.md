@@ -1,4 +1,4 @@
-# renjinStudio
+# Ride
 A RStudio like gui for Renjin 
 
 It is functional i.e. it is possible to create, open, save and execute R scripts 
@@ -20,6 +20,11 @@ Copyright © 2010-2018 BeDataDriven Groep B.V. and contributors under GNU Genera
 Used to color R code.
 
 Copyright (c) 2013-2017, Tomas Mikula and contributors under BSD 2-Clause "Simplified" License
+
+### org.jfree:fxgraphics2d
+A bridge between awt and javafx so we can use the awt graphics devices in renjin
+
+Copyright (c) 2014-2018, Object Refinery Limited. Licensed under a BSD-style license
 
 ### org.slf4j:slf4j-api and slf4j-log4j12
 The logging framework used.

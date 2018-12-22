@@ -1,4 +1,4 @@
-package se.alipsa.renjinstudio.environment;
+package se.alipsa.ride.environment;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -6,13 +6,13 @@ import javafx.scene.control.TextArea;
 import org.renjin.eval.Context;
 import org.renjin.sexp.Environment;
 import org.renjin.sexp.StringVector;
-import se.alipsa.renjinstudio.RenjinStudio;
+import se.alipsa.ride.Ride;
 
 public class EnvironmentComponent extends TabPane {
 
     TextArea envTA;
 
-    public EnvironmentComponent(RenjinStudio gui) {
+    public EnvironmentComponent(Ride gui) {
         Tab environment = new Tab();
         environment.setText("Environment");
         envTA = new TextArea();

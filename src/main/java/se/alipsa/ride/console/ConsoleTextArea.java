@@ -1,4 +1,4 @@
-package se.alipsa.renjinstudio.console;
+package se.alipsa.ride.console;
 
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;

@@ -1,4 +1,4 @@
-package se.alipsa.renjinstudio;
+package se.alipsa.ride;
 
 import javafx.application.Application;
 import javafx.geometry.Orientation;
@@ -13,14 +13,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.alipsa.renjinstudio.code.CodeComponent;
-import se.alipsa.renjinstudio.console.ConsoleComponent;
-import se.alipsa.renjinstudio.environment.EnvironmentComponent;
-import se.alipsa.renjinstudio.inout.InoutComponent;
-import se.alipsa.renjinstudio.menu.MainMenuBar;
-import se.alipsa.renjinstudio.utils.FileUtils;
+import se.alipsa.ride.code.CodeComponent;
+import se.alipsa.ride.console.ConsoleComponent;
+import se.alipsa.ride.environment.EnvironmentComponent;
+import se.alipsa.ride.inout.InoutComponent;
+import se.alipsa.ride.menu.MainMenuBar;
+import se.alipsa.ride.utils.FileUtils;
 
-public class RenjinStudio extends Application {
+public class Ride extends Application {
 
     private ConsoleComponent console;
     private CodeComponent codeComponent;
@@ -29,7 +29,7 @@ public class RenjinStudio extends Application {
     private Stage primaryStage;
     private Scene scene;
 
-    Logger log = LoggerFactory.getLogger(RenjinStudio.class);
+    Logger log = LoggerFactory.getLogger(Ride.class);
 
     public static void main(String[] args) {
         launch(args);
@@ -81,7 +81,7 @@ public class RenjinStudio extends Application {
         main.getChildren().add(splitPane);
 
 
-        primaryStage.setTitle("Renjin Studio");
+        primaryStage.setTitle("Ride, a Renjin IDE");
         primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
         primaryStage.setScene(scene);
         primaryStage.show();
