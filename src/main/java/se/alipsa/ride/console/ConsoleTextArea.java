@@ -8,6 +8,7 @@ public class ConsoleTextArea extends TextArea {
   public ConsoleTextArea() {
     setFont(Font.font("Courier New"));
   }
+
   public void append(String text, boolean... skipNewline) {
 
     boolean skip = skipNewline.length > 0 ? skipNewline[0]  : false;
@@ -15,7 +16,8 @@ public class ConsoleTextArea extends TextArea {
     if (skip) {
       sep = "";
     }
-    setText(getText() + sep + text);
+    String txt = getText().trim();
+    setText(txt + sep + text);
   }
 
 }

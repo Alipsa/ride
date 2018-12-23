@@ -101,7 +101,8 @@ public class InoutComponent extends TabPane {
         return fileTree.getRootDir();
     }
 
-    public void plot(Node node, String... title) {
+    /** display an image in the Plot tab */
+    public void display(Node node, String... title) {
         Tab tab = new Tab();
         imageTabpane.getTabs().add(tab);
         if (title.length > 0) {
@@ -115,9 +116,10 @@ public class InoutComponent extends TabPane {
         imageTabsSelectionModel.select(tab);
     }
 
-    public void plot(Image img, String... title) {
+    /** display an image in the Plot tab */
+    public void display(Image img, String... title) {
         ImageView node = new ImageView(img);
-        plot(node, title);
+        display(node, title);
     }
 
     public void setPackages(StringVector pkgs) {

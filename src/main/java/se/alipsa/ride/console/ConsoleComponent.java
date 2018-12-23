@@ -72,9 +72,9 @@ public class ConsoleComponent extends BorderPane {
         engine = factory.getScriptEngine(session);
         String greeting = "* Renjin " + RenjinVersion.getVersionName() + " *";
         String surround = getStars(greeting.length());
-        console.append(surround, true);
+        console.append(surround);
         console.append(greeting);
-        console.append(surround + "\n");
+        console.append(surround + "\n>");
     }
 
     private String getStars(int length) {
@@ -92,7 +92,7 @@ public class ConsoleComponent extends BorderPane {
     }
 
     // TODO: figure out why wait cursor is not set on console text area
-    public void runScript(String script) {
+    public void runScript(String script, String title) {
         gui.setWaitCursor();
         console.setCursor(Cursor.WAIT);
 
@@ -101,7 +101,7 @@ public class ConsoleComponent extends BorderPane {
             public Void call() throws Exception {
             try (StringWriter outputWriter = new StringWriter()){
                 try {
-                    executeScriptAndReport(script, outputWriter);
+                    executeScriptAndReport(script, title, outputWriter);
                 } catch (RuntimeException e) {
                    throw new RuntimeScriptException(e);
                 }
@@ -136,18 +136,19 @@ public class ConsoleComponent extends BorderPane {
         new Thread(task).start();
     }
 
-    private void executeScriptAndReport(String script, StringWriter outputWriter) throws ScriptException {
+    private void executeScriptAndReport(String script, String title, StringWriter outputWriter) throws ScriptException {
 
         Platform.runLater(() -> {
             try {
                 engine.put("inout", gui.getInoutComponent());
                 engine.getContext().setWriter(outputWriter);
                 engine.getContext().setErrorWriter(outputWriter);
+                outputWriter.write(title + "\n");
                 engine.eval(script);
-                outputWriter.write("\n");
                 session.printWarnings();
                 session.clearWarnings();
-                console.append(outputWriter.toString());
+                outputWriter.write(">");
+                console.append(outputWriter.toString(), true);
             } catch (org.renjin.parser.ParseException e) {
                 ExceptionAlert.showAlert("Error parsing R script: " + e.getMessage(), e);
             } catch(ScriptException | EvalException e) {
