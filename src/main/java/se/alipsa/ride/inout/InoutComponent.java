@@ -2,10 +2,9 @@ package se.alipsa.ride.inout;
 
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -23,6 +22,7 @@ public class InoutComponent extends TabPane {
 
     FileTree fileTree;
     Tab plots;
+    TabPane imageTabpane;
     Tab packages;
     Ride gui;
 
@@ -55,7 +55,8 @@ public class InoutComponent extends TabPane {
 
         plots = new Tab();
         plots.setText("Plots");
-        plots.setContent(new PlotCanvas());
+        imageTabpane = new TabPane();
+        plots.setContent(imageTabpane);
 
         getTabs().add(plots);
 
@@ -100,8 +101,23 @@ public class InoutComponent extends TabPane {
         return fileTree.getRootDir();
     }
 
-    public void setPlot(Node node) {
-        plots.setContent(node);
+    public void plot(Node node, String... title) {
+        Tab tab = new Tab();
+        imageTabpane.getTabs().add(tab);
+        if (title.length > 0) {
+            tab.setText(title[0]);
+        }
+        tab.setContent(node);
+        SingleSelectionModel<Tab> selectionModel = getSelectionModel();
+        selectionModel.select(plots);
+
+        SingleSelectionModel<Tab> imageTabsSelectionModel = imageTabpane.getSelectionModel();
+        imageTabsSelectionModel.select(tab);
+    }
+
+    public void plot(Image img, String... title) {
+        ImageView node = new ImageView(img);
+        plot(node, title);
     }
 
     public void setPackages(StringVector pkgs) {

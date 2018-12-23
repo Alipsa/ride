@@ -125,11 +125,11 @@ public class ConsoleComponent extends BorderPane {
             } else if (ex instanceof ScriptException || ex instanceof EvalException ){
                 msg = "Error running R script: ";
             } else if (ex instanceof IOException){
-                msg = "Failed to close writer capturing renjin results";
+                msg = "Failed to close writer capturing renjin results: ";
             } else if (ex instanceof RuntimeScriptException ) {
                 msg = "An unknown error occurred running R script: ";
             } else if (ex instanceof Exception){
-                msg = "Exception thrown when running script";
+                msg = "Exception thrown when running script: ";
             }
             ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
         });
@@ -137,14 +137,28 @@ public class ConsoleComponent extends BorderPane {
     }
 
     private void executeScriptAndReport(String script, StringWriter outputWriter) throws ScriptException {
-        engine.put("inout", gui.getInoutComponent());
-        engine.getContext().setWriter(outputWriter);
-        engine.getContext().setErrorWriter(outputWriter);
-        engine.eval(script);
-        outputWriter.write("\n");
-        session.printWarnings();
-        session.clearWarnings();
-        console.append(outputWriter.toString());
+
+        Platform.runLater(() -> {
+            try {
+                engine.put("inout", gui.getInoutComponent());
+                engine.getContext().setWriter(outputWriter);
+                engine.getContext().setErrorWriter(outputWriter);
+                engine.eval(script);
+                outputWriter.write("\n");
+                session.printWarnings();
+                session.clearWarnings();
+                console.append(outputWriter.toString());
+            } catch (org.renjin.parser.ParseException e) {
+                ExceptionAlert.showAlert("Error parsing R script: " + e.getMessage(), e);
+            } catch(ScriptException | EvalException e) {
+                ExceptionAlert.showAlert("Error running R script: " + e.getMessage(), e);
+            } catch (RuntimeException e) {
+                ExceptionAlert.showAlert("A runtime error occurred running R script: " + e.getMessage(), e);
+            } catch (Exception e) {
+                ExceptionAlert.showAlert("Exception thrown when running script: " + e.getMessage(), e);
+            }
+        });
+
         Environment global = session.getGlobalEnvironment();
         Platform.runLater(() -> {
             try {
