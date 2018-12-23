@@ -1,12 +1,17 @@
 package se.alipsa.ride.inout;
 
 import javafx.event.ActionEvent;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
+import org.renjin.primitives.packaging.DllInfo;
+import org.renjin.sexp.StringVector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
@@ -17,7 +22,8 @@ import java.io.File;
 public class InoutComponent extends TabPane {
 
     FileTree fileTree;
-
+    Tab plots;
+    Tab packages;
     Ride gui;
 
     Logger log = LoggerFactory.getLogger(InoutComponent.class);
@@ -47,14 +53,15 @@ public class InoutComponent extends TabPane {
         filesTab.setContent(filesPane);
         getTabs().add(filesTab);
 
-        Tab plots = new Tab();
+        plots = new Tab();
         plots.setText("Plots");
         plots.setContent(new PlotCanvas());
 
         getTabs().add(plots);
 
-        Tab packages = new Tab();
+        packages = new Tab();
         packages.setText("Packages");
+        packages.setContent(new TextArea());
 
         getTabs().add(packages);
 
@@ -91,5 +98,25 @@ public class InoutComponent extends TabPane {
 
     public File getRootDir() {
         return fileTree.getRootDir();
+    }
+
+    public void setPlot(Node node) {
+        plots.setContent(node);
+    }
+
+    public void setPackages(StringVector pkgs) {
+        TextArea ta = (TextArea)packages.getContent();
+        ta.clear();
+        if (pkgs == null) {
+            return;
+        }
+        for (String pkg: pkgs) {
+            ta.appendText(pkg + "\n");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "The Ride InOutComponent";
     }
 }

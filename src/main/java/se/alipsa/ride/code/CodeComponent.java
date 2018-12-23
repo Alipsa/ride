@@ -90,5 +90,6 @@ public class CodeComponent extends BorderPane {
 
     public void fileSaved(File file) {
         getActiveTab().setText(file.getName());
+        getActiveCodeTextArea().setFile(file);
     }
 }

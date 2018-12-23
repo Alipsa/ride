@@ -22,7 +22,7 @@ import se.alipsa.ride.utils.FileUtils;
 
 public class Ride extends Application {
 
-    private ConsoleComponent console;
+    private ConsoleComponent consoleComponent;
     private CodeComponent codeComponent;
     private EnvironmentComponent environmentComponent;
     private InoutComponent inoutComponent;
@@ -55,12 +55,12 @@ public class Ride extends Application {
         SplitPane leftSplitPane = new SplitPane();
         leftSplitPane.setOrientation(Orientation.VERTICAL);
 
-        console = new ConsoleComponent(this);
-        stretch(console, root);
+        consoleComponent = new ConsoleComponent(this);
+        stretch(consoleComponent, root);
 
         codeComponent = new CodeComponent(this);
         stretch(codeComponent, root);
-        leftSplitPane.getItems().addAll(codeComponent, console);
+        leftSplitPane.getItems().addAll(codeComponent, consoleComponent);
 
 
         SplitPane rightSplitPane = new SplitPane();
@@ -98,7 +98,7 @@ public class Ride extends Application {
     }
 
     public ConsoleComponent getConsoleComponent() {
-        return console;
+        return consoleComponent;
     }
 
     public CodeComponent getCodeComponent() {
@@ -119,9 +119,11 @@ public class Ride extends Application {
 
     public void setWaitCursor() {
         scene.setCursor(Cursor.WAIT);
+        consoleComponent.setCursor(Cursor.WAIT);
     }
 
     public void setNormalCursor() {
         scene.setCursor(Cursor.DEFAULT);
+        consoleComponent.setCursor(Cursor.DEFAULT);
     }
 }

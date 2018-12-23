@@ -48,6 +48,7 @@ public class MainMenuBar extends MenuBar {
 
     private void restartR(ActionEvent evt) {
         gui.getConsoleComponent().restartR();
+        gui.getInoutComponent().setPackages(null);
     }
 
     private Menu createFileMenu() {
