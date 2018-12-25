@@ -36,6 +36,7 @@ public class ConsoleComponent extends BorderPane {
 
     private ConsoleTextArea console;
     private Ride gui;
+    private List<RemoteRepository> remoteRepositories;
 
     public ConsoleComponent(Ride gui) {
         this.gui = gui;
@@ -56,12 +57,12 @@ public class ConsoleComponent extends BorderPane {
 
     private void initRenjin() {
         RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
-        List<RemoteRepository> repositories = new ArrayList<>();
-        repositories.add(AetherFactory.renjinRepo());
-        repositories.add(AetherFactory.mavenCentral());
+        remoteRepositories = new ArrayList<>();
+        remoteRepositories.add(AetherFactory.renjinRepo());
+        remoteRepositories.add(AetherFactory.mavenCentral());
         ClassLoader parentClassLoader = getClass().getClassLoader();
 
-        AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, repositories);
+        AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
 
         session = new SessionBuilder()
                 .withDefaultPackages()
@@ -172,4 +173,7 @@ public class ConsoleComponent extends BorderPane {
         });
     }
 
+    public List<RemoteRepository> getRemoteRepositories() {
+        return remoteRepositories;
+    }
 }

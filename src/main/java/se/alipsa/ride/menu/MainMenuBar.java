@@ -32,10 +32,25 @@ public class MainMenuBar extends MenuBar {
         Menu menuBuild = new Menu("Build");
         Menu menuDebug = new Menu("Debug");
         Menu menuProfile = new Menu("Profile");
-        Menu menuTools = new Menu("Tools");
+        Menu menuTools = createToolsMenu();
         Menu menuHelp = new Menu("Help");
         getMenus().addAll(menuFile, menuEdit, menuCode, menuView, menuPlots, menuSession,
                 menuBuild, menuDebug, menuProfile, menuTools, menuHelp);
+    }
+
+    private Menu createToolsMenu() {
+
+        Menu toolsMenu = new Menu("Tools");
+        MenuItem globalOption = new MenuItem("Global Options");
+        globalOption.setOnAction(this::handleGlobalOptions);
+        toolsMenu.getItems().add(globalOption);
+        return toolsMenu;
+    }
+
+    private void handleGlobalOptions(ActionEvent actionEvent) {
+
+        GlobalOptionsDialog dialog = new GlobalOptionsDialog(gui);
+        dialog.showAndWait();
     }
 
     private Menu createSessionMenu() {

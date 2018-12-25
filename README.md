@@ -1,13 +1,36 @@
 # Ride
 A RStudio like gui for Renjin 
 
+The purpose of this gui is to provide a nice R development environment, similar to R Studio, for the Renjin 
+JVM implementation of R (www.renjin.org). It runs R code in the renjin ScriptEngine thus allowing you to run and verify 
+R scripts before creating an embedded R application in java code, or to just use it as a data analysis tool
+much like you would use R Studio. 
+
 It is functional i.e. it is possible to create, open, save and execute R scripts 
 but it is far from all the rich functionality of RStudio at this point. 
 
-To create a runnable jar do `mvn package` and then run it with `java -jar renjinStudio-1.0-SNAPSHOT-jar-with-dependencies.jar`
-
 
 ![alt text](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Screenshot.png "Screenshot")
+
+
+As Renjin does not yet fully support graphics such as plotting the only support for displaying graphics in Ride
+is to use the inout component that has been injected into the session to display files e.g.
+
+````
+# rideutils provides ways to bridge over from R to Java to be able to interact with the IDE
+library("se.alipsa:rideutils")
+
+# read the file and return it as a javafx Image
+img <- readImage("image/logo.png")
+# display it in my javafx application
+inout$display(img, "logo")
+````
+
+The AetherPackageLoader is used per default so libraries will be fetched automatically from 
+bedatadriven or maven central repos.
+
+To create a runnable jar do `mvn package` and then run it with `java -jar renjinStudio-1.0-SNAPSHOT-jar-with-dependencies.jar`
+
 
 ## 3:rd party software used
 
