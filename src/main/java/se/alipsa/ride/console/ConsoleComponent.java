@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.model.Repo;
+import se.alipsa.ride.utils.Animation;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
@@ -42,6 +44,7 @@ public class ConsoleComponent extends BorderPane {
     private Session session;
 
     private ImageView globeView;
+    //private Animation spinningGlobe;
     private ConsoleTextArea console;
     private Ride gui;
     private List<RemoteRepository> remoteRepositories;
@@ -52,10 +55,10 @@ public class ConsoleComponent extends BorderPane {
     public static final Repo MVN_CENTRAL_REPO = asRepo(AetherFactory.mavenCentral());
     public static final String REMOTE_REPOSITORIES_PREF = "ConsoleComponent.RemoteRepositories";
 
-    private static final Image SPINNING_GLOBE = new Image(FileUtils
-        .getResourceUrl("image/spinningGlobe.gif").toExternalForm(), 30, 30, true, true);
-    private static final Image GLOBE = new Image(FileUtils
-        .getResourceUrl("image/globe.png").toExternalForm(), 30, 30, true, true);
+    private static final Image IMG_RUNNING = new Image(FileUtils
+        .getResourceUrl("image/running.png").toExternalForm(), 30, 30, true, true);
+    private static final Image IMG_WAITING = new Image(FileUtils
+        .getResourceUrl("image/waiting.png").toExternalForm(), 30, 30, true, true);
 
     private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
 
@@ -64,8 +67,13 @@ public class ConsoleComponent extends BorderPane {
         Button clearButton = new Button("Clear");
         clearButton.setOnAction(this::clearConsole);
         FlowPane topPane = new FlowPane();
+        topPane.setPadding(new Insets(1, 10, 1,5));
+        topPane.setHgap(10);
 
-        globeView = new ImageView(GLOBE);
+        //spinningGlobe = createSpinner(5 * 1000);
+        //spinningGlobe.setCycleCount(20);
+
+        globeView = new ImageView(IMG_WAITING);
         //Button globeButton = new Button();
         //globeButton.setGraphic(globeView);
 
@@ -75,6 +83,15 @@ public class ConsoleComponent extends BorderPane {
         console = new ConsoleTextArea();
         setCenter(console);
         initRenjin(getStoredRemoteRepositories());
+    }
+
+    private Animation createSpinner(int duration) {
+        Image[] sequence = new Image[24];
+        for (int i = 0; i < 24; i++) {
+            sequence[i] = new Image(FileUtils.getResourceUrl("image/spinner/" + i + ".gif").toExternalForm(),
+                    30, 30, true, true);
+        }
+        return new Animation(sequence, duration);
     }
 
     private void clearConsole(ActionEvent actionEvent) {
@@ -177,7 +194,7 @@ public class ConsoleComponent extends BorderPane {
 
     // TODO: figure out why wait cursor is not set on console text area
     public void runScript(String script, String title) {
-        spinGlobe();
+        running();
         console.setCursor(Cursor.WAIT);
 
         Task<Void> task = new Task<Void>() {
@@ -196,11 +213,11 @@ public class ConsoleComponent extends BorderPane {
         };
 
         task.setOnSucceeded(e -> {
-            stillGlobe();
+            waiting();
             console.setCursor(Cursor.DEFAULT);
         });
         task.setOnFailed(e -> {
-            stillGlobe();
+            waiting();
             console.setCursor(Cursor.DEFAULT);
             Throwable ex = task.getException();
             String msg = "";
@@ -276,19 +293,21 @@ public class ConsoleComponent extends BorderPane {
         initRenjin(repos);
     }
 
-    private void spinGlobe() {
-        // TODO Animated Gifs do not work well in javafx
-        // see https://rterp.wordpress.com/2014/09/04/animations-with-javafx-so-easy-a-chimp-can-do-it/
-        // and https://stackoverflow.com/questions/28183667/how-i-can-stop-an-animated-gif-in-javafx/28185996
-        // for ideas how to do it differently
-        Platform.runLater(() -> globeView.setImage(SPINNING_GLOBE));
+    private void running() {
+        // TODO figure Animation in a seprate thread instead of static image
+        //Platform.runLater(() -> spinningGlobe.play());
+        //spinningGlobe.play();
+        Platform.runLater(() -> globeView.setImage(IMG_RUNNING));
         try {
-            Thread.currentThread().sleep(10);
+            Thread.sleep(10);
         } catch (InterruptedException e) {
+           // ignore
         }
     }
 
-    private void stillGlobe() {
-        Platform.runLater(() -> globeView.setImage(GLOBE));
+    private void waiting() {
+        //Platform.runLater(() -> spinningGlobe.pause());
+        //spinningGlobe.pause();
+        Platform.runLater(() -> globeView.setImage(IMG_WAITING));
     }
 }
