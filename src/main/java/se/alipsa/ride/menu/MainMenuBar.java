@@ -65,10 +65,17 @@ public class MainMenuBar extends MenuBar {
 
     private Menu createSessionMenu() {
         Menu sessionMenu = new Menu("Session");
-        MenuItem restart = new MenuItem("Restart R");
-        restart.setOnAction(this::restartR);
-        sessionMenu.getItems().add(restart);
+        MenuItem restartMI = new MenuItem("Restart R");
+        restartMI.setOnAction(this::restartR);
+        MenuItem interruptMI = new MenuItem("Interrupt R");
+        interruptMI.setOnAction(this::interruptR);
+
+        sessionMenu.getItems().addAll(restartMI, interruptMI);
         return sessionMenu;
+    }
+
+    private void interruptR(ActionEvent actionEvent) {
+        gui.getConsoleComponent().interruptR();
     }
 
     private void restartR(ActionEvent evt) {

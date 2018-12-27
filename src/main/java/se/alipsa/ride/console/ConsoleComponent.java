@@ -8,6 +8,8 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -38,13 +41,21 @@ public class ConsoleComponent extends BorderPane {
     private ScriptEngine engine;
     private Session session;
 
+    private ImageView globeView;
     private ConsoleTextArea console;
     private Ride gui;
     private List<RemoteRepository> remoteRepositories;
 
+    private Thread runThread;
+
     public static final Repo RENJIN_REPO = asRepo(AetherFactory.renjinRepo());
     public static final Repo MVN_CENTRAL_REPO = asRepo(AetherFactory.mavenCentral());
     public static final String REMOTE_REPOSITORIES_PREF = "ConsoleComponent.RemoteRepositories";
+
+    private static final Image SPINNING_GLOBE = new Image(FileUtils
+        .getResourceUrl("image/spinningGlobe.gif").toExternalForm(), 30, 30, true, true);
+    private static final Image GLOBE = new Image(FileUtils
+        .getResourceUrl("image/globe.png").toExternalForm(), 30, 30, true, true);
 
     private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
 
@@ -53,7 +64,12 @@ public class ConsoleComponent extends BorderPane {
         Button clearButton = new Button("Clear");
         clearButton.setOnAction(this::clearConsole);
         FlowPane topPane = new FlowPane();
-        topPane.getChildren().add(clearButton);
+
+        globeView = new ImageView(GLOBE);
+        //Button globeButton = new Button();
+        //globeButton.setGraphic(globeView);
+
+        topPane.getChildren().addAll(globeView, clearButton);
         setTop(topPane);
 
         console = new ConsoleTextArea();
@@ -152,9 +168,16 @@ public class ConsoleComponent extends BorderPane {
         gui.getEnvironmentComponent().clearEnvironment();
     }
 
+    public void interruptR() {
+        console.append("Interrupting Renjin..\n");
+        if (runThread != null && runThread.isAlive()) {
+            runThread.interrupt();
+        }
+    }
+
     // TODO: figure out why wait cursor is not set on console text area
     public void runScript(String script, String title) {
-        gui.setWaitCursor();
+        spinGlobe();
         console.setCursor(Cursor.WAIT);
 
         Task<Void> task = new Task<Void>() {
@@ -173,11 +196,11 @@ public class ConsoleComponent extends BorderPane {
         };
 
         task.setOnSucceeded(e -> {
-            gui.setNormalCursor();
+            stillGlobe();
             console.setCursor(Cursor.DEFAULT);
         });
         task.setOnFailed(e -> {
-            gui.setNormalCursor();
+            stillGlobe();
             console.setCursor(Cursor.DEFAULT);
             Throwable ex = task.getException();
             String msg = "";
@@ -194,7 +217,8 @@ public class ConsoleComponent extends BorderPane {
             }
             ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
         });
-        new Thread(task).start();
+        runThread = new Thread(task);
+        runThread.start();
     }
 
     private void executeScriptAndReport(String script, String title, StringWriter outputWriter) throws ScriptException {
@@ -250,5 +274,21 @@ public class ConsoleComponent extends BorderPane {
         }
         log.info("initialzing renjin with {} repos", repos.size());
         initRenjin(repos);
+    }
+
+    private void spinGlobe() {
+        // TODO Animated Gifs do not work well in javafx
+        // see https://rterp.wordpress.com/2014/09/04/animations-with-javafx-so-easy-a-chimp-can-do-it/
+        // and https://stackoverflow.com/questions/28183667/how-i-can-stop-an-animated-gif-in-javafx/28185996
+        // for ideas how to do it differently
+        Platform.runLater(() -> globeView.setImage(SPINNING_GLOBE));
+        try {
+            Thread.currentThread().sleep(10);
+        } catch (InterruptedException e) {
+        }
+    }
+
+    private void stillGlobe() {
+        Platform.runLater(() -> globeView.setImage(GLOBE));
     }
 }
