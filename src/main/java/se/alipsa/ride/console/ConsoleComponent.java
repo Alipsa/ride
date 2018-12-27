@@ -1,5 +1,8 @@
 package se.alipsa.ride.console;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -14,12 +17,13 @@ import org.renjin.aether.AetherPackageLoader;
 import org.renjin.eval.EvalException;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
-import org.renjin.parser.ParseException;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.Environment;
-import org.renjin.sexp.SEXP;
 import org.renjin.sexp.StringVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.IOException;
@@ -38,6 +42,12 @@ public class ConsoleComponent extends BorderPane {
     private Ride gui;
     private List<RemoteRepository> remoteRepositories;
 
+    public static final Repo RENJIN_REPO = asRepo(AetherFactory.renjinRepo());
+    public static final Repo MVN_CENTRAL_REPO = asRepo(AetherFactory.mavenCentral());
+    public static final String REMOTE_REPOSITORIES_PREF = "ConsoleComponent.RemoteRepositories";
+
+    private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
+
     public ConsoleComponent(Ride gui) {
         this.gui = gui;
         Button clearButton = new Button("Clear");
@@ -48,18 +58,17 @@ public class ConsoleComponent extends BorderPane {
 
         console = new ConsoleTextArea();
         setCenter(console);
-        initRenjin();
+        initRenjin(getStoredRemoteRepositories());
     }
 
     private void clearConsole(ActionEvent actionEvent) {
         console.clear();
     }
 
-    private void initRenjin() {
+    private void initRenjin(List<Repo> repos) {
         RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
         remoteRepositories = new ArrayList<>();
-        remoteRepositories.add(AetherFactory.renjinRepo());
-        remoteRepositories.add(AetherFactory.mavenCentral());
+        remoteRepositories.addAll(asRemoteRepositories(repos));
         ClassLoader parentClassLoader = getClass().getClassLoader();
 
         AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
@@ -78,6 +87,57 @@ public class ConsoleComponent extends BorderPane {
         console.append(surround + "\n>");
     }
 
+    private List<RemoteRepository> asRemoteRepositories(List<Repo> items) {
+        List<RemoteRepository> list = new ArrayList<>();
+        for (Repo repo: items) {
+            list.add(new RemoteRepository.Builder(repo.getId(), repo.getType(), repo.getUrl()).build());
+        }
+        return list;
+    }
+
+    private List<Repo> asRepos(List<RemoteRepository> repositories) {
+        List<Repo> list = new ArrayList<>();
+        for (RemoteRepository repo: repositories) {
+            list.add(asRepo(repo));
+        }
+        return list;
+    }
+
+    private static Repo asRepo(RemoteRepository repo) {
+        return new Repo(repo.getId(), repo.getContentType(), repo.getUrl());
+    }
+
+    private List<Repo> getStoredRemoteRepositories() {
+        List<Repo> list = new ArrayList<>();
+        String remotes = gui.getPrefs().get(REMOTE_REPOSITORIES_PREF, null);
+        log.info("Remotes from prefs are: {}", remotes);
+        if (remotes == null) {
+            log.warn("No stored prefs for remote repos, adding defaults");
+            addDefaultRepos(list);
+            return list;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            list = mapper.readValue(remotes, new TypeReference<List<Repo>>(){});
+        } catch (InvalidDefinitionException e) {
+            e.printStackTrace();
+            log.warn("Something is wrong with the pref key {}, deleting it to start fresh", REMOTE_REPOSITORIES_PREF);
+            gui.getPrefs().remove(REMOTE_REPOSITORIES_PREF);
+            addDefaultRepos(list);
+        } catch (IOException e) {
+            e.printStackTrace();
+            addDefaultRepos(list);
+        }
+        return list;
+    }
+
+    private void addDefaultRepos(List<Repo> list) {
+        log.info("add renjin repo");
+        list.add(RENJIN_REPO);
+        log.info("add maven central repo");
+        list.add(MVN_CENTRAL_REPO);
+    }
+
     private String getStars(int length) {
         StringBuffer buf = new StringBuffer(length);
         for (int i = 0; i < length; i++) {
@@ -88,7 +148,7 @@ public class ConsoleComponent extends BorderPane {
 
     public void restartR() {
         console.append("Restarting Renjin..\n");
-        initRenjin();
+        initRenjin(getStoredRemoteRepositories());
         gui.getEnvironmentComponent().clearEnvironment();
     }
 
@@ -173,7 +233,22 @@ public class ConsoleComponent extends BorderPane {
         });
     }
 
-    public List<RemoteRepository> getRemoteRepositories() {
-        return remoteRepositories;
+    public List<Repo> getRemoteRepositories() {
+        return asRepos(remoteRepositories);
+    }
+
+    public void setRemoterepositories(List<Repo> repos) {
+        ObjectMapper mapper = new ObjectMapper();
+        StringWriter writer = new StringWriter();
+        try {
+            mapper.writeValue(writer, repos);
+            String r = writer.toString();
+            log.info("Writing repos to prefs as: {}", r);
+            gui.getPrefs().put(REMOTE_REPOSITORIES_PREF, r);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        log.info("initialzing renjin with {} repos", repos.size());
+        initRenjin(repos);
     }
 }

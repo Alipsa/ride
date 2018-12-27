@@ -53,3 +53,7 @@ Copyright (c) 2014-2018, Object Refinery Limited. Licensed under a BSD-style lic
 The logging framework used.
 
 Copyright (c) 2004-2017 QOS.ch under MIT license
+
+### com.fasterxml.jackson.core:jackson-core and jackson-databind
+Used for JSON handling in various places.
+Copyright Fasterxml under Apache 2.0 license.

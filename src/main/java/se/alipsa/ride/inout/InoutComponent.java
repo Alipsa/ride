@@ -32,7 +32,7 @@ public class InoutComponent extends TabPane {
 
         this.gui = gui;
 
-        fileTree = new FileTree(gui.getCodeComponent());
+        fileTree = new FileTree(gui);
 
         Tab filesTab = new Tab();
         filesTab.setText("Files");

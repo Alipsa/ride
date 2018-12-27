@@ -5,15 +5,19 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
+import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
+import java.util.Optional;
 
 public class MainMenuBar extends MenuBar {
 
@@ -48,10 +52,16 @@ public class MainMenuBar extends MenuBar {
     }
 
     private void handleGlobalOptions(ActionEvent actionEvent) {
-
         GlobalOptionsDialog dialog = new GlobalOptionsDialog(gui);
-        dialog.showAndWait();
+        Optional<GlobalOptions> res = dialog.showAndWait();
+        if (!res.isPresent()) {
+            return;
+        }
+        GlobalOptions result = res.get();
+        gui.getConsoleComponent().setRemoterepositories((List<Repo>) result.get(GlobalOptions.REMOTE_REPOSITORIES));
     }
+
+
 
     private Menu createSessionMenu() {
         Menu sessionMenu = new Menu("Session");

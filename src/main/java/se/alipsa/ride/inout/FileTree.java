@@ -15,7 +15,6 @@ import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
 import java.util.Comparator;
-import java.util.prefs.Preferences;
 
 public class FileTree extends TreeView {
 
@@ -30,10 +29,12 @@ public class FileTree extends TreeView {
     final String folderUrl = FileUtils.getResourceUrl("image/folder.png").toExternalForm();
     final String fileUrl = FileUtils.getResourceUrl("image/file.png").toExternalForm();
 
+    Ride gui;
     Logger log = LoggerFactory.getLogger(FileTree.class);
 
-    public FileTree(CodeComponent codeComponent) {
-        this.codeComponent = codeComponent;
+    public FileTree(Ride gui) {
+        this.gui = gui;
+        this.codeComponent = gui.getCodeComponent();
 
         String currentPath = new File(getWorkingDirPref()).getAbsolutePath();
         File current = new File(currentPath);
@@ -66,15 +67,11 @@ public class FileTree extends TreeView {
     }
 
     private String getWorkingDirPref() {
-        return getPrefs().get(WORKING_DIR_PREF, ".");
-    }
-
-    private Preferences getPrefs() {
-        return Preferences.userRoot().node(Ride.class.getName());
+        return gui.getPrefs().get(WORKING_DIR_PREF, ".");
     }
 
     private void setWorkingDirPref(File dir) {
-        getPrefs().put(WORKING_DIR_PREF, dir.getAbsolutePath());
+        gui.getPrefs().put(WORKING_DIR_PREF, dir.getAbsolutePath());
     }
 
     private TreeItem<File> createTree(File file) {

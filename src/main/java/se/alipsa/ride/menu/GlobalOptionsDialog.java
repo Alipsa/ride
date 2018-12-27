@@ -1,25 +1,27 @@
 package se.alipsa.ride.menu;
 
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import org.eclipse.aether.repository.RemoteRepository;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.console.ConsoleComponent;
+import se.alipsa.ride.model.Repo;
+import se.alipsa.ride.utils.TableViewWithVisibleRowCount;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class GlobalOptionsDialog extends Dialog<Map<String,Object>> {
+public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
+
+    TableViewWithVisibleRowCount<Repo> reposTable;
 
     public GlobalOptionsDialog(Ride gui) {
         setTitle("Global options");
@@ -37,19 +39,68 @@ public class GlobalOptionsDialog extends Dialog<Map<String,Object>> {
         Label reposLabel = new Label("Remote Repositories");
         grid.add(reposLabel,0,0);
 
-        TableView<Repo> reposTable = new TableView();
-        List<RemoteRepository> repos = gui.getConsoleComponent().getRemoteRepositories();
-        TableColumn idCol = new TableColumn("id");
+        reposTable = new TableViewWithVisibleRowCount<>();
+        List<Repo> repos = gui.getConsoleComponent().getRemoteRepositories();
+
+        TableColumn<Repo, String> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(new PropertyValueFactory<Repo,String>("id"));
-        TableColumn typeCol = new TableColumn("type");
+        idCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        idCol.setOnEditCommit( t ->
+                        (t.getTableView().getItems().get(t.getTablePosition().getRow()))
+                                .setId(t.getNewValue())
+        );
+
+        TableColumn<Repo, String> typeCol = new TableColumn<>("type");
         typeCol.setCellValueFactory(new PropertyValueFactory<Repo,String>("type"));
-        TableColumn urlCol = new TableColumn("url");
+        typeCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        typeCol.setOnEditCommit( t ->
+                (t.getTableView().getItems().get(t.getTablePosition().getRow()))
+                        .setType(t.getNewValue())
+        );
+
+        TableColumn<Repo, String>  urlCol = new TableColumn<>("url");
         urlCol.setCellValueFactory(new PropertyValueFactory<Repo,String>("url"));
+        urlCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        urlCol.setOnEditCommit( t ->
+                (t.getTableView().getItems().get(t.getTablePosition().getRow()))
+                        .setUrl(t.getNewValue())
+        );
+
+        reposTable.setRowFactory(tableView -> {
+            final TableRow<Repo> row = new TableRow<>();
+            final ContextMenu contextMenu = new ContextMenu();
+            final MenuItem addMenuItem = new MenuItem("add row");
+            addMenuItem.setOnAction(event -> {
+                addRow(new Repo());
+            });
+
+            final Menu addDefault = new Menu("add default");
+            final MenuItem addBedataDriven = new MenuItem("Renjin repo");
+            addBedataDriven.setOnAction(this::addRenjinRepo);
+            final MenuItem addMavenCentral = new MenuItem("Maven Central");
+            addMavenCentral.setOnAction(this::addMvnCentralRepo);
+            addDefault.getItems().addAll(addBedataDriven, addMavenCentral);
+
+            final MenuItem removeMenuItem = new MenuItem("delete row");
+            removeMenuItem.setOnAction(event -> reposTable.getItems().remove(row.getItem()));
+            contextMenu.getItems().addAll(addMenuItem, addDefault, removeMenuItem);
+
+            // Set context menu on row, but use a binding to make it only show for non-empty rows:
+            row.contextMenuProperty().bind(
+                    Bindings.when(row.emptyProperty())
+                            .then((ContextMenu)null)
+                            .otherwise(contextMenu)
+            );
+            return row ;
+        });
+
+
         urlCol.setMinWidth(450);
         reposTable.getColumns().addAll(idCol, typeCol, urlCol);
 
         reposTable.setItems(createObservable(repos));
-        reposTable.setEditable(false); // todo change to true when editing can be saved
+        reposTable.setNumberOfRows(reposTable.getItems().size());
+        reposTable.setEditable(true);
         grid.add(reposTable, 1, 0);
 
         getDialogPane().setPrefSize(800, 400);
@@ -57,16 +108,35 @@ public class GlobalOptionsDialog extends Dialog<Map<String,Object>> {
         //getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
         setResizable(true);
 
+        setResultConverter(button -> button == ButtonType.OK ?  createResult() : null);
 
     }
 
-    ObservableList<Repo> createObservable(List<RemoteRepository> repos ) {
-        List<Repo> repoList = new ArrayList<>();
-        for (RemoteRepository repo : repos) {
-            repoList.add(new Repo(repo.getId(), repo.getContentType(), repo.getUrl()));
+    private void addRow(Repo repo) {
+        reposTable.getItems().add(repo);
+        reposTable.setNumberOfRows(reposTable.getItems().size());
+    }
+
+    private void addRenjinRepo(ActionEvent actionEvent) {
+        addRow(ConsoleComponent.RENJIN_REPO);
+    }
+
+    private void addMvnCentralRepo(ActionEvent actionEvent) {
+        addRow(ConsoleComponent.MVN_CENTRAL_REPO);
+    }
+
+    ObservableList<Repo> createObservable(List<Repo> repos ) {
+        if (repos == null) {
+            return FXCollections.emptyObservableList();
         }
-        ObservableList<Repo> list = FXCollections.observableArrayList(repoList);
+        ObservableList<Repo> list = FXCollections.observableArrayList(repos);
         return list;
+    }
+
+    GlobalOptions createResult() {
+        GlobalOptions result = new GlobalOptions();
+        result.put(GlobalOptions.REMOTE_REPOSITORIES, reposTable.getItems());
+        return result;
     }
 
 

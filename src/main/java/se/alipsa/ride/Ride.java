@@ -20,6 +20,8 @@ import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.MainMenuBar;
 import se.alipsa.ride.utils.FileUtils;
 
+import java.util.prefs.Preferences;
+
 public class Ride extends Application {
 
     private ConsoleComponent consoleComponent;
@@ -125,5 +127,9 @@ public class Ride extends Application {
     public void setNormalCursor() {
         scene.setCursor(Cursor.DEFAULT);
         consoleComponent.setCursor(Cursor.DEFAULT);
+    }
+
+    public Preferences getPrefs() {
+        return Preferences.userRoot().node(Ride.class.getName());
     }
 }
