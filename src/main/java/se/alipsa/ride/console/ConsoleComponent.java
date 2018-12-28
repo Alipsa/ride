@@ -3,16 +3,20 @@ package se.alipsa.ride.console;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.Cursor;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.renjin.RenjinVersion;
 import org.renjin.aether.AetherFactory;
@@ -35,6 +39,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
@@ -44,12 +50,12 @@ public class ConsoleComponent extends BorderPane {
     private Session session;
 
     private ImageView globeView;
-    //private Animation spinningGlobe;
+    Button statusButton;
     private ConsoleTextArea console;
     private Ride gui;
     private List<RemoteRepository> remoteRepositories;
 
-    private Thread runThread;
+    private Timeline scriptExecutionTimeline;
 
     public static final Repo RENJIN_REPO = asRepo(AetherFactory.renjinRepo());
     public static final Repo MVN_CENTRAL_REPO = asRepo(AetherFactory.mavenCentral());
@@ -65,7 +71,7 @@ public class ConsoleComponent extends BorderPane {
     public ConsoleComponent(Ride gui) {
         this.gui = gui;
         Button clearButton = new Button("Clear");
-        clearButton.setOnAction(this::clearConsole);
+        clearButton.setOnAction(e -> console.clear());
         FlowPane topPane = new FlowPane();
         topPane.setPadding(new Insets(1, 10, 1,5));
         topPane.setHgap(10);
@@ -73,11 +79,13 @@ public class ConsoleComponent extends BorderPane {
         //spinningGlobe = createSpinner(5 * 1000);
         //spinningGlobe.setCycleCount(20);
 
-        globeView = new ImageView(IMG_WAITING);
-        //Button globeButton = new Button();
-        //globeButton.setGraphic(globeView);
+        globeView = new ImageView();
+        statusButton = new Button();
+        statusButton.setOnAction(e -> interruptR());
+        statusButton.setGraphic(globeView);
+        waiting();
 
-        topPane.getChildren().addAll(globeView, clearButton);
+        topPane.getChildren().addAll(statusButton, clearButton);
         setTop(topPane);
 
         console = new ConsoleTextArea();
@@ -92,10 +100,6 @@ public class ConsoleComponent extends BorderPane {
                     30, 30, true, true);
         }
         return new Animation(sequence, duration);
-    }
-
-    private void clearConsole(ActionEvent actionEvent) {
-        console.clear();
     }
 
     private void initRenjin(List<Repo> repos) {
@@ -185,62 +189,41 @@ public class ConsoleComponent extends BorderPane {
         gui.getEnvironmentComponent().clearEnvironment();
     }
 
+    /** This will not work as the Scriptengine must run in the jfx thread
+     * (Platform.runLater()) to allow interaction with the gui e.g. printing plots
+     */
     public void interruptR() {
-        console.append("Interrupting Renjin..\n");
-        if (runThread != null && runThread.isAlive()) {
-            runThread.interrupt();
+        log.info("Interrupting runnning script");
+        if (Animation.Status.RUNNING.equals(scriptExecutionTimeline.getStatus())) {
+            console.append("Interrupting Renjin...\n>");
+            scriptExecutionTimeline.stop();
         }
     }
 
-    // TODO: figure out why wait cursor is not set on console text area
-    public void runScript(String script, String title) {
-        running();
-        console.setCursor(Cursor.WAIT);
-
-        Task<Void> task = new Task<Void>() {
-            @Override
-            public Void call() throws Exception {
-            try (StringWriter outputWriter = new StringWriter()){
-                try {
-                    executeScriptAndReport(script, title, outputWriter);
-                } catch (RuntimeException e) {
-                   throw new RuntimeScriptException(e);
-                }
-
-            }
-            return null ;
-            }
-        };
-
-        task.setOnSucceeded(e -> {
-            waiting();
-            console.setCursor(Cursor.DEFAULT);
-        });
-        task.setOnFailed(e -> {
-            waiting();
-            console.setCursor(Cursor.DEFAULT);
-            Throwable ex = task.getException();
-            String msg = "";
-            if (ex instanceof org.renjin.parser.ParseException) {
-                msg = "Error parsing R script: ";
-            } else if (ex instanceof ScriptException || ex instanceof EvalException ){
-                msg = "Error running R script: ";
-            } else if (ex instanceof IOException){
-                msg = "Failed to close writer capturing renjin results: ";
-            } else if (ex instanceof RuntimeScriptException ) {
-                msg = "An unknown error occurred running R script: ";
-            } else if (ex instanceof Exception){
-                msg = "Exception thrown when running script: ";
-            }
-            ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
-        });
-        runThread = new Thread(task);
-        runThread.start();
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            log.info("Sleep was interrupted");
+        }
     }
 
-    private void executeScriptAndReport(String script, String title, StringWriter outputWriter) throws ScriptException {
+    public void runScript(String script, String title) {
+        running();
+        try (StringWriter outputWriter = new StringWriter()){
+                executeScriptAndReport(script, title, outputWriter);
+        } catch (IOException e) {
+            waiting();
+            ExceptionAlert.showAlert("Failed to close writer capturing renjin results: ", e);
+        }
+    }
 
-        Platform.runLater(() -> {
+    private void executeScriptAndReport(String script, String title, StringWriter outputWriter) {
+        // A bit unorthodox use of timeline but this allows us to interrupt a running script
+        // since the running script must be on the jfx thread to allow interaction with the gui
+        // e.g. for plots, this is the best way to do that.
+        scriptExecutionTimeline = new Timeline();
+        KeyFrame scriptFrame = new KeyFrame(Duration.seconds(1), evt -> {
             try {
                 engine.put("inout", gui.getInoutComponent());
                 engine.getContext().setWriter(outputWriter);
@@ -252,26 +235,36 @@ public class ConsoleComponent extends BorderPane {
                 outputWriter.write(">");
                 console.append(outputWriter.toString(), true);
             } catch (org.renjin.parser.ParseException e) {
-                ExceptionAlert.showAlert("Error parsing R script: " + e.getMessage(), e);
+                Platform.runLater(() ->
+                ExceptionAlert.showAlert("Error parsing R script: " + e.getMessage(), e));
             } catch(ScriptException | EvalException e) {
-                ExceptionAlert.showAlert("Error running R script: " + e.getMessage(), e);
+                Platform.runLater(() ->
+                ExceptionAlert.showAlert("Error running R script: " + e.getMessage(), e));
             } catch (RuntimeException e) {
-                ExceptionAlert.showAlert("A runtime error occurred running R script: " + e.getMessage(), e);
+                Platform.runLater(() ->
+                ExceptionAlert.showAlert("A runtime error occurred running R script: " + e.getMessage(), e));
             } catch (Exception e) {
-                ExceptionAlert.showAlert("Exception thrown when running script: " + e.getMessage(), e);
+                Platform.runLater(() ->
+                ExceptionAlert.showAlert("Exception thrown when running script: " + e.getMessage(), e));
             }
         });
 
-        Environment global = session.getGlobalEnvironment();
-        Platform.runLater(() -> {
+        KeyFrame pkgFrame = new KeyFrame(Duration.seconds(1), evt -> {
             try {
+                Environment global = session.getGlobalEnvironment();
                 gui.getEnvironmentComponent().setEnvironment(global, session.getTopLevelContext());
                 StringVector pkgs = (StringVector) engine.eval("(.packages())");
                 gui.getInoutComponent().setPackages(pkgs);
+                waiting();
             } catch (ScriptException e) {
                 e.printStackTrace();
             }
         });
+
+        scriptExecutionTimeline.getKeyFrames().addAll(scriptFrame, pkgFrame);
+        scriptExecutionTimeline.setCycleCount(1);
+        scriptExecutionTimeline.play();
+
     }
 
     public List<Repo> getRemoteRepositories() {
@@ -289,25 +282,44 @@ public class ConsoleComponent extends BorderPane {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        log.info("initialzing renjin with {} repos", repos.size());
+        log.info("initializing Renjin with {} repos", repos.size());
         initRenjin(repos);
     }
 
     private void running() {
-        // TODO figure Animation in a seprate thread instead of static image
-        //Platform.runLater(() -> spinningGlobe.play());
-        //spinningGlobe.play();
-        Platform.runLater(() -> globeView.setImage(IMG_RUNNING));
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-           // ignore
-        }
+        Platform.runLater(() -> {
+            globeView.setImage(IMG_RUNNING);
+            statusButton.setTooltip(new Tooltip("Script is running, click to abort"));
+            showTooltip(statusButton);
+        });
+        sleep(10);
     }
 
     private void waiting() {
-        //Platform.runLater(() -> spinningGlobe.pause());
-        //spinningGlobe.pause();
-        Platform.runLater(() -> globeView.setImage(IMG_WAITING));
+        Platform.runLater(() -> {
+            globeView.setImage(IMG_WAITING);
+            statusButton.setTooltip(new Tooltip("Engine is idle"));
+        });
+    }
+
+    public void showTooltip(Control control)
+    {
+        Tooltip customTooltip = control.getTooltip();
+        Stage owner = gui.getStage();
+        Point2D p = control.localToScene(10.0, 20.0);
+
+        customTooltip.setAutoHide(true);
+
+        customTooltip.show(owner, p.getX()
+            + control.getScene().getX() + control.getScene().getWindow().getX(), p.getY()
+            + control.getScene().getY() + control.getScene().getWindow().getY());
+
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            public void run() {
+                Platform.runLater(() -> customTooltip.hide());
+            }
+        };
+        timer.schedule(task,800);
     }
 }
