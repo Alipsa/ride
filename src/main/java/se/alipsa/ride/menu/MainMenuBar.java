@@ -62,7 +62,7 @@ public class MainMenuBar extends MenuBar {
 
         gui.getConsoleComponent().setRemoterepositories(
             (List<Repo>) result.get(GlobalOptions.REMOTE_REPOSITORIES),
-            gui.getClass().getClassLoader()
+            Thread.currentThread().getContextClassLoader()
         );
     }
 

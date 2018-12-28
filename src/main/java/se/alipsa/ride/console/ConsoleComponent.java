@@ -37,6 +37,8 @@ import se.alipsa.ride.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -94,7 +96,8 @@ public class ConsoleComponent extends BorderPane {
     }
 
     private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader) {
-        Thread.currentThread().setContextClassLoader(parentClassLoader);
+        // TODO try to take this all the way and load factory, loader and sessionbuilder
+        // using the parentClassLoader
         RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
         remoteRepositories = new ArrayList<>();
         remoteRepositories.addAll(asRemoteRepositories(repos));
@@ -108,7 +111,19 @@ public class ConsoleComponent extends BorderPane {
                 .build();
 
         engine = factory.getScriptEngine(session);
-        String greeting = "* Renjin " + RenjinVersion.getVersionName() + " *";
+        String version = "unknown";
+
+        try {
+            Class clazz = parentClassLoader.loadClass("org.renjin.RenjinVersion");
+            Method method = clazz.getMethod("getVersionName", null);
+            Object o = method.invoke(null, null);
+            version = (String)o;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        String greeting = "* Renjin " + version + " *";
         String surround = getStars(greeting.length());
         console.append(surround);
         console.append(greeting);

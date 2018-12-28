@@ -5,7 +5,8 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Control;
+import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -19,165 +20,165 @@ import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.GlobalOptions;
 import se.alipsa.ride.menu.MainMenuBar;
-import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.ParentLastURLClassLoader;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.prefs.Preferences;
 
 public class Ride extends Application {
 
-    private ConsoleComponent consoleComponent;
-    private CodeComponent codeComponent;
-    private EnvironmentComponent environmentComponent;
-    private InoutComponent inoutComponent;
-    private Stage primaryStage;
-    private Scene scene;
-    File renjinJar;
+  private ConsoleComponent consoleComponent;
+  private CodeComponent codeComponent;
+  private EnvironmentComponent environmentComponent;
+  private InoutComponent inoutComponent;
+  private Stage primaryStage;
+  private Scene scene;
+  File renjinJar;
 
-    Logger log = LoggerFactory.getLogger(Ride.class);
+  Logger log = LoggerFactory.getLogger(Ride.class);
 
-    public static void main(String[] args) {
-        launch(args);
+  public static void main(String[] args) {
+    launch(args);
+  }
+
+  @Override
+  public void start(Stage primaryStage) {
+
+    this.primaryStage = primaryStage;
+
+    BorderPane root = new BorderPane();
+    VBox main = new VBox();
+    main.setAlignment(Pos.CENTER);
+    main.setFillWidth(true);
+
+    root.setCenter(main);
+
+    root.setTop(new MainMenuBar(this));
+
+    scene = new Scene(root, 1366, 768);
+    scene.getStylesheets().add(FileUtils.getResourceUrl("R-keywords.css").toExternalForm());
+
+    SplitPane leftSplitPane = new SplitPane();
+    leftSplitPane.setOrientation(Orientation.VERTICAL);
+
+    consoleComponent = new ConsoleComponent(this);
+    stretch(consoleComponent, root);
+
+    codeComponent = new CodeComponent(this);
+    stretch(codeComponent, root);
+    leftSplitPane.getItems().addAll(codeComponent, consoleComponent);
+
+
+    SplitPane rightSplitPane = new SplitPane();
+    rightSplitPane.setOrientation(Orientation.VERTICAL);
+
+    environmentComponent = new EnvironmentComponent(this);
+    stretch(environmentComponent, root);
+
+    inoutComponent = new InoutComponent(this);
+    stretch(inoutComponent, root);
+
+    rightSplitPane.getItems().addAll(environmentComponent, inoutComponent);
+
+    SplitPane splitPane = new SplitPane();
+    splitPane.setOrientation(Orientation.HORIZONTAL);
+    splitPane.getItems().addAll(leftSplitPane, rightSplitPane);
+
+    main.getChildren().add(splitPane);
+
+
+    primaryStage.setTitle("Ride, a Renjin IDE");
+    primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
+    primaryStage.setScene(scene);
+    primaryStage.show();
+  }
+
+  private void stretch(Pane component, Pane root) {
+    component.prefHeightProperty().bind(root.heightProperty());
+    component.prefWidthProperty().bind(root.widthProperty());
+  }
+
+  private void stretch(Control component, Pane root) {
+    component.prefHeightProperty().bind(root.heightProperty());
+    component.prefWidthProperty().bind(root.widthProperty());
+  }
+
+  public ConsoleComponent getConsoleComponent() {
+    return consoleComponent;
+  }
+
+  public CodeComponent getCodeComponent() {
+    return codeComponent;
+  }
+
+  public EnvironmentComponent getEnvironmentComponent() {
+    return environmentComponent;
+  }
+
+  public InoutComponent getInoutComponent() {
+    return inoutComponent;
+  }
+
+  public Stage getStage() {
+    return primaryStage;
+  }
+
+  public void setWaitCursor() {
+    scene.setCursor(Cursor.WAIT);
+    consoleComponent.setCursor(Cursor.WAIT);
+  }
+
+  public void setNormalCursor() {
+    scene.setCursor(Cursor.DEFAULT);
+    consoleComponent.setCursor(Cursor.DEFAULT);
+  }
+
+  public Preferences getPrefs() {
+    return Preferences.userRoot().node(Ride.class.getName());
+  }
+
+  public void addJarToClasspath(File jar) throws
+      NoSuchMethodException, SecurityException, IllegalAccessException,
+      IllegalArgumentException, InvocationTargetException, MalformedURLException {
+    // Get the ClassLoader class
+    ClassLoader cl = ClassLoader.getSystemClassLoader();
+    Class<?> clazz = cl.getClass();
+
+    // Get the protected addURL method from the parent URLClassLoader class
+    Method method = clazz.getSuperclass().getDeclaredMethod("addURL", new Class[]{URL.class});
+
+    // Run projected addURL method to add JAR to classpath
+    method.setAccessible(true);
+    method.invoke(cl, new Object[]{jar.toURI().toURL()});
+  }
+
+  public ParentLastURLClassLoader classloaderForJar(File jar) throws MalformedURLException {
+    ParentLastURLClassLoader cl = new ParentLastURLClassLoader(new URL[]{jar.toURI().toURL()},
+        ClassLoader.getSystemClassLoader());
+    return cl;
+  }
+
+  public File getRenjinJar() {
+    if (renjinJar == null) {
+      renjinJar = new File(getPrefs().get(GlobalOptions.RENJIN_JAR, "."));
     }
+    return renjinJar;
+  }
 
-    @Override
-    public void start(Stage primaryStage) {
-
-        this.primaryStage = primaryStage;
-
-        BorderPane root = new BorderPane();
-        VBox main = new VBox();
-        main.setAlignment(Pos.CENTER);
-        main.setFillWidth(true);
-
-        root.setCenter(main);
-
-        root.setTop(new MainMenuBar(this));
-
-        scene = new Scene(root, 1366, 768);
-        scene.getStylesheets().add(FileUtils.getResourceUrl("R-keywords.css").toExternalForm());
-
-        SplitPane leftSplitPane = new SplitPane();
-        leftSplitPane.setOrientation(Orientation.VERTICAL);
-
-        consoleComponent = new ConsoleComponent(this);
-        stretch(consoleComponent, root);
-
-        codeComponent = new CodeComponent(this);
-        stretch(codeComponent, root);
-        leftSplitPane.getItems().addAll(codeComponent, consoleComponent);
-
-
-        SplitPane rightSplitPane = new SplitPane();
-        rightSplitPane.setOrientation(Orientation.VERTICAL);
-
-        environmentComponent = new EnvironmentComponent(this);
-        stretch(environmentComponent, root);
-
-        inoutComponent = new InoutComponent(this);
-        stretch(inoutComponent, root);
-
-        rightSplitPane.getItems().addAll(environmentComponent, inoutComponent);
-
-        SplitPane splitPane = new SplitPane();
-        splitPane.setOrientation(Orientation.HORIZONTAL);
-        splitPane.getItems().addAll(leftSplitPane, rightSplitPane);
-
-        main.getChildren().add(splitPane);
-
-
-        primaryStage.setTitle("Ride, a Renjin IDE");
-        primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
-        primaryStage.setScene(scene);
-        primaryStage.show();
+  public void setRenjinJar(File renjinJar) {
+    this.renjinJar = renjinJar;
+    getPrefs().put(GlobalOptions.RENJIN_JAR, renjinJar.getAbsolutePath());
+    try {
+      ParentLastURLClassLoader cl = classloaderForJar(renjinJar);
+      Thread.currentThread().setContextClassLoader(cl);
+    } catch (Exception e) {
+      ExceptionAlert.showAlert("Failed to add jar to classpath", e);
     }
-
-    private void stretch(Pane component, Pane root) {
-        component.prefHeightProperty().bind(root.heightProperty());
-        component.prefWidthProperty().bind(root.widthProperty());
-    }
-
-    private void stretch(Control component, Pane root) {
-        component.prefHeightProperty().bind(root.heightProperty());
-        component.prefWidthProperty().bind(root.widthProperty());
-    }
-
-    public ConsoleComponent getConsoleComponent() {
-        return consoleComponent;
-    }
-
-    public CodeComponent getCodeComponent() {
-        return codeComponent;
-    }
-
-    public EnvironmentComponent getEnvironmentComponent() {
-        return environmentComponent;
-    }
-
-    public InoutComponent getInoutComponent() {
-        return inoutComponent;
-    }
-
-    public Stage getStage() {
-        return primaryStage;
-    }
-
-    public void setWaitCursor() {
-        scene.setCursor(Cursor.WAIT);
-        consoleComponent.setCursor(Cursor.WAIT);
-    }
-
-    public void setNormalCursor() {
-        scene.setCursor(Cursor.DEFAULT);
-        consoleComponent.setCursor(Cursor.DEFAULT);
-    }
-
-    public Preferences getPrefs() {
-        return Preferences.userRoot().node(Ride.class.getName());
-    }
-
-    public void addJarToClasspath(File jar) throws
-        NoSuchMethodException, SecurityException, IllegalAccessException,
-        IllegalArgumentException, InvocationTargetException, MalformedURLException {
-        // Get the ClassLoader class
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        Class<?> clazz = cl.getClass();
-
-        // Get the protected addURL method from the parent URLClassLoader class
-        Method method = clazz.getSuperclass().getDeclaredMethod("addURL", new Class[] {URL.class});
-
-        // Run projected addURL method to add JAR to classpath
-        method.setAccessible(true);
-        method.invoke(cl, new Object[] {jar.toURI().toURL()});
-    }
-
-    public URLClassLoader classloaderForJar(File jar) throws MalformedURLException{
-      URLClassLoader cl = new URLClassLoader(new URL[] {jar.toURI().toURL()}, ClassLoader.getSystemClassLoader());
-      return cl;
-    }
-
-    public File getRenjinJar() {
-        if (renjinJar == null) {
-            renjinJar = new File(getPrefs().get(GlobalOptions.RENJIN_JAR, "."));
-        }
-        return renjinJar;
-    }
-
-    public void setRenjinJar(File renjinJar) {
-        this.renjinJar = renjinJar;
-        getPrefs().put(GlobalOptions.RENJIN_JAR, renjinJar.getAbsolutePath());
-        try {
-          URLClassLoader cl = classloaderForJar(renjinJar);
-          Thread.currentThread().setContextClassLoader(cl);
-        } catch (Exception e) {
-            ExceptionAlert.showAlert("Failed to add jar to classpath", e);
-        }
-    }
+  }
 }
