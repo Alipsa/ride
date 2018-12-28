@@ -10,20 +10,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
-import org.eclipse.aether.repository.RemoteRepository;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
-import se.alipsa.ride.utils.FileTextField;
 import se.alipsa.ride.utils.TableViewWithVisibleRowCount;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
     TableViewWithVisibleRowCount<Repo> reposTable;
-    FileTextField renjinJarTF;
 
     public GlobalOptionsDialog(Ride gui) {
         setTitle("Global options");
@@ -103,12 +99,6 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
         reposTable.setEditable(true);
         grid.add(reposTable, 1, 0);
 
-        Label renJinJar = new Label("Renjin jar location");
-        grid.add(renJinJar, 0, 1);
-
-        renjinJarTF = new FileTextField(gui);
-        grid.add(renjinJarTF, 1, 1);
-
         getDialogPane().setPrefSize(800, 400);
         getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         //getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
@@ -142,7 +132,6 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     GlobalOptions createResult() {
         GlobalOptions result = new GlobalOptions();
         result.put(GlobalOptions.REMOTE_REPOSITORIES, reposTable.getItems());
-        result.put(GlobalOptions.RENJIN_JAR, renjinJarTF.getFile());
 
         return result;
     }

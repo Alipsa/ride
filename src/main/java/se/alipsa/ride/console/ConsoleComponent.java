@@ -37,6 +37,7 @@ import se.alipsa.ride.utils.FileUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -98,30 +99,29 @@ public class ConsoleComponent extends BorderPane {
     private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader) {
         // TODO try to take this all the way and load factory, loader and sessionbuilder
         // using the parentClassLoader
-        RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
-        remoteRepositories = new ArrayList<>();
-        remoteRepositories.addAll(asRemoteRepositories(repos));
-
-        AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
-
-        session = new SessionBuilder()
-                .withDefaultPackages()
-                .setPackageLoader(loader) // allows library to work without having to include in the pom
-                .setClassLoader(loader.getClassLoader()) //allows imports in r code to work
-                .build();
-
-        engine = factory.getScriptEngine(session);
         String version = "unknown";
 
         try {
-            Class clazz = parentClassLoader.loadClass("org.renjin.RenjinVersion");
-            Method method = clazz.getMethod("getVersionName", null);
-            Object o = method.invoke(null, null);
-            version = (String)o;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
 
+            remoteRepositories = new ArrayList<>();
+            remoteRepositories.addAll(asRemoteRepositories(repos));
+
+            AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
+
+            SessionBuilder builder = new SessionBuilder();
+            session = builder
+                    .withDefaultPackages()
+                    .setPackageLoader(loader) // allows library to work without having to include in the pom
+                    .setClassLoader(loader.getClassLoader()) //allows imports in r code to work
+                    .build();
+
+            engine = factory.getScriptEngine(session);
+
+            version = RenjinVersion.getVersionName();
+        } catch (Exception e) {
+            ExceptionAlert.showAlert("Failed to load Renjin ScriptEngine", e);
+        }
 
         String greeting = "* Renjin " + version + " *";
         String surround = getStars(greeting.length());

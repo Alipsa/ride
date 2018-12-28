@@ -17,9 +17,9 @@ public class FileTextField extends HBox {
   Ride gui;
   File file;
 
-  public FileTextField(Ride gui) {
+  public FileTextField(Ride gui, File file) {
     this.gui = gui;
-    setFile(gui.getRenjinJar());
+    setFile(file);
     this.setHgrow(field, Priority.ALWAYS);
     getChildren().addAll(field, chooseFileButton);
     chooseFileButton.setOnAction(this::selectFile);
@@ -43,6 +43,9 @@ public class FileTextField extends HBox {
 
   public void setFile(File file) {
     this.file = file;
+    if (file == null) {
+      return;
+    }
     field.setText(file.getAbsolutePath());
   }
 }
