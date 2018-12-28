@@ -53,10 +53,19 @@ public class CodeComponent extends BorderPane {
     }
 
     private void handleRunAction (ActionEvent event) {
+        String rCode = getCodeFromActiveTab();
+        log.debug("Running r code {}", rCode);
+        console.runScript(rCode, getActiveScriptName());
+    }
+
+    public String getActiveScriptName() {
+        return getActiveTab().getText();
+
+    }
+    public String getCodeFromActiveTab() {
         CodeTextArea code = getActiveCodeTextArea();
         String rCode = code.getText();
-        log.debug("Running r code {}", rCode);
-        console.runScript(rCode, getActiveTab().getText());
+        return rCode;
     }
 
     public CodeTextArea getActiveCodeTextArea() {

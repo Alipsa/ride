@@ -90,23 +90,14 @@ public class ConsoleComponent extends BorderPane {
 
         console = new ConsoleTextArea();
         setCenter(console);
-        initRenjin(getStoredRemoteRepositories());
+        initRenjin(getStoredRemoteRepositories(), Thread.currentThread().getContextClassLoader());
     }
 
-    private Animation createSpinner(int duration) {
-        Image[] sequence = new Image[24];
-        for (int i = 0; i < 24; i++) {
-            sequence[i] = new Image(FileUtils.getResourceUrl("image/spinner/" + i + ".gif").toExternalForm(),
-                    30, 30, true, true);
-        }
-        return new Animation(sequence, duration);
-    }
-
-    private void initRenjin(List<Repo> repos) {
+    private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader) {
+        Thread.currentThread().setContextClassLoader(parentClassLoader);
         RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
         remoteRepositories = new ArrayList<>();
         remoteRepositories.addAll(asRemoteRepositories(repos));
-        ClassLoader parentClassLoader = getClass().getClassLoader();
 
         AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
 
@@ -147,9 +138,9 @@ public class ConsoleComponent extends BorderPane {
     private List<Repo> getStoredRemoteRepositories() {
         List<Repo> list = new ArrayList<>();
         String remotes = gui.getPrefs().get(REMOTE_REPOSITORIES_PREF, null);
-        log.info("Remotes from prefs are: {}", remotes);
+        log.debug("Remotes from prefs are: {}", remotes);
         if (remotes == null) {
-            log.warn("No stored prefs for remote repos, adding defaults");
+            log.info("No stored prefs for remote repos, adding defaults");
             addDefaultRepos(list);
             return list;
         }
@@ -185,17 +176,19 @@ public class ConsoleComponent extends BorderPane {
 
     public void restartR() {
         console.append("Restarting Renjin..\n");
-        initRenjin(getStoredRemoteRepositories());
+        initRenjin(getStoredRemoteRepositories(), Thread.currentThread().getContextClassLoader());
         gui.getEnvironmentComponent().clearEnvironment();
     }
 
-    /** This will not work as the Scriptengine must run in the jfx thread
-     * (Platform.runLater()) to allow interaction with the gui e.g. printing plots
+    /**
+     * TODO: while we can stop the timeline with this we cannot interrupt
+     * the scriptengines eval.
      */
     public void interruptR() {
         log.info("Interrupting runnning script");
         if (Animation.Status.RUNNING.equals(scriptExecutionTimeline.getStatus())) {
             console.append("Interrupting Renjin...\n>");
+            // Would be nice with something like engine.stop() here;
             scriptExecutionTimeline.stop();
         }
     }
@@ -271,19 +264,19 @@ public class ConsoleComponent extends BorderPane {
         return asRepos(remoteRepositories);
     }
 
-    public void setRemoterepositories(List<Repo> repos) {
+    public void setRemoterepositories(List<Repo> repos, ClassLoader cl) {
         ObjectMapper mapper = new ObjectMapper();
         StringWriter writer = new StringWriter();
         try {
             mapper.writeValue(writer, repos);
             String r = writer.toString();
-            log.info("Writing repos to prefs as: {}", r);
+            log.debug("Writing repos to prefs as: {}", r);
             gui.getPrefs().put(REMOTE_REPOSITORIES_PREF, r);
         } catch (Exception e) {
             e.printStackTrace();
         }
         log.info("initializing Renjin with {} repos", repos.size());
-        initRenjin(repos);
+        initRenjin(repos, cl);
     }
 
     private void running() {

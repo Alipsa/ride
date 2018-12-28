@@ -58,7 +58,12 @@ public class MainMenuBar extends MenuBar {
             return;
         }
         GlobalOptions result = res.get();
-        gui.getConsoleComponent().setRemoterepositories((List<Repo>) result.get(GlobalOptions.REMOTE_REPOSITORIES));
+        gui.setRenjinJar((File)result.get(GlobalOptions.RENJIN_JAR));
+
+        gui.getConsoleComponent().setRemoterepositories(
+            (List<Repo>) result.get(GlobalOptions.REMOTE_REPOSITORIES),
+            gui.getClass().getClassLoader()
+        );
     }
 
 

@@ -17,9 +17,18 @@ import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.inout.InoutComponent;
+import se.alipsa.ride.menu.GlobalOptions;
 import se.alipsa.ride.menu.MainMenuBar;
+import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.prefs.Preferences;
 
 public class Ride extends Application {
@@ -30,6 +39,7 @@ public class Ride extends Application {
     private InoutComponent inoutComponent;
     private Stage primaryStage;
     private Scene scene;
+    File renjinJar;
 
     Logger log = LoggerFactory.getLogger(Ride.class);
 
@@ -131,5 +141,43 @@ public class Ride extends Application {
 
     public Preferences getPrefs() {
         return Preferences.userRoot().node(Ride.class.getName());
+    }
+
+    public void addJarToClasspath(File jar) throws
+        NoSuchMethodException, SecurityException, IllegalAccessException,
+        IllegalArgumentException, InvocationTargetException, MalformedURLException {
+        // Get the ClassLoader class
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        Class<?> clazz = cl.getClass();
+
+        // Get the protected addURL method from the parent URLClassLoader class
+        Method method = clazz.getSuperclass().getDeclaredMethod("addURL", new Class[] {URL.class});
+
+        // Run projected addURL method to add JAR to classpath
+        method.setAccessible(true);
+        method.invoke(cl, new Object[] {jar.toURI().toURL()});
+    }
+
+    public URLClassLoader classloaderForJar(File jar) throws MalformedURLException{
+      URLClassLoader cl = new URLClassLoader(new URL[] {jar.toURI().toURL()}, ClassLoader.getSystemClassLoader());
+      return cl;
+    }
+
+    public File getRenjinJar() {
+        if (renjinJar == null) {
+            renjinJar = new File(getPrefs().get(GlobalOptions.RENJIN_JAR, "."));
+        }
+        return renjinJar;
+    }
+
+    public void setRenjinJar(File renjinJar) {
+        this.renjinJar = renjinJar;
+        getPrefs().put(GlobalOptions.RENJIN_JAR, renjinJar.getAbsolutePath());
+        try {
+          URLClassLoader cl = classloaderForJar(renjinJar);
+          Thread.currentThread().setContextClassLoader(cl);
+        } catch (Exception e) {
+            ExceptionAlert.showAlert("Failed to add jar to classpath", e);
+        }
     }
 }
