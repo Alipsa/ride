@@ -1,9 +1,7 @@
 package se.alipsa.ride.menu;
 
 import javafx.event.ActionEvent;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.slf4j.Logger;
@@ -11,13 +9,17 @@ import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.model.Repo;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 public class MainMenuBar extends MenuBar {
 
@@ -37,9 +39,43 @@ public class MainMenuBar extends MenuBar {
         Menu menuDebug = new Menu("Debug");
         Menu menuProfile = new Menu("Profile");
         Menu menuTools = createToolsMenu();
-        Menu menuHelp = new Menu("Help");
+        Menu menuHelp = createHelpMenu();
         getMenus().addAll(menuFile, menuEdit, menuCode, menuView, menuPlots, menuSession,
                 menuBuild, menuDebug, menuProfile, menuTools, menuHelp);
+    }
+
+    private Menu createHelpMenu() {
+        Menu menu = new Menu("Help");
+        MenuItem about = new MenuItem("About Ride");
+        about.setOnAction(this::displayAbout);
+
+        menu.getItems().addAll(about);
+        return menu;
+    }
+
+    private void displayAbout(ActionEvent actionEvent) {
+        Properties props = new Properties();
+        String version = "unknown";
+        try (InputStream is = FileUtils.getResourceUrl("version.properties").openStream()) {
+            props.load(is);
+            version = props.getProperty("version");
+        } catch (IOException e) {
+
+        }
+        StringBuilder content = new StringBuilder();
+        content.append("Version ");
+        content.append(version);
+        content.append("\n\n See https://github.com/perNyfelt/ride/ for more info or to report issues");
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About Ride");
+        alert.setHeaderText(null);
+        TextArea ta = new TextArea();
+        ta.setWrapText(true);
+        ta.setText(content.toString());
+        alert.getDialogPane().setContent(ta);
+        alert.setResizable(true);
+        alert.showAndWait();
+
     }
 
     private Menu createToolsMenu() {

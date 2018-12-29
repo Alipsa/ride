@@ -18,6 +18,7 @@ public class Alerts {
     alert.setTitle(title);
     alert.setHeaderText(null);
     alert.setContentText(content);
+    alert.setResizable(true);
     alert.showAndWait();
   }
 

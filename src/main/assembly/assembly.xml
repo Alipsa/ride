@@ -13,6 +13,10 @@
             <source>target/${project.artifactId}-${project.version}.jar</source>
             <outputDirectory>.</outputDirectory>
         </file>
+        <file>
+            <source>version.properties</source>
+            <outputDirectory>.</outputDirectory>
+        </file>
     </files>
 
     <fileSets>
