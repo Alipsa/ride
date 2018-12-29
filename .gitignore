@@ -23,6 +23,7 @@
 hs_err_pid*
 /renjinStudio.iml
 /.idea/
-/src/bin/ride (1).iml
+**/*.iml
 /dependency-reduced-pom.xml
 /version.properties
+/target/
