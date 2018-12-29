@@ -29,13 +29,23 @@ inout$display(img, "logo")
 The AetherPackageLoader is used per default so libraries will be fetched automatically from 
 bedatadriven or maven central repos.
 
-To create a runnable jar do `mvn package` and then run it with `java -jar renjinStudio-1.0-SNAPSHOT-jar-with-dependencies.jar`
+To create a runnable jar do 
+```
+mvn clean install
+``` 
+
+and then run it with 
+```
+cd src/bin
+mvn exec:java
+``` 
 
 
 ## 3:rd party software used
 
 ### org.renjin:renjin-script-engine, tools, and renjin-aether-package-loader
-The components that actually does something ;) i.e. executes R code.
+The components that actually does something ;) i.e. executes R code. It is not included in the fat jar and 
+dependecies are scoped as provided. This enables us to run Ride with any version of Renjin (0.9.2716 or later)
 
 Copyright © 2010-2018 BeDataDriven Groep B.V. and contributors under GNU General Public License v2.0
 
