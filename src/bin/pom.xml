@@ -34,6 +34,11 @@
             <artifactId>renjin-aether-package-loader</artifactId>
             <version>${renjin.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.renjin</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${renjin.version}</version>
+        </dependency>
     </dependencies>
 
     <repositories>

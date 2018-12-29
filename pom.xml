@@ -13,28 +13,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <renjin.run.version>0.9.2716</renjin.run.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.renjin</groupId>
-                <artifactId>renjin-script-engine</artifactId>
-                <version>RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.renjin</groupId>
-                <artifactId>tools</artifactId>
-                <version>RELEASE</version>
-            </dependency>
-            <dependency>
-                <groupId>org.renjin</groupId>
-                <artifactId>renjin-aether-package-loader</artifactId>
-                <version>RELEASE</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -45,16 +24,25 @@
         <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>renjin-script-engine</artifactId>
+            <version>RELEASE</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>tools</artifactId>
+            <version>RELEASE</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>renjin-aether-package-loader</artifactId>
+            <version>RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.renjin</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>RELEASE</version>
             <scope>provided</scope>
         </dependency>
 
@@ -78,11 +66,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.25</version>
-        </dependency>
-        <dependency>
-            <groupId>org.renjin</groupId>
-            <artifactId>hamcrest</artifactId>
-            <version>RELEASE</version>
         </dependency>
 
         <dependency>
@@ -122,24 +105,52 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>se.alipsa.ride.Ride</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedClassifierName>shaded</shadedClassifierName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <!--execution>
                         <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>se.alipsa.ride.Ride</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution-->
+                    <execution>
+                        <id>dist</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

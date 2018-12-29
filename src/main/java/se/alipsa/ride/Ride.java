@@ -1,6 +1,8 @@
 package se.alipsa.ride;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -12,6 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.code.CodeComponent;
@@ -89,6 +92,10 @@ public class Ride extends Application {
 
     main.getChildren().add(splitPane);
 
+    primaryStage.setOnCloseRequest(t -> {
+      Platform.exit();
+      System.exit(0);
+    });
 
     primaryStage.setTitle("Ride, a Renjin IDE");
     primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
