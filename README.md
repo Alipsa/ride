@@ -29,17 +29,12 @@ inout$display(img, "logo")
 The AetherPackageLoader is used per default so libraries will be fetched automatically from 
 bedatadriven or maven central repos.
 
-To create a runnable jar do 
+To create a runnable jar and run it do 
 ```
-mvn clean install
+./devrun.sh
 ``` 
 
-and then run it with 
-```
-cd src/bin
-mvn exec:java
-``` 
-
+For released versions there is another shell script (run.sh) that should be used to start Ride.
 
 ## 3:rd party software used
 

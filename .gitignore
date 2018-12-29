@@ -25,3 +25,4 @@ hs_err_pid*
 /.idea/
 /src/bin/ride (1).iml
 /dependency-reduced-pom.xml
+/version.properties
