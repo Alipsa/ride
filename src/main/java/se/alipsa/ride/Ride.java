@@ -2,7 +2,6 @@ package se.alipsa.ride;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -14,7 +13,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.code.CodeComponent;
@@ -23,13 +21,8 @@ import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.MainMenuBar;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.ParentLastURLClassLoader;
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
 public class Ride extends Application {
@@ -94,7 +87,14 @@ public class Ride extends Application {
 
     primaryStage.setOnCloseRequest(t -> {
       Platform.exit();
-      System.exit(0);
+      // Allow some time before calling system exist so stop() can be used to do stuff if neeed
+      Timer timer = new Timer();
+      TimerTask task = new TimerTask() {
+        public void run() {
+          System.exit(0);
+        }
+      };
+      timer.schedule(task,100);
     });
 
     primaryStage.setTitle("Ride, a Renjin IDE");
