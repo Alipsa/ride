@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# build and run Ride
+# just run Ride based on latest compilation
 
 PROPERTY_FILE=version.properties
 
@@ -9,8 +9,6 @@ function getProperty {
    PROP_VALUE=`cat $PROPERTY_FILE | grep "$PROP_KEY" | cut -d'=' -f2`
    echo $PROP_VALUE | xargs
 }
-
-mvn clean install
 
 echo "# Reading property from $PROPERTY_FILE"
 JAR_NAME=$(getProperty "jar.name")
