@@ -10,7 +10,7 @@
 
     <properties>
         <!-- requires version 0.9.2716 or later -->
-        <renjin.version>0.9.2716</renjin.version>
+        <renjin.version>0.9.2717</renjin.version>
         <ride.jar>${basedir}/ride-1.0-SNAPSHOT.jar</ride.jar>
     </properties>
 

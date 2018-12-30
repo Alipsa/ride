@@ -38,6 +38,7 @@ public class FileTree extends TreeView {
 
         String currentPath = new File(getWorkingDirPref()).getAbsolutePath();
         File current = new File(currentPath);
+        setWorkingDir(current);
 
         setRoot(createTree(current));
 
@@ -72,6 +73,12 @@ public class FileTree extends TreeView {
 
     private void setWorkingDirPref(File dir) {
         gui.getPrefs().put(WORKING_DIR_PREF, dir.getAbsolutePath());
+        setWorkingDir(dir);
+    }
+
+    private void setWorkingDir(File dir) {
+        gui.getConsoleComponent().setWorkingDir(dir);
+        System.setProperty("user.dir", dir.getAbsolutePath());
     }
 
     private TreeItem<File> createTree(File file) {

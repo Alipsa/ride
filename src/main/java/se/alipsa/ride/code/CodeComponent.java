@@ -2,6 +2,8 @@ package se.alipsa.ride.code;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -44,6 +46,20 @@ public class CodeComponent extends BorderPane {
         codeTab.setText(title);
 
         CodeTextArea code = new CodeTextArea();
+        code.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if (e.isControlDown() && KeyCode.ENTER.equals(e.getCode())) {
+                String rCode = code.getText(code.getCurrentParagraph()); // current line
+
+                String selected = code.selectedTextProperty().getValue();
+                // if text is selected then go with that instead
+                if (selected != null && !"".equals(selected)) {
+                    rCode = getCodeFromActiveTab();
+                }
+                console.runScript(rCode, getActiveScriptName());
+                //code.displaceCaret(rCode.length() + 1);
+                code.moveTo(code.getCurrentParagraph() + 1, 0);
+            }
+        });
         VirtualizedScrollPane vPane = new VirtualizedScrollPane<>(code);
         codeTab.setContent(vPane);
         pane.getTabs().add(codeTab);
@@ -52,7 +68,7 @@ public class CodeComponent extends BorderPane {
         return code;
     }
 
-    private void handleRunAction (ActionEvent event) {
+    private void handleRunAction(ActionEvent event) {
         String rCode = getCodeFromActiveTab();
         log.debug("Running r code {}", rCode);
         console.runScript(rCode, getActiveScriptName());
@@ -62,16 +78,23 @@ public class CodeComponent extends BorderPane {
         return getActiveTab().getText();
 
     }
+
     public String getCodeFromActiveTab() {
         CodeTextArea code = getActiveCodeTextArea();
-        String rCode = code.getText();
+        String rCode;
+        String selected = code.selectedTextProperty().getValue();
+        if (selected == null || "".equals(selected)) {
+            rCode = code.getText();
+        } else {
+            rCode = selected;
+        }
         return rCode;
     }
 
     public CodeTextArea getActiveCodeTextArea() {
         Tab selected = getActiveTab();
-        VirtualizedScrollPane vPane = (VirtualizedScrollPane)selected.getContent();
-        return (CodeTextArea)vPane.getContent();
+        VirtualizedScrollPane vPane = (VirtualizedScrollPane) selected.getContent();
+        return (CodeTextArea) vPane.getContent();
     }
 
     private Tab getActiveTab() {
@@ -81,7 +104,7 @@ public class CodeComponent extends BorderPane {
 
     public CodeTextArea addTab(String title, String content) {
         CodeTextArea code = createAndAddTab(title);
-        code.replaceText(0,0, content);
+        code.replaceText(0, 0, content);
         return code;
     }
 

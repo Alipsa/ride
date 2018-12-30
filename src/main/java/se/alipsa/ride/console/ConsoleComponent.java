@@ -17,6 +17,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.commons.vfs2.FileSystemException;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.renjin.RenjinVersion;
 import org.renjin.aether.AetherFactory;
@@ -35,6 +36,7 @@ import se.alipsa.ride.utils.Animation;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -329,5 +331,13 @@ public class ConsoleComponent extends BorderPane {
             }
         };
         timer.schedule(task,800);
+    }
+
+    public void setWorkingDir(File dir) {
+        try {
+            session.setWorkingDirectory(dir);
+        } catch (FileSystemException e) {
+            log.warn("Error setting working dir to {} for session", dir, e);
+        }
     }
 }

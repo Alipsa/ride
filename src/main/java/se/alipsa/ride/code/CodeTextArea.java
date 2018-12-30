@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -55,7 +56,6 @@ public class CodeTextArea extends CodeArea {
 
         // run the following code block when previous stream emits an event
         .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
-
 
     }
 
