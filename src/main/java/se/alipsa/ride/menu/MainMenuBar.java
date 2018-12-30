@@ -56,15 +56,19 @@ public class MainMenuBar extends MenuBar {
     private void displayAbout(ActionEvent actionEvent) {
         Properties props = new Properties();
         String version = "unknown";
+        String releaseTag = "unknown";
         try (InputStream is = FileUtils.getResourceUrl("version.properties").openStream()) {
             props.load(is);
             version = props.getProperty("version");
+            releaseTag = props.getProperty("release.tag");
         } catch (IOException e) {
 
         }
         StringBuilder content = new StringBuilder();
-        content.append("Version ");
+        content.append("Version: ");
         content.append(version);
+        content.append("\nRelease tag: ");
+        content.append(releaseTag);
         content.append("\n\n See https://github.com/perNyfelt/ride/ for more info or to report issues");
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About Ride");

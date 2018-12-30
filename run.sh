@@ -15,9 +15,10 @@ function getProperty {
 
 echo "# Reading property from $PROPERTY_FILE"
 JAR_NAME=$(getProperty "jar.name")
+RELEASE_TAG=$(getProperty "release.tag")
 
 target=${PWD}/target/${JAR_NAME}
 
 cd src/bin
-mvn initialize -Dride.jar=${target}
-mvn exec:java -Dride.jar=${target}
+mvn initialize -Dride.jar=${target} -Drelease.tag=${RELEASE_TAG}
+mvn exec:java -Dride.jar=${target} -Drelease.tag=${RELEASE_TAG}
