@@ -13,7 +13,7 @@ print(j)
 
 # Exercise #4
 print("# The cars dataset is available in base R. You can type cars to see it. Use the class function to determine what type of object is cars.")
-class(cars)
+print(class(cars))
 
 str(cars)
 
