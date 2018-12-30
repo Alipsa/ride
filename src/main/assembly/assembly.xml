@@ -36,6 +36,9 @@
             <outputDirectory>.</outputDirectory>
             <includes>
                 <include>*.sh</include>
+                <include>*.cmd</include>
+                <include>*.md</include>
+                <include>*.ico</include>
             </includes>
             <lineEnding>unix</lineEnding>
             <fileMode>0755</fileMode>

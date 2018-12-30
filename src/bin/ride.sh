@@ -12,7 +12,10 @@ function getProperty {
 }
 
 JAR_NAME=$(getProperty "jar.name")
+RELEASE_TAG=$(getProperty "release.tag")
 
-target=${PWD}/${JAR_NAME}
-mvn initialize -Dride.jar=${target}
-mvn exec:java
+TARGET=${DIR}/${JAR_NAME}
+
+
+mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
+mvn exec:java -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}

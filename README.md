@@ -34,7 +34,7 @@ To create a runnable jar and run it do
 ./devrun.sh
 ``` 
 
-For released versions there is another shell script (run.sh) that should be used to start Ride.
+For released versions there is another shell script (ride.sh or ride.cmd) that should be used to start Ride.
 
 ## 3:rd party software used
 
