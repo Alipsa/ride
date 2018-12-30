@@ -12,7 +12,7 @@ Unzip ride-1.0-beta2-dist.zip to a directory of choice
 `> ./run.sh`
 
 
-#Version Descriptions
+# Version Descriptions
 
 ### 1.0 beta2
 Will now honor ctrl + enter to execute current row or selection
