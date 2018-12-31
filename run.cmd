@@ -10,7 +10,9 @@ set JAR_NAME=%jar.name%
 
 set RELEASE_TAG=%release.tag%
 
-set TARGET=%DIR%\%jar.name%
+set TARGET=%DIR%\target\%jar.name%
+
+cd src/bin
 
 call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
 
