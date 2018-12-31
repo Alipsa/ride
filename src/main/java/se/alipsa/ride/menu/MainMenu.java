@@ -3,11 +3,15 @@ package se.alipsa.ride.menu;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import org.renjin.eval.Session;
+import org.renjin.primitives.packaging.PackageLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
+import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
@@ -68,8 +72,13 @@ public class MainMenu extends MenuBar {
         content.append("\nRelease tag: ");
         content.append(releaseTag);
         content.append("\n\n See https://github.com/perNyfelt/ride/ for more info or to report issues");
+        showInfoAlert("About Ride", content);
+
+    }
+
+    private void showInfoAlert(String title, StringBuilder content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About Ride");
+        alert.setTitle(title);
         alert.setHeaderText(null);
         TextArea ta = new TextArea();
         ta.setWrapText(true);
@@ -77,7 +86,6 @@ public class MainMenu extends MenuBar {
         alert.getDialogPane().setContent(ta);
         alert.setResizable(true);
         alert.showAndWait();
-
     }
 
     private Menu createToolsMenu() {
@@ -97,6 +105,7 @@ public class MainMenu extends MenuBar {
         }
         GlobalOptions result = res.get();
 
+        gui.getConsoleComponent().setPackageLoader((Class)result.get(GlobalOptions.PKG_LOADER));
         gui.getConsoleComponent().setRemoterepositories(
             (List<Repo>) result.get(GlobalOptions.REMOTE_REPOSITORIES),
             Thread.currentThread().getContextClassLoader()
@@ -119,8 +128,24 @@ public class MainMenu extends MenuBar {
         interruptMI.setOnAction(this::interruptR);
         disableInterruptMenuItem();
 
-        sessionMenu.getItems().addAll(restartMI, interruptMI);
+        MenuItem sessionInfo = new MenuItem("SessionInfo");
+        sessionInfo.setOnAction(this::showSessionInfo);
+
+        sessionMenu.getItems().addAll(restartMI, interruptMI, sessionInfo);
         return sessionMenu;
+    }
+
+    private void showSessionInfo(ActionEvent actionEvent) {
+        ConsoleComponent cc = gui.getConsoleComponent();
+        Session session = cc.getSession();
+        StringBuilder content = new StringBuilder();
+        content.append("Package loader: ");
+        content.append(cc.getPackageLoader());
+        content.append("\nClassloader: ");
+        content.append(session.getClassLoader().getClass().getName());
+        content.append("\nWorking dir: ");
+        content.append(session.getWorkingDirectory());
+        showInfoAlert("Session info", content);
     }
 
     private void interruptR(ActionEvent actionEvent) {

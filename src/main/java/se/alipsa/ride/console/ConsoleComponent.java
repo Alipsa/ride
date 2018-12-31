@@ -25,6 +25,8 @@ import org.renjin.aether.AetherPackageLoader;
 import org.renjin.eval.EvalException;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
+import org.renjin.primitives.packaging.ClasspathPackageLoader;
+import org.renjin.primitives.packaging.PackageLoader;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.Environment;
 import org.renjin.sexp.StringVector;
@@ -55,16 +57,18 @@ public class ConsoleComponent extends BorderPane {
     private Session session;
 
     private ImageView globeView;
-    Button statusButton;
+    private Button statusButton;
     private ConsoleTextArea console;
     private Ride gui;
     private List<RemoteRepository> remoteRepositories;
+    private PackageLoader packageLoader;
 
     private Timeline scriptExecutionTimeline;
 
     public static final Repo RENJIN_REPO = asRepo(AetherFactory.renjinRepo());
     public static final Repo MVN_CENTRAL_REPO = asRepo(AetherFactory.mavenCentral());
     public static final String REMOTE_REPOSITORIES_PREF = "ConsoleComponent.RemoteRepositories";
+    public static final String PACKAGE_LOADER_PREF = "ConsoleComponent.PackageLoader";
 
     private static final Image IMG_RUNNING = new Image(FileUtils
         .getResourceUrl("image/running.png").toExternalForm(), 30, 30, true, true);
@@ -100,8 +104,6 @@ public class ConsoleComponent extends BorderPane {
     }
 
     private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader) {
-        // TODO try to take this all the way and load factory, loader and sessionbuilder
-        // using the parentClassLoader
         String version = "unknown";
 
         try {
@@ -110,13 +112,15 @@ public class ConsoleComponent extends BorderPane {
             remoteRepositories = new ArrayList<>();
             remoteRepositories.addAll(asRemoteRepositories(repos));
 
-            AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
+            PackageLoader loader = getPackageLoader(parentClassLoader);
+
+            ClassLoader cl = classloader(loader, parentClassLoader);
 
             SessionBuilder builder = new SessionBuilder();
             session = builder
                     .withDefaultPackages()
                     .setPackageLoader(loader) // allows library to work without having to include in the pom
-                    .setClassLoader(loader.getClassLoader()) //allows imports in r code to work
+                    .setClassLoader(cl) //allows imports in r code to work
                     .build();
 
             engine = factory.getScriptEngine(session);
@@ -131,6 +135,39 @@ public class ConsoleComponent extends BorderPane {
         console.append(surround);
         console.append(greeting);
         console.append(surround + "\n>");
+    }
+
+    private ClassLoader classloader(PackageLoader loader, ClassLoader parentClassLoader) {
+        if (loader instanceof AetherPackageLoader) {
+            return ((AetherPackageLoader) loader).getClassLoader();
+        }
+        return parentClassLoader;
+    }
+
+    private PackageLoader getPackageLoader(ClassLoader parentClassLoader) {
+        if (packageLoader != null) {
+            return packageLoader;
+        }
+        String pkgLoaderName = gui.getPrefs().get(PACKAGE_LOADER_PREF, AetherPackageLoader.class.getSimpleName());
+        PackageLoader loader = packageLoaderForName(parentClassLoader, pkgLoaderName);
+        setPackageLoader(loader.getClass());
+        return loader;
+    }
+
+    public PackageLoader getPackageLoader() {
+        return packageLoader;
+    }
+
+    private PackageLoader packageLoaderForName(ClassLoader parentClassLoader, String pkgLoaderName) {
+        if (ClasspathPackageLoader.class.getSimpleName().equals(pkgLoaderName)) {
+            return new ClasspathPackageLoader(parentClassLoader);
+        }
+        return new AetherPackageLoader(parentClassLoader, remoteRepositories);
+    }
+
+    public void setPackageLoader(Class<?> loader) {
+        packageLoader = packageLoaderForName(Thread.currentThread().getContextClassLoader(), loader.getSimpleName());
+        gui.getPrefs().put(PACKAGE_LOADER_PREF, loader.getSimpleName());
     }
 
     private List<RemoteRepository> asRemoteRepositories(List<Repo> items) {
@@ -282,6 +319,7 @@ public class ConsoleComponent extends BorderPane {
         return asRepos(remoteRepositories);
     }
 
+    /** this should be called last as the Session is reinitialized at the end */
     public void setRemoterepositories(List<Repo> repos, ClassLoader cl) {
         ObjectMapper mapper = new ObjectMapper();
         StringWriter writer = new StringWriter();
@@ -342,5 +380,9 @@ public class ConsoleComponent extends BorderPane {
         } catch (FileSystemException e) {
             log.warn("Error setting working dir to {} for session", dir, e);
         }
+    }
+
+    public Session getSession() {
+        return session;
     }
 }

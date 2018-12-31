@@ -1,7 +1,13 @@
 library(grDevices)
 library(graphics)
 
-fileName <- "/tmp/svgplot.svg"
+sysname <- Sys.info()["sysname"]
+if(sysname == "unix") {
+	fileName <- "/tmp/svgplot.svg"
+} else {
+	fileName <- "c:/tmp/svgplot.svg"
+}
+
 # First plot
 svg(fileName)
 plot(sin, -pi, 2*pi)

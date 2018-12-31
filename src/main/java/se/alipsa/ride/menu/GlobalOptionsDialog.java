@@ -1,5 +1,7 @@
 package se.alipsa.ride.menu;
 
+import static se.alipsa.ride.console.ConsoleComponent.PACKAGE_LOADER_PREF;
+
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,6 +12,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
+import org.renjin.aether.AetherPackageLoader;
+import org.renjin.primitives.packaging.ClasspathPackageLoader;
+import org.renjin.primitives.packaging.PackageLoader;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
@@ -19,7 +24,8 @@ import java.util.List;
 
 public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
-    TableViewWithVisibleRowCount<Repo> reposTable;
+    private TableViewWithVisibleRowCount<Repo> reposTable;
+    private ComboBox<Class> pkgLoaderCb;
 
     public GlobalOptionsDialog(Ride gui) {
         setTitle("Global options");
@@ -99,9 +105,21 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
         reposTable.setEditable(true);
         grid.add(reposTable, 1, 0);
 
+        Label pkgLoaderLabel = new Label("Package Loader");
+        grid.add(pkgLoaderLabel, 0,1);
+        pkgLoaderCb = new ComboBox<>();
+        pkgLoaderCb.setConverter(new PackageLoaderClassConverter());
+        pkgLoaderCb.getItems().addAll(ClasspathPackageLoader.class, AetherPackageLoader.class);
+        String defaultPkgLoader = gui.getPrefs().get(PACKAGE_LOADER_PREF, AetherPackageLoader.class.getSimpleName());
+        if (AetherPackageLoader.class.getSimpleName().equals(defaultPkgLoader)) {
+            pkgLoaderCb.getSelectionModel().select(AetherPackageLoader.class);
+        } else {
+            pkgLoaderCb.getSelectionModel().select(ClasspathPackageLoader.class);
+        }
+        grid.add(pkgLoaderCb, 1,1);
+
         getDialogPane().setPrefSize(800, 400);
         getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        //getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
         setResizable(true);
 
         setResultConverter(button -> button == ButtonType.OK ?  createResult() : null);
@@ -132,7 +150,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     GlobalOptions createResult() {
         GlobalOptions result = new GlobalOptions();
         result.put(GlobalOptions.REMOTE_REPOSITORIES, reposTable.getItems());
-
+        result.put(GlobalOptions.PKG_LOADER, pkgLoaderCb.getSelectionModel().getSelectedItem());
         return result;
     }
 
