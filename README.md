@@ -44,6 +44,14 @@ inout$display(readImage(fileName), "svgplot")
 The AetherPackageLoader is used per default so libraries will be fetched automatically from 
 bedatadriven or maven central repos. This can be modified in the Global Options menu.
 
+If you change to the ClasspathPackageLoader you need to add dependencies to the maven pom.xml
+when running Ride. The change is persistent so just add any required dependency and start Ride.
+
+This is useful when moving from development to test to make sure dependencies are correct 
+prior to integration testing in embedded mode on e.g. an app server. In the package tab you can see
+a list of packages loaded for the session (in case you missed a library call in the script but loaded 
+it from another script - the session is shared).
+
 To create a runnable jar and run it do 
 ```
 ./devrun.sh
