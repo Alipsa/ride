@@ -148,6 +148,9 @@
     <profiles>
         <profile>
             <id>createProps</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
