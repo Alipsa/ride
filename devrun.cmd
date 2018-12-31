@@ -2,7 +2,7 @@
 set DIR=%~dp0%
 cd %DIR%
 
-call mvn -PcreateProps clean process-resources
+call mvn -PcreateProps clean install
 
 set PROPERTY_FILE=version.properties
 
@@ -13,8 +13,6 @@ set JAR_NAME=%jar.name%
 set RELEASE_TAG=%release.tag%
 
 set TARGET=%DIR%\target\%jar.name%
-
-call mvn install
 
 cd src/bin
 

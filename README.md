@@ -48,15 +48,22 @@ If you change to the ClasspathPackageLoader you need to add dependencies to the 
 when running Ride. The change is persistent so just add any required dependency and start Ride.
 
 This is useful when moving from development to test to make sure dependencies are correct 
-prior to integration testing in embedded mode on e.g. an app server. In the package tab you can see
+prior to integration testing in embedded mode on e.g. an app server. In the Packages tab you can see
 a list of packages loaded for the session (in case you missed a library call in the script but loaded 
 it from another script - the session is shared).
 
+# Building and compiling
+
+To build simply do ` mvn -PcreateProps clean install`
+
+There are some wrapper scripts that you might find useful.  
 To create a runnable jar and run it do 
 ```
 ./devrun.sh
 ``` 
-or the equivalent devrun.cmd for windows.
+or the equivalent `devrun.cmd` for windows.
+
+To just run it without rebuilding use `run.sh` or `run.cmd` depending on environment.
 
 For released versions there is another shell script (ride.sh or ride.cmd) that should be used to start Ride.
 
