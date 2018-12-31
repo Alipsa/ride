@@ -94,6 +94,7 @@ public class ConsoleComponent extends BorderPane {
         setTop(topPane);
 
         console = new ConsoleTextArea();
+        console.setEditable(false);
         setCenter(console);
         initRenjin(getStoredRemoteRepositories(), Thread.currentThread().getContextClassLoader());
     }
