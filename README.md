@@ -6,33 +6,45 @@ JVM implementation of R (www.renjin.org). It runs R code in the renjin ScriptEng
 R scripts before creating an embedded R application in java code, or to just use it as a data analysis tool
 much like you would use R Studio. 
 
-It is functional i.e. it is possible to create, open, save and execute R scripts 
-but it is far from all the rich functionality of RStudio at this point. 
+It was created to have a familiar (similar to RStudio) interface to develop R scripts that
+will later run in embedded mode on application servers such as Wildfly or Play Framework.
+
+It is functional i.e. it is possible to create, open, save and execute R scripts, 
+run selected text, ctrl + enter execution of current line or selected text, view packages loaded, 
+see variables created etc. but it has some way to go compared to all the rich functionality of RStudio at this point. 
 
 
 ![alt text](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Screenshot.png "Screenshot")
 
 
-As Renjin does not yet fully support graphics such as plotting the only support for displaying graphics in Ride
-is to use the inout component that has been injected into the session to display files e.g.
+As Renjins support for graphics such as plotting is still somewhat limited (It just pops up an AWT window with the plot).
+An alternative way is to use the inout component that has been injected into the session to display files e.g.
 
 ````
+library(grDevices)
+library(graphics)
+
+# plot a svg image to a file
+fileName <- "/tmp/svgplot.svg"
+svg(fileName)
+plot(sin, -pi, 2*pi)
+
+dev.off()
+
 # rideutils provides ways to bridge over from R to Java to be able to interact with the IDE
 library("se.alipsa:rideutils")
-
-# read the file and return it as a javafx Image
-img <- readImage("image/logo.png")
-# display it in my javafx application
-inout$display(img, "logo")
+# convert the image to a a javafx Image and display it in ride
+inout$display(readImage(fileName), "svgplot")
 ````
 
 The AetherPackageLoader is used per default so libraries will be fetched automatically from 
-bedatadriven or maven central repos.
+bedatadriven or maven central repos. This can be modified in the Global Options menu.
 
 To create a runnable jar and run it do 
 ```
 ./devrun.sh
 ``` 
+or the equivalent devrun.cmd for windows.
 
 For released versions there is another shell script (ride.sh or ride.cmd) that should be used to start Ride.
 
