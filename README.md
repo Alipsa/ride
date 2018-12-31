@@ -37,6 +37,10 @@ library("se.alipsa:rideutils")
 inout$display(readImage(fileName), "svgplot")
 ````
 
+
+![alt text](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Plot.png "Plot")
+
+
 The AetherPackageLoader is used per default so libraries will be fetched automatically from 
 bedatadriven or maven central repos. This can be modified in the Global Options menu.
 
