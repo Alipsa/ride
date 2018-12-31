@@ -19,7 +19,7 @@ import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.inout.InoutComponent;
-import se.alipsa.ride.menu.MainMenuBar;
+import se.alipsa.ride.menu.MainMenu;
 import se.alipsa.ride.utils.FileUtils;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,6 +33,7 @@ public class Ride extends Application {
   private InoutComponent inoutComponent;
   private Stage primaryStage;
   private Scene scene;
+  private MainMenu mainMenu;
 
   Logger log = LoggerFactory.getLogger(Ride.class);
 
@@ -52,7 +53,8 @@ public class Ride extends Application {
 
     root.setCenter(main);
 
-    root.setTop(new MainMenuBar(this));
+    mainMenu = new MainMenu(this);
+    root.setTop(mainMenu);
 
     scene = new Scene(root, 1366, 768);
     scene.getStylesheets().add(FileUtils.getResourceUrl("R-keywords.css").toExternalForm());
@@ -86,21 +88,25 @@ public class Ride extends Application {
     main.getChildren().add(splitPane);
 
     primaryStage.setOnCloseRequest(t -> {
-      Platform.exit();
-      // Allow some time before calling system exist so stop() can be used to do stuff if neeed
-      Timer timer = new Timer();
-      TimerTask task = new TimerTask() {
-        public void run() {
-          System.exit(0);
-        }
-      };
-      timer.schedule(task,100);
+      endProgram();
     });
 
     primaryStage.setTitle("Ride, a Renjin IDE");
     primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
     primaryStage.setScene(scene);
     primaryStage.show();
+  }
+
+  public void endProgram() {
+    Platform.exit();
+    // Allow some time before calling system exist so stop() can be used to do stuff if neeed
+    Timer timer = new Timer();
+    TimerTask task = new TimerTask() {
+      public void run() {
+        System.exit(0);
+      }
+    };
+    timer.schedule(task,100);
   }
 
   private void stretch(Pane component, Pane root) {
@@ -131,6 +137,10 @@ public class Ride extends Application {
 
   public Stage getStage() {
     return primaryStage;
+  }
+
+  public MainMenu getMainMenu() {
+    return mainMenu;
   }
 
   public void setWaitCursor() {

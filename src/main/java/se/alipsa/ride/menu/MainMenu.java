@@ -3,13 +3,11 @@ package se.alipsa.ride.menu;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
-import org.eclipse.aether.repository.RemoteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.model.Repo;
-import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
@@ -21,13 +19,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
-public class MainMenuBar extends MenuBar {
+public class MainMenu extends MenuBar {
 
     Ride gui;
+    MenuItem interruptMI;
+    Logger log = LoggerFactory.getLogger(MainMenu.class);
 
-    Logger log = LoggerFactory.getLogger(MainMenuBar.class);
-
-    public MainMenuBar(Ride gui) {
+    public MainMenu(Ride gui) {
         this.gui = gui;
         Menu menuFile = createFileMenu();
         Menu menuEdit = new Menu("Edit");
@@ -105,14 +103,21 @@ public class MainMenuBar extends MenuBar {
         );
     }
 
+    public void disableInterruptMenuItem() {
+        interruptMI.setDisable(true);
+    }
 
+    public void enableInterruptMenuItem() {
+        interruptMI.setDisable(false);
+    }
 
     private Menu createSessionMenu() {
         Menu sessionMenu = new Menu("Session");
         MenuItem restartMI = new MenuItem("Restart R");
         restartMI.setOnAction(this::restartR);
-        MenuItem interruptMI = new MenuItem("Interrupt R");
+        interruptMI = new MenuItem("Interrupt R");
         interruptMI.setOnAction(this::interruptR);
+        disableInterruptMenuItem();
 
         sessionMenu.getItems().addAll(restartMI, interruptMI);
         return sessionMenu;
@@ -138,8 +143,11 @@ public class MainMenuBar extends MenuBar {
 
         MenuItem save = new MenuItem("Save");
         save.setOnAction(this::saveContent);
-        menu.getItems().addAll(fileMenu, save);
 
+        MenuItem quit = new MenuItem("Quit Session");
+        quit.setOnAction(e -> gui.endProgram());
+
+        menu.getItems().addAll(fileMenu, save, quit);
         return menu;
     }
 

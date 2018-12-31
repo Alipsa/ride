@@ -5,6 +5,8 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ${DIR}
 
+mvn -PcreateProps clean process-resources
+
 PROPERTY_FILE=version.properties
 
 function getProperty {
@@ -13,7 +15,7 @@ function getProperty {
    echo $PROP_VALUE | xargs
 }
 
-mvn clean install
+mvn install
 
 echo "# Reading property from $PROPERTY_FILE"
 JAR_NAME=$(getProperty "jar.name")

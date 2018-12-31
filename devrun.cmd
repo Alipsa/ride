@@ -2,6 +2,8 @@
 set DIR=%~dp0%
 cd %DIR%
 
+call mvn -PcreateProps clean process-resources
+
 set PROPERTY_FILE=version.properties
 
 FOR /F "tokens=1,2 delims==" %%G IN (%PROPERTY_FILE%) DO (set %%G=%%H)
@@ -12,7 +14,7 @@ set RELEASE_TAG=%release.tag%
 
 set TARGET=%DIR%\target\%jar.name%
 
-call mvn clean install
+call mvn install
 
 cd src/bin
 

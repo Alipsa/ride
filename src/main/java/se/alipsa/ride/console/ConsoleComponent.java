@@ -301,6 +301,7 @@ public class ConsoleComponent extends BorderPane {
             globeView.setImage(IMG_RUNNING);
             statusButton.setTooltip(new Tooltip("Script is running, click to abort"));
             showTooltip(statusButton);
+            gui.getMainMenu().enableInterruptMenuItem();
         });
         sleep(10);
     }
@@ -309,6 +310,7 @@ public class ConsoleComponent extends BorderPane {
         Platform.runLater(() -> {
             globeView.setImage(IMG_WAITING);
             statusButton.setTooltip(new Tooltip("Engine is idle"));
+            gui.getMainMenu().disableInterruptMenuItem();
         });
     }
 
