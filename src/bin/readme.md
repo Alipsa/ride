@@ -19,7 +19,9 @@ or on windows
 # Version Descriptions
 
 ### 1.0 beta3
-Add support for running on Windows
+Add support for running on Windows.
+Add support for switching package loaders
+Various minor improvements.
 
 ### 1.0 beta2
 Will now honor ctrl + enter to execute current row or selection
