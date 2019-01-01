@@ -83,6 +83,18 @@
             <version>2.9.8</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Git integration Core Library
+        see https://wiki.eclipse.org/JGit/User_Guide
+        https://download.eclipse.org/jgit/site/5.2.0.201812061821-r/apidocs/index.html
+        http://www.doublecloud.org/2013/01/how-to-read-git-repository-using-java-apis/
+        https://git-scm.com/book/uz/v2/Appendix-B%3A-Embedding-Git-in-your-Applications-JGit
+        https://github.com/centic9/jgit-cookbook
+        -->
+        <!--dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>5.2.0.201812061821-r</version>
+        </dependency-->
 
     </dependencies>
 
@@ -92,6 +104,10 @@
             <name>bedatadriven public repo</name>
             <url>https://nexus.bedatadriven.com/content/groups/public/</url>
         </repository>
+        <!--repository>
+            <id>jgit-repository</id>
+            <url>https://repo.eclipse.org/content/groups/releases/</url>
+        </repository-->
     </repositories>
     <pluginRepositories>
         <pluginRepository>

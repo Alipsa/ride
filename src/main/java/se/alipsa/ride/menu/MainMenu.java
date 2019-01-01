@@ -4,14 +4,13 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import org.renjin.eval.Session;
-import org.renjin.primitives.packaging.PackageLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
+import se.alipsa.ride.code.TabTextArea;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
-import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
@@ -178,11 +177,11 @@ public class MainMenu extends MenuBar {
     }
 
     private void nRScript(ActionEvent actionEvent) {
-        gui.getCodeComponent().addTab("Unknown", "");
+        gui.getCodeComponent().addCodeTab("Unknown", "");
     }
 
     private void saveContent(ActionEvent event) {
-        CodeTextArea codeArea = gui.getCodeComponent().getActiveCodeTextArea();
+        TabTextArea codeArea = gui.getCodeComponent().getActiveTabTextArea();
         File file = codeArea.getFile();
         if (file == null)  {
             FileChooser fileChooser = new FileChooser();
@@ -196,7 +195,7 @@ public class MainMenu extends MenuBar {
 
         try {
             boolean fileExisted = file.exists();
-            FileUtils.writeToFile(file, codeArea.getText());
+            FileUtils.writeToFile(file, codeArea.getAllTextContent());
             log.info("File {} saved", file.getAbsolutePath());
             if (!fileExisted) {
                 gui.getInoutComponent().fileAdded(file);

@@ -103,7 +103,11 @@ public class FileTree extends TreeView {
             if (file.isFile()) {
                 String fileNameUpper = file.getName().toUpperCase();
                 if (fileNameUpper.endsWith(".R") || fileNameUpper.endsWith(".S")) {
-                    codeComponent.addTab(file);
+                    codeComponent.addCodeTab(file);
+                } else if (fileNameUpper.endsWith(".TXT") || fileNameUpper.endsWith(".CSV")
+                        || fileNameUpper.endsWith(".MD") || fileNameUpper.endsWith("RMD")
+                        || fileNameUpper.equals("NAMESPACE")) {
+                    codeComponent.addTxtTab(file);
                 } else {
                     Alerts.info("Unknown file type",
                             "Unknown file type, not sure what to do with " + file.getName());

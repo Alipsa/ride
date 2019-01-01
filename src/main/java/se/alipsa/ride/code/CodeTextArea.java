@@ -13,7 +13,7 @@ import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 
-public class CodeTextArea extends CodeArea {
+public class CodeTextArea extends CodeArea implements TabTextArea {
 
     File file;
 
@@ -88,5 +88,21 @@ public class CodeTextArea extends CodeArea {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public String getTextContent() {
+        String rCode;
+        String selected = selectedTextProperty().getValue();
+        if (selected == null || "".equals(selected)) {
+            rCode = getText();
+        } else {
+            rCode = selected;
+        }
+        return rCode;
+    }
+
+    @Override
+    public String getAllTextContent() {
+        return getText();
     }
 }

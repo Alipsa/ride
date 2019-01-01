@@ -38,38 +38,24 @@ public class CodeComponent extends BorderPane {
 
         pane = new TabPane();
         setCenter(pane);
-        createAndAddTab("Untitled");
+        addTabAndActivate(createCodeTab("Untitled"));
     }
 
-    private CodeTextArea createAndAddTab(String title) {
-        Tab codeTab = new Tab();
-        codeTab.setText(title);
+    private TextAreaTab createCodeTab(String title) {
+        CodeTab codeTab = new CodeTab(title, console, this);
+        return codeTab;
+    }
 
-        CodeTextArea code = new CodeTextArea();
-        code.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-            if (e.isControlDown() && KeyCode.ENTER.equals(e.getCode())) {
-                String rCode = code.getText(code.getCurrentParagraph()); // current line
-
-                String selected = code.selectedTextProperty().getValue();
-                // if text is selected then go with that instead
-                if (selected != null && !"".equals(selected)) {
-                    rCode = getCodeFromActiveTab();
-                }
-                console.runScript(rCode, getActiveScriptName());
-                //code.displaceCaret(rCode.length() + 1);
-                code.moveTo(code.getCurrentParagraph() + 1, 0);
-            }
-        });
-        VirtualizedScrollPane vPane = new VirtualizedScrollPane<>(code);
-        codeTab.setContent(vPane);
+    private TextAreaTab addTabAndActivate(TextAreaTab codeTab) {
         pane.getTabs().add(codeTab);
         SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
         selectionModel.select(codeTab);
-        return code;
+        return codeTab;
     }
 
+
     private void handleRunAction(ActionEvent event) {
-        String rCode = getCodeFromActiveTab();
+        String rCode = getTextFromActiveTab();
         log.debug("Running r code {}", rCode);
         console.runScript(rCode, getActiveScriptName());
     }
@@ -79,49 +65,66 @@ public class CodeComponent extends BorderPane {
 
     }
 
-    public String getCodeFromActiveTab() {
-        CodeTextArea code = getActiveCodeTextArea();
-        String rCode;
-        String selected = code.selectedTextProperty().getValue();
-        if (selected == null || "".equals(selected)) {
-            rCode = code.getText();
-        } else {
-            rCode = selected;
-        }
-        return rCode;
+    public String getTextFromActiveTab() {
+        TabTextArea ta = getActiveTabTextArea();
+        return ta.getTextContent();
     }
 
-    public CodeTextArea getActiveCodeTextArea() {
-        Tab selected = getActiveTab();
-        VirtualizedScrollPane vPane = (VirtualizedScrollPane) selected.getContent();
-        return (CodeTextArea) vPane.getContent();
+    public TabTextArea getActiveTabTextArea() {
+        TextAreaTab selected = getActiveTab();
+        return selected.getTabTextArea();
     }
 
-    private Tab getActiveTab() {
-        SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
-        return selectionModel.getSelectedItem();
+    private TextAreaTab getActiveTab() {
+        SingleSelectionModel selectionModel = pane.getSelectionModel();
+        return (TextAreaTab)selectionModel.getSelectedItem();
     }
 
-    public CodeTextArea addTab(String title, String content) {
-        CodeTextArea code = createAndAddTab(title);
+    public CodeTextArea addCodeTab(String title, String content) {
+
+        TextAreaTab tab = addTabAndActivate(createCodeTab(title));
+        //CodeTextArea code = (CodeTextArea)((VirtualizedScrollPane)tab.getContent()).getContent();
+        CodeTextArea code = (CodeTextArea)tab.getTabTextArea();
         code.replaceText(0, 0, content);
         return code;
     }
 
-    public void addTab(File file) {
+    public void addCodeTab(File file) {
         List<String> lines;
         try {
             lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
             String content = String.join("\n", lines);
-            CodeTextArea code = addTab(file.getName(), content);
+            CodeTextArea code = addCodeTab(file.getName(), content);
             code.setFile(file);
         } catch (IOException e) {
             ExceptionAlert.showAlert("Failed to read content of file " + file, e);
         }
     }
 
+    public TabTextArea addTxtTab(String title, String content) {
+        TxtTab txtTab = new TxtTab(title, content);
+        addTabAndActivate(txtTab);
+        return txtTab.getTabTextArea();
+    }
+
+    public void addTxtTab(File file) {
+        List<String> lines;
+        try {
+            lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+            String content = String.join("\n", lines);
+            TxtTextArea txtTa = (TxtTextArea)addTxtTab(file.getName(), content);
+            txtTa.setFile(file);
+        } catch (IOException e) {
+            ExceptionAlert.showAlert("Failed to read content of file " + file, e);
+        }
+    }
+
+    public void addTab(File file, TabType type) {
+        //TODO implement me instead of separate methods for each type
+    }
+
     public void fileSaved(File file) {
         getActiveTab().setText(file.getName());
-        getActiveCodeTextArea().setFile(file);
+        getActiveTabTextArea().setFile(file);
     }
 }
