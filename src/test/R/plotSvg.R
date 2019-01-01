@@ -1,8 +1,7 @@
 library(grDevices)
 library(graphics)
 
-sysname <- Sys.info()["sysname"]
-if(sysname == "unix") {
+if(.Platform$OS.type == "unix") {
 	fileName <- "/tmp/svgplot.svg"
 } else {
 	fileName <- "c:/tmp/svgplot.svg"

@@ -145,6 +145,7 @@ public class MainMenu extends MenuBar {
         content.append(session.getClassLoader().getClass().getName());
         content.append("\nWorking dir: ");
         content.append(session.getWorkingDirectory());
+        content.append("\n\n Please execute print(sessionInfo()) for other relevant session info");
         showInfoAlert("Session info", content);
     }
 

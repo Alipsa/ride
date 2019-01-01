@@ -38,8 +38,21 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
         grid.setPadding(new Insets(10, 15, 10, 10));
         getDialogPane().setContent(grid);
 
+        Label pkgLoaderLabel = new Label("Package Loader");
+        grid.add(pkgLoaderLabel, 0,0);
+        pkgLoaderCb = new ComboBox<>();
+        pkgLoaderCb.setConverter(new PackageLoaderClassConverter());
+        pkgLoaderCb.getItems().addAll(ClasspathPackageLoader.class, AetherPackageLoader.class);
+        String defaultPkgLoader = gui.getPrefs().get(PACKAGE_LOADER_PREF, AetherPackageLoader.class.getSimpleName());
+        if (AetherPackageLoader.class.getSimpleName().equals(defaultPkgLoader)) {
+            pkgLoaderCb.getSelectionModel().select(AetherPackageLoader.class);
+        } else {
+            pkgLoaderCb.getSelectionModel().select(ClasspathPackageLoader.class);
+        }
+        grid.add(pkgLoaderCb, 1,0);
+
         Label reposLabel = new Label("Remote Repositories");
-        grid.add(reposLabel,0,0);
+        grid.add(reposLabel,0,1);
 
         reposTable = new TableViewWithVisibleRowCount<>();
         List<Repo> repos = gui.getConsoleComponent().getRemoteRepositories();
@@ -103,20 +116,20 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
         reposTable.setItems(createObservable(repos));
         reposTable.setNumberOfRows(reposTable.getItems().size());
         reposTable.setEditable(true);
-        grid.add(reposTable, 1, 0);
 
-        Label pkgLoaderLabel = new Label("Package Loader");
-        grid.add(pkgLoaderLabel, 0,1);
-        pkgLoaderCb = new ComboBox<>();
-        pkgLoaderCb.setConverter(new PackageLoaderClassConverter());
-        pkgLoaderCb.getItems().addAll(ClasspathPackageLoader.class, AetherPackageLoader.class);
-        String defaultPkgLoader = gui.getPrefs().get(PACKAGE_LOADER_PREF, AetherPackageLoader.class.getSimpleName());
-        if (AetherPackageLoader.class.getSimpleName().equals(defaultPkgLoader)) {
-            pkgLoaderCb.getSelectionModel().select(AetherPackageLoader.class);
-        } else {
-            pkgLoaderCb.getSelectionModel().select(ClasspathPackageLoader.class);
+        if (ClasspathPackageLoader.class.equals(pkgLoaderCb.getValue())) {
+            reposTable.setDisable(true);
         }
-        grid.add(pkgLoaderCb, 1,1);
+
+        grid.add(reposTable, 1, 1);
+
+        pkgLoaderCb.valueProperty().addListener(e -> {
+            if (ClasspathPackageLoader.class.equals(pkgLoaderCb.getValue())) {
+                reposTable.setDisable(true);
+            } else {
+                reposTable.setDisable(false);
+            }
+        });
 
         getDialogPane().setPrefSize(800, 400);
         getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
