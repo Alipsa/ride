@@ -1,10 +1,11 @@
 library(grDevices)
 library(graphics)
 
-if(.Platform$OS.type == "unix") {
-	fileName <- "/tmp/svgplot.svg"
-} else {
+sysname <- tolower(Sys.info()["sysname"])
+if(startsWith(sysname, "windows")) {
 	fileName <- "c:/tmp/svgplot.svg"
+} else {
+	fileName <- "/tmp/svgplot.svg"
 }
 
 # First plot
