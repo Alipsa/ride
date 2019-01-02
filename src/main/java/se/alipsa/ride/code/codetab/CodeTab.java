@@ -9,6 +9,7 @@ import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.TabTextArea;
 import se.alipsa.ride.code.TextAreaTab;
@@ -25,8 +26,11 @@ public class CodeTab extends TextAreaTab {
 
     private Logger log = LoggerFactory.getLogger(CodeTab.class);
 
-    public CodeTab(String title, ConsoleComponent console, CodeComponent codeComponent) {
-        this.console = console;
+    public CodeTab(String title, Ride gui) {
+        super(gui);
+        this.console = gui.getConsoleComponent();
+        CodeComponent codeComponent = gui.getCodeComponent();
+
         setTitle(title);
 
         BorderPane pane = new BorderPane();
@@ -38,7 +42,7 @@ public class CodeTab extends TextAreaTab {
         runButton.setOnAction(this::handleRunAction);
         buttonPane.getChildren().add(runButton);
 
-        codeTextArea = new CodeTextArea();
+        codeTextArea = new CodeTextArea(this);
         codeTextArea.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             if (e.isControlDown() && KeyCode.ENTER.equals(e.getCode())) {
                 String rCode = codeTextArea.getText(codeTextArea.getCurrentParagraph()); // current line
@@ -85,8 +89,8 @@ public class CodeTab extends TextAreaTab {
     }
 
     @Override
-    public void replaceText(int start, int end, String content) {
-        codeTextArea.replaceText(start, end, content);
+    public void replaceContentText(int start, int end, String content) {
+        codeTextArea.replaceContentText(start, end, content);
     }
 
     @Override

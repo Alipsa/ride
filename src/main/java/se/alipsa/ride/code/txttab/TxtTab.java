@@ -1,5 +1,6 @@
 package se.alipsa.ride.code.txttab;
 
+import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TabTextArea;
 import se.alipsa.ride.code.TextAreaTab;
 
@@ -9,15 +10,17 @@ public class TxtTab extends TextAreaTab {
 
     TxtTextArea txtTextArea;
 
-    public TxtTab(String title) {
+    public TxtTab(String title, Ride gui) {
+        super(gui);
         setText(title);
-        txtTextArea = new TxtTextArea();
+        txtTextArea = new TxtTextArea(this);
         setContent(txtTextArea);
     }
 
-    public TxtTab(String title, String content) {
+    public TxtTab(String title, String content, Ride gui) {
+        super(gui);
         setText(title);
-        txtTextArea = new TxtTextArea();
+        txtTextArea = new TxtTextArea(this);
         setContent(txtTextArea);
         txtTextArea.replaceText(0, 0, content);
     }
@@ -43,8 +46,8 @@ public class TxtTab extends TextAreaTab {
     }
 
     @Override
-    public void replaceText(int start, int end, String content) {
-        txtTextArea.replaceText(start, end, content);
+    public void replaceContentText(int start, int end, String content) {
+        txtTextArea.replaceContentText(start, end, content);
     }
 
     @Override
@@ -56,4 +59,5 @@ public class TxtTab extends TextAreaTab {
     public void setTitle(String title) {
         setText(title);
     }
+
 }

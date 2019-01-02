@@ -1,6 +1,7 @@
 package se.alipsa.ride.code.xmltab;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
 
 import java.io.File;
@@ -9,9 +10,10 @@ public class XmlTab extends TextAreaTab {
 
   XmlTextArea xmlTextArea;
 
-  public XmlTab(String title) {
+  public XmlTab(String title, Ride gui) {
+    super(gui);
     setText(title);
-    xmlTextArea = new XmlTextArea();
+    xmlTextArea = new XmlTextArea(this);
     VirtualizedScrollPane pane = new VirtualizedScrollPane<>(xmlTextArea);
     setContent(pane);
   }
@@ -37,8 +39,8 @@ public class XmlTab extends TextAreaTab {
   }
 
   @Override
-  public void replaceText(int start, int end, String content) {
-    xmlTextArea.replaceText(start, end, content);
+  public void replaceContentText(int start, int end, String content) {
+    xmlTextArea.replaceContentText(start, end, content);
   }
 
   @Override

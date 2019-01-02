@@ -3,6 +3,7 @@ package se.alipsa.ride.code.javatab;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
 
 import java.io.File;
@@ -13,9 +14,10 @@ public class JavaTab extends TextAreaTab {
 
   private Logger log = LoggerFactory.getLogger(JavaTab.class);
 
-  public JavaTab(String title) {
+  public JavaTab(String title, Ride gui) {
+    super(gui);
     setTitle(title);
-    javaTextArea = new JavaTextArea();
+    javaTextArea = new JavaTextArea(this);
     VirtualizedScrollPane<JavaTextArea> pane = new VirtualizedScrollPane<>(javaTextArea);
     setContent(pane);
   }
@@ -41,7 +43,7 @@ public class JavaTab extends TextAreaTab {
   }
 
   @Override
-  public void replaceText(int start, int end, String content) {
-    javaTextArea.replaceText(start, end, content);
+  public void replaceContentText(int start, int end, String content) {
+    javaTextArea.replaceContentText(start, end, content);
   }
 }

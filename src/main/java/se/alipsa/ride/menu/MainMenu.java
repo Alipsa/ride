@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TabTextArea;
+import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
@@ -180,7 +181,12 @@ public class MainMenu extends MenuBar {
     }
 
     private void saveContent(ActionEvent event) {
-        TabTextArea codeArea = gui.getCodeComponent().getActiveTab();
+        TextAreaTab codeArea = gui.getCodeComponent().getActiveTab();
+        saveContent(codeArea);
+
+    }
+
+    public void saveContent(TextAreaTab codeArea) {
         File file = codeArea.getFile();
         if (file == null)  {
             FileChooser fileChooser = new FileChooser();
@@ -191,7 +197,6 @@ public class MainMenu extends MenuBar {
                 return;
             }
         }
-
         try {
             boolean fileExisted = file.exists();
             FileUtils.writeToFile(file, codeArea.getAllTextContent());
@@ -200,9 +205,9 @@ public class MainMenu extends MenuBar {
                 gui.getInoutComponent().fileAdded(file);
             }
             gui.getCodeComponent().fileSaved(file);
+            codeArea.contentSaved();
         } catch (FileNotFoundException e) {
             ExceptionAlert.showAlert("Failed to save file " + file, e);
         }
-
     }
 }

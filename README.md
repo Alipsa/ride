@@ -71,7 +71,7 @@ For released versions there is another shell script (ride.sh or ride.cmd) that s
 The components that actually does something ;) i.e. executes R code. It is not included in the fat jar and 
 dependecies are scoped as provided. This enables us to run Ride with any version of Renjin (0.9.2716 or later)
 
-Copyright © 2010-2018 BeDataDriven Groep B.V. and contributors under GNU General Public License v2.0
+Copyright © 2010-2019 BeDataDriven Groep B.V. and contributors under GNU General Public License v2.0
 
 ### org.fxmisc.richtext:richtextfx
 Used to color R code.

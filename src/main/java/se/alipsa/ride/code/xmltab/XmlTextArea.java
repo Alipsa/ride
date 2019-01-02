@@ -1,5 +1,6 @@
 package se.alipsa.ride.code.xmltab;
 
+import javafx.beans.InvalidationListener;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -7,6 +8,7 @@ import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.TabTextArea;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -29,12 +31,34 @@ public class XmlTextArea extends CodeArea implements TabTextArea {
     private static final int GROUP_EQUAL_SYMBOL = 2;
     private static final int GROUP_ATTRIBUTE_VALUE = 3;
 
-    public XmlTextArea() {
+    private XmlTab parent;
+
+    private boolean contentChanged = false;
+
+    private boolean blockChange = false;
+
+    public XmlTextArea(XmlTab parent) {
+        this.parent = parent;
         setParagraphGraphicFactory(LineNumberFactory.get(this));
 
         textProperty().addListener((obs, oldText, newText) -> {
             setStyleSpans(0, computeHighlighting(newText));
         });
+
+        richChanges()
+            // ignore changes that do nothing (i.g. syntax highlighting changes)
+            .filter(ch -> !ch.isIdentity())
+            // only run next part if no new change is emitted in 500 ms
+            .successionEnds(Duration.ofMillis(500))
+            // now save the text
+            .subscribe(ignore -> contentChanged());
+    }
+
+    private void contentChanged() {
+        if (contentChanged == false && !blockChange) {
+            parent.contentChanged();
+            contentChanged = true;
+        }
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -102,4 +126,10 @@ public class XmlTextArea extends CodeArea implements TabTextArea {
         return null;
     }
 
+    @Override
+    public void replaceContentText(int start, int end, String text) {
+        blockChange = true;
+        replaceText(start, end, text);
+        blockChange = false;
+    }
 }

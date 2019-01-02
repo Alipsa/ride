@@ -1,5 +1,6 @@
 package se.alipsa.ride.code.javatab;
 
+import javafx.beans.InvalidationListener;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -16,6 +17,11 @@ import java.util.regex.Pattern;
 public class JavaTextArea extends CodeArea implements TabTextArea {
 
   private File file;
+
+  boolean contentChanged = false;
+  private boolean blockChange = false;
+
+  private JavaTab parent;
 
   private static final String[] KEYWORDS = new String[] {
       "abstract", "assert", "boolean", "break", "byte",
@@ -48,11 +54,27 @@ public class JavaTextArea extends CodeArea implements TabTextArea {
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
 
-  public JavaTextArea() {
+  public JavaTextArea(JavaTab parent) {
+    this.parent = parent;
     setParagraphGraphicFactory(LineNumberFactory.get(this));
     multiPlainChanges()
         .successionEnds(Duration.ofMillis(400))
         .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
+
+    richChanges()
+        // ignore changes that do nothing (i.g. syntax highlighting changes)
+        .filter(ch -> !ch.isIdentity())
+        // only run next part if no new change is emitted in 500 ms
+        .successionEnds(Duration.ofMillis(500))
+        // now save the text
+        .subscribe(ignore -> contentChanged());
+  }
+
+  private void contentChanged() {
+    if (contentChanged == false && !blockChange) {
+      parent.contentChanged();
+      contentChanged = true;
+    }
   }
 
   private static StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -103,5 +125,12 @@ public class JavaTextArea extends CodeArea implements TabTextArea {
   @Override
   public String getAllTextContent() {
     return getText();
+  }
+
+  @Override
+  public void replaceContentText(int start, int end, String text) {
+    blockChange = true;
+    replaceText(start, end, text);
+    blockChange = false;
   }
 }

@@ -22,10 +22,12 @@ public class CodeComponent extends BorderPane {
 
     private ConsoleComponent console;
     private TabPane pane;
+    private Ride gui;
 
     private Logger log = LoggerFactory.getLogger(CodeComponent.class);
 
     public CodeComponent(Ride gui) {
+        this.gui = gui;
         this.console = gui.getConsoleComponent();
 
         pane = new TabPane();
@@ -38,7 +40,7 @@ public class CodeComponent extends BorderPane {
     }
 
     private TextAreaTab createCodeTab(String title) {
-        CodeTab codeTab = new CodeTab(title, console, this);
+        CodeTab codeTab = new CodeTab(title, gui);
         return codeTab;
     }
 
@@ -65,67 +67,26 @@ public class CodeComponent extends BorderPane {
         return (TextAreaTab)selectionModel.getSelectedItem();
     }
 
-    /*
-    public TabTextArea addCodeTab(String title, String content) {
-
-        TabTextArea tab = addTabAndActivate(createCodeTab(title));
-        tab.replaceText(0, 0, content);
-        return tab;
-    } */
-
-    /*
-    public void addCodeTab(File file) {
-        List<String> lines;
-        try {
-            lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
-            String content = String.join("\n", lines);
-            TabTextArea tab = addCodeTab(file.getName(), content);
-            tab.setFile(file);
-        } catch (IOException e) {
-            ExceptionAlert.showAlert("Failed to read content of file " + file, e);
-        }
-    } */
-
-    /*
-    public TabTextArea addTxtTab(String title, String content) {
-        TxtTab txtTab = new TxtTab(title, content);
-        addTabAndActivate(txtTab);
-        return txtTab;
-    } */
-
-    /*
-    public void addTxtTab(File file) {
-        List<String> lines;
-        try {
-            lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
-            String content = String.join("\n", lines);
-            TxtTextArea txtTa = (TxtTextArea)addTxtTab(file.getName(), content);
-            txtTa.setFile(file);
-        } catch (IOException e) {
-            ExceptionAlert.showAlert("Failed to read content of file " + file, e);
-        }
-    } */
-
     public void addTab(File file, TabType type) {
         List<String> lines;
         TextAreaTab tab;
         String title = file.getName();
         switch (type) {
-            case R: tab = new CodeTab(title, console, this);
+            case R: tab = new CodeTab(title, gui);
             break;
-            case TXT: tab = new TxtTab(title);
+            case TXT: tab = new TxtTab(title, gui);
             break;
-            case XML: tab = new XmlTab(title);
+            case XML: tab = new XmlTab(title, gui);
             break;
-            case JAVA: tab = new JavaTab(title);
+            case JAVA: tab = new JavaTab(title, gui);
             break;
-            default: tab = new TxtTab(title);
+            default: tab = new TxtTab(title, gui);
         }
         try {
             lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
             String content = String.join("\n", lines);
             tab.setFile(file);
-            tab.replaceText(0,0,content);
+            tab.replaceContentText(0,0, content);
         } catch (IOException e) {
             ExceptionAlert.showAlert("Failed to read content of file " + file, e);
         }

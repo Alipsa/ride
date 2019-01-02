@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -17,6 +19,8 @@ import se.alipsa.ride.code.TabTextArea;
 public class CodeTextArea extends CodeArea implements TabTextArea {
 
     private File file;
+
+    private boolean contentChanged = false;
 
     private static final String[] KEYWORDS = new String[] {
             "if", "else", "repeat", "while", "function",
@@ -42,8 +46,12 @@ public class CodeTextArea extends CodeArea implements TabTextArea {
                     + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
     );
 
+    CodeTab parent;
 
-    public CodeTextArea() {
+    private boolean blockChange = false;
+
+    public CodeTextArea(CodeTab parent) {
+        this.parent = parent;
         setParagraphGraphicFactory(LineNumberFactory.get(this));
         // recompute the syntax highlighting 400 ms after user stops editing area
 
@@ -58,8 +66,22 @@ public class CodeTextArea extends CodeArea implements TabTextArea {
         // run the following code block when previous stream emits an event
         .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
 
+        richChanges()
+            // ignore changes that do nothing (i.g. syntax highlighting changes)
+            .filter(ch -> !ch.isIdentity())
+            // only run next part if no new change is emitted in 500 ms
+            .successionEnds(Duration.ofMillis(500))
+            // now save the text
+            .subscribe(ignore -> contentChanged());
     }
 
+
+    private void contentChanged() {
+        if (contentChanged == false && !blockChange) {
+            parent.contentChanged();
+            contentChanged = true;
+        }
+    }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);
@@ -100,6 +122,13 @@ public class CodeTextArea extends CodeArea implements TabTextArea {
             rCode = selected;
         }
         return rCode;
+    }
+
+    @Override
+    public void replaceContentText(int start, int end, String text) {
+        blockChange = true;
+        replaceText(start, end, text);
+        blockChange = false;
     }
 
     @Override
