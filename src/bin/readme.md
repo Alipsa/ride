@@ -18,19 +18,23 @@ or on windows
 
 # Version Descriptions
 
+### 1.0 beta 4
+- Add support for text, xml and java files
+- Add context menu to file tree
+
 ### 1.0 beta3
-Add support for running on Windows.
-Add support for switching package loaders
-Various minor improvements.
+- Add support for running on Windows.
+- Add support for switching package loaders
+- Various minor improvements.
 
 ### 1.0 beta2
-Will now honor ctrl + enter to execute current row or selection
+- Will now honor ctrl + enter to execute current row or selection
 
-Run button will now execute selected text (if any is selected) or execute the whole script.
+- Run button will now execute selected text (if any is selected) or execute the whole script.
 
-Fixed setting working dir properly when changing dirs so that scripts can reference files relatively.
+- Fixed setting working dir properly when changing dirs so that scripts can reference files relatively.
 
-Tested with Renjin 0.9.2717
+- Tested with Renjin 0.9.2717
 
 ### 1.0 beta
-Initial release
+- Initial release

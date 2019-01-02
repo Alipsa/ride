@@ -13,7 +13,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <release.tag>1.0-beta3</release.tag>
+        <release.tag>1.0-beta4</release.tag>
     </properties>
 
     <dependencies>
@@ -83,13 +83,7 @@
             <version>2.9.8</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Git integration Core Library
-        see https://wiki.eclipse.org/JGit/User_Guide
-        https://download.eclipse.org/jgit/site/5.2.0.201812061821-r/apidocs/index.html
-        http://www.doublecloud.org/2013/01/how-to-read-git-repository-using-java-apis/
-        https://git-scm.com/book/uz/v2/Appendix-B%3A-Embedding-Git-in-your-Applications-JGit
-        https://github.com/centic9/jgit-cookbook
-        -->
+        <!-- Git integration Core Library -->
         <!--dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
