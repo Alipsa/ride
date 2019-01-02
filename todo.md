@@ -9,10 +9,11 @@
 ### Implement History tab
 
 ### add terminal tab to ConsoleComponent
-Maybe Beanshell since Jshell is only available for Java 9+
-- https://github.com/beanshell/beanshell
-- https://github.com/beanshell/beanshell/wiki
+- Maybe Beanshell since Jshell is only available for Java 9+
+    - https://github.com/beanshell/beanshell
+    - https://github.com/beanshell/beanshell/wiki
 
+````
     <dependencies>
        <dependency>
          <groupId>org.apache-extras.beanshell</groupId>
@@ -20,6 +21,13 @@ Maybe Beanshell since Jshell is only available for Java 9+
          <version>2.0b6</version>
        </dependency>
     </dependencies>
+````    
+
+- An alternative would be Jython 
+
+- ...or some kind of bash
+    - either a homebrewed bridge to bash
+    - or pick up on https://github.com/crashub/bash    
 ### Add import dataSet in File meny
 Should generate code at current cursor
 
