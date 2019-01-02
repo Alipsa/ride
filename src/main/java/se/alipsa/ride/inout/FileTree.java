@@ -1,20 +1,24 @@
 package se.alipsa.ride.inout;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
+import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
 import java.util.Comparator;
+import java.util.Optional;
 
 public class FileTree extends TreeView {
 
@@ -60,6 +64,83 @@ public class FileTree extends TreeView {
         });
 
         setOnMouseClicked(this::handleClick);
+
+        setContextMenu(createContextMenu());
+    }
+
+    private ContextMenu createContextMenu() {
+        ContextMenu menu = new ContextMenu();
+        MenuItem createDirMI = new MenuItem("Create dir");
+        createDirMI.setOnAction(e -> {
+            TreeItem<File> currentNode = (TreeItem) getSelectionModel().getSelectedItem();
+            File currentFile = currentNode.getValue();
+            File newDir = promptForFile(currentFile, "Create and add dir", "Enter the dir name:");
+            if (newDir == null) {
+                return;
+            }
+            try {
+                Files.createDirectory(newDir.toPath());
+                addTreeNode(newDir);
+            } catch (IOException e1) {
+                ExceptionAlert.showAlert("Failed to create directory", e1);
+            }
+        });
+
+        MenuItem createFileMI = new MenuItem("Create file");
+        createFileMI.setOnAction(e -> {
+            TreeItem<File> currentNode = (TreeItem) getSelectionModel().getSelectedItem();
+            File currentFile = currentNode.getValue();
+            File newFile = promptForFile(currentFile, "Create and add file", "Enter the file name:");
+            if (newFile == null) {
+                return;
+            }
+            try {
+                Files.createFile(newFile.toPath());
+                addTreeNode(newFile);
+            } catch (IOException e1) {
+                ExceptionAlert.showAlert("Failed to create file", e1);
+            }
+        });
+
+        MenuItem deleteMI = new MenuItem("Delete");
+        deleteMI.setOnAction(e -> {
+            TreeItem<File> currentNode = (TreeItem) getSelectionModel().getSelectedItem();
+            File currentFile = currentNode.getValue();
+            String fileType = "file";
+            try {
+                if (currentFile.isDirectory()) {
+                    fileType = "directory";
+                }
+                Files.delete(currentFile.toPath());
+                currentNode.getParent().getChildren().remove(currentNode);
+            } catch (DirectoryNotEmptyException ex) {
+                ExceptionAlert.showAlert("Directory is not empty, cannot delete ", ex);
+            }
+            catch (IOException ex) {
+                ExceptionAlert.showAlert("Failed to delete " + fileType, ex);
+            }
+        });
+
+        menu.getItems().addAll(createDirMI, createFileMI, deleteMI);
+        return menu;
+    }
+
+    private File promptForFile(File currentFile, String title, String content) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle(title);
+        dialog.setContentText(content);
+        Optional<String> result = dialog.showAndWait();
+        if (!result.isPresent()) {
+            return null;
+        }
+        String file = result.get();
+        File newFile;
+        if (currentFile.isDirectory()) {
+            newFile = new File(currentFile, file);
+        } else {
+            newFile = new File(currentFile.getParentFile(), file);
+        }
+        return newFile;
     }
 
 
@@ -103,12 +184,20 @@ public class FileTree extends TreeView {
             if (file.isFile()) {
                 String fileNameUpper = file.getName().toUpperCase();
                 if (fileNameUpper.endsWith(".R") || fileNameUpper.endsWith(".S")) {
-                    codeComponent.addCodeTab(file);
+                    codeComponent.addTab(file, TabType.R);
                 } else if (fileNameUpper.endsWith(".TXT") || fileNameUpper.endsWith(".CSV")
-                        || fileNameUpper.endsWith(".MD") || fileNameUpper.endsWith("RMD")
-                        || fileNameUpper.equals("NAMESPACE")) {
-                    codeComponent.addTxtTab(file);
-                } else {
+                    || fileNameUpper.endsWith(".MD") || fileNameUpper.endsWith(".RMD")
+                    || fileNameUpper.endsWith(".SQL") || fileNameUpper.endsWith(".SAS")
+                    || fileNameUpper.endsWith(".SPS")
+                    || fileNameUpper.equals("NAMESPACE")) {
+                    codeComponent.addTab(file, TabType.TXT);
+                } else if (fileNameUpper.endsWith(".XML") || fileNameUpper.endsWith(".XSD")
+                    || fileNameUpper.endsWith(".WSDL") || fileNameUpper.endsWith(".SPJ")) {
+                    codeComponent.addTab(file, TabType.XML);
+                } else if (fileNameUpper.endsWith(".JAVA")) {
+                    codeComponent.addTab(file, TabType.JAVA);
+                }
+                else {
                     Alerts.info("Unknown file type",
                             "Unknown file type, not sure what to do with " + file.getName());
                 }
@@ -116,14 +205,21 @@ public class FileTree extends TreeView {
         }
     }
 
-    public void addFile(File file) {
+    public void addTreeNode(File file) {
         TreeItem<File> item = findTreeViewItem(this.getRoot(), file.getParentFile());
-
         TreeItem<File> fileItem = new TreeItem<>(file);
-        fileItem.setGraphic(new ImageView(fileUrl));
-        item.getChildren().add(fileItem);
-        item.getChildren().sort(treeItemComparator);
-        item.setExpanded(true);
+        addTreeNode(item, fileItem);
+    }
+
+    public void addTreeNode(TreeItem<File> dirItem, TreeItem<File> fileItem) {
+        if (fileItem.getValue().isDirectory()) {
+            fileItem.setGraphic(new ImageView(folderUrl));
+        } else {
+            fileItem.setGraphic(new ImageView(fileUrl));
+        }
+        dirItem.getChildren().add(fileItem);
+        dirItem.getChildren().sort(treeItemComparator);
+        dirItem.setExpanded(true);
     }
 
     public void refresh(File dir) {

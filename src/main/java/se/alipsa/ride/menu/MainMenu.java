@@ -7,7 +7,6 @@ import org.renjin.eval.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.TabTextArea;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
@@ -177,11 +176,11 @@ public class MainMenu extends MenuBar {
     }
 
     private void nRScript(ActionEvent actionEvent) {
-        gui.getCodeComponent().addCodeTab("Unknown", "");
+        gui.getCodeComponent().addCodeTab();
     }
 
     private void saveContent(ActionEvent event) {
-        TabTextArea codeArea = gui.getCodeComponent().getActiveTabTextArea();
+        TabTextArea codeArea = gui.getCodeComponent().getActiveTab();
         File file = codeArea.getFile();
         if (file == null)  {
             FileChooser fileChooser = new FileChooser();

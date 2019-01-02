@@ -1,4 +1,4 @@
-package se.alipsa.ride.code;
+package se.alipsa.ride.code.codetab;
 
 import java.io.File;
 import java.time.Duration;
@@ -12,10 +12,11 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import se.alipsa.ride.code.TabTextArea;
 
 public class CodeTextArea extends CodeArea implements TabTextArea {
 
-    File file;
+    private File file;
 
     private static final String[] KEYWORDS = new String[] {
             "if", "else", "repeat", "while", "function",

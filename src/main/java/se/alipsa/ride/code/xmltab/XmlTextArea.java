@@ -1,9 +1,10 @@
-package se.alipsa.ride.code;
+package se.alipsa.ride.code.xmltab;
 
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import se.alipsa.ride.code.TabTextArea;
 
 import java.io.File;
 import java.util.Collection;
@@ -100,6 +101,5 @@ public class XmlTextArea extends CodeArea implements TabTextArea {
     public String getAllTextContent() {
         return null;
     }
-
 
 }

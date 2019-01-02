@@ -1,10 +1,11 @@
-package se.alipsa.ride.code;
+package se.alipsa.ride.code.txttab;
 
 import javafx.scene.control.TextArea;
+import se.alipsa.ride.code.TabTextArea;
 
 import java.io.File;
 
-public class TxtTextArea extends TextArea implements TabTextArea  {
+public class TxtTextArea extends TextArea implements TabTextArea {
 
     private File file;
 

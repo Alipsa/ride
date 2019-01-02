@@ -7,14 +7,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
-import org.renjin.primitives.packaging.DllInfo;
 import org.renjin.sexp.StringVector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.inout.plot.PlotCanvas;
 
 import java.io.File;
 
@@ -94,14 +91,14 @@ public class InoutComponent extends TabPane {
     }
 
     public void fileAdded(File file) {
-        fileTree.addFile(file);
+        fileTree.addTreeNode(file);
     }
 
     public File getRootDir() {
         return fileTree.getRootDir();
     }
 
-    /** display an image in the Plot tab */
+    /** display an image in the Plot txttab */
     public void display(Node node, String... title) {
         Tab tab = new Tab();
         imageTabpane.getTabs().add(tab);
@@ -116,7 +113,7 @@ public class InoutComponent extends TabPane {
         imageTabsSelectionModel.select(tab);
     }
 
-    /** display an image in the Plot tab */
+    /** display an image in the Plot txttab */
     public void display(Image img, String... title) {
         ImageView node = new ImageView(img);
         display(node, title);

@@ -57,7 +57,8 @@ public class Ride extends Application {
     root.setTop(mainMenu);
 
     scene = new Scene(root, 1366, 768);
-    scene.getStylesheets().add(FileUtils.getResourceUrl("R-keywords.css").toExternalForm());
+    addStyleSheet("R-keywords.css");
+    addStyleSheet("XML-keywords.css");
 
     SplitPane leftSplitPane = new SplitPane();
     leftSplitPane.setOrientation(Orientation.VERTICAL);
@@ -95,6 +96,10 @@ public class Ride extends Application {
     primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
     primaryStage.setScene(scene);
     primaryStage.show();
+  }
+
+  public void addStyleSheet(String styleSheetPath) {
+    scene.getStylesheets().add(FileUtils.getResourceUrl(styleSheetPath).toExternalForm());
   }
 
   public void endProgram() {
