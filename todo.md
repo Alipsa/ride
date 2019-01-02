@@ -1,17 +1,17 @@
 # TODO
 ## Version 1.0
 ### Track need to save
-mark code tab with * in the title as soon as editing started
-unmark as soon as code is saved
-tabs that have changed should prompt a save dialog when closing
+- mark code tab with * in the title as soon as editing started
+- unmark as soon as code is saved
+- tabs that have changed should prompt a save dialog when closing
 
 ## version 1.1
 ### Implement History tab
 
 ### add terminal tab to ConsoleComponent
 Maybe Beanshell since Jshell is only available for Java 9+
-https://github.com/beanshell/beanshell
-https://github.com/beanshell/beanshell/wiki
+- https://github.com/beanshell/beanshell
+- https://github.com/beanshell/beanshell/wiki
 
     <dependencies>
        <dependency>
@@ -36,6 +36,6 @@ use jGit see
 - https://github.com/centic9/jgit-cookbook
         
 ### Enable offline mode
-To allow explicit setting Aether to offline
-The maven Settings class created by AetherFactory must be publicly exposed,
+- To allow explicit setting Aether to offline
+- The maven Settings class created by AetherFactory must be publicly exposed,
 ideally by AetherPackageLoader  
