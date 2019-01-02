@@ -61,13 +61,7 @@ public class JavaTextArea extends CodeArea implements TabTextArea {
         .successionEnds(Duration.ofMillis(400))
         .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
 
-    richChanges()
-        // ignore changes that do nothing (i.g. syntax highlighting changes)
-        .filter(ch -> !ch.isIdentity())
-        // only run next part if no new change is emitted in 500 ms
-        .successionEnds(Duration.ofMillis(500))
-        // now save the text
-        .subscribe(ignore -> contentChanged());
+    plainTextChanges().subscribe(ptc -> contentChanged());
   }
 
   private void contentChanged() {

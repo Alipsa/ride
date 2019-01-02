@@ -1,6 +1,7 @@
 package se.alipsa.ride.code;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Tab;
 import se.alipsa.ride.Ride;
@@ -15,12 +16,16 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
     public TextAreaTab(Ride gui) {
         super.setOnCloseRequest( event -> {
             if(isChanged()) {
+                ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+                ButtonType no = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.getButtonTypes().clear();
+                alert.getButtonTypes().addAll(yes, no);
                 alert.setTitle("File is not saved");
                 alert.setHeaderText("Save file " + getTitle());
 
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK){
+                if (result.get() == yes){
                     gui.getMainMenu().saveContent(this);
                 } else {
                     // ... user chose CANCEL or closed the dialog

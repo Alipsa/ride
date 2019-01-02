@@ -29,7 +29,6 @@ public class CodeTab extends TextAreaTab {
     public CodeTab(String title, Ride gui) {
         super(gui);
         this.console = gui.getConsoleComponent();
-        CodeComponent codeComponent = gui.getCodeComponent();
 
         setTitle(title);
 
@@ -45,6 +44,7 @@ public class CodeTab extends TextAreaTab {
         codeTextArea = new CodeTextArea(this);
         codeTextArea.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             if (e.isControlDown() && KeyCode.ENTER.equals(e.getCode())) {
+                CodeComponent codeComponent = gui.getCodeComponent();
                 String rCode = codeTextArea.getText(codeTextArea.getCurrentParagraph()); // current line
 
                 String selected = codeTextArea.selectedTextProperty().getValue();

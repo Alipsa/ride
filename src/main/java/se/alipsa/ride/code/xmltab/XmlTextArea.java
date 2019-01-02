@@ -45,13 +45,7 @@ public class XmlTextArea extends CodeArea implements TabTextArea {
             setStyleSpans(0, computeHighlighting(newText));
         });
 
-        richChanges()
-            // ignore changes that do nothing (i.g. syntax highlighting changes)
-            .filter(ch -> !ch.isIdentity())
-            // only run next part if no new change is emitted in 500 ms
-            .successionEnds(Duration.ofMillis(500))
-            // now save the text
-            .subscribe(ignore -> contentChanged());
+        plainTextChanges().subscribe(ptc -> contentChanged());
     }
 
     private void contentChanged() {

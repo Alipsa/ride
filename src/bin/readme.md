@@ -20,7 +20,8 @@ or on windows
 
 ### 1.0 beta 4
 - Add support for text, xml and java files
-- Add context menu to file tree
+- Add context menu to file tree (add and remove dir/file)
+- Track if files are modified and prompts to save when closing if unsaved
 
 ### 1.0 beta3
 - Add support for running on Windows.

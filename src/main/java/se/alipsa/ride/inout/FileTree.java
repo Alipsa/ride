@@ -115,8 +115,7 @@ public class FileTree extends TreeView {
                 currentNode.getParent().getChildren().remove(currentNode);
             } catch (DirectoryNotEmptyException ex) {
                 ExceptionAlert.showAlert("Directory is not empty, cannot delete ", ex);
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
                 ExceptionAlert.showAlert("Failed to delete " + fileType, ex);
             }
         });
@@ -180,28 +179,43 @@ public class FileTree extends TreeView {
         if (event.getClickCount() == 2) {
             TreeItem<File> item = (TreeItem) getSelectionModel().getSelectedItem();
             File file = item.getValue();
+            String type = guessContentType(file);
 
             if (file.isFile()) {
                 String fileNameUpper = file.getName().toUpperCase();
                 if (fileNameUpper.endsWith(".R") || fileNameUpper.endsWith(".S")) {
                     codeComponent.addTab(file, TabType.R);
-                } else if (fileNameUpper.endsWith(".TXT") || fileNameUpper.endsWith(".CSV")
-                    || fileNameUpper.endsWith(".MD") || fileNameUpper.endsWith(".RMD")
-                    || fileNameUpper.endsWith(".SQL") || fileNameUpper.endsWith(".SAS")
-                    || fileNameUpper.endsWith(".SPS")
-                    || fileNameUpper.equals("NAMESPACE")) {
-                    codeComponent.addTab(file, TabType.TXT);
-                } else if (fileNameUpper.endsWith(".XML") || fileNameUpper.endsWith(".XSD")
-                    || fileNameUpper.endsWith(".WSDL") || fileNameUpper.endsWith(".SPJ")) {
+                } else if (type.equals("application/xml") || type.equals("application/xslt+xml")
+                        // in case an xml declaration was omitted:
+                        || fileNameUpper.endsWith(".XML")) {
                     codeComponent.addTab(file, TabType.XML);
                 } else if (fileNameUpper.endsWith(".JAVA")) {
                     codeComponent.addTab(file, TabType.JAVA);
-                }
-                else {
+                } else if (type.equals("application/x-shellscript") || type.equals("application/sql")
+                        || type.startsWith("text")) {
+                    codeComponent.addTab(file, TabType.TXT);
+                } else {
                     Alerts.info("Unknown file type",
                             "Unknown file type, not sure what to do with " + file.getName());
                 }
             }
+        }
+    }
+
+    private String guessContentType(File file) {
+        String unknown = "unknown";
+        String type;
+        try {
+            type = Files.probeContentType(file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return unknown;
+        }
+        if (type != null) {
+            log.info("File ContentType for {} seems to be {}", file.getName(), type);
+            return type;
+        } else {
+            return unknown;
         }
     }
 
