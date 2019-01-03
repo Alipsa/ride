@@ -1,9 +1,24 @@
-# TODO
+# Todo / Roadmap
 
 ## version 1.1
 ### Implement History tab
 ### implement edit menu
 undo and find/replace seems most pertinent
+
+### Code menu improvements
+Comment/Uncomment lines
+Format code
+
+### add Rmd support
+
+### add Roxygen support
+
+### Tools -> Options menu
+Make it possible to customize tab as \t or number of spaces
+
+### Tools -> Generate menu
+Create Maven pom (not in Rstudio). Create a Maven pom stub with dependencies for 
+Renjin + whatever is needed for all library() commands to work.
 
 ### add terminal tab to ConsoleComponent
 - Maybe Beanshell since Jshell is only available for Java 9+
@@ -25,6 +40,7 @@ undo and find/replace seems most pertinent
 - ...or some kind of bash
     - either a homebrewed bridge to bash
     - or pick up on https://github.com/crashub/bash    
+
 ### Add import dataSet in File meny
 Should generate code at current cursor
 

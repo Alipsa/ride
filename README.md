@@ -95,3 +95,7 @@ Copyright Fasterxml under Apache 2.0 license.
 ### org.apache.tika:tika-core
 Used to detect file types as Files.probeContentType is inconsistent over different OS's
 Apache 2.0 license.
+
+# Contributing
+If you are interested in helping out, reporting issues, creating tests or implementing new features
+are all warmly welcome. See also [todo](todo.md) for roadmap.
