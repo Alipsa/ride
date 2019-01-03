@@ -1,12 +1,9 @@
 # TODO
-## Version 1.0
-### Track need to save
-- mark code tab with * in the title as soon as editing started
-- unmark as soon as code is saved
-- tabs that have changed should prompt a save dialog when closing
 
 ## version 1.1
 ### Implement History tab
+### implement edit menu
+undo and find/replace seems most pertinent
 
 ### add terminal tab to ConsoleComponent
 - Maybe Beanshell since Jshell is only available for Java 9+

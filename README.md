@@ -91,3 +91,7 @@ Copyright (c) 2004-2017 QOS.ch under MIT license
 ### com.fasterxml.jackson.core:jackson-core and jackson-databind
 Used for JSON handling in various places.
 Copyright Fasterxml under Apache 2.0 license.
+
+### org.apache.tika:tika-core
+Used to detect file types as Files.probeContentType is inconsistent over different OS's
+Apache 2.0 license.

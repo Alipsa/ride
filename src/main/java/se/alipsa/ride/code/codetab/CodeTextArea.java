@@ -15,12 +15,9 @@ import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.TabTextArea;
+import se.alipsa.ride.code.TextCodeArea;
 
-public class CodeTextArea extends CodeArea implements TabTextArea {
-
-    private File file;
-
-    private boolean contentChanged = false;
+public class CodeTextArea extends TextCodeArea {
 
     private static final String[] KEYWORDS = new String[] {
             "if", "else", "repeat", "while", "function",
@@ -46,39 +43,13 @@ public class CodeTextArea extends CodeArea implements TabTextArea {
                     + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
     );
 
-    CodeTab parent;
-
-    private boolean blockChange = false;
 
     public CodeTextArea(CodeTab parent) {
-        this.parent = parent;
-        setParagraphGraphicFactory(LineNumberFactory.get(this));
-        // recompute the syntax highlighting 400 ms after user stops editing area
-
-        // plain changes = ignore style changes that are emitted when syntax highlighting is reapplied
-        // multi plain changes = save computation by not rerunning the code multiple times
-        //   when making multiple changes (e.g. renaming a method at multiple parts in file)
-        multiPlainChanges()
-
-        // do not emit an event until 400 ms have passed since the last emission of previous stream
-        .successionEnds(Duration.ofMillis(400))
-
-        // run the following code block when previous stream emits an event
-        .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
-
-        plainTextChanges().subscribe(ptc -> contentChanged());
-
+        super(parent);
     }
 
 
-    private void contentChanged() {
-        if (contentChanged == false && !blockChange) {
-            parent.contentChanged();
-            contentChanged = true;
-        }
-    }
-
-    private static StyleSpans<Collection<String>> computeHighlighting(String text) {
+    protected final StyleSpans<Collection<String>> computeHighlighting(String text) {
         Matcher matcher = PATTERN.matcher(text);
         int lastKwEnd = 0;
         StyleSpansBuilder<Collection<String>> spansBuilder
@@ -98,36 +69,5 @@ public class CodeTextArea extends CodeArea implements TabTextArea {
         }
         spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
         return spansBuilder.create();
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public String getTextContent() {
-        String rCode;
-        String selected = selectedTextProperty().getValue();
-        if (selected == null || "".equals(selected)) {
-            rCode = getText();
-        } else {
-            rCode = selected;
-        }
-        return rCode;
-    }
-
-    @Override
-    public void replaceContentText(int start, int end, String text) {
-        blockChange = true;
-        replaceText(start, end, text);
-        blockChange = false;
-    }
-
-    @Override
-    public String getAllTextContent() {
-        return getText();
     }
 }

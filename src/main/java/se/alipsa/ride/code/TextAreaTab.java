@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public abstract class TextAreaTab extends Tab implements TabTextArea {
 
-    private boolean isChanged = false;
+    protected boolean isChanged = false;
 
     public TextAreaTab(Ride gui) {
         super.setOnCloseRequest( event -> {
@@ -53,7 +53,7 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
         isChanged = false;
     }
 
-    boolean isChanged() {
+    public boolean isChanged() {
         return isChanged;
     }
 

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TabTextArea;
+import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
@@ -166,48 +167,83 @@ public class MainMenu extends MenuBar {
         nRScript.setOnAction(this::nRScript);
         fileMenu.getItems().add(nRScript);
 
+        MenuItem nText = new MenuItem("Text file");
+        nText.setOnAction(this::nTextFile);
+        fileMenu.getItems().add(nText);
+
         MenuItem save = new MenuItem("Save");
         save.setOnAction(this::saveContent);
+
+        MenuItem saveAs = new MenuItem("Save as");
+        saveAs.setOnAction(this::saveContentAs);
 
         MenuItem quit = new MenuItem("Quit Session");
         quit.setOnAction(e -> gui.endProgram());
 
-        menu.getItems().addAll(fileMenu, save, quit);
+        menu.getItems().addAll(fileMenu, save, saveAs, quit);
         return menu;
     }
 
+    private void nTextFile(ActionEvent actionEvent) {
+        gui.getCodeComponent().addCodeTab(TabType.TXT);
+    }
+
     private void nRScript(ActionEvent actionEvent) {
-        gui.getCodeComponent().addCodeTab();
+        gui.getCodeComponent().addCodeTab(TabType.R);
     }
 
     private void saveContent(ActionEvent event) {
         TextAreaTab codeArea = gui.getCodeComponent().getActiveTab();
         saveContent(codeArea);
+    }
 
+    private void saveContentAs(ActionEvent event) {
+        TextAreaTab codeArea = gui.getCodeComponent().getActiveTab();
+        saveContentAs(codeArea);
     }
 
     public void saveContent(TextAreaTab codeArea) {
         File file = codeArea.getFile();
         if (file == null)  {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialDirectory(gui.getInoutComponent().getRootDir());
-            fileChooser.setTitle("Save File");
-            file = fileChooser.showSaveDialog(gui.getStage());
+            file = promptForFile();
             if (file == null) {
                 return;
             }
         }
         try {
-            boolean fileExisted = file.exists();
-            FileUtils.writeToFile(file, codeArea.getAllTextContent());
-            log.info("File {} saved", file.getAbsolutePath());
-            if (!fileExisted) {
-                gui.getInoutComponent().fileAdded(file);
-            }
-            gui.getCodeComponent().fileSaved(file);
-            codeArea.contentSaved();
+            saveFile(codeArea, file);
         } catch (FileNotFoundException e) {
             ExceptionAlert.showAlert("Failed to save file " + file, e);
         }
+    }
+
+    public void saveContentAs(TextAreaTab codeArea) {
+        File file = promptForFile();
+        if (file == null) {
+            return;
+        }
+        try {
+            saveFile(codeArea, file);
+        } catch (FileNotFoundException e) {
+            ExceptionAlert.showAlert("Failed to save file " + file, e);
+        }
+    }
+
+    private void saveFile(TextAreaTab codeArea, File file) throws FileNotFoundException {
+        boolean fileExisted = file.exists();
+        FileUtils.writeToFile(file, codeArea.getAllTextContent());
+        log.info("File {} saved", file.getAbsolutePath());
+        if (!fileExisted) {
+            gui.getInoutComponent().fileAdded(file);
+        }
+        gui.getCodeComponent().fileSaved(file);
+        codeArea.contentSaved();
+    }
+
+    private File promptForFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(gui.getInoutComponent().getRootDir());
+        fileChooser.setTitle("Save File");
+        return fileChooser.showSaveDialog(gui.getStage());
     }
 }

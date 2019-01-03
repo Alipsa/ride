@@ -32,11 +32,24 @@ public class CodeComponent extends BorderPane {
 
         pane = new TabPane();
         setCenter(pane);
-        addCodeTab();
+        addCodeTab(TabType.R);
     }
 
-    public void addCodeTab() {
-        addTabAndActivate(createCodeTab("Untitled"));
+    public void addCodeTab(TabType type) {
+        final String untitled = "Untitled";
+        TextAreaTab tab;
+        switch (type) {
+            case R: tab = createCodeTab(untitled);
+            break;
+            case TXT: tab = new TxtTab(untitled, gui);
+            break;
+            case JAVA: tab = new JavaTab(untitled, gui);
+            break;
+            case XML: tab = new XmlTab(untitled, gui);
+            break;
+            default: throw new RuntimeException("Unknown filetype " + type);
+        }
+        addTabAndActivate(tab);
     }
 
     private TextAreaTab createCodeTab(String title) {

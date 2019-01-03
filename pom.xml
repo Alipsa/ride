@@ -83,6 +83,12 @@
             <version>2.9.8</version>
             <scope>provided</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>1.20</version>
+        </dependency>
         <!-- Git integration Core Library -->
         <!--dependency>
             <groupId>org.eclipse.jgit</groupId>

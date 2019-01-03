@@ -22,7 +22,12 @@ or on windows
 - Add support for text, xml and java files
 - Add context menu to file tree (add and remove dir/file)
 - Track if files are modified and prompts to save when closing if unsaved
-
+    - mark code tab with * in the title as soon as editing started
+    - unmark as soon as code is saved
+    - tabs that have changed should prompt a save dialog when closing
+- Add "save as" menu option
+- Add "new -> text file" menu option
+ 
 ### 1.0 beta3
 - Add support for running on Windows.
 - Add support for switching package loaders

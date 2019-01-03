@@ -1,27 +1,15 @@
 package se.alipsa.ride.code.javatab;
 
-import javafx.beans.InvalidationListener;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import se.alipsa.ride.code.TabTextArea;
+import se.alipsa.ride.code.TextCodeArea;
 
-import java.io.File;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JavaTextArea extends CodeArea implements TabTextArea {
-
-  private File file;
-
-  boolean contentChanged = false;
-  private boolean blockChange = false;
-
-  private JavaTab parent;
+public class JavaTextArea extends TextCodeArea  {
 
   private static final String[] KEYWORDS = new String[] {
       "abstract", "assert", "boolean", "break", "byte",
@@ -55,23 +43,10 @@ public class JavaTextArea extends CodeArea implements TabTextArea {
   );
 
   public JavaTextArea(JavaTab parent) {
-    this.parent = parent;
-    setParagraphGraphicFactory(LineNumberFactory.get(this));
-    multiPlainChanges()
-        .successionEnds(Duration.ofMillis(400))
-        .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
-
-    plainTextChanges().subscribe(ptc -> contentChanged());
+    super(parent);
   }
 
-  private void contentChanged() {
-    if (contentChanged == false && !blockChange) {
-      parent.contentChanged();
-      contentChanged = true;
-    }
-  }
-
-  private static StyleSpans<Collection<String>> computeHighlighting(String text) {
+  protected final StyleSpans<Collection<String>> computeHighlighting(String text) {
     Matcher matcher = PATTERN.matcher(text);
     int lastKwEnd = 0;
     StyleSpansBuilder<Collection<String>> spansBuilder
@@ -94,37 +69,4 @@ public class JavaTextArea extends CodeArea implements TabTextArea {
     return spansBuilder.create();
   }
 
-  @Override
-  public File getFile() {
-    return file;
-  }
-
-  @Override
-  public void setFile(File file) {
-    this.file = file;
-  }
-
-  @Override
-  public String getTextContent() {
-    String code;
-    String selected = selectedTextProperty().getValue();
-    if (selected == null || "".equals(selected)) {
-      code = getText();
-    } else {
-      code = selected;
-    }
-    return code;
-  }
-
-  @Override
-  public String getAllTextContent() {
-    return getText();
-  }
-
-  @Override
-  public void replaceContentText(int start, int end, String text) {
-    blockChange = true;
-    replaceText(start, end, text);
-    blockChange = false;
-  }
 }
