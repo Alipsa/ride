@@ -52,7 +52,9 @@ it from another script - the session is shared).
 
 # Building and compiling
 
-To build simply do ` mvn clean install`
+Download rideutils from https://github.com/perNyfelt/rideutils and build it with `mvn install`
+
+To build ride then simply do ` mvn clean install`
 
 There are some wrapper scripts that you might find useful.  
 To create a runnable jar and run it do 
