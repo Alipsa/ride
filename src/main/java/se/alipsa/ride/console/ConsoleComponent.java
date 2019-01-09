@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
@@ -38,15 +39,18 @@ import se.alipsa.ride.utils.Animation;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 
 public class ConsoleComponent extends BorderPane {
 
@@ -259,11 +263,204 @@ public class ConsoleComponent extends BorderPane {
   public void runScript(String script, String title) {
     running();
     try (StringWriter outputWriter = new StringWriter()) {
-      executeScriptAndReport(script, title, outputWriter);
+      //executeScriptAndReport(script, title, outputWriter);
+      executeScriptAndReport(script, title);
     } catch (IOException e) {
       waiting();
       ExceptionAlert.showAlert("Failed to close writer capturing renjin results: ", e);
     }
+  }
+
+  /*
+  public void runScriptInThread(String script) {
+    running();
+
+    Task<Void> task = new Task<Void>() {
+      @Override
+      public Void call() throws Exception {
+        try (StringWriter outputWriter = new StringWriter(); StringWriter envWriter = new StringWriter()){
+          engine.getContext().setWriter(outputWriter);
+          engine.getContext().setErrorWriter(outputWriter);
+          engine.eval(script);
+          console.append(outputWriter.toString());
+          Environment global = session.getGlobalEnvironment();
+          gui.getEnvironmentComponent().setEnvironment(global, session.getTopLevelContext());
+          try (StringWriter outputWriter = new StringWriter()){
+            try {
+              executeScriptAndReport(script, outputWriter);
+            } catch (RuntimeException e) {
+              throw new RuntimeScriptException(e);
+            }
+
+          }
+          return null ;
+        }
+      };
+
+        task.setOnSucceeded(e -> waiting());
+        task.setOnSucceeded(e ->  waiting() });
+    task.setOnFailed(e -> {
+      waiting();
+      Throwable ex = task.getException();
+      String msg = "";
+      if (ex instanceof org.renjin.parser.ParseException){
+        if (ex instanceof org.renjin.parser.ParseException) {
+          msg = "Error parsing R script: ";
+        } else if (ex instanceof ScriptException || ex instanceof EvalException ){
+          msg = "Error running R script: ";
+        } else if (ex instanceof RuntimeException ) {
+          msg = "An unknown error occurred running R script: ";
+        } else if (ex instanceof IOException){
+          msg = "Failed to close writer capturing renjin results";
+        } else if (ex instanceof RuntimeScriptException ) {
+          msg = "An unknown error occurred running R script: ";
+        } else if (ex instanceof Exception){
+          msg = "Exception thrown when running script";
+        }
+        ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
+      });
+      new Thread(task).start();
+    }
+
+    private void executeScriptAndReport(String script, StringWriter outputWriter) throws ScriptException {
+      engine.put("inout", gui.getInoutComponent());
+      engine.getContext().setWriter(outputWriter);
+      engine.getContext().setErrorWriter(outputWriter);
+      engine.eval(script);
+      outputWriter.write("\n");
+      session.printWarnings();
+      session.clearWarnings();
+      console.append(outputWriter.toString());
+      Environment global = session.getGlobalEnvironment();
+      Platform.runLater(() -> {
+        try {
+          gui.getEnvironmentComponent().setEnvironment(global, session.getTopLevelContext());
+          StringVector pkgs = (StringVector) engine.eval("(.packages())");
+          gui.getInoutComponent().setPackages(pkgs);
+        } catch (ScriptException e) {
+          e.printStackTrace();
+        }
+      });
+    }
+  }
+}*/
+
+  /* Earliest alternative
+  public void runScript(String script) {
+        Platform.runLater(() -> {
+            StringWriter outputWriter = new StringWriter();
+            engine.getContext().setWriter(outputWriter);
+            engine.getContext().setErrorWriter(outputWriter);
+            try {
+        gui.setWaitCursor();
+        Task<Void> task = new Task<Void>() {
+            @Override
+            public Void call() throws Exception {
+            try (StringWriter outputWriter = new StringWriter(); StringWriter envWriter = new StringWriter()){
+                engine.getContext().setWriter(outputWriter);
+                engine.getContext().setErrorWriter(outputWriter);
+                engine.eval(script);
+                // TODO send variable result to EnvironmentComponent, see http://docs.renjin.org/en/latest/library/capture.html
+            } catch (org.renjin.parser.ParseException pe) {
+                ExceptionAlert.showAlert("Error parsing R script: " + pe.getMessage(), pe);
+            } catch (ScriptException | EvalException e) {
+                ExceptionAlert.showAlert("Error running R script: " + e.getMessage(), e);
+            } catch (RuntimeException re) {
+                ExceptionAlert.showAlert("An unknown error occurred running R script: " + re.getMessage(), re);
+            }
+            console.setText(console.getText() + "\n" + outputWriter.toString());
+            try {
+                outputWriter.close();
+            } catch (IOException e) {
+                ExceptionAlert.showAlert("Failed to close writer capturing renjin results", e);
+                console.setText(console.getText() + "\n" + outputWriter.toString());
+                Environment global = session.getGlobalEnvironment();
+                gui.getEnvironmentComponent().setEnvironment(global);
+            }
+            return null ;
+            }
+        };
+
+        task.setOnSucceeded(e -> gui.setNormalCursor());
+        task.setOnFailed(e -> {
+            gui.setNormalCursor();
+            Throwable ex = task.getException();
+            String msg = "";
+            if (ex instanceof org.renjin.parser.ParseException){
+                msg = "Error parsing R script: ";
+            } else if (ex instanceof ScriptException || ex instanceof EvalException ){
+                msg = "Error running R script: ";
+            } else if (ex instanceof RuntimeException ) {
+                msg = "An unknown error occurred running R script: ";
+            } else if (ex instanceof IOException){
+                msg = "Failed to close writer capturing renjin results";
+            }
+            ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
+        });
+        new Thread(task).start();
+    }
+
+   */
+
+  class AppenderOutputStream extends OutputStream {
+    @Override
+    public void write(int b) {
+      console.appendText(String.valueOf((char) b));
+    }
+  }
+
+  private void executeScriptAndReport(String script, String title) {
+    // A bit unorthodox use of timeline but this allows us to interrupt a running script
+    // since the running script must be on the jfx thread to allow interaction with the gui
+    // e.g. for plots, this is the best way to do that.
+    scriptExecutionTimeline = new Timeline();
+    KeyFrame scriptFrame = new KeyFrame(Duration.seconds(1), evt -> {
+      try (OutputStream out = new AppenderOutputStream();
+           PrintStream outStream = new PrintStream(out);
+           PrintWriter outputWriter = new PrintWriter(outStream)) {
+
+        engine.put("inout", gui.getInoutComponent());
+
+        outputWriter.write(title + "\n");
+        session.setStdOut(outputWriter);
+        // TODO change to another printwriter so warning will be printed in red text
+        session.setStdErr(outputWriter);
+        engine.eval(script);
+
+        session.printWarnings();
+        session.clearWarnings();
+        outputWriter.write(">");
+      } catch (org.renjin.parser.ParseException e) {
+        Platform.runLater(() ->
+            ExceptionAlert.showAlert("Error parsing R script: " + e.getMessage(), e));
+      } catch (ScriptException | EvalException e) {
+        Platform.runLater(() ->
+            ExceptionAlert.showAlert("Error running R script: " + e.getMessage(), e));
+      } catch (RuntimeException e) {
+        Platform.runLater(() ->
+            ExceptionAlert.showAlert("A runtime error occurred running R script: " + e.getMessage(), e));
+      } catch (Exception e) {
+        Platform.runLater(() ->
+            ExceptionAlert.showAlert("Exception thrown when running script: " + e.getMessage(), e));
+      }
+    });
+
+    KeyFrame pkgFrame = new KeyFrame(Duration.seconds(1), evt -> {
+      try {
+        Environment global = session.getGlobalEnvironment();
+        gui.getEnvironmentComponent().setEnvironment(global, session.getTopLevelContext());
+        StringVector pkgs = (StringVector) engine.eval("(.packages())");
+        gui.getInoutComponent().setPackages(pkgs);
+        waiting();
+      } catch (ScriptException e) {
+        e.printStackTrace();
+      }
+    });
+
+    scriptExecutionTimeline.getKeyFrames().addAll(scriptFrame, pkgFrame);
+    scriptExecutionTimeline.setCycleCount(1);
+    scriptExecutionTimeline.play();
+
   }
 
   private void executeScriptAndReport(String script, String title, StringWriter outputWriter) {

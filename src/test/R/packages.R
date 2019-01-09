@@ -1,3 +1,4 @@
+print("Start")
 library("grDevices")
 library("graphics")
 library("poker")
@@ -15,7 +16,7 @@ pkgs <- (.packages())
 print(pkgs[2])
 
 j = 0
-for (i in 1:25000) {
+for (i in 1:250000) {
   j <- sqrt(j + (i^2))
 }
 print(j)
