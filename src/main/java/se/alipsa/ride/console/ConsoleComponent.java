@@ -78,6 +78,8 @@ public class ConsoleComponent extends BorderPane {
 
   private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
 
+  private Thread scriptThread;
+
   public ConsoleComponent(Ride gui) {
     this.gui = gui;
     Button clearButton = new Button("Clear");
@@ -240,15 +242,21 @@ public class ConsoleComponent extends BorderPane {
   }
 
   /**
-   * TODO: while we can stop the timeline with this we cannot interrupt
-   * the scriptengines eval.
+   * TODO: while we can stop the timeline with this we cannot interrupt the scriptengines eval.
    */
   public void interruptR() {
     log.info("Interrupting runnning script");
-    if (Animation.Status.RUNNING.equals(scriptExecutionTimeline.getStatus())) {
-      console.append("Interrupting Renjin...\n>");
+    if (scriptExecutionTimeline != null && Animation.Status.RUNNING.equals(scriptExecutionTimeline.getStatus())) {
+      console.appendText("\nInterrupting Renjin...\n>");
       // Would be nice with something like engine.stop() here;
       scriptExecutionTimeline.stop();
+    }
+    // This is a nasty piece of code but a brutal stop() is the only thing that will break out of the script engine
+    if (scriptThread != null && scriptThread.isAlive()) {
+      console.append("\nInterrupting Renjin thread...");
+      scriptThread.interrupt();
+      scriptThread.stop();
+      console.appendText("\n>");
     }
   }
 
@@ -294,6 +302,9 @@ public class ConsoleComponent extends BorderPane {
       waiting();
       Throwable throwable = task.getException();
       Throwable ex = throwable.getCause();
+      if (ex == null) {
+        ex = throwable;
+      }
 
       String msg = "";
 
@@ -310,12 +321,13 @@ public class ConsoleComponent extends BorderPane {
       } else if (ex instanceof Exception) {
         msg = "Exception thrown when running script";
       }
+
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
 
     });
-    Thread thread = new Thread(task);
-    thread.setDaemon(false);
-    thread.start();
+    scriptThread = new Thread(task);
+    scriptThread.setDaemon(false);
+    scriptThread.start();
   }
 
   class AppenderOutputStream extends OutputStream {
