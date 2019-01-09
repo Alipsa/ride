@@ -24,9 +24,9 @@ public class FileUtils {
   /**
    * Gets a reference to a file or folder in the classpath. Useful for getting test resources and
    * other similar artifacts.
-   * 
-   * @param name the name of the resource, use / to separate path entities.
-   *             Do NOT lead with a "/" unless you know what you are doing.
+   *
+   * @param name        the name of the resource, use / to separate path entities.
+   *                    Do NOT lead with a "/" unless you know what you are doing.
    * @param encodingOpt optional encoding if something other than UTF-8 is needed.
    * @return The resource as a file.
    * @throws FileNotFoundException if the resource cannot be found.
@@ -49,8 +49,8 @@ public class FileUtils {
   }
 
   /**
-   * Find a resource using available class loaders. 
-   * It will also load resources/files from the 
+   * Find a resource using available class loaders.
+   * It will also load resources/files from the
    * absolute path of the file system (not only the classpath's).
    */
   public static URL getResourceUrl(String resource) {
@@ -85,9 +85,8 @@ public class FileUtils {
   }
 
 
-
-
-  /** fetch a list of files for the dir specified and the extension specified
+  /**
+   * fetch a list of files for the dir specified and the extension specified
    * extension in not case sensitive
    */
   public static List<File> findFilesWithExt(File dir, String ext) throws IOException {
@@ -105,8 +104,8 @@ public class FileUtils {
 
   /**
    * Copy a file to a dir.
-   * 
-   * @param from the file to copy
+   *
+   * @param from  the file to copy
    * @param toDir the destination dir
    * @return the copied file
    * @throws IOException if an IO issue occurs
@@ -133,8 +132,8 @@ public class FileUtils {
   /**
    * Copy a file to a dir.
    *
-   * @param from the file to copy
-   * @param toFile the destination file
+   * @param from         the file to copy
+   * @param toFile       the destination file
    * @param overwriteOpt whether to overwrite existing file or not, default true
    * @return the copied file
    * @throws IOException if an IO issue occurs
@@ -153,8 +152,8 @@ public class FileUtils {
 
   /**
    * Find the first file matching the pattern.
-   * 
-   * @param dir the dir to search
+   *
+   * @param dir    the dir to search
    * @param prefix the pattern to match
    * @param suffix the pattern to match
    * @return the first file matching the pattern
@@ -174,8 +173,10 @@ public class FileUtils {
     return null;
   }
 
-  /** recursive delete on exit. */
-  public static void deleteOnExit(File dir) throws IOException { 
+  /**
+   * recursive delete on exit.
+   */
+  public static void deleteOnExit(File dir) throws IOException {
     if (dir == null) {
       return;
     }
@@ -186,23 +187,22 @@ public class FileUtils {
         file.toFile().deleteOnExit();
         return FileVisitResult.CONTINUE;
       }
-      
+
       @Override
       public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
         dir.toFile().deleteOnExit();
         return FileVisitResult.CONTINUE;
       }
     });
-    
+
   }
 
   /**
-   *
-   * @param file the file to write to
+   * @param file    the file to write to
    * @param content the content to write
    * @throws FileNotFoundException If the given file object does not denote an existing, writable regular file
-   * and a new regular file of that name cannot be created,
-   * or if some other error occurs while opening or creating the file
+   *                               and a new regular file of that name cannot be created,
+   *                               or if some other error occurs while opening or creating the file
    */
   public static void writeToFile(File file, String content) throws FileNotFoundException {
     try (PrintStream out = new PrintStream(file)) {

@@ -11,7 +11,7 @@ public class ConsoleTextArea extends TextArea {
 
   public void append(String text, boolean... skipNewline) {
 
-    boolean skip = skipNewline.length > 0 ? skipNewline[0]  : false;
+    boolean skip = skipNewline.length > 0 ? skipNewline[0] : false;
     String sep = "\n";
     if (skip) {
       sep = "";

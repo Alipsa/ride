@@ -10,7 +10,8 @@
 
     <properties>
         <!-- requires version 0.9.2716 or later -->
-        <renjin.version>0.9.2717</renjin.version>
+        <!--renjin.version>0.9.2717</renjin.version-->
+        <renjin.version>1.0.0-SNAPSHOT</renjin.version>
         <ride.jar>provided by start script</ride.jar>
         <release.tag>provided by start script</release.tag>
     </properties>

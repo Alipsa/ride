@@ -10,40 +10,40 @@ import se.alipsa.ride.Ride;
 
 public class EnvironmentComponent extends TabPane {
 
-    TextArea envTA;
+  TextArea envTA;
 
-    public EnvironmentComponent(Ride gui) {
-        Tab environment = new Tab();
-        environment.setText("Environment");
-        envTA = new TextArea();
-        envTA.setText("Environment");
-        environment.setContent(envTA);
-        getTabs().add(environment);
+  public EnvironmentComponent(Ride gui) {
+    Tab environment = new Tab();
+    environment.setText("Environment");
+    envTA = new TextArea();
+    envTA.setText("Environment");
+    environment.setContent(envTA);
+    getTabs().add(environment);
 
-        Tab history = new Tab();
-        history.setText("History");
+    Tab history = new Tab();
+    history.setText("History");
 
-        getTabs().add(history);
+    getTabs().add(history);
 
-        Tab connections = new Tab();
-        connections.setText("Connections");
+    Tab connections = new Tab();
+    connections.setText("Connections");
 
-        getTabs().add(connections);
+    getTabs().add(connections);
+  }
+
+  public void setEnvironment(Environment env, Context ctx) {
+    StringVector names = env.getNames();
+    StringBuffer buf = new StringBuffer();
+    for (String varName : names) {
+      buf.append(varName);
+      buf.append("\t");
+      buf.append(env.getVariable(ctx, varName).toString());
+      buf.append("\n");
     }
+    envTA.setText(buf.toString());
+  }
 
-    public void setEnvironment(Environment env, Context ctx) {
-        StringVector names = env.getNames();
-        StringBuffer buf = new StringBuffer();
-        for (String varName : names) {
-            buf.append(varName);
-            buf.append("\t");
-            buf.append(env.getVariable(ctx, varName).toString());
-            buf.append("\n");
-        }
-        envTA.setText(buf.toString());
-    }
-
-    public void clearEnvironment() {
-        envTA.setText("");
-    }
+  public void clearEnvironment() {
+    envTA.setText("");
+  }
 }

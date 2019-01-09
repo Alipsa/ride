@@ -2,15 +2,15 @@ package se.alipsa.ride.code;
 
 import java.io.File;
 
-public interface TabTextArea  {
+public interface TabTextArea {
 
-    File getFile();
+  File getFile();
 
-    void setFile(File file);
+  void setFile(File file);
 
-    String getTextContent();
+  String getTextContent();
 
-    String getAllTextContent();
+  String getAllTextContent();
 
-    void replaceContentText(int start, int end, String content);
+  void replaceContentText(int start, int end, String content);
 }

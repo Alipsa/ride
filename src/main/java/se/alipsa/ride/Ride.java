@@ -21,6 +21,7 @@ import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.MainMenu;
 import se.alipsa.ride.utils.FileUtils;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
@@ -111,7 +112,7 @@ public class Ride extends Application {
         System.exit(0);
       }
     };
-    timer.schedule(task,100);
+    timer.schedule(task, 100);
   }
 
   private void stretch(Pane component, Pane root) {

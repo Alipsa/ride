@@ -2,7 +2,7 @@ library(grDevices)
 library(graphics)
 
 # First plot
-plot(sin, -pi, 2*pi)
+plot(sin, -pi, 3*pi)
 
 
 # Second plot
