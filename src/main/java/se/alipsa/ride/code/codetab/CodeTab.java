@@ -33,12 +33,15 @@ public class CodeTab extends TextAreaTab {
 
     BorderPane pane = new BorderPane();
 
-    runButton = new Button("Run");
     FlowPane buttonPane = new FlowPane();
     pane.setTop(buttonPane);
 
+    runButton = new Button("Run");
     runButton.setOnAction(this::handleRunAction);
-    buttonPane.getChildren().add(runButton);
+
+    Button runInThreadButton = new Button("Run in Thread");
+    runInThreadButton.setOnAction(event -> console.runScriptInThread(codeTextArea.getTextContent(), getTitle()));
+    buttonPane.getChildren().addAll(runButton, runInThreadButton);
 
     codeTextArea = new CodeTextArea(this);
     codeTextArea.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
@@ -64,7 +67,7 @@ public class CodeTab extends TextAreaTab {
   private void handleRunAction(ActionEvent event) {
     String rCode = codeTextArea.getTextContent();
     log.debug("Running r code {}", rCode);
-    console.runScript(rCode, getText());
+    console.runScript(rCode, getTitle());
   }
 
   @Override

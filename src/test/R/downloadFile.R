@@ -1,9 +1,10 @@
+print("Loading libraries")
 library("hamcrest")
 library("org.renjin.cran:downloader")
 
 url <- "http://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/femaleControlsPopulation.csv"
 filename <- basename(url)
-print(filename)
+print(paste("filename is", filename))
 download(url, destfile=filename)
 assertThat(file.exists(filename), identicalTo(TRUE))
 

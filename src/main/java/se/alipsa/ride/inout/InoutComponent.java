@@ -1,5 +1,6 @@
 package se.alipsa.ride.inout;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -102,17 +103,20 @@ public class InoutComponent extends TabPane {
    * display an image in the Plot txttab
    */
   public void display(Node node, String... title) {
-    Tab tab = new Tab();
-    imageTabpane.getTabs().add(tab);
-    if (title.length > 0) {
-      tab.setText(title[0]);
-    }
-    tab.setContent(node);
-    SingleSelectionModel<Tab> selectionModel = getSelectionModel();
-    selectionModel.select(plots);
+    Platform.runLater(()-> {
+      Tab tab = new Tab();
+      imageTabpane.getTabs().add(tab);
+      if (title.length > 0) {
+        tab.setText(title[0]);
+      }
+      tab.setContent(node);
+      SingleSelectionModel<Tab> selectionModel = getSelectionModel();
+      selectionModel.select(plots);
 
-    SingleSelectionModel<Tab> imageTabsSelectionModel = imageTabpane.getSelectionModel();
-    imageTabsSelectionModel.select(tab);
+      SingleSelectionModel<Tab> imageTabsSelectionModel = imageTabpane.getSelectionModel();
+      imageTabsSelectionModel.select(tab);
+    }
+    );
   }
 
   /**

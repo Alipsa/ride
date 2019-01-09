@@ -1,4 +1,4 @@
-print("Start")
+print("Loading libraries")
 library("grDevices")
 library("graphics")
 library("poker")
