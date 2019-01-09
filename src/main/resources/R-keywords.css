@@ -1,29 +1,29 @@
 /* see https://www.rapidtables.com/web/css/css-color.html for color names */
-.keyword {
+.r_keyword {
     -fx-fill: blue;
     -fx-font-weight: bold;
 }
 
-.digit {
+.r_digit {
     -fx-fill:mediumblue;
 }
 
-.assign {
+.r_assign {
     -fx-fill: dimgray;
 }
 
-.bracket {
+.r_bracket {
     -fx-fill: dimgray;
 }
 
-.string {
+.r_string {
     -fx-fill: green;
 }
 
-.comment {
+.r_comment {
     -fx-fill: darkseagreen;
 }
 
-.paragraph-box:has-caret {
+.r_paragraph-box:has-caret {
     -fx-background-color: #f2f9fc;
 }

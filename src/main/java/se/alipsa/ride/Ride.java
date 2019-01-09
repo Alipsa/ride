@@ -59,7 +59,9 @@ public class Ride extends Application {
 
     scene = new Scene(root, 1366, 768);
     addStyleSheet("R-keywords.css");
-    addStyleSheet("XML-keywords.css");
+    addStyleSheet("xml-keywords.css");
+    addStyleSheet("sql-keywords.css");
+    addStyleSheet("java-keywords.css");
 
     SplitPane leftSplitPane = new SplitPane();
     leftSplitPane.setOrientation(Orientation.VERTICAL);

@@ -193,8 +193,10 @@ public class FileTree extends TreeView {
           codeComponent.addTab(file, TabType.XML);
         } else if (strEndsWith(fileNameLower, ".java")) {
           codeComponent.addTab(file, TabType.JAVA);
+        } else if (strEquals(type, "text/x-sql", "application/sql")) {
+          codeComponent.addTab(file, TabType.SQL);
         } else if (strStartsWith(type, "text")
-            || strEquals(type, "application/sql", "application/x-bat",
+            || strEquals(type, "application/x-bat",
             "application/x-sh", "application/json", "application/x-sas")
           /*|| strEndsWith(fileNameLower, ".txt", ".md", ".csv")*/) {
           codeComponent.addTab(file, TabType.TXT);

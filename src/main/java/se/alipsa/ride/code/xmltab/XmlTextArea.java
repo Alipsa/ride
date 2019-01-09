@@ -48,13 +48,13 @@ public class XmlTextArea extends TextCodeArea {
 
       spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
       if (matcher.group("COMMENT") != null) {
-        spansBuilder.add(Collections.singleton("comment"), matcher.end() - matcher.start());
+        spansBuilder.add(Collections.singleton("xml_comment"), matcher.end() - matcher.start());
       } else {
         if (matcher.group("ELEMENT") != null) {
           String attributesText = matcher.group(GROUP_ATTRIBUTES_SECTION);
 
-          spansBuilder.add(Collections.singleton("tagmark"), matcher.end(GROUP_OPEN_BRACKET) - matcher.start(GROUP_OPEN_BRACKET));
-          spansBuilder.add(Collections.singleton("anytag"), matcher.end(GROUP_ELEMENT_NAME) - matcher.end(GROUP_OPEN_BRACKET));
+          spansBuilder.add(Collections.singleton("xml_tagmark"), matcher.end(GROUP_OPEN_BRACKET) - matcher.start(GROUP_OPEN_BRACKET));
+          spansBuilder.add(Collections.singleton("xml_anytag"), matcher.end(GROUP_ELEMENT_NAME) - matcher.end(GROUP_OPEN_BRACKET));
 
           if (!attributesText.isEmpty()) {
 
@@ -63,9 +63,9 @@ public class XmlTextArea extends TextCodeArea {
             Matcher amatcher = ATTRIBUTES.matcher(attributesText);
             while (amatcher.find()) {
               spansBuilder.add(Collections.emptyList(), amatcher.start() - lastKwEnd);
-              spansBuilder.add(Collections.singleton("attribute"), amatcher.end(GROUP_ATTRIBUTE_NAME) - amatcher.start(GROUP_ATTRIBUTE_NAME));
-              spansBuilder.add(Collections.singleton("tagmark"), amatcher.end(GROUP_EQUAL_SYMBOL) - amatcher.end(GROUP_ATTRIBUTE_NAME));
-              spansBuilder.add(Collections.singleton("avalue"), amatcher.end(GROUP_ATTRIBUTE_VALUE) - amatcher.end(GROUP_EQUAL_SYMBOL));
+              spansBuilder.add(Collections.singleton("xml_attribute"), amatcher.end(GROUP_ATTRIBUTE_NAME) - amatcher.start(GROUP_ATTRIBUTE_NAME));
+              spansBuilder.add(Collections.singleton("xml_tagmark"), amatcher.end(GROUP_EQUAL_SYMBOL) - amatcher.end(GROUP_ATTRIBUTE_NAME));
+              spansBuilder.add(Collections.singleton("xml_avalue"), amatcher.end(GROUP_ATTRIBUTE_VALUE) - amatcher.end(GROUP_EQUAL_SYMBOL));
               lastKwEnd = amatcher.end();
             }
             if (attributesText.length() > lastKwEnd)
@@ -74,7 +74,7 @@ public class XmlTextArea extends TextCodeArea {
 
           lastKwEnd = matcher.end(GROUP_ATTRIBUTES_SECTION);
 
-          spansBuilder.add(Collections.singleton("tagmark"), matcher.end(GROUP_CLOSE_BRACKET) - lastKwEnd);
+          spansBuilder.add(Collections.singleton("xml_tagmark"), matcher.end(GROUP_CLOSE_BRACKET) - lastKwEnd);
         }
       }
       lastKwEnd = matcher.end();

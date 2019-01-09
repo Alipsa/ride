@@ -163,12 +163,16 @@ public class MainMenu extends MenuBar {
     Menu fileMenu = new Menu("New File");
 
     MenuItem nRScript = new MenuItem("R Script");
-    nRScript.setOnAction(this::nRScript);
+    nRScript.setOnAction(a ->  gui.getCodeComponent().addCodeTab(TabType.R));
     fileMenu.getItems().add(nRScript);
 
     MenuItem nText = new MenuItem("Text file");
-    nText.setOnAction(this::nTextFile);
+    nText.setOnAction(a -> gui.getCodeComponent().addCodeTab(TabType.TXT));
     fileMenu.getItems().add(nText);
+
+    MenuItem nSql = new MenuItem("SQL file");
+    nSql.setOnAction(a -> gui.getCodeComponent().addCodeTab(TabType.SQL));
+    fileMenu.getItems().add(nSql);
 
     MenuItem save = new MenuItem("Save");
     save.setOnAction(this::saveContent);
@@ -183,13 +187,7 @@ public class MainMenu extends MenuBar {
     return menu;
   }
 
-  private void nTextFile(ActionEvent actionEvent) {
-    gui.getCodeComponent().addCodeTab(TabType.TXT);
-  }
 
-  private void nRScript(ActionEvent actionEvent) {
-    gui.getCodeComponent().addCodeTab(TabType.R);
-  }
 
   private void saveContent(ActionEvent event) {
     TextAreaTab codeArea = gui.getCodeComponent().getActiveTab();

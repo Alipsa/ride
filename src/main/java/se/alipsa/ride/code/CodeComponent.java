@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.codetab.CodeTab;
 import se.alipsa.ride.code.javatab.JavaTab;
+import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
 import se.alipsa.ride.code.xmltab.XmlTab;
 import se.alipsa.ride.console.ConsoleComponent;
@@ -52,6 +53,9 @@ public class CodeComponent extends BorderPane {
         break;
       case XML:
         tab = new XmlTab(untitled, gui);
+        break;
+      case SQL:
+        tab = new SqlTab(untitled, gui);
         break;
       default:
         throw new RuntimeException("Unknown filetype " + type);
@@ -103,6 +107,9 @@ public class CodeComponent extends BorderPane {
         break;
       case JAVA:
         tab = new JavaTab(title, gui);
+        break;
+      case SQL:
+        tab = new SqlTab(title, gui);
         break;
       default:
         tab = new TxtTab(title, gui);

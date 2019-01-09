@@ -1,0 +1,20 @@
+.sql_keyword {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+
+.sql_semicolon {
+    -fx-font-weight: bold;
+}
+.sql_paren {
+    -fx-fill: dimgray;
+    -fx-font-weight: bold;
+}
+
+.sql_string {
+    -fx-fill: green;
+}
+
+.sql_comment {
+    -fx-fill: darkseagreen;
+}
