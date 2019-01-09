@@ -1,12 +1,12 @@
 package se.alipsa.ride.code.txttab;
 
 import javafx.beans.InvalidationListener;
-import javafx.scene.control.TextArea;
+import org.fxmisc.richtext.CodeArea;
 import se.alipsa.ride.code.TabTextArea;
 
 import java.io.File;
 
-public class TxtTextArea extends TextArea implements TabTextArea {
+public class TxtTextArea extends CodeArea implements TabTextArea {
 
   private File file;
   private boolean contentChanged = false;
