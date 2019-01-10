@@ -9,6 +9,7 @@ greaterThan <- function(expected) {
 }
 
 test.readImage <- function() {
+    print("test.readImage")
     import(javafx.scene.image.Image)
     
     img <- readImage("image/logo.png")

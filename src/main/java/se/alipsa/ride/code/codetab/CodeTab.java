@@ -1,6 +1,7 @@
 package se.alipsa.ride.code.codetab;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -34,6 +35,8 @@ public class CodeTab extends TextAreaTab {
     BorderPane pane = new BorderPane();
 
     FlowPane buttonPane = new FlowPane();
+    buttonPane.setHgap(5);
+    buttonPane.setPadding(new Insets(5, 10, 5, 5));
     pane.setTop(buttonPane);
 
     runButton = new Button("Run");
