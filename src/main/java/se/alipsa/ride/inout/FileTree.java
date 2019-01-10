@@ -254,6 +254,10 @@ public class FileTree extends TreeView {
 
   public void addTreeNode(File file) {
     TreeItem<File> item = findTreeViewItem(this.getRoot(), file.getParentFile());
+    if (item == null) {
+      log.info("File saved outside of current working dir");
+      return;
+    }
     TreeItem<File> fileItem = new TreeItem<>(file);
     addTreeNode(item, fileItem);
   }

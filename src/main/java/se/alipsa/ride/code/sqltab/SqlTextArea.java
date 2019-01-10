@@ -118,11 +118,11 @@ public class SqlTextArea extends TextCodeArea {
         = new StyleSpansBuilder<>();
     while (matcher.find()) {
       String styleClass =
-          matcher.group("KEYWORD") != null ? "sql_keyword" :
-              matcher.group("PAREN") != null ? "sql_paren" :
-                    matcher.group("SEMICOLON") != null ? "sql_emicolon" :
-                        matcher.group("STRING") != null ? "sql_string" :
-                            matcher.group("COMMENT") != null ? "sql_comment" :
+          matcher.group("KEYWORD") != null ? "keyword" :
+              matcher.group("PAREN") != null ? "paren" :
+                    matcher.group("SEMICOLON") != null ? "semicolon" :
+                        matcher.group("STRING") != null ? "string" :
+                            matcher.group("COMMENT") != null ? "comment" :
                                       null; /* never happens */
       assert styleClass != null;
       spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);

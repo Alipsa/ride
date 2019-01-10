@@ -58,10 +58,8 @@ public class Ride extends Application {
     root.setTop(mainMenu);
 
     scene = new Scene(root, 1366, 768);
-    addStyleSheet("R-keywords.css");
+    addStyleSheet("keywords.css");
     addStyleSheet("xml-keywords.css");
-    addStyleSheet("sql-keywords.css");
-    addStyleSheet("java-keywords.css");
 
     SplitPane leftSplitPane = new SplitPane();
     leftSplitPane.setOrientation(Orientation.VERTICAL);

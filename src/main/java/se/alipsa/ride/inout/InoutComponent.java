@@ -13,6 +13,7 @@ import org.renjin.sexp.StringVector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.utils.Alerts;
 
 import java.io.File;
 

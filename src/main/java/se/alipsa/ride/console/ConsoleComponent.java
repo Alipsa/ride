@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.apache.commons.vfs2.FileSystemException;
 import org.eclipse.aether.repository.RemoteRepository;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.RenjinVersion;
 import org.renjin.aether.AetherFactory;
 import org.renjin.aether.AetherPackageLoader;
@@ -34,6 +35,7 @@ import org.renjin.sexp.StringVector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.codetab.CodeTextArea;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.Animation;
 import se.alipsa.ride.utils.ExceptionAlert;
@@ -83,7 +85,10 @@ public class ConsoleComponent extends BorderPane {
   public ConsoleComponent(Ride gui) {
     this.gui = gui;
     Button clearButton = new Button("Clear");
-    clearButton.setOnAction(e -> console.clear());
+    clearButton.setOnAction(e -> {
+      console.clear();
+      console.appendText(">");
+    });
     FlowPane topPane = new FlowPane();
     topPane.setPadding(new Insets(1, 10, 1, 5));
     topPane.setHgap(10);
@@ -102,7 +107,11 @@ public class ConsoleComponent extends BorderPane {
 
     console = new ConsoleTextArea();
     console.setEditable(false);
-    setCenter(console);
+
+    VirtualizedScrollPane<ConsoleTextArea> vPane = new VirtualizedScrollPane<>(console);
+    vPane.setMaxWidth(Double.MAX_VALUE);
+    vPane.setMaxHeight(Double.MAX_VALUE);
+    setCenter(vPane);
     initRenjin(getStoredRemoteRepositories(), Thread.currentThread().getContextClassLoader());
   }
 
@@ -139,7 +148,7 @@ public class ConsoleComponent extends BorderPane {
     String surround = getStars(greeting.length());
     console.append(surround);
     console.append(greeting);
-    console.append(surround + "\n>");
+    console.append(surround + "\n>", true);
   }
 
   private ClassLoader classloader(PackageLoader loader, ClassLoader parentClassLoader) {
@@ -296,10 +305,19 @@ public class ConsoleComponent extends BorderPane {
       }
     };
 
-    task.setOnSucceeded(e -> waiting());
-    task.setOnSucceeded(e -> waiting());
+    task.setOnSucceeded(e -> {
+      waiting();
+      updateEnvironment();
+      promptAndScrollToEnd();
+    });
+    task.setOnSucceeded(e -> {
+      waiting();
+      updateEnvironment();
+      promptAndScrollToEnd();
+    });
     task.setOnFailed(e -> {
       waiting();
+      updateEnvironment();
       Throwable throwable = task.getException();
       Throwable ex = throwable.getCause();
       if (ex == null) {
@@ -323,17 +341,35 @@ public class ConsoleComponent extends BorderPane {
       }
 
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
-
+      promptAndScrollToEnd();
     });
     scriptThread = new Thread(task);
     scriptThread.setDaemon(false);
     scriptThread.start();
   }
 
+  private void promptAndScrollToEnd() {
+    console.appendText(">");
+    console.moveTo(console.getLength());
+    console.requestFollowCaret();
+  }
+
+  private void updateEnvironment() {
+    Environment global = session.getGlobalEnvironment();
+    gui.getEnvironmentComponent().setEnvironment(global, session.getTopLevelContext());
+    StringVector pkgs = null;
+    try {
+      pkgs = (StringVector) engine.eval("(.packages())");
+    } catch (ScriptException e) {
+      ExceptionAlert.showAlert("Error updating environment", e);
+    }
+    gui.getInoutComponent().setPackages(pkgs);
+  }
+
   class AppenderOutputStream extends OutputStream {
     @Override
     public void write(int b) {
-      Platform.runLater(() ->console.appendText(String.valueOf((char) b)));
+      Platform.runLater(() -> console.appendText(String.valueOf((char) b)));
     }
   }
 
@@ -341,19 +377,22 @@ public class ConsoleComponent extends BorderPane {
 
       try (OutputStream out = new AppenderOutputStream();
            PrintStream outStream = new PrintStream(out);
-           PrintWriter outputWriter = new PrintWriter(outStream)) {
+           PrintWriter outputWriter = new PrintWriter(outStream);
+           StringWriter warnStrWriter  = new StringWriter();
+           PrintWriter warnWriter = new PrintWriter(warnStrWriter)
+      ) {
 
         engine.put("inout", gui.getInoutComponent());
 
-        outputWriter.write(title + "\n");
+        Platform.runLater(() -> console.append(title));
         session.setStdOut(outputWriter);
-        // TODO change to another printwriter so warning will be printed in red text
         session.setStdErr(outputWriter);
-        engine.eval(script);
 
+        engine.eval(script);
+        session.setStdOut(warnWriter);
         session.printWarnings();
+        Platform.runLater(() -> console.appendWarning(warnStrWriter.toString()));
         session.clearWarnings();
-        outputWriter.write(">");
       }
   }
 
@@ -363,16 +402,21 @@ public class ConsoleComponent extends BorderPane {
     // e.g. for plots, this is the best way to do that.
     scriptExecutionTimeline = new Timeline();
     KeyFrame scriptFrame = new KeyFrame(Duration.seconds(1), evt -> {
-      try {
+      try (StringWriter warnStrWriter  = new StringWriter();
+           PrintWriter warnWriter = new PrintWriter(warnStrWriter)){
         engine.put("inout", gui.getInoutComponent());
         engine.getContext().setWriter(outputWriter);
         engine.getContext().setErrorWriter(outputWriter);
         outputWriter.write(title + "\n");
         engine.eval(script);
-        session.printWarnings();
-        session.clearWarnings();
-        outputWriter.write(">");
         console.append(outputWriter.toString(), true);
+
+        session.setStdOut(warnWriter);
+        session.printWarnings();
+        console.appendWarning(warnStrWriter.toString());
+        session.clearWarnings();
+        //outputWriter.write(">");
+
       } catch (org.renjin.parser.ParseException e) {
         Platform.runLater(() ->
             ExceptionAlert.showAlert("Error parsing R script: " + e.getMessage(), e));
@@ -389,15 +433,9 @@ public class ConsoleComponent extends BorderPane {
     });
 
     KeyFrame pkgFrame = new KeyFrame(Duration.seconds(1), evt -> {
-      try {
-        Environment global = session.getGlobalEnvironment();
-        gui.getEnvironmentComponent().setEnvironment(global, session.getTopLevelContext());
-        StringVector pkgs = (StringVector) engine.eval("(.packages())");
-        gui.getInoutComponent().setPackages(pkgs);
-        waiting();
-      } catch (ScriptException e) {
-        e.printStackTrace();
-      }
+      waiting();
+      updateEnvironment();
+      promptAndScrollToEnd();
     });
 
     scriptExecutionTimeline.getKeyFrames().addAll(scriptFrame, pkgFrame);

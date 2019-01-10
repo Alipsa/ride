@@ -48,12 +48,12 @@ public class CodeTextArea extends TextCodeArea {
         = new StyleSpansBuilder<>();
     while (matcher.find()) {
       String styleClass =
-          matcher.group("KEYWORD") != null ? "r_keyword" :
-              matcher.group("ASSIGNMENT") != null ? "r_assign" :
-                  matcher.group("BRACKET") != null ? "r_bracket" :
-                      matcher.group("DIGIT") != null ? "r_digit" :
-                          matcher.group("STRING") != null ? "r_string" :
-                              matcher.group("COMMENT") != null ? "r_comment" :
+          matcher.group("KEYWORD") != null ? "keyword" :
+              matcher.group("ASSIGNMENT") != null ? "assign" :
+                  matcher.group("BRACKET") != null ? "bracket" :
+                      matcher.group("DIGIT") != null ? "digit" :
+                          matcher.group("STRING") != null ? "string" :
+                              matcher.group("COMMENT") != null ? "comment" :
                                   null; /* never happens */
       assert styleClass != null;
       spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);

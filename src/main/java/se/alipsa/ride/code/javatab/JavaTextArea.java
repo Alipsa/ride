@@ -53,13 +53,13 @@ public class JavaTextArea extends TextCodeArea {
         = new StyleSpansBuilder<>();
     while (matcher.find()) {
       String styleClass =
-          matcher.group("KEYWORD") != null ? "java_keyword" :
-              matcher.group("PAREN") != null ? "java_paren" :
-                  matcher.group("BRACE") != null ? "java_brace" :
-                      matcher.group("BRACKET") != null ? "java_bracket" :
-                          matcher.group("SEMICOLON") != null ? "java_semicolon" :
-                              matcher.group("STRING") != null ? "java_string" :
-                                  matcher.group("COMMENT") != null ? "java_comment" :
+          matcher.group("KEYWORD") != null ? "keyword" :
+              matcher.group("PAREN") != null ? "paren" :
+                  matcher.group("BRACE") != null ? "brace" :
+                      matcher.group("BRACKET") != null ? "bracket" :
+                          matcher.group("SEMICOLON") != null ? "semicolon" :
+                              matcher.group("STRING") != null ? "string" :
+                                  matcher.group("COMMENT") != null ? "comment" :
                                       null; /* never happens */
       assert styleClass != null;
       spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);

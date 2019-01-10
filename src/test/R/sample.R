@@ -5,9 +5,9 @@ print(mean(numvec))
 # Exercise #3
 print("# Use a for loop to determine the value of sum_{i=1}^{25} i^2")
 
-j = 0
-for (i in 1:25) {
-  j <- j + (i^2)
+k = 0
+for (i in 1:22) {
+  k <- k + (i^2)
 }
 print(j)
 

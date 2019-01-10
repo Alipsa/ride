@@ -1,0 +1,53 @@
+/* see https://www.rapidtables.com/web/css/css-color.html for color names */
+.assign {
+    -fx-fill: dimgray;
+}
+
+.brace {
+    -fx-fill: teal;
+    -fx-font-weight: bold;
+}
+
+.bracket {
+    -fx-fill: dimgray;
+}
+
+.comment {
+    -fx-fill: darkseagreen;
+}
+
+.digit {
+    -fx-fill:mediumblue;
+}
+
+.error {
+    -fx-fill: red;
+}
+
+.keyword {
+    -fx-fill: blue;
+    -fx-font-weight: bold;
+}
+
+.paragraph-box:has-caret {
+    -fx-background-color: #f2f9fc;
+}
+
+.paren {
+    -fx-fill: turquoise;
+    -fx-font-weight: bold;
+}
+
+.semicolon {
+    -fx-font-weight: bold;
+}
+
+.string {
+    -fx-fill: green;
+}
+
+.warning {
+    -fx-fill: darkred;
+}
+
+
