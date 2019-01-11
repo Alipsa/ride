@@ -14,12 +14,10 @@ import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
 import se.alipsa.ride.code.xmltab.XmlTab;
 import se.alipsa.ride.console.ConsoleComponent;
-import se.alipsa.ride.utils.CharsetDetector;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.List;
 
 public class CodeComponent extends BorderPane {
@@ -127,9 +125,10 @@ public class CodeComponent extends BorderPane {
       log.info("Content detected as charset {}", match.getName());
       String content = detector.getString(textBytes, match.getName());
       */
-      Charset charset = CharsetDetector.detect(textBytes);
-      log.info("Charset detected as {}", charset);
-      String content = new String(textBytes, charset);
+      //Charset charset = CharsetDetector.detect(textBytes);
+      String content = new String(textBytes);
+      //log.info("Charset detected as {}", charset);
+      //String content = new String(textBytes, charset);
 
       tab.setFile(file);
       tab.replaceContentText(0, 0, content);
