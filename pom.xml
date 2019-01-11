@@ -89,17 +89,6 @@
             <artifactId>tika-core</artifactId>
             <version>1.20</version>
         </dependency>
-        <!--dependency>
-          <groupId>org.apache.tika</groupId>
-          <artifactId>tika-parsers</artifactId>
-          <version>1.20</version>
-          <exclusions>
-            <exclusion>
-              <groupId>commons-logging</groupId>
-              <artifactId>commons-logging</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency-->
         <!-- Git integration Core Library -->
         <!--dependency>
             <groupId>org.eclipse.jgit</groupId>

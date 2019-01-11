@@ -98,6 +98,9 @@ Copyright Fasterxml under Apache 2.0 license.
 Used to detect file types as Files.probeContentType is inconsistent over different OS's
 Apache 2.0 license.
 
+### codehaus:guessencoding
+Used to detect file encoding (Charset). Copyright 2002-2007 Guillaume Laforge unde Apache 2.0 License
+
 # Contributing
 If you are interested in helping out, reporting issues, creating tests or implementing new features
 are all warmly welcome. See also [todo](todo.md) for roadmap.

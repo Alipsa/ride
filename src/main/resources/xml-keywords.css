@@ -2,17 +2,17 @@
     -fx-fill: gray;
 }
 .xml_anytag {
-    -fx-fill: crimson;
+    -fx-fill: blue;
 }
 .xml_paren {
-    -fx-fill: firebrick;
+    -fx-fill: darkgray;
     -fx-font-weight: bold;
 }
 .xml_attribute {
-    -fx-fill: darkviolet;
+    -fx-fill: black;
 }
 .xml_avalue {
-    -fx-fill: black;
+    -fx-fill: darkgreen;
 }
 
 .xml_comment {
