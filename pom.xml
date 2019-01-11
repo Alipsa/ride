@@ -89,6 +89,17 @@
             <artifactId>tika-core</artifactId>
             <version>1.20</version>
         </dependency>
+        <!--dependency>
+          <groupId>org.apache.tika</groupId>
+          <artifactId>tika-parsers</artifactId>
+          <version>1.20</version>
+          <exclusions>
+            <exclusion>
+              <groupId>commons-logging</groupId>
+              <artifactId>commons-logging</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency-->
         <!-- Git integration Core Library -->
         <!--dependency>
             <groupId>org.eclipse.jgit</groupId>
@@ -103,6 +114,11 @@
             <id>bedatadriven</id>
             <name>bedatadriven public repo</name>
             <url>https://nexus.bedatadriven.com/content/groups/public/</url>
+        </repository>
+        <repository>
+          <id>central</id>
+          <name>Maven Central</name>
+          <url>http://repo1.maven.org/maven2/</url>
         </repository>
         <!--repository>
             <id>jgit-repository</id>

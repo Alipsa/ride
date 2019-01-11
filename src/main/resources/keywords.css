@@ -4,7 +4,7 @@
 }
 
 .brace {
-    -fx-fill: teal;
+    -fx-fill: slategray;
     -fx-font-weight: bold;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .digit {
-    -fx-fill:mediumblue;
+    -fx-fill:darkslateblue;
 }
 
 .error {
@@ -34,7 +34,7 @@
 }
 
 .paren {
-    -fx-fill: turquoise;
+    -fx-fill: darkgray;
     -fx-font-weight: bold;
 }
 
@@ -43,7 +43,7 @@
 }
 
 .string {
-    -fx-fill: green;
+    -fx-fill: darkgreen;
 }
 
 .warning {

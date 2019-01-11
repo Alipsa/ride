@@ -4,6 +4,7 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
@@ -13,12 +14,12 @@ import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
 import se.alipsa.ride.code.xmltab.XmlTab;
 import se.alipsa.ride.console.ConsoleComponent;
+import se.alipsa.ride.utils.CharsetDetector;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.List;
 
 public class CodeComponent extends BorderPane {
@@ -115,8 +116,21 @@ public class CodeComponent extends BorderPane {
         tab = new TxtTab(title, gui);
     }
     try {
-      lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
-      String content = String.join("\n", lines);
+      //lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+      //String content = String.join("\n", lines);
+      byte[] textBytes = FileUtils.readFileToByteArray(file);
+      /*
+      org.apache.tika.parser.txt.CharsetDetector detector = new CharsetDetector();
+      detector.setText(textBytes);
+
+      org.apache.tika.parser.txt.CharsetMatch match = detector.detect();
+      log.info("Content detected as charset {}", match.getName());
+      String content = detector.getString(textBytes, match.getName());
+      */
+      Charset charset = CharsetDetector.detect(textBytes);
+      log.info("Charset detected as {}", charset);
+      String content = new String(textBytes, charset);
+
       tab.setFile(file);
       tab.replaceContentText(0, 0, content);
     } catch (IOException e) {

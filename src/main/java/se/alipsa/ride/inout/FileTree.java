@@ -1,7 +1,9 @@
 package se.alipsa.ride.inout;
 
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.scene.control.*;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.apache.tika.Tika;
@@ -14,6 +16,7 @@ import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
@@ -201,11 +204,38 @@ public class FileTree extends TreeView {
           /*|| strEndsWith(fileNameLower, ".txt", ".md", ".csv")*/) {
           codeComponent.addTab(file, TabType.TXT);
         } else {
-          Alerts.info("Unknown file type",
-              "Unknown file type, not sure what to do with " + file.getName());
+          if (isDesktopSupported()) {
+              log.info("Try to open {} in associated application", file.getName());
+              openApplicationExternal(file);
+          } else {
+            Alerts.info("Unknown file type",
+                "Unknown file type, not sure what to do with " + file.getName());
+          }
         }
       }
     }
+  }
+
+  private boolean isDesktopSupported() {
+    try {
+      return Desktop.isDesktopSupported();
+    } catch (Exception e) {
+      return false;
+    }
+  }
+
+  private void openApplicationExternal(File file) {
+    Task<Void> task = new Task<Void>() {
+      @Override
+      protected Void call() throws Exception {
+        Desktop.getDesktop().open(file);
+        return null;
+      }
+    };
+
+    task.setOnFailed(e -> ExceptionAlert.showAlert("Failed to open " + file, task.getException()));
+    Thread appthread = new Thread(task);
+    appthread.start();
   }
 
   private boolean strStartsWith(String fileNameLower, String... strOpt) {
