@@ -21,7 +21,6 @@ public class CodeTab extends TextAreaTab {
 
   CodeTextArea codeTextArea;
 
-  Button runButton;
   ConsoleComponent console;
 
   private Logger log = LoggerFactory.getLogger(CodeTab.class);
@@ -39,12 +38,13 @@ public class CodeTab extends TextAreaTab {
     buttonPane.setPadding(new Insets(5, 10, 5, 5));
     pane.setTop(buttonPane);
 
-    runButton = new Button("Run");
-    runButton.setOnAction(this::handleRunAction);
+    //Button runButton = new Button("Run");
+    //runButton.setOnAction(this::handleRunAction);
 
-    Button runInThreadButton = new Button("Run in Thread");
+    Button runInThreadButton = new Button("Run");
     runInThreadButton.setOnAction(event -> console.runScriptInThread(codeTextArea.getTextContent(), getTitle()));
-    buttonPane.getChildren().addAll(runButton, runInThreadButton);
+    buttonPane.getChildren().addAll(runInThreadButton);
+    //buttonPane.getChildren().addAll(runButton, runInThreadButton);
 
     codeTextArea = new CodeTextArea(this);
     codeTextArea.addEventHandler(KeyEvent.KEY_PRESSED, e -> {

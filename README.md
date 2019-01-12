@@ -11,7 +11,7 @@ will later run in embedded mode on application servers such as Wildfly or Play F
 
 It is functional i.e. it is possible to create, open, save and execute R scripts, 
 run selected text, ctrl + enter execution of current line or selected text, view packages loaded, 
-see variables created etc. but it has some way to go compared to all the rich functionality of RStudio at this point. 
+see variables created, syntax highlighting for R, XML, SQL  and Java files etc. but it has some way to go compared to all the rich functionality of RStudio at this point. 
 
 ![alt text](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Screenshot.png "Screenshot")
 

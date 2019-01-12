@@ -1,5 +1,4 @@
-This is expected to be the last beta release. All features that was envisioned for 
-version 1.0 are now implemented. 
+This is version 1.0 of Ride.
 
 At this point Ride is usable and provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine.
 
@@ -14,7 +13,7 @@ Since you probably want to run the ScriptEngine with the ClassPathPackageLoader 
 you can set Ride to use this to resolve packages. You then need to include those dependencies to the maven.pom. 
 
 ## How to install:
-Unzip ride-1.0-beta2-dist.zip to a directory of choice
+Unzip ride-1.0-final-dist.zip to a directory of choice
 
 ## How to run:
 
@@ -26,6 +25,14 @@ or on windows
 
 
 # Version Descriptions
+
+### 1.0 Final
+- Run scriptEngine in a separate thread but still make it possible to interact with the gui
+    - Enables console output as the R script is executed rather than outputting content at the end as before.
+- Syntax highlighting for SQL files as well
+- Charset detection of files so at least UTF16LE files (and of course UTF 8 and ISO-8859-x) looks nice in the editor
+- Opening unknown files in default associated program
+- Various refactoring and minor bugfixes     
 
 ### 1.0 beta 4
 - Add support for text, xml and java files
