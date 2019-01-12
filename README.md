@@ -95,11 +95,11 @@ Used for JSON handling in various places.
 Copyright Fasterxml under Apache 2.0 license.
 
 ### org.apache.tika:tika-core
-Used to detect file types as Files.probeContentType is inconsistent over different OS's
+Used to detect file types as Files.probeContentType is inconsistent over different OS's;
 Apache 2.0 license.
 
 ### codehaus:guessencoding
-Used to detect file encoding (Charset). Copyright 2002-2007 Guillaume Laforge unde Apache 2.0 License
+Used to detect file encoding (Charset). Copyright 2002-2007 Guillaume Laforge under Apache 2.0 License
 
 # Contributing
 If you are interested in helping out, reporting issues, creating tests or implementing new features
