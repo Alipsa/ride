@@ -38,6 +38,11 @@
     -fx-font-weight: bold;
 }
 
+.console {
+    -fx-font-family: consolas;
+    -fx-font-size: 10pt;
+}
+
 .semicolon {
     -fx-font-weight: bold;
 }

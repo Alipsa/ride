@@ -1,8 +1,5 @@
 package se.alipsa.ride.console;
 
-import javafx.application.Platform;
-import javafx.scene.control.TextArea;
-import javafx.scene.text.Font;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +9,7 @@ public class ConsoleTextArea extends CodeArea {
   Logger log = LoggerFactory.getLogger(ConsoleTextArea.class);
 
   public ConsoleTextArea() {
-    setStyle("-fx-font-family: consolas; -fx-font-size: 10pt;");
-    //setFont(Font.font("Courier New"));
+    getStyleClass().add("console");
   }
 
   public void append(String text, boolean... skipNewline) {
