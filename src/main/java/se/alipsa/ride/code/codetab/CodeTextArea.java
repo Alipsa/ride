@@ -1,5 +1,7 @@
 package se.alipsa.ride.code.codetab;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.TextCodeArea;
@@ -38,6 +40,13 @@ public class CodeTextArea extends TextCodeArea {
 
   public CodeTextArea(CodeTab parent) {
     super(parent);
+    textProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue.contains("hamcrest")) {
+        parent.enableRunTestsButton();
+      } else {
+        parent.disableRunTestsButton();
+      }
+    });
   }
 
 

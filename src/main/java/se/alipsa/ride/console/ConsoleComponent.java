@@ -24,14 +24,15 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.RenjinVersion;
 import org.renjin.aether.AetherFactory;
 import org.renjin.aether.AetherPackageLoader;
+import org.renjin.eval.Context;
 import org.renjin.eval.EvalException;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
 import org.renjin.primitives.packaging.ClasspathPackageLoader;
 import org.renjin.primitives.packaging.PackageLoader;
+import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
-import org.renjin.sexp.Environment;
-import org.renjin.sexp.StringVector;
+import org.renjin.sexp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
@@ -47,16 +48,16 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import static se.alipsa.ride.utils.StringUtils.format;
+
 public class ConsoleComponent extends BorderPane {
 
-  private ScriptEngine engine;
+  private RenjinScriptEngine engine;
   private Session session;
 
   private ImageView globeView;
@@ -364,6 +365,132 @@ public class ConsoleComponent extends BorderPane {
       ExceptionAlert.showAlert("Error updating environment", e);
     }
     gui.getInoutComponent().setPackages(pkgs);
+  }
+
+  public void runTests(String script, String title) {
+    console.append("");
+    console.append("Running hamcrest tests");
+    console.append("----------------------");
+    List<TestResult> results = new ArrayList<>();
+    results.add(runTest(script, title));
+    //now run each testFunction in that file, in the same Session
+    for (Symbol name : session.getGlobalEnvironment().getSymbolNames()) {
+      String methodName = name.getPrintName().trim();
+      if (methodName.startsWith("test.")) {
+        SEXP value = session.getGlobalEnvironment().getVariable(session.getTopLevelContext(), name);
+        if (isNoArgsFunction(value)) {
+          Context context = session.getTopLevelContext();
+          results.add(runTestFunction(context, title, name));
+        }
+      }
+    }
+    Map<TestResult.OutCome, List<TestResult>> resultMap = results.stream()
+        .collect(Collectors.groupingBy(TestResult::getResult));
+
+    List<TestResult> successResults = resultMap.get(TestResult.OutCome.SUCCESS);
+    List<TestResult> failureResults = resultMap.get(TestResult.OutCome.FAILURE);
+    List<TestResult> errorResults = resultMap.get(TestResult.OutCome.ERROR);
+    long successCount = successResults == null ? 0 : successResults.size();
+    long failCount = failureResults == null ? 0 : failureResults.size();
+    long errorCount = errorResults == null ? 0 : errorResults.size();
+
+    console.append("R tests summary:");
+    console.append("----------------");
+    console.append(format("Tests run: {}, Sucesses: {}, Failures: {}, Errors: {}",
+        results.size(), successCount, failCount, errorCount));
+
+    boolean errorsDuringTests = failCount > 0 || errorCount > 0;
+    if (errorsDuringTests) {
+      console.append("");
+      console.append("Results: ");
+      for (TestResult res : results) {
+        if (res.getResult().equals(TestResult.OutCome.SUCCESS)) {
+          continue;
+        }
+        String errMsg = formatMessage(res.getError());
+        console.appendWarning(format("\t{} : {} : {}",
+            res.getResult(),
+            res.getIssue(),
+            errMsg));
+      }
+    } else {
+      console.append(format("\tSUCCESS! {} tests run", results.size()));
+    }
+    updateEnvironment();
+    promptAndScrollToEnd();
+  }
+
+
+  private TestResult runTest(String script, String title) {
+    TestResult result = new TestResult(title);
+    String issue;
+    Exception exception;
+    String testName = title;
+    try {
+      engine.eval(script);
+      result.setResult(TestResult.OutCome.SUCCESS);
+      console.append(format("\t# {}: Success", testName));
+      return result;
+    } catch (org.renjin.parser.ParseException e) {
+      exception = e;
+      issue = e.getClass().getSimpleName() + " parsing R script " + testName;
+    } catch (ScriptException | EvalException e) {
+      exception = e;
+      issue = e.getClass().getSimpleName() + " executing test " + testName;
+    } catch (RuntimeException e) {
+      exception = e;
+      issue = e.getClass().getSimpleName() + " occurred running R script " + testName;
+    } catch (Exception e) {
+      exception = e;
+      issue = e.getClass().getSimpleName() + " thrown when running script " + testName;
+    }
+    console.appendWarning(format("\t# {}: Failure detected: {}", testName, formatMessage(exception)));
+    result.setResult(TestResult.OutCome.FAILURE);
+    result.setError(exception);
+    result.setIssue(issue);
+    return result;
+  }
+
+  private boolean isNoArgsFunction(final SEXP value) {
+    if (value instanceof Closure) {
+      Closure testFunction = (Closure) value;
+      return testFunction.getFormals().length() == 0;
+    }
+    return false;
+  }
+
+  private String formatMessage(final Throwable error) {
+    return error.getMessage().trim().replace("\n", ", ");
+  }
+
+  private TestResult runTestFunction(final Context context, final String title, final Symbol name) {
+    String methodName = name.getPrintName().trim() + "()";
+    String testName = title + ": " + methodName ;
+    console.append(format("\t# Running test function {} in {}", methodName, title));
+    String issue;
+    Exception exception;
+    TestResult result = new TestResult(title);
+    try {
+      context.evaluate(FunctionCall.newCall(name));
+      console.append(format("\t\t# {}: Success", testName));
+      result.setResult(TestResult.OutCome.SUCCESS);
+      return result;
+    } catch (EvalException e) {
+      exception = e;
+      issue = e.getClass().getSimpleName() + " executing test " + testName;
+    } catch (RuntimeException e) {
+      exception = e;
+      issue = e.getClass().getSimpleName() + " occurred running R script " + testName;
+    } catch (Exception e) {
+      exception = e;
+      issue = e.getClass().getSimpleName() + " thrown when running script " + testName;
+    }
+
+    console.appendWarning(format("\t\t# {}: Failure detected: {}", testName, formatMessage(exception)));
+    result.setResult(TestResult.OutCome.FAILURE);
+    result.setError(exception);
+    result.setIssue(issue);
+    return result;
   }
 
   class AppenderOutputStream extends OutputStream {
