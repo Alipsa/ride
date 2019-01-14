@@ -18,4 +18,13 @@ test.readImage <- function() {
     print("done")
 }
 
-test.readImage()
+runTests <- function() {
+	vars <- ls(envir = .GlobalEnv, pattern = "test.*")
+	#str(vars)
+	for(func in vars){
+  	  print(paste("Running test", func))
+	  do.call(func, list() )
+	}
+}
+
+runTests()
