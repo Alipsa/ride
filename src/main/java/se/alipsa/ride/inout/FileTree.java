@@ -184,7 +184,7 @@ public class FileTree extends TreeView {
       TreeItem<File> item = (TreeItem) getSelectionModel().getSelectedItem();
       File file = item.getValue();
       String type = guessContentType(file);
-      log.info("File ContentType for {} detected as {}", file.getName(), type);
+      log.debug("File ContentType for {} detected as {}", file.getName(), type);
       if (file.isFile()) {
         String fileNameLower = file.getName().toLowerCase();
         if (strEndsWith(fileNameLower, ".r", ".s") || strEquals(type, "text/x-rsrc")) {

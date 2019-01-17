@@ -24,6 +24,7 @@ public class CodeTab extends TextAreaTab {
   private ConsoleComponent console;
 
   private Button runTestsButton;
+  private boolean isRunTestButtonDisabled = false;
 
   private Logger log = LoggerFactory.getLogger(CodeTab.class);
 
@@ -115,10 +116,16 @@ public class CodeTab extends TextAreaTab {
   }
 
   public void enableRunTestsButton() {
-    runTestsButton.setDisable(false);
+    if (isRunTestButtonDisabled) {
+      runTestsButton.setDisable(false);
+      isRunTestButtonDisabled = false;
+    }
   }
 
   public void disableRunTestsButton() {
-    runTestsButton.setDisable(true);
+    if (!isRunTestButtonDisabled) {
+      runTestsButton.setDisable(true);
+      isRunTestButtonDisabled = true;
+    }
   }
 }

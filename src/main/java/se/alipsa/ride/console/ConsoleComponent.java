@@ -357,14 +357,20 @@ public class ConsoleComponent extends BorderPane {
 
   private void updateEnvironment() {
     Environment global = session.getGlobalEnvironment();
-    gui.getEnvironmentComponent().setEnvironment(global, session.getTopLevelContext());
+    Context topContext = session.getTopLevelContext();
+    gui.getEnvironmentComponent().setEnvironment(global, topContext);
     StringVector pkgs = null;
     try {
       pkgs = (StringVector) engine.eval("(.packages())");
+
     } catch (ScriptException e) {
       ExceptionAlert.showAlert("Error updating environment", e);
     }
     gui.getInoutComponent().setPackages(pkgs);
+
+    // TODO consider setting the working dir in filetree after each run as setwd() night have changed it
+    // Below is how to get it:
+    // log.info("Working dir is {}", engine.getSession().getWorkingDirectory().getName().getPath());
   }
 
   public void runTests(String script, String title) {

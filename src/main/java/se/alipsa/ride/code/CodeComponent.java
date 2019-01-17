@@ -122,7 +122,7 @@ public class CodeComponent extends BorderPane {
       CharsetToolkit toolkit = new CharsetToolkit(textBytes);
       toolkit.setEnforce8Bit(true);
       Charset charset = toolkit.guessEncoding();
-      log.info("Charset for {} detected as {}", file.getName(), charset);
+      log.debug("Charset for {} detected as {}", file.getName(), charset);
       String content = new String(textBytes, charset);
 
       tab.setFile(file);

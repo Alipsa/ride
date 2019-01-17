@@ -9,7 +9,7 @@ k = 0
 for (i in 1:22) {
   k <- k + (i^2)
 }
-print(j)
+print(k)
 
 # Exercise #4
 print("# The cars dataset is available in base R. You can type cars to see it. Use the class function to determine what type of object is cars.")
