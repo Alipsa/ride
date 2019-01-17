@@ -19,9 +19,11 @@ import java.io.File;
 
 public class CodeTab extends TextAreaTab {
 
-  CodeTextArea codeTextArea;
+  private CodeTextArea codeTextArea;
 
-  ConsoleComponent console;
+  private ConsoleComponent console;
+
+  private Button runTestsButton;
 
   private Logger log = LoggerFactory.getLogger(CodeTab.class);
 
@@ -43,8 +45,13 @@ public class CodeTab extends TextAreaTab {
 
     Button runInThreadButton = new Button("Run");
     runInThreadButton.setOnAction(event -> console.runScriptInThread(codeTextArea.getTextContent(), getTitle()));
-    buttonPane.getChildren().addAll(runInThreadButton);
+    buttonPane.getChildren().add(runInThreadButton);
     //buttonPane.getChildren().addAll(runButton, runInThreadButton);
+
+    runTestsButton = new Button("Run tests");
+    runTestsButton.setOnAction(evt -> console.runTests(codeTextArea.getTextContent(), getTitle()));
+    buttonPane.getChildren().add(runTestsButton);
+    disableRunTestsButton();
 
     codeTextArea = new CodeTextArea(this);
     codeTextArea.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
@@ -57,8 +64,7 @@ public class CodeTab extends TextAreaTab {
         if (selected != null && !"".equals(selected)) {
           rCode = codeComponent.getTextFromActiveTab();
         }
-        console.runScript(rCode, codeComponent.getActiveScriptName());
-        //code.displaceCaret(rCode.length() + 1);
+        console.runScriptInThread(rCode, codeComponent.getActiveScriptName());
         codeTextArea.moveTo(codeTextArea.getCurrentParagraph() + 1, 0);
       }
     });
@@ -106,5 +112,13 @@ public class CodeTab extends TextAreaTab {
   @Override
   public void setTitle(String title) {
     setText(title);
+  }
+
+  public void enableRunTestsButton() {
+    runTestsButton.setDisable(false);
+  }
+
+  public void disableRunTestsButton() {
+    runTestsButton.setDisable(true);
   }
 }
