@@ -9,7 +9,7 @@ select * from sometable where bra='asd'
 -- a one liner comment
 select * from asd
 left join asdnkl on tjo = asd.asdm
-inner join asd on as = as
+inner join asd on asset = assmet
 where s = 1
 group by asdan
 order by asdads desc

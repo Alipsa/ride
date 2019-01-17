@@ -18,12 +18,23 @@ test.readImage <- function() {
     print("done")
 }
 
+test.testwith1args <- function(arg1) {
+	assertTrue(TRUE)
+}
+test.testwith2args <- function(arg1, arg2) {
+	assertTrue(TRUE)
+}
+
 runTests <- function() {
 	vars <- ls(envir = .GlobalEnv, pattern = "test.*")
-	#str(vars)
 	for(func in vars){
-  	  print(paste("Running test", func))
-	  do.call(func, list() )
+	  numargs <- length(formals(func))
+	  if (numargs == 0) {
+  	  	print(paste("# Running test", func))
+	  	do.call(func, list() )
+	  } else {
+		print(paste("Tests should not have arguments, skipping", func))
+	  }
 	}
 }
 
