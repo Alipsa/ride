@@ -6,7 +6,6 @@ import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
-import se.alipsa.ride.code.javatab.JavaTextArea;
 
 import java.io.File;
 

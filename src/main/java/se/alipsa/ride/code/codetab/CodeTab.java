@@ -107,16 +107,6 @@ public class CodeTab extends TextAreaTab {
     codeTextArea.replaceContentText(start, end, content);
   }
 
-  @Override
-  public String getTitle() {
-    return getText();
-  }
-
-  @Override
-  public void setTitle(String title) {
-    setText(title);
-  }
-
   public void enableRunTestsButton() {
     if (isRunTestButtonDisabled) {
       runTestsButton.setDisable(false);

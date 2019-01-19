@@ -20,6 +20,7 @@ public class CodeTextArea extends TextCodeArea {
       "library"
   };
 
+
   private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
   private static final String ASSIGNMENT_PATTERN = "\\-\\>|\\<\\-|\\=|\\~|\\%\\>\\%";
   private static final String BRACKET_PATTERN = "\\[|\\]|\\{|\\}|\\(|\\)";

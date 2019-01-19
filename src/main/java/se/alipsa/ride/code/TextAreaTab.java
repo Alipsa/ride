@@ -17,6 +17,8 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
 
   protected Button saveButton = new Button();
 
+  private Tooltip saveToolTip;
+
   private static final Image IMG_SAVE = new Image(FileUtils
       .getResourceUrl("image/save.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
 
@@ -24,6 +26,8 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
     saveButton.setGraphic(new ImageView(IMG_SAVE));
     saveButton.setDisable(true);
     saveButton.setOnAction(a -> gui.getMainMenu().saveContent(this));
+    saveToolTip = new Tooltip("Save");
+    saveButton.setTooltip(saveToolTip);
 
     super.setOnCloseRequest(event -> {
           if (isChanged()) {
@@ -52,6 +56,7 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
 
   public void setTitle(String title) {
     setText(title);
+    saveToolTip.setText("Save " + title.replace("*", ""));
   }
 
   public void contentChanged() {

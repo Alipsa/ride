@@ -12,7 +12,7 @@ public class XmlTab extends TextAreaTab {
 
   public XmlTab(String title, Ride gui) {
     super(gui);
-    setText(title);
+    setTitle(title);
     xmlTextArea = new XmlTextArea(this);
     VirtualizedScrollPane pane = new VirtualizedScrollPane<>(xmlTextArea);
     setContent(pane);
@@ -43,13 +43,4 @@ public class XmlTab extends TextAreaTab {
     xmlTextArea.replaceContentText(start, end, content);
   }
 
-  @Override
-  public String getTitle() {
-    return getText();
-  }
-
-  @Override
-  public void setTitle(String title) {
-    setText(title);
-  }
 }
