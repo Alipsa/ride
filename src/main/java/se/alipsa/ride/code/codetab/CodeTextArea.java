@@ -1,7 +1,5 @@
 package se.alipsa.ride.code.codetab;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.TextCodeArea;
@@ -13,6 +11,7 @@ import java.util.regex.Pattern;
 
 public class CodeTextArea extends TextCodeArea {
 
+  // Since T and F are not true keywords (they can be reassigned e.g. T <- FALSE), they are not included below
   private static final String[] KEYWORDS = new String[]{
       "if", "else", "repeat", "while", "function",
       "for", "in", "next", "break", "TRUE",

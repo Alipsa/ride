@@ -1,14 +1,17 @@
 # Todo / Roadmap
 
 ## version 1.1
-### Restructure components
+### Run hamcrest tests
+Create a new runbutton when hamcrest tests are detected
+
+### Restructure components (maybe)
 - code component NW (as before)
 - out component SW
     - contains R console, plot, table view and SQL result (a table view)
 - in component SE
     - contains filetree
 - environment NE
-    - conatins packages, variables, history    
+    - contains packages, variables, history    
     
 ### enable execution of SQL queries 
 - A run query button in the SQL code tab
@@ -18,13 +21,15 @@
 undo and find/replace seems most pertinent
 
 ### Code menu improvements
-Comment/Uncomment lines
+Comment/Uncomment lines + the Ctrl+Shift+C combo
 Format code
 
 ### Tools -> Options menu
 Make it possible to customize tab as \t or number of spaces
 
 ## version 1.2
+### Implements graphics support (grDevices) for javafx
+
 ### add Rmd support
 
 ### add Roxygen support

@@ -36,7 +36,6 @@ import org.renjin.sexp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.code.codetab.CodeTextArea;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.Animation;
 import se.alipsa.ride.utils.ExceptionAlert;
@@ -50,9 +49,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import static se.alipsa.ride.Constants.ICON_HEIGHT;
+import static se.alipsa.ride.Constants.ICON_WIDTH;
 import static se.alipsa.ride.utils.StringUtils.format;
 
 public class ConsoleComponent extends BorderPane {
@@ -60,7 +60,7 @@ public class ConsoleComponent extends BorderPane {
   private RenjinScriptEngine engine;
   private Session session;
 
-  private ImageView globeView;
+  private ImageView runningView;
   private Button statusButton;
   private ConsoleTextArea console;
   private Ride gui;
@@ -75,9 +75,9 @@ public class ConsoleComponent extends BorderPane {
   public static final String PACKAGE_LOADER_PREF = "ConsoleComponent.PackageLoader";
 
   private static final Image IMG_RUNNING = new Image(FileUtils
-      .getResourceUrl("image/running.png").toExternalForm(), 30, 30, true, true);
+      .getResourceUrl("image/running.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
   private static final Image IMG_WAITING = new Image(FileUtils
-      .getResourceUrl("image/waiting.png").toExternalForm(), 30, 30, true, true);
+      .getResourceUrl("image/waiting.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
 
   private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
 
@@ -97,10 +97,10 @@ public class ConsoleComponent extends BorderPane {
     //spinningGlobe = createSpinner(5 * 1000);
     //spinningGlobe.setCycleCount(20);
 
-    globeView = new ImageView();
+    runningView = new ImageView();
     statusButton = new Button();
     statusButton.setOnAction(e -> interruptR());
-    statusButton.setGraphic(globeView);
+    statusButton.setGraphic(runningView);
     waiting();
 
     topPane.getChildren().addAll(statusButton, clearButton);
@@ -405,6 +405,9 @@ public class ConsoleComponent extends BorderPane {
     console.append(format("Tests run: {}, Sucesses: {}, Failures: {}, Errors: {}",
         results.size(), successCount, failCount, errorCount));
 
+    /* TODO: not sure if this section should be here or not
+    // Running test from Ride is just one file at a time so a complete summary like the plugin provides seems
+    // unnecessary - YMMV
     boolean errorsDuringTests = failCount > 0 || errorCount > 0;
     if (errorsDuringTests) {
       console.append("");
@@ -422,6 +425,7 @@ public class ConsoleComponent extends BorderPane {
     } else {
       console.append(format("\tSUCCESS! {} tests run", results.size()));
     }
+    */
     updateEnvironment();
     promptAndScrollToEnd();
   }
@@ -601,7 +605,7 @@ public class ConsoleComponent extends BorderPane {
 
   private void running() {
     Platform.runLater(() -> {
-      globeView.setImage(IMG_RUNNING);
+      runningView.setImage(IMG_RUNNING);
       statusButton.setTooltip(new Tooltip("Script is running, click to abort"));
       showTooltip(statusButton);
       gui.getMainMenu().enableInterruptMenuItem();
@@ -611,7 +615,7 @@ public class ConsoleComponent extends BorderPane {
 
   private void waiting() {
     Platform.runLater(() -> {
-      globeView.setImage(IMG_WAITING);
+      runningView.setImage(IMG_WAITING);
       statusButton.setTooltip(new Tooltip("Engine is idle"));
       gui.getMainMenu().disableInterruptMenuItem();
     });

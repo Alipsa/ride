@@ -1,18 +1,30 @@
 package se.alipsa.ride.code;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Tab;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.utils.FileUtils;
 
 import java.util.Optional;
+
+import static se.alipsa.ride.Constants.ICON_HEIGHT;
+import static se.alipsa.ride.Constants.ICON_WIDTH;
 
 public abstract class TextAreaTab extends Tab implements TabTextArea {
 
   protected boolean isChanged = false;
 
+  protected Button saveButton = new Button();
+
+  private static final Image IMG_SAVE = new Image(FileUtils
+      .getResourceUrl("image/save.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
+
   public TextAreaTab(Ride gui) {
+    saveButton.setGraphic(new ImageView(IMG_SAVE));
+    saveButton.setDisable(true);
+    saveButton.setOnAction(a -> gui.getMainMenu().saveContent(this));
+
     super.setOnCloseRequest(event -> {
           if (isChanged()) {
             ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
@@ -45,11 +57,13 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
   public void contentChanged() {
     setTitle(getTitle() + "*");
     isChanged = true;
+    saveButton.setDisable(false);
   }
 
   public void contentSaved() {
     setTitle(getTitle().replace("*", ""));
     isChanged = false;
+    saveButton.setDisable(true);
   }
 
   public boolean isChanged() {

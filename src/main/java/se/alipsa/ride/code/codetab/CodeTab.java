@@ -41,6 +41,8 @@ public class CodeTab extends TextAreaTab {
     buttonPane.setPadding(new Insets(5, 10, 5, 5));
     pane.setTop(buttonPane);
 
+    buttonPane.getChildren().add(saveButton);
+
     //Button runButton = new Button("Run");
     //runButton.setOnAction(this::handleRunAction);
 

@@ -26,6 +26,12 @@ or on windows
 
 # Version Descriptions
 
+### 1.1 SNAPSHOT (TODO change version when released)
+- Create a new runbutton when hamcrest tests are detected
+
+    Will run hamcrest tests similar to the renjin-hamcrest-maven-plugin i.e. producing nice output, error messages and
+    summary 
+
 ### 1.0 Final
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui
     - Enables console output as the R script is executed rather than outputting content at the end as before.
