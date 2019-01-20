@@ -41,12 +41,7 @@ import se.alipsa.ride.utils.Animation;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.script.ScriptException;
@@ -106,7 +101,7 @@ public class ConsoleComponent extends BorderPane {
     topPane.getChildren().addAll(statusButton, clearButton);
     setTop(topPane);
 
-    console = new ConsoleTextArea();
+    console = new ConsoleTextArea(gui);
     console.setEditable(false);
 
     VirtualizedScrollPane<ConsoleTextArea> vPane = new VirtualizedScrollPane<>(console);
@@ -506,31 +501,49 @@ public class ConsoleComponent extends BorderPane {
   class AppenderOutputStream extends OutputStream {
     @Override
     public void write(int b) {
-      Platform.runLater(() -> console.appendText(String.valueOf((char) b)));
+      console.appendChar((char) b);
+    }
+  }
+
+  class WarningAppenderOutputStream extends OutputStream {
+    @Override
+    public void write(int b) {
+      console.appendWarnChar((char) b);
     }
   }
 
   private void executeScriptAndReport(String script, String title) throws Exception {
 
       try (OutputStream out = new AppenderOutputStream();
-           PrintStream outStream = new PrintStream(out);
-           PrintWriter outputWriter = new PrintWriter(outStream);
-           StringWriter warnStrWriter  = new StringWriter();
-           PrintWriter warnWriter = new PrintWriter(warnStrWriter)
+           WarningAppenderOutputStream err = new WarningAppenderOutputStream();
+           PrintWriter outputWriter = new PrintWriter(out);
+           PrintWriter errWriter = new PrintWriter(err)
       ) {
 
         engine.put("inout", gui.getInoutComponent());
 
         Platform.runLater(() -> console.append(title));
         session.setStdOut(outputWriter);
-        session.setStdErr(outputWriter);
+        session.setStdErr(errWriter);
 
         engine.eval(script);
-        session.setStdOut(warnWriter);
-        session.printWarnings();
-        Platform.runLater(() -> console.appendWarning(warnStrWriter.toString()));
-        session.clearWarnings();
+        postEvalOutput();
+
+      } catch (Exception e) {
+        postEvalOutput();
+        throw e;
       }
+  }
+
+  private void postEvalOutput() throws IOException {
+    try (StringWriter warnStrWriter = new StringWriter();
+         PrintWriter warnWriter = new PrintWriter(warnStrWriter)) {
+      console.flush();
+      session.setStdOut(warnWriter);
+      session.printWarnings();
+      Platform.runLater(() -> console.appendWarning(warnStrWriter.toString()));
+      session.clearWarnings();
+    }
   }
 
   private void executeScriptAndReport(String script, String title, StringWriter outputWriter) {
@@ -651,5 +664,9 @@ public class ConsoleComponent extends BorderPane {
 
   public Session getSession() {
     return session;
+  }
+
+  public void setConsoleMaxSize(int size) {
+    console.setConsoleMaxSize(size);
   }
 }

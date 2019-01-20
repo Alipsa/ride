@@ -15,16 +15,20 @@ import org.renjin.primitives.packaging.ClasspathPackageLoader;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
+import se.alipsa.ride.utils.IntField;
 import se.alipsa.ride.utils.TableViewWithVisibleRowCount;
 
 import java.util.List;
 
 import static se.alipsa.ride.console.ConsoleComponent.PACKAGE_LOADER_PREF;
+import static se.alipsa.ride.console.ConsoleTextArea.MAX_LENGTH;
+import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 
 public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
   private TableViewWithVisibleRowCount<Repo> reposTable;
   private ComboBox<Class> pkgLoaderCb;
+  private IntField intField;
 
   public GlobalOptionsDialog(Ride gui) {
     setTitle("Global options");
@@ -130,6 +134,11 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
       }
     });
 
+    Label consoleMaxSizeLabel = new Label("Console max size");
+    grid.add(consoleMaxSizeLabel, 0, 2);
+    intField = new IntField(1000, Integer.MAX_VALUE, gui.getPrefs().getInt(CONSOLE_MAX_LENGTH_PREF, MAX_LENGTH));
+    grid.add(intField, 1, 2);
+
     getDialogPane().setPrefSize(800, 400);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     setResizable(true);
@@ -163,6 +172,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     GlobalOptions result = new GlobalOptions();
     result.put(GlobalOptions.REMOTE_REPOSITORIES, reposTable.getItems());
     result.put(GlobalOptions.PKG_LOADER, pkgLoaderCb.getSelectionModel().getSelectedItem());
+    result.put(CONSOLE_MAX_LENGTH_PREF, intField.getValue());
     return result;
   }
 

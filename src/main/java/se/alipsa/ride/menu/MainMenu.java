@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
+import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
+
 public class MainMenu extends MenuBar {
 
   Ride gui;
@@ -109,6 +111,9 @@ public class MainMenu extends MenuBar {
         (List<Repo>) result.get(GlobalOptions.REMOTE_REPOSITORIES),
         Thread.currentThread().getContextClassLoader()
     );
+    int consoleMaxLength = result.getInt(CONSOLE_MAX_LENGTH_PREF);
+    gui.getPrefs().putInt(CONSOLE_MAX_LENGTH_PREF, consoleMaxLength);
+    gui.getConsoleComponent().setConsoleMaxSize(consoleMaxLength);
   }
 
   public void disableInterruptMenuItem() {
