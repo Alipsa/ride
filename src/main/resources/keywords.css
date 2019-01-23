@@ -1,6 +1,7 @@
 /* see https://www.rapidtables.com/web/css/css-color.html for color names */
 .assign {
     -fx-fill: dimgray;
+    -fx-font-weight: bold;
 }
 
 .brace {
@@ -10,10 +11,12 @@
 
 .bracket {
     -fx-fill: dimgray;
+    -fx-font-weight: bold;
 }
 
 .comment {
-    -fx-fill: darkseagreen;
+    /*-fx-fill: darkseagreen;*/
+    -fx-fill: gray
 }
 
 .digit {
@@ -24,9 +27,18 @@
     -fx-fill: red;
 }
 
+.function {
+    -fx-font-style: italic;
+}
+
 .keyword {
     -fx-fill: blue;
     -fx-font-weight: bold;
+}
+
+.operator {
+    /*-fx-fill: darkslategray;*/
+    -fx-fill: dimgray;
 }
 
 .paragraph-box:has-caret {

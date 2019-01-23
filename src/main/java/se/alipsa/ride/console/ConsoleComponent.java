@@ -24,6 +24,8 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.RenjinVersion;
 import org.renjin.aether.AetherFactory;
 import org.renjin.aether.AetherPackageLoader;
+import org.renjin.aether.ConsoleRepositoryListener;
+import org.renjin.aether.ConsoleTransferListener;
 import org.renjin.eval.Context;
 import org.renjin.eval.EvalException;
 import org.renjin.eval.Session;
@@ -88,9 +90,6 @@ public class ConsoleComponent extends BorderPane {
     FlowPane topPane = new FlowPane();
     topPane.setPadding(new Insets(1, 10, 1, 5));
     topPane.setHgap(10);
-
-    //spinningGlobe = createSpinner(5 * 1000);
-    //spinningGlobe.setCycleCount(20);
 
     runningView = new ImageView();
     statusButton = new Button();
@@ -172,7 +171,10 @@ public class ConsoleComponent extends BorderPane {
     if (ClasspathPackageLoader.class.getSimpleName().equals(pkgLoaderName)) {
       return new ClasspathPackageLoader(parentClassLoader);
     }
-    return new AetherPackageLoader(parentClassLoader, remoteRepositories);
+    AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
+    //loader.setRepositoryListener(new ConsoleRepositoryListener(System.out));
+    //loader.setTransferListener(new ConsoleTransferListener(System.out));
+    return loader;
   }
 
   public void setPackageLoader(Class<?> loader) {
@@ -521,6 +523,7 @@ public class ConsoleComponent extends BorderPane {
       ) {
 
         engine.put("inout", gui.getInoutComponent());
+        //engine.put("packageLoader", getPackageLoader());
 
         Platform.runLater(() -> console.append(title));
         session.setStdOut(outputWriter);
