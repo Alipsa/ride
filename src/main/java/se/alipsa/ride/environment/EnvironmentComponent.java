@@ -7,10 +7,16 @@ import org.renjin.eval.Context;
 import org.renjin.sexp.Environment;
 import org.renjin.sexp.StringVector;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.environment.connections.Connection;
+import se.alipsa.ride.environment.connections.ConnectionsTab;
+
+import java.util.List;
 
 public class EnvironmentComponent extends TabPane {
 
   TextArea envTA;
+
+  ConnectionsTab connectionsTab;
 
   public EnvironmentComponent(Ride gui) {
     Tab environment = new Tab();
@@ -25,10 +31,9 @@ public class EnvironmentComponent extends TabPane {
 
     getTabs().add(history);
 
-    Tab connections = new Tab();
-    connections.setText("Connections");
+    connectionsTab = new ConnectionsTab();
 
-    getTabs().add(connections);
+    getTabs().add(connectionsTab);
   }
 
   public void setEnvironment(Environment env, Context ctx) {
@@ -45,5 +50,9 @@ public class EnvironmentComponent extends TabPane {
 
   public void clearEnvironment() {
     envTA.setText("");
+  }
+
+  public List<Connection> getConnections() {
+    return connectionsTab.getConnections();
   }
 }

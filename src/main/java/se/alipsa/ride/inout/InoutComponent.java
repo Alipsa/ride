@@ -128,22 +128,20 @@ public class InoutComponent extends TabPane {
     // so need to differentiate explicitly
     String type =  sexp.getTypeName();
     if (sexp instanceof ListVector) {
-      System.out.println("Identified as ListVector of type " + type);
+      log.debug("Identified as ListVector of type {}", type);
       view((ListVector)sexp, title);
     } else if (sexp instanceof Vector) {
-      System.out.println("Identified as Vector of type " + type);
+      log.debug("Identified as Vector of type {}", type);
       Vector vec = (Vector)sexp;
       if (vec.hasAttributes()) {
         AttributeMap attributes = vec.getAttributes();
         Vector dim = attributes.getDim();
         if (dim == null) {
-          System.out.println("Identified as a vector of type " + type + " with length " + vec.length());
+          log.debug("Identified as a vector of type {} with length {}", type, vec.length());
           view(vec, title);
         } else {
           if (dim.length() == 2) {
-            System.out.println("Identified as a " +
-                dim.getElementAsInt(0) + "x" +
-                dim.getElementAsInt(1) + " matrix of type " + type);
+            log.debug("Identified as a {}x{} matrix of type {}", dim.getElementAsInt(0), dim.getElementAsInt(1), type);
             Matrix mat = new Matrix(vec);
             view(mat, title);
           } else {
