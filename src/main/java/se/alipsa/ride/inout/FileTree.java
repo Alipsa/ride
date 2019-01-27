@@ -182,7 +182,13 @@ public class FileTree extends TreeView {
   private void handleClick(MouseEvent event) {
     if (event.getClickCount() == 2) {
       TreeItem<File> item = (TreeItem) getSelectionModel().getSelectedItem();
+      if (item == null) {
+        return;
+      }
       File file = item.getValue();
+      if (file.isDirectory()) {
+        return;
+      }
       String type = guessContentType(file);
       log.debug("File ContentType for {} detected as {}", file.getName(), type);
       if (file.isFile()) {

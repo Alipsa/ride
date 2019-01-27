@@ -1,6 +1,8 @@
 package se.alipsa.ride.code.sqltab;
 
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -24,6 +26,14 @@ public class SqlTab extends TextAreaTab {
     pane.setTop(buttonPane);
 
     buttonPane.getChildren().add(saveButton);
+
+    Button runButton = new Button("Run");
+    buttonPane.getChildren().add(runButton);
+
+    ComboBox<String> connectionCombo= new ComboBox<>();
+    connectionCombo.getItems().add("conn");
+    connectionCombo.getItems().add("conn2");
+    buttonPane.getChildren().add(connectionCombo);
 
     sqlTextArea = new SqlTextArea(this);
     VirtualizedScrollPane<SqlTextArea> scrollPane = new VirtualizedScrollPane<>(sqlTextArea);
