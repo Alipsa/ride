@@ -31,6 +31,10 @@ or on windows
 
     Will run hamcrest tests similar to the renjin-hamcrest-maven-plugin i.e. producing nice output, error messages and
     summary 
+    
+- enable execution of SQL queries
+ 
+    Support for select and update queries in the SQL code tab    
 
 ### 1.0 Final
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui
