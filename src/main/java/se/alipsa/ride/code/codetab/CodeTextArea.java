@@ -2,6 +2,8 @@ package se.alipsa.ride.code.codetab;
 
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.alipsa.ride.code.TextCodeArea;
 
 import java.util.*;
@@ -10,12 +12,15 @@ import java.util.regex.Pattern;
 
 public class CodeTextArea extends TextCodeArea {
 
+  private static Logger log = LoggerFactory.getLogger(CodeTextArea.class);
+
   // Since T and F are not true keywords (they can be reassigned e.g. T <- FALSE), they are not included below
   private static final String[] KEYWORDS = new String[]{
       "if", "else", "repeat", "while", "function",
       "for", "in", "next", "break", "TRUE",
       "FALSE", "NULL", "Inf", "NaN", "NA",
-      "NA_integer_", "NA_real_", "NA_complex_", "NA_character_", "…"
+      "NA_integer_", "NA_real_", "NA_complex_", "NA_character_", "…",
+      "library" // not strictly a keyword but RStudio treats it like this so we will too
   };
 
   // See https://www.rdocumentation.org/packages/base/versions/3.5.2 for more, at ns-dblcolon
@@ -53,7 +58,8 @@ public class CodeTextArea extends TextCodeArea {
   private static final String OPERATOR_PATTERN = "-|\\+|\\*|/|\\^|\\*{2}|%%|%/%|%in%|<|>|<=|>=|={2}|!=|!|&|:";
   private static final String BRACKET_PATTERN = "[\\[\\]\\{\\}\\(\\)]";
   private static final String DIGIT_PATTERN = "\\b\\d+";
-  private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"|\'([^\'\\\\]|\\\\.)*\'";
+  //private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"|\'([^\'\\\\]|\\\\.)*\'"; // backtracing makes this crazy slow
+  private static final String STRING_PATTERN = "\"\"|''|\"[^\"]+\"|'[^']+'";
   private static final String COMMENT_PATTERN = "#[^\n]*";
 
   private static final Pattern PATTERN = Pattern.compile(
@@ -64,6 +70,11 @@ public class CodeTextArea extends TextCodeArea {
           + "|(?<BRACKET>" + BRACKET_PATTERN + ")"
           + "|(?<DIGIT>" + DIGIT_PATTERN + ")"
           + "|(?<STRING>" + STRING_PATTERN + ")"
+          + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
+  );
+
+  private static final Pattern LIGHT_PATTERN = Pattern.compile(
+      "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
 
@@ -79,28 +90,54 @@ public class CodeTextArea extends TextCodeArea {
     });
   }
 
-
   protected final StyleSpans<Collection<String>> computeHighlighting(String text) {
-    Matcher matcher = PATTERN.matcher(text);
+    return computeFullHighlighting(text);
+    /* // rewrote regexp for String pattern so do not need this now
+    if (text.length() < 60000) {
+      return computeFullHighlighting(text);
+    } else {
+      log.warn("Text is too large for full syntax coloring, using bare essentials");
+      return computeLightHighlighting(text);
+    }*/
+  }
+
+  protected final StyleSpans<Collection<String>> computeLightHighlighting(String text) {
+    Matcher matcher = LIGHT_PATTERN.matcher(text);
     int lastKwEnd = 0;
-    StyleSpansBuilder<Collection<String>> spansBuilder
-        = new StyleSpansBuilder<>();
+    StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
     while (matcher.find()) {
       String styleClass =
           matcher.group("KEYWORD") != null ? "keyword" :
-             // matcher.group("FUNCTIONS") != null ? "function" :
-                matcher.group("ASSIGNMENT") != null ? "assign" :
-                    matcher.group("OPERATOR") != null ? "operator" :
+              matcher.group("COMMENT") != null ? "comment" :
+                  null; /* never happens */
+      spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
+      spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
+      lastKwEnd = matcher.end();
+    }
+    spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
+    return spansBuilder.create();
+  }
+
+  protected final StyleSpans<Collection<String>> computeFullHighlighting(String text) {
+    Matcher matcher = PATTERN.matcher(text);
+    int lastKwEnd = 0;
+    StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+    while (matcher.find()) {
+      String styleClass =
+          matcher.group("KEYWORD") != null ? "keyword" :
+              // matcher.group("FUNCTIONS") != null ? "function" :
+              matcher.group("ASSIGNMENT") != null ? "assign" :
+                  matcher.group("OPERATOR") != null ? "operator" :
                       matcher.group("BRACKET") != null ? "bracket" :
                           matcher.group("DIGIT") != null ? "digit" :
                               matcher.group("STRING") != null ? "string" :
                                   matcher.group("COMMENT") != null ? "comment" :
                                       null; /* never happens */
-      assert styleClass != null;
       spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
       spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
       lastKwEnd = matcher.end();
     }
+
     spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
     return spansBuilder.create();
   }

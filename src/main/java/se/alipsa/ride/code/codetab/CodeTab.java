@@ -1,7 +1,8 @@
 package se.alipsa.ride.code.codetab;
 
+import static se.alipsa.ride.Constants.FLOWPANE_INSETS;
+
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -38,16 +39,16 @@ public class CodeTab extends TextAreaTab {
 
     FlowPane buttonPane = new FlowPane();
     buttonPane.setHgap(5);
-    buttonPane.setPadding(new Insets(5, 10, 5, 5));
+    buttonPane.setPadding(FLOWPANE_INSETS);
     pane.setTop(buttonPane);
 
     buttonPane.getChildren().add(saveButton);
 
-    //Button runButton = new Button("Run");
+    //Button runButton = new Button("Run sync");
     //runButton.setOnAction(this::handleRunAction);
 
-    Button runInThreadButton = new Button("Run");
-    runInThreadButton.setOnAction(event -> console.runScriptInThread(codeTextArea.getTextContent(), getTitle()));
+    Button runInThreadButton = new Button("Run"); // async
+    runInThreadButton.setOnAction(event -> console.runScriptAsync(codeTextArea.getTextContent(), getTitle()));
     buttonPane.getChildren().add(runInThreadButton);
     //buttonPane.getChildren().addAll(runButton, runInThreadButton);
 
@@ -67,7 +68,7 @@ public class CodeTab extends TextAreaTab {
         if (selected != null && !"".equals(selected)) {
           rCode = codeComponent.getTextFromActiveTab();
         }
-        console.runScriptInThread(rCode, codeComponent.getActiveScriptName());
+        console.runScriptAsync(rCode, codeComponent.getActiveScriptName());
         codeTextArea.moveTo(codeTextArea.getCurrentParagraph() + 1, 0);
       }
     });
@@ -79,7 +80,7 @@ public class CodeTab extends TextAreaTab {
   private void handleRunAction(ActionEvent event) {
     String rCode = codeTextArea.getTextContent();
     log.debug("Running r code {}", rCode);
-    console.runScript(rCode, getTitle());
+    console.runScriptSync(rCode, getTitle());
   }
 
   @Override

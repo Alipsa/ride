@@ -275,7 +275,22 @@ public class ConsoleComponent extends BorderPane {
     }
   }
 
-  public void runScript(String script, String title) {
+  public SEXP runScriptSilent(String script) {
+    try {
+      return (SEXP)engine.eval(script);
+    } catch (Exception e) {
+      ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
+      return null;
+    }
+  }
+
+  public SEXP fetchVar(String varName) {
+    Environment global = engine.getSession().getGlobalEnvironment();
+    Context topContext = engine.getSession().getTopLevelContext();
+    return global.getVariable(topContext, varName);
+  }
+
+  public void runScriptSync(String script, String title) {
     running();
     try (StringWriter outputWriter = new StringWriter()) {
       executeScriptAndReport(script, title, outputWriter);
@@ -285,7 +300,7 @@ public class ConsoleComponent extends BorderPane {
     }
   }
 
-  public void runScriptInThread(String script, String title) {
+  public void runScriptAsync(String script, String title) {
     running();
 
     Task<Void> task = new Task<Void>() {
@@ -402,27 +417,6 @@ public class ConsoleComponent extends BorderPane {
     console.append(format("Tests run: {}, Sucesses: {}, Failures: {}, Errors: {}",
         results.size(), successCount, failCount, errorCount));
 
-    /* TODO: not sure if this section should be here or not
-    // Running test from Ride is just one file at a time so a complete summary like the plugin provides seems
-    // unnecessary - YMMV
-    boolean errorsDuringTests = failCount > 0 || errorCount > 0;
-    if (errorsDuringTests) {
-      console.append("");
-      console.append("Results: ");
-      for (TestResult res : results) {
-        if (res.getResult().equals(TestResult.OutCome.SUCCESS)) {
-          continue;
-        }
-        String errMsg = formatMessage(res.getError());
-        console.appendWarning(format("\t{} : {} : {}",
-            res.getResult(),
-            res.getIssue(),
-            errMsg));
-      }
-    } else {
-      console.append(format("\tSUCCESS! {} tests run", results.size()));
-    }
-    */
     updateEnvironment();
     promptAndScrollToEnd();
   }

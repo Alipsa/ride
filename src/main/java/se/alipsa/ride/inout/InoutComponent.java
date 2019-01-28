@@ -207,7 +207,7 @@ public class InoutComponent extends TabPane {
     );
   }
 
-  private void view(ListVector listVec, String... title ) {
+  public void view(ListVector listVec, String... title ) {
     List<String> colList = new ArrayList<>();
     if (listVec.hasAttributes()) {
       AttributeMap attributes = listVec.getAttributes();

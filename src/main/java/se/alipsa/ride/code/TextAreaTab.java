@@ -18,11 +18,13 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
   protected Button saveButton = new Button();
 
   private Tooltip saveToolTip;
+  protected Ride gui;
 
   private static final Image IMG_SAVE = new Image(FileUtils
       .getResourceUrl("image/save.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
 
   public TextAreaTab(Ride gui) {
+    this.gui = gui;
     saveButton.setGraphic(new ImageView(IMG_SAVE));
     saveButton.setDisable(true);
     saveButton.setOnAction(a -> gui.getMainMenu().saveContent(this));

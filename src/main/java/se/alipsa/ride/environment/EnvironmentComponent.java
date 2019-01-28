@@ -31,7 +31,7 @@ public class EnvironmentComponent extends TabPane {
 
     getTabs().add(history);
 
-    connectionsTab = new ConnectionsTab();
+    connectionsTab = new ConnectionsTab(gui);
 
     getTabs().add(connectionsTab);
   }
