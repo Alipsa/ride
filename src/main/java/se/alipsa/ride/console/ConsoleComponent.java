@@ -275,12 +275,18 @@ public class ConsoleComponent extends BorderPane {
     }
   }
 
-  public SEXP runScriptSilent(String script) {
-    try {
-      return (SEXP)engine.eval(script);
+  public SEXP runScriptSilent(String script) throws Exception {
+    try (PrintWriter out = new PrintWriter(System.out);
+         PrintWriter err = new PrintWriter(System.err)) {
+      running();
+      session.setStdOut(out);
+      session.setStdErr(err);
+      SEXP sexp = (SEXP)engine.eval(script);
+      waiting();
+      return sexp;
     } catch (Exception e) {
-      ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
-      return null;
+      waiting();
+      throw e;
     }
   }
 

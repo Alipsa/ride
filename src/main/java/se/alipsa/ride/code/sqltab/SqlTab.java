@@ -3,8 +3,10 @@ package se.alipsa.ride.code.sqltab;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -13,6 +15,7 @@ import org.renjin.sexp.SEXP;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.environment.connections.Connection;
+import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
 import java.util.List;
@@ -47,6 +50,7 @@ public class SqlTab extends TextAreaTab {
     buttonPane.getChildren().add(runUpdateButton);
 
     connectionCombo = new ComboBox<>();
+    connectionCombo.setTooltip(new Tooltip("Create connections in the Connections tab \nand select the name here"));
     connectionCombo.setOnMouseClicked(e -> {
       List<Connection> connections = gui.getEnvironmentComponent().getConnections();
       connectionCombo.setItems(FXCollections.observableArrayList(connections));
@@ -66,41 +70,66 @@ public class SqlTab extends TextAreaTab {
   }
 
   private void runSelectQuery(ActionEvent actionEvent) {
-    //gui.setWaitCursor();
-    String sql = getTextContent();
-    Connection con = connectionCombo.getValue();
-    String rcode = baseRQueryString(con);
-    rcode += "sqlTabDf <- dbGetQuery(sqlTabCon, \"" + sql + "\")\n";
-    rcode += "dbDisconnect(sqlTabCon)";
-    gui.getConsoleComponent().runScriptSilent(rcode);
-    ListVector df = (ListVector)gui.getConsoleComponent().fetchVar("sqlTabDf");
-    // cleanup
-    gui.getInoutComponent().view(df, getTitle());
-    rcode = "rm(sqlTabDrv); rm(sqlTabCon); rm(sqlTabDf)";
-    gui.getConsoleComponent().runScriptSilent(rcode);
-    //gui.setNormalCursor();
+    setWaitCursor();
+    String rCode = baseRQueryString(connectionCombo.getValue(), "sqlTabDf <- dbGetQuery", getTextContent()).toString();
+    try {
+      gui.getConsoleComponent().runScriptSilent(rCode);
+      ListVector df = (ListVector) gui.getConsoleComponent().fetchVar("sqlTabDf");
+      // cleanup
+      gui.getInoutComponent().view(df, getTitle());
+
+      setNormalCursor();
+    } catch (Exception e) {
+      setNormalCursor();
+      ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
+    }
+
+    try {
+      gui.getConsoleComponent().runScriptSilent("dbDisconnect(sqlTabCon); rm(sqlTabDrv); rm(sqlTabCon); rm(sqlTabDf)");
+    } catch (Exception e) {
+      setNormalCursor();
+      ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
+    }
+  }
+
+  private void setNormalCursor() {
+    gui.setNormalCursor();
+    sqlTextArea.setCursor(Cursor.DEFAULT);
+  }
+
+  private void setWaitCursor() {
+    gui.setWaitCursor();
+    sqlTextArea.setCursor(Cursor.WAIT);
   }
 
   private void runUpdateQuery(ActionEvent actionEvent) {
-    //gui.setWaitCursor();
-    String sql = getTextContent();
-    Connection con = connectionCombo.getValue();
-    String rcode = baseRQueryString(con);
-    rcode += "sqlTabNumRows <- dbSendUpdate(sqlTabCon, \"" + sql + "\")\n";
-    rcode += "dbDisconnect(sqlTabCon)";
-    gui.getConsoleComponent().runScriptSilent(rcode);
-    SEXP result = gui.getConsoleComponent().fetchVar("sqlTabNumRows");
-    System.out.println("Update result: " + result);
-    rcode = "rm(sqlTabDrv); rm(sqlTabCon); rm(sqlTabNumRows)";
-    gui.getConsoleComponent().runScriptSilent(rcode);
-    //gui.setNormalCursor();
+    setWaitCursor();
+    //System.out.println("Runing update:\n" + sql);
+    String rCode = baseRQueryString(connectionCombo.getValue(), "dbSendUpdate", getTextContent()).toString();
+    try {
+      //System.out.println("  calling scriptengine");
+      gui.getConsoleComponent().runScriptSilent(rCode);
+      //System.out.println("  cleanup");
+      setNormalCursor();
+    } catch (Exception e) {
+      setNormalCursor();
+      ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
+    }
+    try {
+      gui.getConsoleComponent().runScriptSilent("dbDisconnect(sqlTabCon); rm(sqlTabDrv); rm(sqlTabCon); rm(sqlTabNumRows)");
+    } catch (Exception e) {
+      ExceptionAlert.showAlert("Cleanup failed: " + e.getMessage(), e);
+    }
+    //System.out.println("update query done!");
   }
 
-  private String baseRQueryString(Connection con) {
-    String rcode = "library('DBI')\n library('org.renjin.cran:RJDBC')\n";
-    rcode += "sqlTabDrv <- JDBC('" + con.getDriver() + "')\n";
-    rcode += "sqlTabCon <- dbConnect(sqlTabDrv, url='" + con.getUrl() + "')\n";
-    return rcode;
+  private StringBuilder baseRQueryString(Connection con, String command, String sql) {
+    StringBuilder str = new StringBuilder();
+    str.append("library('DBI')\n library('org.renjin.cran:RJDBC')\n")
+        .append("sqlTabDrv <- JDBC('").append(con.getDriver()).append("')\n")
+        .append("sqlTabCon <- dbConnect(sqlTabDrv, url='").append(con.getUrl()).append("')\n")
+        .append(command).append("(sqlTabCon, \"").append(sql).append("\")");
+    return str;
   }
 
   @Override

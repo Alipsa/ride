@@ -63,7 +63,7 @@ public class ConnectionsTab extends Tab {
         builder.append(con.getDriver());
         builder.append(" \t");
         builder.append(con.getUrl());
-        builder.append(" \t");
+        builder.append(" \n");
       }
       setPref(DRIVER_PREF, driverText.getText());
       setPref(URL_PREF, urlText.getText());

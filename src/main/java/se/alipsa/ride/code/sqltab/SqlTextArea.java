@@ -12,90 +12,79 @@ import java.util.regex.Pattern;
 public class SqlTextArea extends TextCodeArea {
 
   private static final String[] KEYWORDS = new String[]{
-      "absolute", "action", "add", "admin",
-      "after", "aggregate", "alias", "all",
-      "allocate", "alter", "and", "any",
-      "are", "array", "as", "asc",
-      "assertion", "assertion", "at", "atomic",
-      "authorization", "before", "begin", "bigint",
-      "binary", "bit", "blob", "boolean",
+      "absolute", "action", "add", "admin", "after", "aggregate", "alias", "all", "allocate", "alter",
+      "and", "any", "are", "array", "as", "asc", "assertion", "assertion", "at", "atomic",
+
+      "authorization", "before", "begin", "bigint", "binary", "bit", "blob", "boolean",
       "both", "breadth", "by", "call",
-      "cascade", "cascaded", "case", "cast",
-      "catalog", "char", "character", "check",
-      "class", "clob", "close", "collate",
-      "collation", "collect", "column", "commit",
-      "completion", "condition", "connect", "connection",
-      "constraint", "constraints", "constructor", "contains",
-      "continue", "corresponding", "create", "cross",
-      "cube", "current", "current_date", "current_path",
-      "current_role", "current_time", "current_timestamp", "current_user",
-      "cursor", "cycle", "data", "datalink",
-      "date", "day", "deallocate", "dec",
-      "decimal", "declare", "default", "deferrable",
-      "delete", "depth", "deref", "desc",
-      "descriptor", "destructor", "diagnostics", "dictionary",
-      "disconnect", "do", "domain", "double",
-      "drop", "element", "end-exec", "equals",
-      "escape", "except", "exception", "execute",
-      "exit", "expand", "expanding", "false",
-      "first", "float", "for", "foreign",
-      "free", "from", "function", "fusion",
-      "general", "get", "global", "goto",
-      "group", "grouping", "handler", "hash",
-      "hour", "identity", "if", "ignore",
-      "immediate", "in", "indicator", "initialize",
-      "initially", "inner", "inout", "input",
-      "insert", "int", "integer", "intersect",
-      "intersection", "interval", "into", "is",
-      "isolation", "iterate", "join", "key",
-      "language", "large", "last", "lateral",
-      "leading", "leave", "left", "less",
-      "level", "like", "limit", "local",
-      "localtime", "localtimestamp", "locator", "loop",
-      "match", "member", "meets", "merge",
-      "minute", "modifies", "modify", "module",
-      "month", "multiset", "names", "national",
-      "natural", "nchar", "nclob", "new",
-      "next", "no", "none", "normalize",
-      "not", "null", "numeric", "object",
-      "of", "off", "old", "on",
-      "only", "open", "operation", "option",
-      "or", "order", "ordinality", "out",
-      "outer", "output", "pad", "parameter",
-      "parameters", "partial", "path", "period",
-      "postfix", "precedes", "precision", "prefix",
-      "preorder", "prepare", "preserve", "primary",
+
+      "cascade", "cascaded", "case", "cast", "catalog", "char", "character", "check",
+      "class", "clob", "close", "collate", "collation", "collect", "column", "commit",
+      "completion", "condition", "connect", "connection", "constraint", "constraints", "constructor", "contains",
+      "continue", "corresponding", "create", "cross", "cube", "current", "current_date", "current_path",
+      "current_role", "current_time", "current_timestamp", "current_user", "cursor", "cycle", "data", "datalink",
+
+      "date", "day", "deallocate", "dec", "decimal", "declare", "default", "deferrable",
+      "delete", "depth", "deref", "desc", "descriptor", "destructor", "diagnostics", "dictionary",
+      "disconnect", "distinct", "do", "domain", "double", "drop",
+
+      "element", "end", "end-exec", "equals", "escape", "except", "exception", "execute",
+      "exists", "exit", "expand", "expanding",
+
+      "false", "first", "float", "for", "foreign", "free", "from", "function", "fusion",
+
+      "general", "get", "global", "goto", "group", "grouping",
+
+      "handler", "hash", "hour",
+
+      "identity", "if", "ignore", "immediate", "in", "indicator", "initialize", "initially", "inner",
+      "inout", "input", "insert", "int", "integer", "intersect", "intersection", "interval", "into",
+      "is", "isolation", "iterate", "join", "key",
+
+      "language", "large", "last", "lateral", "leading", "leave", "left", "less",
+      "level", "like", "limit", "local", "localtime", "localtimestamp", "locator", "loop",
+
+      "match", "member", "meets", "merge", "minute", "modifies", "modify", "module", "month", "multiset",
+
+      "names", "national", "natural", "nchar", "nclob", "new", "next", "no", "none", "normalize",
+      "not", "null", "numeric",
+
+      "object", "of", "off", "old", "on", "only", "open", "operation", "option",
+      "or", "order", "ordinality", "out", "outer", "output",
+
+      "pad", "parameter", "parameters", "partial", "path", "period",
+      "postfix", "precedes", "precision", "prefix", "preorder", "prepare", "preserve", "primary",
       "prior", "privileges", "procedure", "public",
-      "read", "reads", "real", "recursive",
-      "redo", "ref", "references", "referencing",
-      "relative", "repeat", "resignal", "restrict",
-      "result", "return", "returns", "revoke",
-      "right", "role", "rollback", "rollup",
-      "routine", "row", "rows", "savepoint",
-      "schema", "scroll", "search", "second",
-      "section", "select", "sequence", "session",
-      "session_user", "set", "sets", "signal",
-      "size", "smallint", "specific", "specifictype",
-      "sql", "sqlexception", "sqlstate", "sqlwarning",
-      "start", "state", "static", "structure",
+
+      "read", "reads", "real", "recursive", "redo", "ref", "references", "referencing",
+      "relative", "repeat", "resignal", "restrict", "result", "return", "returns", "revoke",
+      "right", "role", "rollback", "rollup", "routine", "row", "rows",
+
+      "savepoint", "schema", "scroll", "search", "second", "section", "select", "sequence", "session",
+      "session_user", "set", "sets", "signal", "size", "smallint", "specific", "specifictype",
+      "sql", "sqlexception", "sqlstate", "sqlwarning", "start", "state", "static", "structure",
       "submultiset", "succeeds", "sum", "system_user",
-      "table", "tablesample", "temporary", "terminate",
-      "than", "then", "time", "timestamp",
-      "timezone_hour", "timezone_minute", "to", "trailing",
-      "transaction", "translation", "treat", "trigger",
-      "true", "uescape", "under", "undo",
-      "union", "unique", "unknown", "until",
-      "update", "usage", "user", "using",
-      "value", "values", "varchar", "variable",
-      "varying", "view", "when", "whenever",
-      "where", "while", "with", "write",
-      "year", "zone"
+
+      "table", "tablesample", "temporary", "terminate", "than", "then", "time", "timestamp",
+      "timezone_hour", "timezone_minute", "to", "trailing", "transaction", "translation", "treat",
+      "trigger", "true", "uescape",
+
+      "under", "undo", "union", "unique", "unknown", "until", "update", "usage", "user", "using",
+
+      "value", "values", "varchar", "variable", "varying", "view",
+
+      "when", "whenever", "where", "while", "with", "write",
+
+      "year",
+
+      "zone"
   };
 
-  private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
+  private static final String KEYWORD_PATTERN = "(?i)\\b(" + String.join("|", KEYWORDS) + ")\\b";
   private static final String PAREN_PATTERN = "\\(|\\)";
   private static final String SEMICOLON_PATTERN = "\\;";
-  private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"" + "|" + "\'([^\'\\\\]|\\\\.)*\'";
+  //private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"" + "|" + "\'([^\'\\\\]|\\\\.)*\'";
+  private static final String STRING_PATTERN = "\"\"|''|\"[^\"]+\"|'[^']+'";
   private static final String COMMENT_PATTERN = "--[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
 
   private static final Pattern PATTERN = Pattern.compile(
