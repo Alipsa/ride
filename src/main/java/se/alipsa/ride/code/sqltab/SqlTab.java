@@ -66,6 +66,7 @@ public class SqlTab extends TextAreaTab {
   }
 
   private void runSelectQuery(ActionEvent actionEvent) {
+    //gui.setWaitCursor();
     String sql = getTextContent();
     Connection con = connectionCombo.getValue();
     String rcode = baseRQueryString(con);
@@ -77,9 +78,11 @@ public class SqlTab extends TextAreaTab {
     gui.getInoutComponent().view(df, getTitle());
     rcode = "rm(sqlTabDrv); rm(sqlTabCon); rm(sqlTabDf)";
     gui.getConsoleComponent().runScriptSilent(rcode);
+    //gui.setNormalCursor();
   }
 
   private void runUpdateQuery(ActionEvent actionEvent) {
+    //gui.setWaitCursor();
     String sql = getTextContent();
     Connection con = connectionCombo.getValue();
     String rcode = baseRQueryString(con);
@@ -90,6 +93,7 @@ public class SqlTab extends TextAreaTab {
     System.out.println("Update result: " + result);
     rcode = "rm(sqlTabDrv); rm(sqlTabCon); rm(sqlTabNumRows)";
     gui.getConsoleComponent().runScriptSilent(rcode);
+    //gui.setNormalCursor();
   }
 
   private String baseRQueryString(Connection con) {
