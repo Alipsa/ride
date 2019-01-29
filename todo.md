@@ -3,18 +3,12 @@
 ## version 1.1
 ### Run hamcrest tests
 Create a new runbutton when hamcrest tests are detected
-
-### Restructure components (maybe)
-- code component NW (as before)
-- out component SW
-    - contains R console, plot, table view and SQL result (a table view)
-- in component SE
-    - contains filetree
-- environment NE
-    - contains packages, variables, history    
-    
+ 
 ### enable execution of SQL queries 
 - A run query button in the SQL code tab
+
+### create a database browser
+- Tree structure based on INFORMATION_SCHEMA
     
 ### Implement History tab
 ### implement edit menu
