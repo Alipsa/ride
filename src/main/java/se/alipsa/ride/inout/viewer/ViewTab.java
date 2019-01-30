@@ -38,9 +38,11 @@ public class ViewTab extends Tab {
     }
     tableview.setItems(data);
     Tab tab = new Tab();
+    String tabTitle = " (" + rowList.size() + ")";
     if (title.length > 0) {
-      tab.setText(title[0]);
+      tabTitle = title[0] + tabTitle;
     }
+    tab.setText(tabTitle);
     viewPane.getTabs().add(tab);
     tab.setContent(tableview);
 

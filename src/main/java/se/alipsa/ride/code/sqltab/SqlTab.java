@@ -11,14 +11,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.sexp.ListVector;
-import org.renjin.sexp.SEXP;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.environment.connections.Connection;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
-import java.util.List;
+import java.util.Set;
 
 public class SqlTab extends TextAreaTab {
 
@@ -52,8 +51,12 @@ public class SqlTab extends TextAreaTab {
     connectionCombo = new ComboBox<>();
     connectionCombo.setTooltip(new Tooltip("Create connections in the Connections tab \nand select the name here"));
     connectionCombo.setOnMouseClicked(e -> {
-      List<Connection> connections = gui.getEnvironmentComponent().getConnections();
+      connectionCombo.hide();
+      Set<Connection> connections = gui.getEnvironmentComponent().getConnections();
       connectionCombo.setItems(FXCollections.observableArrayList(connections));
+      int rows = Math.min(5, connections.size());
+      connectionCombo.setVisibleRowCount(rows);
+      connectionCombo.show();
     });
     connectionCombo.getSelectionModel().selectedItemProperty().addListener(
         (options, oldValue, newValue) -> {

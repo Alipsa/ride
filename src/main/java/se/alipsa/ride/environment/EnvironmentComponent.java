@@ -11,6 +11,7 @@ import se.alipsa.ride.environment.connections.Connection;
 import se.alipsa.ride.environment.connections.ConnectionsTab;
 
 import java.util.List;
+import java.util.Set;
 
 public class EnvironmentComponent extends TabPane {
 
@@ -52,7 +53,7 @@ public class EnvironmentComponent extends TabPane {
     envTA.setText("");
   }
 
-  public List<Connection> getConnections() {
+  public Set<Connection> getConnections() {
     return connectionsTab.getConnections();
   }
 }

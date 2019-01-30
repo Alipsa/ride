@@ -1,44 +1,69 @@
 package se.alipsa.ride.environment.connections;
 
-public class Connection {
+import javafx.beans.property.SimpleStringProperty;
 
-  private String name;
-  private String driver;
-  private String url;
+public class Connection implements Comparable {
 
-  public Connection() {}
+  private final SimpleStringProperty name;
+  private final SimpleStringProperty driver;
+  private final SimpleStringProperty url;
+
+  public Connection() {
+    this.name = new SimpleStringProperty();
+    this.driver = new SimpleStringProperty();
+    this.url = new SimpleStringProperty();
+  }
 
   public Connection(String name, String driver, String url) {
-    this.name = name;
-    this.driver = driver;
-    this.url = url;
+    this.name = new SimpleStringProperty(name);
+    this.driver = new SimpleStringProperty(driver);
+    this.url = new SimpleStringProperty(url);
   }
 
   public String getName() {
-    return name;
+    return name.get();
   }
 
   public void setName(String name) {
-    this.name = name;
+    this.name.set(name);
   }
 
   public String getDriver() {
-    return driver;
+    return driver.get();
   }
 
   public void setDriver(String driver) {
-    this.driver = driver;
+    this.driver.set(driver);
   }
 
   public String getUrl() {
-    return url;
+    return url.get();
   }
 
   public void setUrl(String url) {
-    this.url = url;
+    this.url.set(url);
   }
 
   public String toString() {
-    return name;
+    return name.get();
+  }
+
+  @Override
+  public int compareTo(Object obj) {
+    return this.toString().compareTo(obj.toString());
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Connection) {
+      return toString().equals(obj.toString());
+    } else {
+      return false;
+    }
   }
 }

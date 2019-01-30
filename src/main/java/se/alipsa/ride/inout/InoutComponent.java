@@ -1,5 +1,7 @@
 package se.alipsa.ride.inout;
 
+import static se.alipsa.ride.utils.RDataTransformer.*;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -9,7 +11,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.DirectoryChooser;
-import org.renjin.primitives.Types;
 import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.*;
 import org.slf4j.Logger;
@@ -17,14 +18,12 @@ import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.inout.plot.PlotsTab;
 import se.alipsa.ride.inout.viewer.ViewTab;
+import se.alipsa.ride.model.Table;
 import se.alipsa.ride.utils.Alerts;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-public class InoutComponent extends TabPane {
+public class InoutComponent extends TabPane implements InOut {
 
   FileTree fileTree;
   PlotsTab plotsTab;
@@ -103,9 +102,6 @@ public class InoutComponent extends TabPane {
     return fileTree.getRootDir();
   }
 
-  /**
-   * display an image in the Plot txttab
-   */
   public void display(Node node, String... title) {
     Platform.runLater(()-> {
       plotsTab.showPlot(node, title);
@@ -115,9 +111,6 @@ public class InoutComponent extends TabPane {
     );
   }
 
-  /**
-   * display an image in the Plot txttab
-   */
   public void display(Image img, String... title) {
     ImageView node = new ImageView(img);
     display(node, title);
@@ -160,47 +153,18 @@ public class InoutComponent extends TabPane {
 
 
   private void view(Matrix mat, String... title) {
-    String type = mat.getVector().getTypeName();
-    List<String> colList = new ArrayList<>();
-    for (int i = 0; i < mat.getNumCols(); i++) {
-      String colName = mat.getColName(i) == null ? i + "" : mat.getColName(i);
-      colList.add(colName);
-    }
-
-    List<List<Object>> data = new ArrayList<>();
-
-    List<Object> row;
-    for (int i = 0; i < mat.getNumRows(); i++) {
-      row = new ArrayList<>();
-      for (int j = 0; j < mat.getNumCols(); j++) {
-        if ("integer".equals(type)) {
-          row.add(mat.getElementAsInt(i, j));
-        } else {
-          row.add(mat.getElementAsDouble(i, j));
-        }
-      }
-      data.add(row);
-    }
-
-    showInViewer(colList, data, title);
-
+    Table table = new Table(mat);
+    showInViewer(table, title);
   }
 
   private void view(Vector vec, String... title) {
-    List<String> colList = new ArrayList<>();
-    colList.add(vec.getTypeName());
-
-    List<Vector> values = new ArrayList<>();
-    values.add(vec);
-
-    List<List<Object>> rowList = transpose(values);
-    showInViewer(colList, rowList, title);
-
+    Table table = new Table(vec);
+    showInViewer(table, title);
   }
 
-  private void showInViewer(List<String> colList, List<List<Object>> rowList, String[] title) {
+  private void showInViewer(Table table, String[] title) {
     Platform.runLater(() -> {
-          viewer.viewTable(colList, rowList, title);
+          viewer.viewTable(table.getColList(), table.getRowList(), title);
           SingleSelectionModel<Tab> selectionModel = getSelectionModel();
           selectionModel.select(viewer);
         }
@@ -208,46 +172,8 @@ public class InoutComponent extends TabPane {
   }
 
   public void view(ListVector listVec, String... title ) {
-    List<String> colList = new ArrayList<>();
-    if (listVec.hasAttributes()) {
-      AttributeMap attributes = listVec.getAttributes();
-      Map<Symbol, SEXP> attrMap = attributes.toMap();
-      Symbol s = attrMap.keySet().stream().filter(p -> "names".equals(p.getPrintName())).findAny().orElse(null);
-      Vector colNames = (Vector)attrMap.get(s);
-      for(int i = 0; i < colNames.length(); i++) {
-        colList.add(colNames.getElementAsString(i));
-      }
-    }
-
-    List<Vector> table = new ArrayList<>();
-    for(SEXP col : listVec) {
-      Vector column = (Vector)col;
-      table.add(column);
-    }
-    List<List<Object>> rowList = transpose(table);
-
-    showInViewer(colList, rowList, title);
-  }
-
-  private List<List<Object>> transpose(List<Vector> table) {
-    List<List<Object>> ret = new ArrayList<>();
-    final int N = table.get(0).length();
-    for (int i = 0; i < N; i++) {
-      List<Object> row = new ArrayList<>();
-      for (Vector col : table) {
-        if (Types.isFactor(col)) {
-          AttributeMap attributes = col.getAttributes();
-          Map<Symbol, SEXP> attrMap = attributes.toMap();
-          Symbol s = attrMap.keySet().stream().filter(p -> "levels".equals(p.getPrintName())).findAny().orElse(null);
-          Vector vec = (Vector)attrMap.get(s);
-          row.add(vec.getElementAsObject(col.getElementAsInt(i)-1));
-        } else {
-          row.add(col.getElementAsObject(i));
-        }
-      }
-      ret.add(row);
-    }
-    return ret;
+    Table table = new Table(listVec);
+    showInViewer(table, title);
   }
 
   public void setPackages(StringVector pkgs) {
