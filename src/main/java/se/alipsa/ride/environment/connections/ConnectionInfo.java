@@ -2,19 +2,19 @@ package se.alipsa.ride.environment.connections;
 
 import javafx.beans.property.SimpleStringProperty;
 
-public class Connection implements Comparable {
+public class ConnectionInfo implements Comparable {
 
   private final SimpleStringProperty name;
   private final SimpleStringProperty driver;
   private final SimpleStringProperty url;
 
-  public Connection() {
+  public ConnectionInfo() {
     this.name = new SimpleStringProperty();
     this.driver = new SimpleStringProperty();
     this.url = new SimpleStringProperty();
   }
 
-  public Connection(String name, String driver, String url) {
+  public ConnectionInfo(String name, String driver, String url) {
     this.name = new SimpleStringProperty(name);
     this.driver = new SimpleStringProperty(driver);
     this.url = new SimpleStringProperty(url);
@@ -60,7 +60,7 @@ public class Connection implements Comparable {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof Connection) {
+    if (obj instanceof ConnectionInfo) {
       return toString().equals(obj.toString());
     } else {
       return false;

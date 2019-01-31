@@ -7,10 +7,9 @@ import org.renjin.eval.Context;
 import org.renjin.sexp.Environment;
 import org.renjin.sexp.StringVector;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.environment.connections.Connection;
+import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.environment.connections.ConnectionsTab;
 
-import java.util.List;
 import java.util.Set;
 
 public class EnvironmentComponent extends TabPane {
@@ -53,7 +52,7 @@ public class EnvironmentComponent extends TabPane {
     envTA.setText("");
   }
 
-  public Set<Connection> getConnections() {
+  public Set<ConnectionInfo> getConnections() {
     return connectionsTab.getConnections();
   }
 }

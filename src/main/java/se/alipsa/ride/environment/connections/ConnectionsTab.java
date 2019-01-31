@@ -1,16 +1,32 @@
 package se.alipsa.ride.environment.connections;
 
 import static se.alipsa.ride.Constants.*;
+import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
+import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.concurrent.Task;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.Stage;
+import org.renjin.script.RenjinScriptEngine;
+import org.renjin.script.RenjinScriptEngineFactory;
+import org.renjin.sexp.ListVector;
+import org.renjin.sexp.SEXP;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.model.Table;
+import se.alipsa.ride.model.TableMetaData;
+import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.RDataTransformer;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ConnectionsTab extends Tab {
 
@@ -23,7 +39,7 @@ public class ConnectionsTab extends Tab {
   private TextField nameText;
   private TextField driverText;
   private TextField urlText;
-  private TableView<Connection> connectionsTable = new TableView<>();
+  private TableView<ConnectionInfo> connectionsTable = new TableView<>();
 
   public ConnectionsTab(Ride gui) {
     setText("Connections");
@@ -58,7 +74,7 @@ public class ConnectionsTab extends Tab {
     contentPane.setCenter(connectionsTable);
 
     addButton.setOnAction(e -> {
-      Connection con = new Connection(nameText.getText(), driverText.getText(), urlText.getText());
+      ConnectionInfo con = new ConnectionInfo(nameText.getText(), driverText.getText(), urlText.getText());
       //connections.add(con);
       setPref(DRIVER_PREF, driverText.getText());
       setPref(URL_PREF, urlText.getText());
@@ -69,23 +85,23 @@ public class ConnectionsTab extends Tab {
     inputPane.getChildren().add(addButton);
   }
 
-  private TableView<Connection> createConnectionTableView() {
-    TableColumn<Connection, String> nameCol = new TableColumn<>("Name");
+  private TableView<ConnectionInfo> createConnectionTableView() {
+    TableColumn<ConnectionInfo, String> nameCol = new TableColumn<>("Name");
     nameCol.setCellValueFactory(
         new PropertyValueFactory<>("name")
     );
-    TableColumn<Connection,String> driverCol = new TableColumn<>("Driver");
+    TableColumn<ConnectionInfo,String> driverCol = new TableColumn<>("Driver");
     driverCol.setCellValueFactory(
         new PropertyValueFactory<>("driver")
     );
-    TableColumn<Connection,String> urlCol = new TableColumn<>("URL");
+    TableColumn<ConnectionInfo,String> urlCol = new TableColumn<>("URL");
     urlCol.setCellValueFactory(
         new PropertyValueFactory<>("url")
     );
 
     connectionsTable.getColumns().addAll(nameCol, driverCol, urlCol);
     connectionsTable.setRowFactory(tableView -> {
-      final TableRow<Connection> row = new TableRow<>();
+      final TableRow<ConnectionInfo> row = new TableRow<>();
       final ContextMenu contextMenu = new ContextMenu();
       final MenuItem removeMenuItem = new MenuItem("delete connection");
       removeMenuItem.setOnAction(event -> {
@@ -93,9 +109,8 @@ public class ConnectionsTab extends Tab {
       });
       final MenuItem viewMenuItem = new MenuItem("view connection");
       viewMenuItem.setOnAction(event -> {
-        // TODO: fixme!
-        Alerts.info("Not yet implemented",
-            "Viewing connection meta data is not yet implemented");
+        showConnectionMetaData(row.getItem());
+        //Alerts.info("Not yet implemented","Viewing connection meta data is not yet implemented");
       });
       contextMenu.getItems().addAll(viewMenuItem, removeMenuItem);
       row.contextMenuProperty().bind(
@@ -116,7 +131,7 @@ public class ConnectionsTab extends Tab {
     gui.getPrefs().put(pref, val);
   }
 
-  public Set<Connection> getConnections() {
+  public Set<ConnectionInfo> getConnections() {
     return new TreeSet<>(connectionsTable.getItems());
   }
 
@@ -136,4 +151,119 @@ public class ConnectionsTab extends Tab {
    * inner join INFORMATION_SCHEMA.TABLES tab on col.TABLE_NAME = tab.TABLE_NAME and col.TABLE_SCHEMA = tab.TABLE_SCHEMA
    * where TABLE_TYPE <> 'SYSTEM TABLE'
    */
+  private void showConnectionMetaData(ConnectionInfo con) {
+    setWaitCursor();
+    Table table;
+    String sql = "select col.TABLE_NAME\n" +
+        ", TABLE_TYPE\n" +
+        ", COLUMN_NAME\n" +
+        ", ORDINAL_POSITION\n" +
+        ", IS_NULLABLE\n" +
+        ", DATA_TYPE\n" +
+        ", CHARACTER_MAXIMUM_LENGTH\n" +
+        ", NUMERIC_PRECISION_RADIX\n" +
+        ", NUMERIC_SCALE\n" +
+        ", COLLATION_NAME\n" +
+        "from INFORMATION_SCHEMA.COLUMNS col\n" +
+        "inner join INFORMATION_SCHEMA.TABLES tab " +
+        "      on col.TABLE_NAME = tab.TABLE_NAME and col.TABLE_SCHEMA = tab.TABLE_SCHEMA\n" +
+        "where TABLE_TYPE <> 'SYSTEM TABLE'";
+    String rCode = baseRQueryString(con, "connectionsTabDf <- dbGetQuery", sql).toString();
+
+    System.out.println("running script: " + rCode);
+    //gui.getConsoleComponent().runScriptSilent(rCode);
+    runScriptInThread(rCode, "connectionsTabDf", con.getName());
+    /*
+    // cleanup
+    try {
+      System.out.println("cleanup");
+      gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("rm(connectionsTabDf)").toString());
+    } catch (Exception e) {
+      setNormalCursor();
+      ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
+      return;
+    }
+    */
+  }
+
+  void runScriptInThread(String rCode, String varname, String connectionName) {
+    Task<Void> task = new Task<Void>() {
+      @Override
+      public Void call() throws Exception {
+        try {
+          //System.out.println("running script: " + rCode);
+          RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
+          RenjinScriptEngine engine = factory.getScriptEngine(gui.getConsoleComponent().getSession());
+          engine.eval(rCode);
+          //System.out.println("Returned from script");
+        } catch (RuntimeException e) {
+          // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
+          // this way we can get to the original one by extracting the cause from the thrown exception
+          //System.out.println("RuntimeException caught, rethrowing as wrapped Exception");
+          throw new Exception(e);
+        }
+        return null;
+      }
+    };
+    task.setOnSucceeded(e -> {
+      try {
+        ListVector df = (ListVector) gui.getConsoleComponent().fetchVar(varname);
+        List<List<Object>> rows = RDataTransformer.toRowlist(df);
+        List<TableMetaData> metaDataList = new ArrayList<>();
+        rows.forEach(r -> metaDataList.add(new TableMetaData(r)));
+        System.out.println("creating treeview");
+        TreeView treeView = createMetaDataTree(metaDataList, connectionName);
+        Scene dialog = new Scene(treeView);
+        Stage stage = new Stage();
+        stage.setScene(dialog);
+        setNormalCursor();
+        stage.show();
+        stage.toFront();
+      } catch (Exception ex) {
+        ExceptionAlert.showAlert("Failed to create connection tree view", ex);
+      }
+    });
+
+    task.setOnFailed(e -> {
+      setNormalCursor();
+      Throwable throwable = task.getException();
+      Throwable ex = throwable.getCause();
+      if (ex == null) {
+        ex = throwable;
+      }
+      String msg = gui.getConsoleComponent().createMessageFromEvalException(ex);
+      ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
+    });
+    Thread scriptThread = new Thread(task);
+    scriptThread.setDaemon(false);
+    scriptThread.start();
+  }
+  private void setNormalCursor() {
+    gui.setNormalCursor();
+    contentPane.setCursor(Cursor.DEFAULT);
+    connectionsTable.setCursor(Cursor.DEFAULT);
+  }
+
+  private void setWaitCursor() {
+    gui.setWaitCursor();
+    contentPane.setCursor(Cursor.WAIT);
+    connectionsTable.setCursor(Cursor.WAIT);
+  }
+
+  private TreeView createMetaDataTree(List<TableMetaData> table, String connectionName) {
+    System.out.println("Table contains " + table.size() + " rows");
+
+    TreeView tree = new TreeView();
+    TreeItem<String> root = new TreeItem<>(connectionName);
+    tree.setRoot(root);
+    Map<String, List<TableMetaData>> tableMap =
+    table.stream()
+        .collect(Collectors.groupingBy(TableMetaData::getTableName));
+    System.out.println("Map contains " + tableMap + " table groups");
+    tableMap.forEach((k,v) -> {
+      TreeItem<String> tableName = new TreeItem<>(k);
+      root.getChildren().add(tableName);
+    });
+    return tree;
+  }
 }

@@ -1,5 +1,8 @@
 package se.alipsa.ride.code.sqltab;
 
+import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
+import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
+
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -13,7 +16,7 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.sexp.ListVector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
-import se.alipsa.ride.environment.connections.Connection;
+import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
@@ -24,7 +27,7 @@ public class SqlTab extends TextAreaTab {
   private SqlTextArea sqlTextArea;
   private Button runButton;
   private Button runUpdateButton;
-  private ComboBox<Connection> connectionCombo;
+  private ComboBox<ConnectionInfo> connectionCombo;
 
   public SqlTab(String title, Ride gui) {
     super(gui);
@@ -52,9 +55,9 @@ public class SqlTab extends TextAreaTab {
     connectionCombo.setTooltip(new Tooltip("Create connections in the Connections tab \nand select the name here"));
     connectionCombo.setOnMouseClicked(e -> {
       connectionCombo.hide();
-      Set<Connection> connections = gui.getEnvironmentComponent().getConnections();
-      connectionCombo.setItems(FXCollections.observableArrayList(connections));
-      int rows = Math.min(5, connections.size());
+      Set<ConnectionInfo> connectionInfos = gui.getEnvironmentComponent().getConnections();
+      connectionCombo.setItems(FXCollections.observableArrayList(connectionInfos));
+      int rows = Math.min(5, connectionInfos.size());
       connectionCombo.setVisibleRowCount(rows);
       connectionCombo.show();
     });
@@ -78,7 +81,6 @@ public class SqlTab extends TextAreaTab {
     try {
       gui.getConsoleComponent().runScriptSilent(rCode);
       ListVector df = (ListVector) gui.getConsoleComponent().fetchVar("sqlTabDf");
-      // cleanup
       gui.getInoutComponent().view(df, getTitle());
 
       setNormalCursor();
@@ -86,9 +88,9 @@ public class SqlTab extends TextAreaTab {
       setNormalCursor();
       ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
     }
-
+    // cleanup
     try {
-      gui.getConsoleComponent().runScriptSilent("dbDisconnect(sqlTabCon); rm(sqlTabDrv); rm(sqlTabCon); rm(sqlTabDf)");
+      gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("rm(sqlTabDf)").toString());
     } catch (Exception e) {
       setNormalCursor();
       ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
@@ -124,15 +126,6 @@ public class SqlTab extends TextAreaTab {
       ExceptionAlert.showAlert("Cleanup failed: " + e.getMessage(), e);
     }
     //System.out.println("update query done!");
-  }
-
-  private StringBuilder baseRQueryString(Connection con, String command, String sql) {
-    StringBuilder str = new StringBuilder();
-    str.append("library('DBI')\n library('org.renjin.cran:RJDBC')\n")
-        .append("sqlTabDrv <- JDBC('").append(con.getDriver()).append("')\n")
-        .append("sqlTabCon <- dbConnect(sqlTabDrv, url='").append(con.getUrl()).append("')\n")
-        .append(command).append("(sqlTabCon, \"").append(sql).append("\")");
-    return str;
   }
 
   @Override

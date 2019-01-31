@@ -291,8 +291,8 @@ public class ConsoleComponent extends BorderPane {
   }
 
   public SEXP fetchVar(String varName) {
-    Environment global = engine.getSession().getGlobalEnvironment();
-    Context topContext = engine.getSession().getTopLevelContext();
+    Environment global = getSession().getGlobalEnvironment();
+    Context topContext = getSession().getTopLevelContext();
     return global.getVariable(topContext, varName);
   }
 
@@ -314,7 +314,7 @@ public class ConsoleComponent extends BorderPane {
       public Void call() throws Exception {
         try {
           executeScriptAndReport(script, title);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
           // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
           // this way we can get to the original one by extracting the cause from the thrown exception
           System.out.println("Exception caught, rethrowing as wrapped Exception");
@@ -343,21 +343,7 @@ public class ConsoleComponent extends BorderPane {
         ex = throwable;
       }
 
-      String msg = "";
-
-      if (ex instanceof org.renjin.parser.ParseException) {
-        msg = "Error parsing R script: ";
-      } else if (ex instanceof ScriptException || ex instanceof EvalException) {
-        msg = "Error running R script: ";
-      } else if (ex instanceof RuntimeException) {
-        msg = "An unknown error occurred running R script: ";
-      } else if (ex instanceof IOException) {
-        msg = "Failed to close writer capturing renjin results";
-      } else if (ex instanceof RuntimeScriptException) {
-        msg = "An unknown error occurred running R script: ";
-      } else if (ex instanceof Exception) {
-        msg = "Exception thrown when running script";
-      }
+      String msg = createMessageFromEvalException(ex);
 
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
       promptAndScrollToEnd();
@@ -365,6 +351,25 @@ public class ConsoleComponent extends BorderPane {
     scriptThread = new Thread(task);
     scriptThread.setDaemon(false);
     scriptThread.start();
+  }
+
+  public String createMessageFromEvalException(Throwable ex) {
+    String msg = "";
+
+    if (ex instanceof org.renjin.parser.ParseException) {
+      msg = "Error parsing R script: ";
+    } else if (ex instanceof ScriptException || ex instanceof EvalException) {
+      msg = "Error running R script: ";
+    } else if (ex instanceof RuntimeException) {
+      msg = "An unknown error occurred running R script: ";
+    } else if (ex instanceof IOException) {
+      msg = "Failed to close writer capturing renjin results";
+    } else if (ex instanceof RuntimeScriptException) {
+      msg = "An unknown error occurred running R script: ";
+    } else if (ex instanceof Exception) {
+      msg = "Exception thrown when running script";
+    }
+    return msg;
   }
 
   private void promptAndScrollToEnd() {
