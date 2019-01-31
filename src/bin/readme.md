@@ -35,6 +35,9 @@ or on windows
 - enable execution of SQL queries
  
     Support for select and update queries in the SQL code tab    
+    
+- create a database browser
+  - Tree structure based on INFORMATION_SCHEMA activated when right clicking on the connection and choosing view connection.    
 
 ### 1.0 Final
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui

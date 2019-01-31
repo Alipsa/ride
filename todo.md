@@ -4,10 +4,10 @@
 ### Run hamcrest tests
 Create a new runbutton when hamcrest tests are detected
  
-### enable execution of SQL queries 
+### enable execution of SQL queries  (done)
 - A run query button in the SQL code tab
 
-### create a database browser
+### create a database browser (done)
 - Tree structure based on INFORMATION_SCHEMA
     
 ### Implement History tab
