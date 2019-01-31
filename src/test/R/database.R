@@ -7,6 +7,7 @@ library("RJDBC")
 #print(package$isPresent())
 #print(package$get())
 #library("org.postgresql:postgresql")
+# jdbc:h2:~/test
 print("Connect to db")
 drv <- JDBC("org.h2.Driver") 
 con <- dbConnect(drv, url="jdbc:h2:mem:test") 

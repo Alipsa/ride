@@ -137,23 +137,9 @@ public class ConnectionsTab extends Tab {
 
   /**
    * this is consistent for at least H2 and SQl server
-   * select col.TABLE_NAME
-   * , TABLE_TYPE
-   * , COLUMN_NAME
-   * , ORDINAL_POSITION
-   * , IS_NULLABLE
-   * , DATA_TYPE
-   * , CHARACTER_MAXIMUM_LENGTH
-   * , NUMERIC_PRECISION_RADIX
-   * , NUMERIC_SCALE
-   * , COLLATION_NAME
-   *  from INFORMATION_SCHEMA.COLUMNS col
-   * inner join INFORMATION_SCHEMA.TABLES tab on col.TABLE_NAME = tab.TABLE_NAME and col.TABLE_SCHEMA = tab.TABLE_SCHEMA
-   * where TABLE_TYPE <> 'SYSTEM TABLE'
    */
   private void showConnectionMetaData(ConnectionInfo con) {
     setWaitCursor();
-    Table table;
     String sql = "select col.TABLE_NAME\n" +
         ", TABLE_TYPE\n" +
         ", COLUMN_NAME\n" +
@@ -167,23 +153,12 @@ public class ConnectionsTab extends Tab {
         "from INFORMATION_SCHEMA.COLUMNS col\n" +
         "inner join INFORMATION_SCHEMA.TABLES tab " +
         "      on col.TABLE_NAME = tab.TABLE_NAME and col.TABLE_SCHEMA = tab.TABLE_SCHEMA\n" +
-        "where TABLE_TYPE <> 'SYSTEM TABLE'";
+        "where TABLE_TYPE <> 'SYSTEM TABLE'\n" +
+        "and tab.TABLE_SCHEMA not in ('SYSTEM TABLE', 'PG_CATALOG', 'INFORMATION_SCHEMA', 'pg_catalog', 'information_schema')";
     String rCode = baseRQueryString(con, "connectionsTabDf <- dbGetQuery", sql).toString();
 
-    System.out.println("running script: " + rCode);
-    //gui.getConsoleComponent().runScriptSilent(rCode);
+    // runScriptSilent newer returns so have to run in a thread
     runScriptInThread(rCode, "connectionsTabDf", con.getName());
-    /*
-    // cleanup
-    try {
-      System.out.println("cleanup");
-      gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("rm(connectionsTabDf)").toString());
-    } catch (Exception e) {
-      setNormalCursor();
-      ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
-      return;
-    }
-    */
   }
 
   void runScriptInThread(String rCode, String varname, String connectionName) {
@@ -191,15 +166,12 @@ public class ConnectionsTab extends Tab {
       @Override
       public Void call() throws Exception {
         try {
-          //System.out.println("running script: " + rCode);
           RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
           RenjinScriptEngine engine = factory.getScriptEngine(gui.getConsoleComponent().getSession());
           engine.eval(rCode);
-          //System.out.println("Returned from script");
         } catch (RuntimeException e) {
           // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
           // this way we can get to the original one by extracting the cause from the thrown exception
-          //System.out.println("RuntimeException caught, rethrowing as wrapped Exception");
           throw new Exception(e);
         }
         return null;
@@ -215,11 +187,14 @@ public class ConnectionsTab extends Tab {
         TreeView treeView = createMetaDataTree(metaDataList, connectionName);
         Scene dialog = new Scene(treeView);
         Stage stage = new Stage();
+        stage.setTitle(connectionName + " connection view");
         stage.setScene(dialog);
         setNormalCursor();
         stage.show();
         stage.toFront();
+        gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("rm(connectionsTabDf)").toString());
       } catch (Exception ex) {
+        setNormalCursor();
         ExceptionAlert.showAlert("Failed to create connection tree view", ex);
       }
     });
@@ -251,19 +226,20 @@ public class ConnectionsTab extends Tab {
   }
 
   private TreeView createMetaDataTree(List<TableMetaData> table, String connectionName) {
-    System.out.println("Table contains " + table.size() + " rows");
-
     TreeView tree = new TreeView();
     TreeItem<String> root = new TreeItem<>(connectionName);
     tree.setRoot(root);
-    Map<String, List<TableMetaData>> tableMap =
-    table.stream()
+    Map<String, List<TableMetaData>> tableMap = table.stream()
         .collect(Collectors.groupingBy(TableMetaData::getTableName));
-    System.out.println("Map contains " + tableMap + " table groups");
     tableMap.forEach((k,v) -> {
       TreeItem<String> tableName = new TreeItem<>(k);
       root.getChildren().add(tableName);
+      v.forEach(c -> {
+        TreeItem<String> column = new TreeItem<>(c.asColumnString());
+        tableName.getChildren().add(column);
+      });
     });
+    root.setExpanded(true);
     return tree;
   }
 }

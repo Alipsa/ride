@@ -121,7 +121,7 @@ public class SqlTab extends TextAreaTab {
       ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
     }
     try {
-      gui.getConsoleComponent().runScriptSilent("dbDisconnect(sqlTabCon); rm(sqlTabDrv); rm(sqlTabCon); rm(sqlTabNumRows)");
+      gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().toString());
     } catch (Exception e) {
       ExceptionAlert.showAlert("Cleanup failed: " + e.getMessage(), e);
     }
