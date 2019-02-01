@@ -11,6 +11,7 @@ public class TableMetaData {
   private String isNullable;
   private String dataType;
   private Integer characterMaximumLength;
+  private Integer numericPrecision;
   private Integer numericPrecisionRadix;
   private Integer numericScale;
   private String collationName;
@@ -24,14 +25,15 @@ public class TableMetaData {
     setIsNullable((String)row.get(4));
     setDataType(row.get(5).toString()); // On h2 this is an INT, on SQL Server it is VARCHAR, toString works in both cases
     setCharacterMaximumLength((Integer)row.get(6));
-    setNumericPrecisionRadix((Integer)row.get(7));
-    setNumericScale((Integer)row.get(8));
-    setCollationName((String)row.get(9));
+    setNumericPrecision((Integer)row.get(7));
+    setNumericPrecisionRadix((Integer)row.get(8));
+    setNumericScale((Integer)row.get(9));
+    setCollationName((String)row.get(10));
   }
 
   public TableMetaData(Object tableName, Object tableType, Object columnName, Object ordinalPosition,
-                       Object isNullable, Object dataType, Object characterMaximumLength, Object numericPrecisionRadix,
-                       Object numericScale, Object collationName) {
+                       Object isNullable, Object dataType, Object characterMaximumLength, Object numericPrecision,
+                       Object numericPrecisionRadix, Object numericScale, Object collationName) {
 
     setTableName((String)tableName);
     setTableType((String)tableType);
@@ -40,6 +42,7 @@ public class TableMetaData {
     setIsNullable((String)isNullable);
     setDataType((String)dataType);
     setCharacterMaximumLength((Integer)characterMaximumLength);
+    setNumericPrecision((Integer)numericPrecision);
     setNumericPrecisionRadix((Integer)numericPrecisionRadix);
     setNumericScale((Integer)numericScale);
     setCollationName((String)collationName);
@@ -124,6 +127,14 @@ public class TableMetaData {
     this.characterMaximumLength = characterMaximumLength;
   }
 
+  public Integer getNumericPrecision() {
+    return numericPrecision;
+  }
+
+  public void setNumericPrecision(Integer numericPrecision) {
+    this.numericPrecision = numericPrecision;
+  }
+
   public Integer getNumericPrecisionRadix() {
     return numericPrecisionRadix;
   }
@@ -154,8 +165,16 @@ public class TableMetaData {
     if (DATATYPE.contains("VARCHAR") || DATATYPE.equals("CHARACTER VARYING")) {
       precision = "(" + characterMaximumLength + ")";
     } else if (DATATYPE.equals("DECIMAL") || DATATYPE.equals("NUMBER") || DATATYPE.equals("NUMERIC")) {
-      precision = "(" + numericScale + "," + numericPrecisionRadix + ")";
+      precision = "(" + numericPrecision + "," + numericScale + ")";
     }
-    return columnName + "  " + dataType + precision;
+    String nullable;
+    if (isNullable.equalsIgnoreCase("YES")
+        || isNullable.equalsIgnoreCase("TRUE")
+        || isNullable.equalsIgnoreCase("1")) {
+      nullable = "null";
+    } else {
+      nullable = "not null";
+    }
+    return columnName + "  [ " + dataType + precision + ", " + nullable + " ]";
   }
 }

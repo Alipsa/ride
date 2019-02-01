@@ -24,6 +24,7 @@ import se.alipsa.ride.model.TableMetaData;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.RDataTransformer;
 
+import java.io.File;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -40,6 +41,8 @@ public class ConnectionsTab extends Tab {
   private TextField driverText;
   private TextField urlText;
   private TableView<ConnectionInfo> connectionsTable = new TableView<>();
+
+  private TreeItemComparator treeItemComparator = new TreeItemComparator();
 
   public ConnectionsTab(Ride gui) {
     setText("Connections");
@@ -147,6 +150,7 @@ public class ConnectionsTab extends Tab {
         ", IS_NULLABLE\n" +
         ", DATA_TYPE\n" +
         ", CHARACTER_MAXIMUM_LENGTH\n" +
+        ", NUMERIC_PRECISION\n" +
         ", NUMERIC_PRECISION_RADIX\n" +
         ", NUMERIC_SCALE\n" +
         ", COLLATION_NAME\n" +
@@ -238,8 +242,18 @@ public class ConnectionsTab extends Tab {
         TreeItem<String> column = new TreeItem<>(c.asColumnString());
         tableName.getChildren().add(column);
       });
+      tableName.getChildren().sort(treeItemComparator);
     });
+    root.getChildren().sort(treeItemComparator);
     root.setExpanded(true);
     return tree;
+  }
+
+  private class TreeItemComparator implements Comparator<TreeItem<String>> {
+
+    @Override
+    public int compare(TreeItem<String> fileTreeItem, TreeItem<String> t1) {
+      return fileTreeItem.getValue().compareToIgnoreCase(t1.getValue());
+    }
   }
 }
