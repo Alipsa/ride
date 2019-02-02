@@ -3,6 +3,7 @@ package se.alipsa.ride.code;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.fxmisc.richtext.CodeArea;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.utils.FileUtils;
 
@@ -60,6 +61,8 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
     setText(title);
     saveToolTip.setText("Save " + title.replace("*", ""));
   }
+
+  public abstract CodeArea getCodeArea();
 
   public void contentChanged() {
     setTitle(getTitle() + "*");

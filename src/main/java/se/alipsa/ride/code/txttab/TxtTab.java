@@ -1,13 +1,15 @@
 package se.alipsa.ride.code.txttab;
 
+import org.fxmisc.richtext.CodeArea;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.code.TextCodeArea;
 
 import java.io.File;
 
 public class TxtTab extends TextAreaTab {
 
-  TxtTextArea txtTextArea;
+  private TxtTextArea txtTextArea;
 
   public TxtTab(String title, Ride gui) {
     super(gui);
@@ -41,4 +43,8 @@ public class TxtTab extends TextAreaTab {
     txtTextArea.replaceContentText(start, end, content);
   }
 
+  @Override
+  public CodeArea getCodeArea() {
+    return txtTextArea;
+  }
 }

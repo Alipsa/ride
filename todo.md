@@ -12,7 +12,7 @@ Create a new runbutton when hamcrest tests are detected
     
 ### Implement History tab
 ### implement edit menu
-undo and find/replace seems most pertinent
+undo, find and find/replace seems most pertinent
 
 ### Code menu improvements
 Comment/Uncomment lines + the Ctrl+Shift+C combo

@@ -13,9 +13,11 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
 import org.renjin.sexp.ListVector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.code.TextCodeArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.utils.ExceptionAlert;
 
@@ -151,5 +153,10 @@ public class SqlTab extends TextAreaTab {
   @Override
   public void replaceContentText(int start, int end, String content) {
     sqlTextArea.replaceContentText(start, end, content);
+  }
+
+  @Override
+  public CodeArea getCodeArea() {
+    return sqlTextArea;
   }
 }

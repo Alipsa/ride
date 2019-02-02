@@ -28,17 +28,18 @@ or on windows
 
 ### 1.1 SNAPSHOT (TODO change version when released)
 - Create a new runbutton when hamcrest tests are detected
-
-    Will run hamcrest tests similar to the renjin-hamcrest-maven-plugin i.e. producing nice output, error messages and
+    - Will run hamcrest tests similar to the renjin-hamcrest-maven-plugin i.e. producing nice output, error messages and
     summary 
     
 - enable execution of SQL queries
- 
-    Support for select and update queries in the SQL code tab    
+    - Support for select and update queries in the SQL code tab    
     
 - create a database browser
   - Tree structure based on INFORMATION_SCHEMA activated when right clicking on the connection and choosing view connection.    
 
+- Edit menu
+  - Now supports simple find
+  
 ### 1.0 Final
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui
     - Enables console output as the R script is executed rather than outputting content at the end as before.

@@ -1,6 +1,7 @@
 package se.alipsa.ride.code.xmltab;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
 
@@ -8,7 +9,7 @@ import java.io.File;
 
 public class XmlTab extends TextAreaTab {
 
-  XmlTextArea xmlTextArea;
+  private XmlTextArea xmlTextArea;
 
   public XmlTab(String title, Ride gui) {
     super(gui);
@@ -43,4 +44,8 @@ public class XmlTab extends TextAreaTab {
     xmlTextArea.replaceContentText(start, end, content);
   }
 
+  @Override
+  public CodeArea getCodeArea() {
+    return xmlTextArea;
+  }
 }

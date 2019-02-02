@@ -9,11 +9,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.code.TextCodeArea;
 import se.alipsa.ride.console.ConsoleComponent;
 
 import java.io.File;
@@ -120,5 +122,10 @@ public class CodeTab extends TextAreaTab {
       runTestsButton.setDisable(true);
       isRunTestButtonDisabled = true;
     }
+  }
+
+  @Override
+  public CodeArea getCodeArea() {
+    return codeTextArea;
   }
 }

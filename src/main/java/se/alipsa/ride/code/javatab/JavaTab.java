@@ -1,16 +1,18 @@
 package se.alipsa.ride.code.javatab;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.code.TextCodeArea;
 
 import java.io.File;
 
 public class JavaTab extends TextAreaTab {
 
-  JavaTextArea javaTextArea;
+  private JavaTextArea javaTextArea;
 
   private Logger log = LoggerFactory.getLogger(JavaTab.class);
 
@@ -45,5 +47,10 @@ public class JavaTab extends TextAreaTab {
   @Override
   public void replaceContentText(int start, int end, String content) {
     javaTextArea.replaceContentText(start, end, content);
+  }
+
+  @Override
+  public CodeArea getCodeArea() {
+    return javaTextArea;
   }
 }

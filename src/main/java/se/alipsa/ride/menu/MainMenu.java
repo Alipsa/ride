@@ -1,11 +1,17 @@
 package se.alipsa.ride.menu;
 
 import javafx.event.ActionEvent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import org.fxmisc.richtext.CodeArea;
 import org.renjin.eval.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
@@ -33,7 +39,7 @@ public class MainMenu extends MenuBar {
   public MainMenu(Ride gui) {
     this.gui = gui;
     Menu menuFile = createFileMenu();
-    Menu menuEdit = new Menu("Edit");
+    Menu menuEdit = createEditMenu();
     Menu menuCode = new Menu("Code");
     Menu menuView = new Menu("View");
     Menu menuPlots = new Menu("Plots");
@@ -45,6 +51,45 @@ public class MainMenu extends MenuBar {
     Menu menuHelp = createHelpMenu();
     getMenus().addAll(menuFile, menuEdit, menuCode, menuView, menuPlots, menuSession,
         menuBuild, menuDebug, menuProfile, menuTools, menuHelp);
+  }
+
+  private Menu createEditMenu() {
+    Menu menu = new Menu("Edit");
+    MenuItem find = new MenuItem("Find");
+    find.setOnAction(this::displayFind);
+    menu.getItems().add(find);
+    return menu;
+  }
+
+  private void displayFind(ActionEvent actionEvent) {
+
+    FlowPane pane = new FlowPane();
+    pane.setPadding(Constants.FLOWPANE_INSETS);
+    pane.setHgap(Constants.HGAP);
+    pane.setVgap(Constants.VGAP);
+
+    TextField searchTF = new TextField();
+    Button findButton = new Button("search");
+    findButton.setOnAction(e -> {
+      TextAreaTab codeTab = gui.getCodeComponent().getActiveTab();
+      CodeArea codeArea = codeTab.getCodeArea();
+      int caretPos = codeArea.getCaretPosition();
+      String text = codeTab.getAllTextContent().substring(caretPos);
+      String searchWord = searchTF.getText();
+      if (text.contains(searchWord)) {
+        int place = text.indexOf(searchWord);
+        codeArea.moveTo(place);
+        codeArea.selectRange(caretPos + place, caretPos + place + searchWord.length());
+        codeArea.requestFollowCaret();
+      }
+    });
+    pane.getChildren().addAll(searchTF, findButton);
+    Scene scene = new Scene(pane);
+    Stage stage = new Stage();
+    stage.setTitle("Find");
+    stage.setScene(scene);
+    stage.show();
+    stage.toFront();
   }
 
   private Menu createHelpMenu() {
