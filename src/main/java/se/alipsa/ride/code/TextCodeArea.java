@@ -1,5 +1,7 @@
 package se.alipsa.ride.code;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
@@ -34,6 +36,12 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
     plainTextChanges().subscribe(ptc -> {
       if (parent.isChanged() == false && !blockChange) {
         parent.contentChanged();
+      }
+    });
+
+    addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+      if (e.isControlDown() && KeyCode.F.equals(e.getCode())) {
+        parent.gui.getMainMenu().displayFind(null);
       }
     });
   }

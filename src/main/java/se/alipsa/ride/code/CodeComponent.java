@@ -24,7 +24,6 @@ import java.util.List;
 
 public class CodeComponent extends BorderPane {
 
-  private ConsoleComponent console;
   private TabPane pane;
   private Ride gui;
 
@@ -32,7 +31,7 @@ public class CodeComponent extends BorderPane {
 
   public CodeComponent(Ride gui) {
     this.gui = gui;
-    this.console = gui.getConsoleComponent();
+    ConsoleComponent console = gui.getConsoleComponent();
 
     pane = new TabPane();
     setCenter(pane);

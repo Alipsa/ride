@@ -61,7 +61,7 @@ public class MainMenu extends MenuBar {
     return menu;
   }
 
-  private void displayFind(ActionEvent actionEvent) {
+  public void displayFind(ActionEvent actionEvent) {
 
     FlowPane pane = new FlowPane();
     pane.setPadding(Constants.FLOWPANE_INSETS);

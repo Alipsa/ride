@@ -1,6 +1,8 @@
 package se.alipsa.ride.code.txttab;
 
 import javafx.beans.InvalidationListener;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import se.alipsa.ride.code.TabTextArea;
 
@@ -19,6 +21,11 @@ public class TxtTextArea extends CodeArea implements TabTextArea {
         contentChanged = true;
       }
     };
+    addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+      if (e.isControlDown() && KeyCode.F.equals(e.getCode())) {
+        parent.getGui().getMainMenu().displayFind(null);
+      }
+    });
     this.textProperty().addListener(contentChangeListener);
   }
 

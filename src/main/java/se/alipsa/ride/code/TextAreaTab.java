@@ -80,4 +80,8 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
     return isChanged;
   }
 
+  public Ride getGui() {
+    return gui;
+  }
+
 }

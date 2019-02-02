@@ -1,5 +1,7 @@
 package se.alipsa.ride.code.xmltab;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
@@ -35,6 +37,12 @@ public class XmlTextArea extends TextCodeArea {
     plainTextChanges().subscribe(ptc -> {
       if (parent.isChanged() == false && !blockChange) {
         parent.contentChanged();
+      }
+    });
+
+    addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+      if (e.isControlDown() && KeyCode.F.equals(e.getCode())) {
+        parent.getGui().getMainMenu().displayFind(null);
       }
     });
   }
