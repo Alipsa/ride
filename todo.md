@@ -1,7 +1,7 @@
 # Todo / Roadmap
 
 ## version 1.1
-### Run hamcrest tests
+### Run hamcrest tests (done)
 Create a new runbutton when hamcrest tests are detected
  
 ### enable execution of SQL queries  (done)
@@ -11,7 +11,7 @@ Create a new runbutton when hamcrest tests are detected
 - Tree structure based on INFORMATION_SCHEMA
     
 ### Implement History tab
-### implement edit menu
+### implement edit menu (partially done)
 undo, find and find/replace seems most pertinent
 
 ### Code menu improvements
