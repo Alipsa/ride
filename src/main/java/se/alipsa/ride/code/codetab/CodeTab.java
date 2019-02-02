@@ -61,17 +61,25 @@ public class CodeTab extends TextAreaTab {
 
     codeTextArea = new CodeTextArea(this);
     codeTextArea.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-      if (e.isControlDown() && KeyCode.ENTER.equals(e.getCode())) {
-        CodeComponent codeComponent = gui.getCodeComponent();
-        String rCode = codeTextArea.getText(codeTextArea.getCurrentParagraph()); // current line
+      if (e.isControlDown()) {
+        if (KeyCode.ENTER.equals(e.getCode())) {
+          CodeComponent codeComponent = gui.getCodeComponent();
+          String rCode = codeTextArea.getText(codeTextArea.getCurrentParagraph()); // current line
 
-        String selected = codeTextArea.selectedTextProperty().getValue();
-        // if text is selected then go with that instead
-        if (selected != null && !"".equals(selected)) {
-          rCode = codeComponent.getTextFromActiveTab();
+          String selected = codeTextArea.selectedTextProperty().getValue();
+          // if text is selected then go with that instead
+          if (selected != null && !"".equals(selected)) {
+            rCode = codeComponent.getTextFromActiveTab();
+          }
+          console.runScriptAsync(rCode, codeComponent.getActiveScriptName());
+          codeTextArea.moveTo(codeTextArea.getCurrentParagraph() + 1, 0);
+          int totalLength = codeTextArea.getAllTextContent().length();
+          if(codeTextArea.getCaretPosition() > totalLength) {
+            codeTextArea.moveTo(totalLength);
+          }
+        } else if (KeyCode.QUOTE.equals(e.getCode())) {
+          codeTextArea.insertText(codeTextArea.getCaretPosition(), "^");
         }
-        console.runScriptAsync(rCode, codeComponent.getActiveScriptName());
-        codeTextArea.moveTo(codeTextArea.getCurrentParagraph() + 1, 0);
       }
     });
     VirtualizedScrollPane<CodeTextArea> vPane = new VirtualizedScrollPane<>(codeTextArea);

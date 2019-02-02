@@ -20,5 +20,5 @@ RELEASE_TAG=$(getProperty "release.tag")
 TARGET=${PWD}/target/${JAR_NAME}
 
 cd src/bin
-mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
+#mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
 mvn exec:java -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
