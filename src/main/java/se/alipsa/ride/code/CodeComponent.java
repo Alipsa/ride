@@ -136,4 +136,14 @@ public class CodeComponent extends BorderPane {
     getActiveTab().setTitle(file.getName());
     getActiveTab().setFile(file);
   }
+
+  public boolean hasUnsavedFiles() {
+    for (Tab tab : pane.getTabs()) {
+      TextAreaTab taTab = (TextAreaTab)tab;
+      if (taTab.isChanged()) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

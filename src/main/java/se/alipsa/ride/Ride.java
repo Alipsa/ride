@@ -6,6 +6,8 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Control;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
@@ -20,8 +22,10 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.MainMenu;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.FileUtils;
 
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
@@ -90,6 +94,22 @@ public class Ride extends Application {
     main.getChildren().add(splitPane);
 
     primaryStage.setOnCloseRequest(t -> {
+      if (getCodeComponent().hasUnsavedFiles()) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Are you sure you want to exit?");
+        alert.setHeaderText("There are unsaved files");
+        alert.setContentText("Are you sure you want to exit \n -even though you have unsaved files?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if(!result.isPresent()) {
+          t.consume();
+          return;
+        }
+        if (result.get() != ButtonType.OK){
+          t.consume();
+          return;
+        }
+      }
       endProgram();
     });
 
@@ -112,7 +132,7 @@ public class Ride extends Application {
         System.exit(0);
       }
     };
-    timer.schedule(task, 100);
+    timer.schedule(task, 200);
   }
 
   private void stretch(Pane component, Pane root) {
