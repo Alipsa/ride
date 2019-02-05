@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
+import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.TextCodeArea;
 import se.alipsa.ride.console.ConsoleComponent;
@@ -32,7 +33,7 @@ public class CodeTab extends TextAreaTab {
   private Logger log = LoggerFactory.getLogger(CodeTab.class);
 
   public CodeTab(String title, Ride gui) {
-    super(gui);
+    super(gui, TabType.R);
     this.console = gui.getConsoleComponent();
 
     setTitle(title);

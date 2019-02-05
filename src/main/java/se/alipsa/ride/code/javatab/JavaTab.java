@@ -5,6 +5,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.TextCodeArea;
 
@@ -17,7 +18,7 @@ public class JavaTab extends TextAreaTab {
   private Logger log = LoggerFactory.getLogger(JavaTab.class);
 
   public JavaTab(String title, Ride gui) {
-    super(gui);
+    super(gui, TabType.JAVA);
     setTitle(title);
     javaTextArea = new JavaTextArea(this);
     VirtualizedScrollPane<JavaTextArea> pane = new VirtualizedScrollPane<>(javaTextArea);

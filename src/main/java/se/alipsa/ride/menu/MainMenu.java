@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -40,7 +41,7 @@ public class MainMenu extends MenuBar {
     this.gui = gui;
     Menu menuFile = createFileMenu();
     Menu menuEdit = createEditMenu();
-    Menu menuCode = new Menu("Code");
+    Menu menuCode = createCodeMenu();
     Menu menuView = new Menu("View");
     Menu menuPlots = new Menu("Plots");
     Menu menuSession = createSessionMenu();
@@ -51,6 +52,55 @@ public class MainMenu extends MenuBar {
     Menu menuHelp = createHelpMenu();
     getMenus().addAll(menuFile, menuEdit, menuCode, menuView, menuPlots, menuSession,
         menuBuild, menuDebug, menuProfile, menuTools, menuHelp);
+  }
+
+  private Menu createCodeMenu() {
+    Menu menu = new Menu("Code");
+    MenuItem commentItem = new MenuItem("Comment/Uncomment lines");
+    commentItem.setOnAction(this::commentLines);
+    menu.getItems().addAll(commentItem);
+    return menu;
+  }
+
+  private void commentLines(ActionEvent actionEvent) {
+    CodeArea codeArea = gui.getCodeComponent().getActiveTab().getCodeArea();
+    String lineComment;
+    switch (gui.getCodeComponent().getActiveTab().getTabType()) {
+      case R: lineComment = "#"; break;
+      case SQL: lineComment = "--"; break;
+      case JAVA: lineComment = "//"; break;
+      default: return;
+    }
+    String selected = codeArea.selectedTextProperty().getValue();
+    // if text is selected then go with that
+    if (selected != null && !"".equals(selected)) {
+
+      IndexRange range = codeArea.getSelection();
+      String s = toggelComment(selected, lineComment);
+      codeArea.replaceText(range, s);
+    } else { // toggle current line
+      String text = codeArea.getText(codeArea.getCurrentParagraph());
+      int org = codeArea.getCaretPosition();
+      codeArea.moveTo(codeArea.getCurrentParagraph(), 0);
+      int start = codeArea.getCaretPosition();
+      int end = start + text.length();
+      String s = toggelComment(text, lineComment);
+      codeArea.replaceText(start, end, s);
+      codeArea.moveTo(org);
+    }
+  }
+
+  private String toggelComment(String selected, String lineComment) {
+    String[] lines = selected.split("\n");
+    List<String> commented = new ArrayList<>();
+    for (String line : lines) {
+      if (line.startsWith(lineComment)) {
+        commented.add(line.substring(1));
+      } else {
+        commented.add(lineComment + line);
+      }
+    }
+    return String.join("\n", commented);
   }
 
   private Menu createEditMenu() {

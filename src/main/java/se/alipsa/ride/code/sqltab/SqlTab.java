@@ -16,6 +16,7 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.renjin.sexp.ListVector;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.TextCodeArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
@@ -32,7 +33,7 @@ public class SqlTab extends TextAreaTab {
   private ComboBox<ConnectionInfo> connectionCombo;
 
   public SqlTab(String title, Ride gui) {
-    super(gui);
+    super(gui, TabType.SQL);
     setTitle(title);
     BorderPane pane = new BorderPane();
 
