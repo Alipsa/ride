@@ -15,7 +15,7 @@ Create a new runbutton when hamcrest tests are detected
 undo, find and find/replace seems most pertinent
 
 ### Code menu improvements
-Comment/Uncomment lines + the Ctrl+Shift+C combo
+Comment/Uncomment lines + the Ctrl+Shift+C combo (done)
 Format code
 
 ### Tools -> Options menu

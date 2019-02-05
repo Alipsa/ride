@@ -63,6 +63,10 @@ public class MainMenu extends MenuBar {
   }
 
   private void commentLines(ActionEvent actionEvent) {
+    commentLines();
+  }
+
+  public void commentLines() {
     CodeArea codeArea = gui.getCodeComponent().getActiveTab().getCodeArea();
     String lineComment;
     switch (gui.getCodeComponent().getActiveTab().getTabType()) {
@@ -111,7 +115,11 @@ public class MainMenu extends MenuBar {
     return menu;
   }
 
-  public void displayFind(ActionEvent actionEvent) {
+  private void displayFind(ActionEvent actionEvent) {
+    displayFind();
+  }
+
+  public void displayFind() {
 
     FlowPane pane = new FlowPane();
     pane.setPadding(Constants.FLOWPANE_INSETS);

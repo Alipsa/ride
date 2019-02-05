@@ -42,7 +42,7 @@ public class XmlTextArea extends TextCodeArea {
 
     addEventHandler(KeyEvent.KEY_PRESSED, e -> {
       if (e.isControlDown() && KeyCode.F.equals(e.getCode())) {
-        parent.getGui().getMainMenu().displayFind(null);
+        parent.getGui().getMainMenu().displayFind();
       }
     });
   }

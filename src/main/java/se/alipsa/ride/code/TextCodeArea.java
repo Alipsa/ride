@@ -41,7 +41,7 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
 
     addEventHandler(KeyEvent.KEY_PRESSED, e -> {
       if (e.isControlDown() && KeyCode.F.equals(e.getCode())) {
-        parent.gui.getMainMenu().displayFind(null);
+        parent.gui.getMainMenu().displayFind();
       }
     });
   }

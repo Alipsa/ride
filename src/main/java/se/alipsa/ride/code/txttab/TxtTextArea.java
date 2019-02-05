@@ -23,7 +23,7 @@ public class TxtTextArea extends CodeArea implements TabTextArea {
     };
     addEventHandler(KeyEvent.KEY_PRESSED, e -> {
       if (e.isControlDown() && KeyCode.F.equals(e.getCode())) {
-        parent.getGui().getMainMenu().displayFind(null);
+        parent.getGui().getMainMenu().displayFind();
       }
     });
     this.textProperty().addListener(contentChangeListener);

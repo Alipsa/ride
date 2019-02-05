@@ -40,6 +40,9 @@ or on windows
 - Edit menu
   - Now supports simple find
   
+- Code menu improvements
+    - Comment/Uncomment lines + the Ctrl+Shift+C combo
+  
 ### 1.0 Final
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui
     - Enables console output as the R script is executed rather than outputting content at the end as before.

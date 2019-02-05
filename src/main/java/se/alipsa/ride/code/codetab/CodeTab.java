@@ -80,6 +80,8 @@ public class CodeTab extends TextAreaTab {
           }
         } else if (KeyCode.QUOTE.equals(e.getCode())) {
           codeTextArea.insertText(codeTextArea.getCaretPosition(), "^");
+        } else if (e.isShiftDown() && KeyCode.C.equals(e.getCode())) {
+          gui.getMainMenu().commentLines();
         }
       }
     });
