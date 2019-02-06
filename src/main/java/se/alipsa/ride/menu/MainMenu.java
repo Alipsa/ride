@@ -56,7 +56,7 @@ public class MainMenu extends MenuBar {
 
   private Menu createCodeMenu() {
     Menu menu = new Menu("Code");
-    MenuItem commentItem = new MenuItem("Comment/Uncomment lines");
+    MenuItem commentItem = new MenuItem("Toggle line comments  ctrl+shift+C");
     commentItem.setOnAction(this::commentLines);
     menu.getItems().addAll(commentItem);
     return menu;
@@ -109,7 +109,7 @@ public class MainMenu extends MenuBar {
 
   private Menu createEditMenu() {
     Menu menu = new Menu("Edit");
-    MenuItem find = new MenuItem("Find");
+    MenuItem find = new MenuItem("Find  ctrl+F");
     find.setOnAction(this::displayFind);
     menu.getItems().add(find);
     return menu;
@@ -282,7 +282,7 @@ public class MainMenu extends MenuBar {
     nSql.setOnAction(a -> gui.getCodeComponent().addCodeTab(TabType.SQL));
     fileMenu.getItems().add(nSql);
 
-    MenuItem save = new MenuItem("Save");
+    MenuItem save = new MenuItem("Save  ctrl+S");
     save.setOnAction(this::saveContent);
 
     MenuItem saveAs = new MenuItem("Save as");

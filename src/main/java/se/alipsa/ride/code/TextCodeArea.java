@@ -15,10 +15,13 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
 
   protected boolean blockChange = false;
 
+  TextAreaTab parentTab;
+
   public TextCodeArea() {
   }
 
   public TextCodeArea(TextAreaTab parent) {
+    this.parentTab = parent;
     setParagraphGraphicFactory(LineNumberFactory.get(this));
     // recompute the syntax highlighting 400 ms after user stops editing area
 
@@ -34,14 +37,20 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
         .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
 
     plainTextChanges().subscribe(ptc -> {
-      if (parent.isChanged() == false && !blockChange) {
-        parent.contentChanged();
+      if (parentTab.isChanged() == false && !blockChange) {
+        parentTab.contentChanged();
       }
     });
 
     addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-      if (e.isControlDown() && KeyCode.F.equals(e.getCode())) {
-        parent.gui.getMainMenu().displayFind();
+      if (e.isControlDown()) {
+        if (KeyCode.F.equals(e.getCode())) {
+          parentTab.getGui().getMainMenu().displayFind();
+        } else if (KeyCode.S.equals(e.getCode())) {
+          parentTab.getGui().getMainMenu().saveContent(parentTab);
+        } else if (e.isShiftDown() && KeyCode.C.equals(e.getCode())) {
+          parentTab.getGui().getMainMenu().commentLines();
+        }
       }
     });
   }
@@ -80,5 +89,13 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
     blockChange = true;
     replaceText(start, end, text);
     blockChange = false;
+  }
+
+  public TextAreaTab getParentTab() {
+    return parentTab;
+  }
+
+  public void setParentTab(TextAreaTab parentTab) {
+    this.parentTab = parentTab;
   }
 }

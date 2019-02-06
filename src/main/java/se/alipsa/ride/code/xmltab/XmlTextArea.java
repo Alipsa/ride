@@ -28,6 +28,7 @@ public class XmlTextArea extends TextCodeArea {
   private static final int GROUP_ATTRIBUTE_VALUE = 3;
 
   public XmlTextArea(XmlTab parent) {
+    super.setParentTab(parent);
     setParagraphGraphicFactory(LineNumberFactory.get(this));
 
     textProperty().addListener((obs, oldText, newText) -> {
