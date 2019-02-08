@@ -1,5 +1,5 @@
 @echo off
-set DIR=%~dp0%
+set DIR=%~dp0%.
 cd %DIR%
 
 set PROPERTY_FILE=version.properties
@@ -12,6 +12,10 @@ set RELEASE_TAG=%release.tag%
 
 set TARGET=%DIR%\%jar.name%
 
+set "LIB_DIR=%DIR%\lib"
+
+set "PATH=%PATH%;%LIB_DIR%"
+
 call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
 
-call mvn "exec:java" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
+call mvn "exec:java" -Djava.library.path="%LIB_DIR%" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
