@@ -20,4 +20,4 @@ set "PATH=%PATH%;%LIB_DIR%"
 
 call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
 
-call mvn "exec:java" -Djava.library.path="%LIB_DIR%" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
+call mvn "exec:java" -Djava.library.path="%LIB_DIR%" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG% --no-snapshot-updates

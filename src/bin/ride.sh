@@ -22,4 +22,4 @@ TARGET=${DIR}/${JAR_NAME}
 
 mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
 #mvn exec:java -Djava.library.path=${LIB_DIR} -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
-mvn exec:java -Duser.home=$HOME -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
+mvn exec:java -Duser.home=$HOME -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG} --no-snapshot-updates
