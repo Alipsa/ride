@@ -1,0 +1,60 @@
+<assembly>
+    <id>dist</id>
+    <!-- Specifies that our binary distribution is a zip package -->
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <baseDirectory>.</baseDirectory>
+
+    <dependencySets>
+      <dependencySet>
+        <unpack>false</unpack>
+        <scope>runtime</scope>
+        <outputDirectory>lib</outputDirectory>
+      </dependencySet>
+      <dependencySet>
+        <unpack>false</unpack>
+        <scope>provided</scope>
+        <outputDirectory>lib</outputDirectory>
+      </dependencySet>
+    </dependencySets>
+
+    <files>
+        <file>
+            <source>target/${project.artifactId}-${project.version}.jar</source>
+            <outputDirectory>.</outputDirectory>
+        </file>
+        <file>
+            <source>version.properties</source>
+            <outputDirectory>.</outputDirectory>
+        </file>
+        <file>
+            <source>src/main/resources/image/ride-icon.png</source>
+            <outputDirectory>.</outputDirectory>
+        </file>
+    </files>
+
+    <fileSets>
+        <fileSet>
+            <directory>src/bin/</directory>
+            <outputDirectory>.</outputDirectory>
+            <includes>
+                <include>*.xml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src/bin/</directory>
+            <outputDirectory>.</outputDirectory>
+            <includes>
+                <include>*.sh</include>
+                <include>*.cmd</include>
+                <include>*.md</include>
+                <include>*.ico</include>
+            </includes>
+            <lineEnding>unix</lineEnding>
+            <fileMode>0755</fileMode>
+        </fileSet>
+    </fileSets>
+</assembly>

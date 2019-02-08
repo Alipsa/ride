@@ -214,5 +214,30 @@ release.tag=${release.tag}
                 </plugins>
             </build>
         </profile>
+        <profile>
+          <id>fatJar</id>
+          <build>
+            <plugins>
+              <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>dist</id>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>single</goal>
+                    </goals>
+                    <configuration>
+                      <finalName>${project.artifactId}-${release.tag}</finalName>
+                      <descriptors>
+                        <descriptor>src/main/assembly/fatAssembly.xml</descriptor>
+                      </descriptors>
+                    </configuration>
+                  </execution>
+                </executions>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
     </profiles>
 </project>
