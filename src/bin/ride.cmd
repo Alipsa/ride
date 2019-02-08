@@ -14,6 +14,8 @@ set TARGET=%DIR%\%jar.name%
 
 set "LIB_DIR=%DIR%\lib"
 
+if not exist %LIB_DIR% mkdir %LIB_DIR%
+
 set "PATH=%PATH%;%LIB_DIR%"
 
 call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
