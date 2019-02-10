@@ -157,7 +157,13 @@ public class ConsoleComponent extends BorderPane {
     if (packageLoader != null) {
       return packageLoader;
     }
-    String pkgLoaderName = gui.getPrefs().get(PACKAGE_LOADER_PREF, AetherPackageLoader.class.getSimpleName());
+    String pkgLoaderName;
+    String overrridePackageLoader = System.getProperty(PACKAGE_LOADER_PREF);
+    if (overrridePackageLoader != null) {
+      pkgLoaderName =  overrridePackageLoader;
+    } else {
+      pkgLoaderName = gui.getPrefs().get(PACKAGE_LOADER_PREF, AetherPackageLoader.class.getSimpleName());
+    }
     PackageLoader loader = packageLoaderForName(parentClassLoader, pkgLoaderName);
     setPackageLoader(loader.getClass());
     return loader;
@@ -171,6 +177,7 @@ public class ConsoleComponent extends BorderPane {
     if (ClasspathPackageLoader.class.getSimpleName().equals(pkgLoaderName)) {
       return new ClasspathPackageLoader(parentClassLoader);
     }
+    log.info("parentClassLoader = {}, remoteRepositories = {}", parentClassLoader, remoteRepositories);
     AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
     //loader.setRepositoryListener(new ConsoleRepositoryListener(System.out));
     //loader.setTransferListener(new ConsoleTransferListener(System.out));
@@ -663,6 +670,9 @@ public class ConsoleComponent extends BorderPane {
   }
 
   public void setWorkingDir(File dir) {
+    if (dir == null) {
+      return;
+    }
     try {
       session.setWorkingDirectory(dir);
     } catch (FileSystemException e) {

@@ -21,6 +21,12 @@ Format code
 ### Tools -> Options menu
 Make it possible to customize tab as \t or number of spaces
 
+### Enable offline mode
+- build fat zip with all dependencies in the lib folder
+- use ant to lauch instead of maven
+- start with ClasspathPackageLoader instead of AetherPackageLoader regardless of user pref
+
+
 ## version 1.2
 ### Implements graphics support (grDevices) for javafx
 
@@ -49,8 +55,7 @@ use jGit see
 - https://git-scm.com/book/uz/v2/Appendix-B%3A-Embedding-Git-in-your-Applications-JGit
 - https://github.com/centic9/jgit-cookbook
 
-## version 1.5        
-### Enable offline mode
+### Enhanced offline mode
 - To allow explicit setting Aether to offline
 - The maven Settings class created by AetherFactory must be publicly exposed,
 ideally by AetherPackageLoader  

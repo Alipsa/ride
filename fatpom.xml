@@ -5,9 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.alipsa</groupId>
-    <artifactId>ride</artifactId>
+    <artifactId>fat-ride</artifactId>
     <version>1.1-SNAPSHOT</version>
     <!--version>1.1</version-->
+    <name>Fat Ride Pom</name>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -15,6 +16,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <release.tag>1.1-alpha</release.tag>
+        <!-- 3.6.0 -->
+        <maven.version>3.1.0</maven.version>
+
+        <!--1.1.0-->
+        <aether.version>1.0.2.v20150114</aether.version>
     </properties>
 
     <dependencies>
@@ -27,38 +33,39 @@
             <groupId>org.renjin</groupId>
             <artifactId>renjin-script-engine</artifactId>
             <version>RELEASE</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>tools</artifactId>
             <version>RELEASE</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>renjin-aether-package-loader</artifactId>
             <version>RELEASE</version>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.renjin</groupId>
+            <artifactId>gcc-runtime</artifactId>
+            <version>RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>hamcrest</artifactId>
             <version>RELEASE</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.renjin.cran</groupId>
             <artifactId>RJDBC</artifactId>
             <version>10.0.14</version>
-            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.10.1</version>
+
+        <!--dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.6.0</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency-->
 
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
@@ -75,32 +82,68 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.25</version>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>2.9.8</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.9.8</version>
-            <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.9.8</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
             <version>1.20</version>
+        </dependency>
+        <dependency>
+            <groupId>org.renjin.cran</groupId>
+            <artifactId>RJDBC</artifactId>
+            <version>10.0.14</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.15</version>
         </dependency>
         <!-- Git integration Core Library -->
         <!--dependency>
@@ -157,22 +200,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <shadedClassifierName>shaded</shadedClassifierName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
@@ -184,7 +211,7 @@
                         <configuration>
                             <finalName>${project.artifactId}-${release.tag}</finalName>
                             <descriptors>
-                                <descriptor>src/main/assembly/assembly.xml</descriptor>
+                                <descriptor>src/main/assembly/fatAssembly.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>

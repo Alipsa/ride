@@ -1,0 +1,25 @@
+<project name="ride" default="run" basedir=".">
+  <description>
+    Ride offline runner
+  </description>
+
+
+  <target name="run" description="run ride">
+    <java classname="se.alipsa.ride.Ride"
+          fork="true">
+      <jvmarg value="-DConsoleComponent.PackageLoader=ClasspathPackageLoader"/>
+      <classpath>
+        <fileset dir="lib">
+          <include name="**/*.jar"/>
+        </fileset>
+        <fileset dir="${basedir}">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${java.home}/lib/ext">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </java>
+  </target>
+
+</project>

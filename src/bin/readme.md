@@ -31,10 +31,10 @@ or on windows
     - Will run hamcrest tests similar to the renjin-hamcrest-maven-plugin i.e. producing nice output, error messages and
     summary 
     
-- enable execution of SQL queries
+- Enable execution of SQL queries
     - Support for select and update queries in the SQL code tab    
     
-- create a database browser
+- Create a database browser
   - Tree structure based on INFORMATION_SCHEMA activated when right clicking on the connection and choosing view connection.    
 
 - Edit menu
@@ -42,6 +42,11 @@ or on windows
   
 - Code menu improvements
     - Comment/Uncomment lines + the Ctrl+Shift+C combo
+    
+- Enable offline mode
+    - build fat zip with all dependencies in the lib folder
+    - use ant to lauch instead of maven
+    - start with ClasspathPackageLoader instead of AetherPackageLoader regardless of user pref    
   
 ### 1.0 Final
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui
