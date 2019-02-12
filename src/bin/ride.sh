@@ -16,10 +16,9 @@ RELEASE_TAG=$(getProperty "release.tag")
 
 TARGET=${DIR}/${JAR_NAME}
 
-#LIB_DIR=${DIR}/lib
-#mkdir -p ${LIB_DIR}
-#export PATH=$PATH:${LIB_DIR}
+LIB_DIR=${DIR}/lib
+mkdir -p ${LIB_DIR}
+export PATH=$PATH:${LIB_DIR}
 
 mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
-#mvn exec:java -Djava.library.path=${LIB_DIR} -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
-mvn exec:java -Duser.home=$HOME -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG} --no-snapshot-updates
+mvn exec:java -Duser.home=$HOME -Djava.library.path=${LIB_DIR} -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG} --no-snapshot-updates

@@ -1,16 +1,22 @@
-This is version 1.0 of Ride.
+This is version 1.1 of Ride.
 
 At this point Ride is usable and provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine.
 
+I use it daily at work and have been doing so for several months now. It started as a tool to develop and test R code 
+that I created using RStudio but needed a manageable intermediary to make sure my code worked in Renjin before integrating it 
+with the java application servers I use at work due to fact that many packages commonly used in GNU R does not yet work 
+in Renjin. Later, it evolved to the point where I now use it as my primary data analysis tool.
+  
 To run Ride you need to have maven and Java 1.8 or later installed. 
-If you use open JDK then you might need to do something like `sudo apt-get install openjfx` depending on your distro.
+If you use open JDK on Linux then you might need to do something like `sudo apt-get install openjfx` depending on your distro.
 
 Ride is started using maven (see ride.sh/ride.cmd for details). 
 This is because renjin is not included in the fat jar and needs to be wired in to the classpath upon startup. 
 You can specify a different renjin version in the pom if you like but note that it requires renjin version 0.9.2716 or later to work. 
 
 Since you probably want to run the ScriptEngine with the ClassPathPackageLoader when embedding your R app, 
-you can set Ride to use this to resolve packages. You then need to include those dependencies to the maven.pom. 
+you can set Ride to use this to resolve packages. You then need to include those dependencies to the maven.pom and hence
+test that you got all dependencies right before attempting to run the R scripts from the java application (server). 
 
 ## How to install:
 Unzip ride-1.0-final-dist.zip to a directory of choice
@@ -23,6 +29,17 @@ or on windows
 
 `$ .\ride.cmd`
 
+## If you need to run ride offline 
+The `ride-offline.sh` / `ride-offline.cmd` starts ride with the Classpath package loader and includes all jars
+in the lib folder. You need to manually add jars to the liv folder if you need a package or jdbc driver that is 
+not included per default. Ant is used to run it (as opposed to maven for online use) so edit the ride.xml if you 
+need to tweak it. 
+
+## JDBC native components
+For some jdbc drivers there are OS native files that is required for some connections features to work. 
+This is the case for SQL Server where the sqljdbc_auth.dll is needed for integrated security to work.
+In those cases just copy the native files to the lib dir, the startup script points out the lib dir as the java.library.path.   
+
 
 # Version Descriptions
 
@@ -32,20 +49,22 @@ or on windows
     summary 
     
 - Enable execution of SQL queries
-    - Support for select and update queries in the SQL code tab    
+    - Support for select and update queries in the SQL code tab 
+    - multi row selects of query results are supported for easy copy paste to a spreadsheet app or similar.    
     
 - Create a database browser
-  - Tree structure based on INFORMATION_SCHEMA activated when right clicking on the connection and choosing view connection.    
+  - Tree structure based on INFORMATION_SCHEMA activated when right clicking on the connection and choosing view connection. 
+  - ctrl+c will copy the name of the table or column   
 
 - Edit menu
-  - Now supports simple find
+  - Now supports simple, one directional, find
   
 - Code menu improvements
-    - Comment/Uncomment lines + the Ctrl+Shift+C combo
+    - Comment/Uncomment lines + the Ctrl+Shift+C combo, supported for R and SQL files
     
 - Enable offline mode
     - build fat zip with all dependencies in the lib folder
-    - use ant to lauch instead of maven
+    - use ant to launch instead of maven
     - start with ClasspathPackageLoader instead of AetherPackageLoader regardless of user pref    
   
 ### 1.0 Final
