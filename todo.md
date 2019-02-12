@@ -28,6 +28,11 @@ Make it possible to customize tab as \t or number of spaces
 
 
 ## version 1.2
+
+### Add suggestions when pressing ctrl+tab
+- For R: Use R keywords + all base R methods
+- For SQL: use SQL keywords + metadata 
+
 ### Implements graphics support (grDevices) for javafx
 
 ### add Rmd support
