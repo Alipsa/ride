@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static se.alipsa.ride.Constants.KEY_CODE_COPY;
+
 public class ViewTab extends Tab {
 
   TabPane viewPane;
@@ -28,9 +30,8 @@ public class ViewTab extends Tab {
 
     TableView<List<String>> tableView = new TableView<>();
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    final KeyCodeCombination keyCodeCopy = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
     tableView.setOnKeyPressed(event -> {
-      if (keyCodeCopy.match(event)) {
+      if (KEY_CODE_COPY.match(event)) {
         copySelectionToClipboard(tableView);
       }
     });

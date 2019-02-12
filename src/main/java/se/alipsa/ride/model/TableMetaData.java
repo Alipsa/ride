@@ -16,6 +16,9 @@ public class TableMetaData {
   private Integer numericScale;
   private String collationName;
 
+  public static final String COLUMN_META_START = " [ ";
+  public static final String COLUMN_META_END = " ]";
+
 
   public TableMetaData(List<Object> row) {
     setTableName((String)row.get(0));
@@ -175,6 +178,6 @@ public class TableMetaData {
     } else {
       nullable = "not null";
     }
-    return columnName + "  [ " + dataType + precision + ", " + nullable + " ]";
+    return columnName + COLUMN_META_START + dataType + precision + ", " + nullable + COLUMN_META_END;
   }
 }

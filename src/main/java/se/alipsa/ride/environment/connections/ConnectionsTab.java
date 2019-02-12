@@ -4,29 +4,25 @@ import static se.alipsa.ride.Constants.*;
 import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
 import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
 
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.ListVector;
-import org.renjin.sexp.SEXP;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.model.Table;
 import se.alipsa.ride.model.TableMetaData;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.RDataTransformer;
 
-import java.io.File;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ConnectionsTab extends Tab {
@@ -246,6 +242,11 @@ public class ConnectionsTab extends Tab {
     });
     root.getChildren().sort(treeItemComparator);
     root.setExpanded(true);
+    tree.setOnKeyPressed(event -> {
+      if (KEY_CODE_COPY.match(event)) {
+        copySelectionToClipboard(tree);
+      }
+    });
     return tree;
   }
 
@@ -255,5 +256,17 @@ public class ConnectionsTab extends Tab {
     public int compare(TreeItem<String> fileTreeItem, TreeItem<String> t1) {
       return fileTreeItem.getValue().compareToIgnoreCase(t1.getValue());
     }
+  }
+
+  @SuppressWarnings("rawtypes")
+  private void copySelectionToClipboard(final TreeView<?> treeView) {
+    TreeItem treeItem = treeView.getSelectionModel().getSelectedItem();
+    final ClipboardContent clipboardContent = new ClipboardContent();
+    String value = treeItem.getValue().toString();
+    if (value.contains(TableMetaData.COLUMN_META_START)) {
+      value = value.substring(0, value.indexOf(TableMetaData.COLUMN_META_START));
+    }
+    clipboardContent.putString(value);
+    Clipboard.getSystemClipboard().setContent(clipboardContent);
   }
 }
