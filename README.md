@@ -56,6 +56,12 @@ prior to integration testing in embedded mode on e.g. an app server. In the Pack
 a list of packages loaded for the session (in case you missed a library call in the script but loaded 
 it from another script - the session is shared).
 
+### A SQL script screenshot
+Showing the result of a select query in the viewer tab and the connection view that is shown when you right click 
+a connection and choose "view connection".
+
+![alt text](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/SQLScreenshot.png "Plot")
+
 # Building and compiling
 
 Download rideutils from https://github.com/perNyfelt/rideutils and build it with `mvn install`
