@@ -19,7 +19,7 @@ run selected text, ctrl + enter execution of current line or selected text, view
 see variables created, syntax highlighting for R, XML, SQL  and Java files etc. but it has some way to go compared to 
 all the rich functionality of RStudio at this point. 
 
-![alt text](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Screenshot.png "Screenshot")
+![Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Screenshot.png "Screenshot")
 
 As Renjins support for graphics such as plotting is still somewhat limited (It just pops up an AWT window with the plot).
 An alternative way is to use the inout component that has been injected into the session to display files e.g.
@@ -42,7 +42,7 @@ inout$display(readImage(fileName), "svgplot")
 ````
 
 
-![alt text](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Plot.png "Plot")
+![Plot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Plot.png "Plot")
 
 
 The AetherPackageLoader is used per default so libraries will be fetched automatically from 
@@ -60,7 +60,7 @@ it from another script - the session is shared).
 Showing the result of a select query in the viewer tab and the connection view that is shown when you right click 
 a connection and choose "view connection".
 
-![alt text](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/SQLScreenshot.png "Plot")
+![SQL Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/SQLScreenshot.png "SQL Screenshot")
 
 # Building and compiling
 
