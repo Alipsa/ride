@@ -136,6 +136,11 @@
             <artifactId>jaybird-jdk18</artifactId>
             <version>3.0.5</version>
         </dependency>
+        <dependency>
+          <groupId>org.apache.derby</groupId>
+          <artifactId>derby</artifactId>
+          <version>10.14.2.0</version>
+        </dependency>
 
     </dependencies>
 
