@@ -8,10 +8,16 @@ much like you would use R Studio.
 
 It was created to have a familiar (similar to RStudio) interface to develop R scripts that
 will later run in embedded mode on application servers such as Wildfly or Play Framework.
+I use it daily at work and have been doing so for several months now. It started as a tool to develop and test R code 
+that I created using RStudio but needed a manageable intermediary to make sure my code worked in Renjin before integrating it 
+with the java application servers I use at work - due to fact that many packages commonly used in GNU R does not yet work 
+in Renjin. Later, it evolved to the point where I now use it as my primary data analysis tool.
 
-It is functional i.e. it is possible to create, open, save and execute R scripts, 
+
+It is fully functional i.e. it is possible to create, open, save and execute R scripts, 
 run selected text, ctrl + enter execution of current line or selected text, view packages loaded, 
-see variables created, syntax highlighting for R, XML, SQL  and Java files etc. but it has some way to go compared to all the rich functionality of RStudio at this point. 
+see variables created, syntax highlighting for R, XML, SQL  and Java files etc. but it has some way to go compared to 
+all the rich functionality of RStudio at this point. 
 
 ![alt text](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Screenshot.png "Screenshot")
 
@@ -68,6 +74,7 @@ To just run it without rebuilding use `run.sh` or `run.cmd` depending on environ
 For released versions there is another shell script (ride.sh or ride.cmd) that should be used to start Ride.
 
 ## 3:rd party software used
+Note: only direct dependencies are listed below.
 
 ### org.renjin:renjin-script-engine, tools, and renjin-aether-package-loader
 The components that actually does something ;) i.e. executes R code. It is not included in the fat jar and 
