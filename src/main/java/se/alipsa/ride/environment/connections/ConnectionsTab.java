@@ -263,8 +263,9 @@ public class ConnectionsTab extends Tab {
     TreeItem treeItem = treeView.getSelectionModel().getSelectedItem();
     final ClipboardContent clipboardContent = new ClipboardContent();
     String value = treeItem.getValue().toString();
-    if (value.contains(TableMetaData.COLUMN_META_START)) {
-      value = value.substring(0, value.indexOf(TableMetaData.COLUMN_META_START));
+    int idx = value.indexOf(TableMetaData.COLUMN_META_START);
+    if (idx > -1) {
+      value = value.substring(0, idx);
     }
     clipboardContent.putString(value);
     Clipboard.getSystemClipboard().setContent(clipboardContent);
