@@ -21,16 +21,17 @@ Format code
 ### Tools -> Options menu
 Make it possible to customize tab as \t or number of spaces
 
-### Enable offline mode
+### Enable offline mode (done)
 - build fat zip with all dependencies in the lib folder
 - use ant to lauch instead of maven
 - start with ClasspathPackageLoader instead of AetherPackageLoader regardless of user pref
 
+### Add suggestions when pressing ctrl+tab
+- For R: Use R keywords + all base R methods (done)
 
 ## version 1.2
 
 ### Add suggestions when pressing ctrl+tab
-- For R: Use R keywords + all base R methods
 - For SQL: use SQL keywords + metadata 
 
 ### Implements graphics support (grDevices) for javafx

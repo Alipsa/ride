@@ -1,5 +1,11 @@
 package se.alipsa.ride.code.codetab;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Side;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Label;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
@@ -145,11 +151,46 @@ public class CodeTextArea extends TextCodeArea {
   @Override
   public void autoComplete() {
     String line = getText(getCurrentParagraph());
-    //String[] match = line.split("\\s(\\w+)$");
-    String[] match = line.split("\\W*(\\w+).*?(\\w+)\\W*$");
-    if (match.length>0) {
-      String currentWord = match[0];
-      System.out.println("Current word is '" + currentWord + "'");
+    // TODO is. not working
+    String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
+    if (line.endsWith(lastWord)) {
+      suggestCompletion(lastWord);
     }
   }
+
+  private void suggestCompletion(String lastWord) {
+    List<String> suggestions = new ArrayList<>();
+    for(String keyword : KEYWORDS) {
+      if (keyword.startsWith(lastWord)) {
+        suggestions.add(keyword);
+      }
+    }
+    for(String function : FUNCTIONS) {
+      if (function.startsWith(lastWord)) {
+        suggestions.add(function);
+      }
+    }
+    System.out.println("Suggestions are " + suggestions);
+
+    ContextMenu suggestionsPopup = new ContextMenu();
+    List<CustomMenuItem> menuItems = new LinkedList<>();
+    for (String result : suggestions) {
+      Label entryLabel = new Label(result);
+      CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+      item.setOnAction(actionEvent -> {
+        //System.out.println("new word should be " + result);
+        String replacement = result.substring(lastWord.length());
+        insertText(getCaretPosition(), replacement);
+        int currentParagraph = getCurrentParagraph();
+        moveTo(currentParagraph, getParagraphLength(currentParagraph));
+        suggestionsPopup.hide();
+      });
+      menuItems.add(item);
+    }
+    suggestionsPopup.getItems().clear();
+    suggestionsPopup.getItems().addAll(menuItems);
+    //TODO replace with popup at line, see richtextfx demo
+    suggestionsPopup.show(this, Side.BOTTOM, 0, 0);
+  }
+
 }

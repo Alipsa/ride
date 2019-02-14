@@ -62,7 +62,10 @@ In those cases just copy the native files to the lib dir, the startup script poi
     - build fat zip with all dependencies in the lib folder
     - use ant to launch instead of maven
     - start with ClasspathPackageLoader instead of AetherPackageLoader regardless of user pref    
-  
+
+- Add suggestions when pressing ctrl+tab
+  - For R: base on R keywords + all base R methods (done)
+    
 ### 1.0 Final
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui
     - Enables console output as the R script is executed rather than outputting content at the end as before.
