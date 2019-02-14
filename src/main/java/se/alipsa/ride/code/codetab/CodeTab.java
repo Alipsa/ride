@@ -80,6 +80,8 @@ public class CodeTab extends TextAreaTab {
           }
         } else if (KeyCode.QUOTE.equals(e.getCode())) {
           codeTextArea.insertText(codeTextArea.getCaretPosition(), "^");
+        } else if (KeyCode.TAB.equals(e.getCode())) {
+          codeTextArea.autoComplete();
         }
       }
     });

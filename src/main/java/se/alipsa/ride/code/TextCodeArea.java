@@ -98,4 +98,8 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
   public void setParentTab(TextAreaTab parentTab) {
     this.parentTab = parentTab;
   }
+
+  public void autoComplete() {
+    // do nothing per default
+  }
 }

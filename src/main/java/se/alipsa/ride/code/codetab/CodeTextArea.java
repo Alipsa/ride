@@ -141,4 +141,15 @@ public class CodeTextArea extends TextCodeArea {
     spansBuilder.add(Collections.emptyList(), text.length() - lastKwEnd);
     return spansBuilder.create();
   }
+
+  @Override
+  public void autoComplete() {
+    String line = getText(getCurrentParagraph());
+    //String[] match = line.split("\\s(\\w+)$");
+    String[] match = line.split("\\W*(\\w+).*?(\\w+)\\W*$");
+    if (match.length>0) {
+      String currentWord = match[0];
+      System.out.println("Current word is '" + currentWord + "'");
+    }
+  }
 }
