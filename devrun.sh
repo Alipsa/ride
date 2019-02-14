@@ -5,7 +5,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ${DIR}
 
-mvn clean install -P online
+mvn clean install -P online -P createProps
 
 PROPERTY_FILE=version.properties
 

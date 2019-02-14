@@ -2,7 +2,7 @@
 set DIR=%~dp0%
 cd %DIR%
 
-call mvn clean install
+call mvn clean install -P online -P createProps
 
 set PROPERTY_FILE=version.properties
 
