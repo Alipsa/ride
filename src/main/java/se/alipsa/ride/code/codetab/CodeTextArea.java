@@ -36,7 +36,7 @@ public class CodeTextArea extends TextCodeArea {
       "backsolve", "baseenv", "basename", "beta", "besselI", "besselK", "besselJ", "besselY", "bindtextdomain", "bitwAnd", "bitwNot", "bitwOr", "bitwShiftL", "bitwShiftR", "bitwXor", "body", "bquote", "browser", "browserCondition", "browserSetDebug", "browserText", "builtins", "by", "bzfile",
       "c", "call", "casefold", "cat", "cbind", "ceiling", "charmatch", "chartr", "chol", "chol2inv", "choose", "class", "close", "col", "colMeans", "colnames", "colSums", "comment", "complex", "conflicts", "cos", "cospi", "cummax", "cummin", "cumsum", "cumprod", "curlGetHeaders", "cut",
       "data.class", "data.frame", "deparse", "date", "det", "determinant", "detach", "dget", "dbinom", "diag", "diff", "difftime", "digamma", "dim", "dimnames", "dnorm", "dir.create", "dir.exists", "dirname", "do.call", "dontCheck", "dpois", "dput", "drop", "dunif", "duplicated",
-      "emptyenv", "enc2native", "enc2utf8", "Encoding", "encodeString", "env.profile", "environment", "environmentName", "exp", "eval", "evalq", "eval.parent", "exists", "expand.grid", "expression",
+      "emptyenv", "enc2native", "enc2utf8", "Encoding", "encodeString", "env.profile", "environment", "environmentName", "exp", "eval", "evalq", "eval.parent", "exists", "expand.grid", "exp", "expression",
       "factor", "factorial", "fifo", "file", "file.access", "file.append", "file.choose", "file.copy", "file.create", "file.exists", "file.link", "file.remove", "file.show", "file.symlink", "Filter", "Find", "find.package", "findInterval", "floor", "flush", "force", "forceAndCall", "formals", "format", "format.info", "format.pval", "formatC", "formatDL", "forwardsolve",
       "gamma", "gc", "gcinfo", "get0", "gettext", "getwd", "gl", "globalenv", "gregexpr", "grep", "grepl", "grepRaw", "gsub", "gzcon", "gzfile",
       "iconv", "identical", "identity", "ifelse", "inherits", "integer", "interaction", "interactive", "is.array", "is.atomic", "is.call", "is.character", "is.complex", "is.data.frame", "is.double", "is.environment", "is.expression", "is.factor", "is.function", "is.integer", "is.language", "is.na", "is.null", "is.numeric", "is.matrix", "is.object", "is.ordered", "is.primitive", "is.R", "is.recursive", "is.vector", "isFALSE", "isTRUE", "isIncomplete", "isOpen", "isSymmetric", "I", "ISOdatetime", "ISOdate",
@@ -44,9 +44,9 @@ public class CodeTextArea extends TextCodeArea {
       "Map", "mapply", "margin.table", "match", "matrix", "max", "mean",  "median", "memCompress", "memDecompress", "merge", "min", "mostattributes",
       "names", "Negate", "new.env", "NextMethod", "ngettext", "nrow", "ncol",
       "ordered", "oldClass", "open",
-      "parent.env", "pairlist", "paste", "paste0", "path.package", "pbinom", "pipe", "pmax", "pmin", "pnorm", "Position", "ppois", "prettyNum", "print", "provideDimnames", "psigamma",
-      "qbinom", "qpois", "qnorm", "quantile",
-      "range", "rbind", "rbinom", "read.dcf", "require", "regexec", "regexpr", "rep", "return", "round", "rowMeans", "rownames", "rowSums", "rpois", "rnorm", "R.home", "Recall", "Reduce", "RNGkind", "RNGversion",
+      "parent.env", "pairlist", "paste", "paste0", "path.package", "pbinom", "pipe", "pmax", "pmin", "pnorm", "Position", "ppois", "prettyNum", "print", "provideDimnames", "psigamma", "punif",
+      "qbinom", "qpois", "qnorm", "quantile", "qunif",
+      "range", "rbind", "rbinom", "read.dcf", "require", "regexec", "regexpr", "rep", "return", "round", "rowMeans", "rownames", "rowSums", "rpois", "rnorm", "R.home", "Recall", "Reduce", "RNGkind", "RNGversion", "runif",
       "sapply", "scale", "sd", "seq", "set.seed", "setwd", "signif", "sin", "single", "sinpi", "socketConnection", "sqrt",  "stop", "stopifnot", "str", "strsplit", "sub", "subset", "substr", "sum", "summary", "switch", "Sys.chmod", "Sys.Date", "Sys.getenv", "Sys.getpid", "Sys.junction", "Sys.localeconv", "Sys.setFileTime", "Sys.sleep", "Sys.time", "Sys.umask", "Sys.which",
       "table", "tan", "tanpi", "toupper", "tolower", "trigamma", "trunc", "tryCatch", "typeof",
       "unclass", "unz", "url", "UseMethod",
@@ -153,7 +153,7 @@ public class CodeTextArea extends TextCodeArea {
     // TODO is. not working
     //String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
     String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
-    if (line.endsWith(lastWord)) {
+    if (line.endsWith(lastWord) && !"".equals(lastWord)) {
       suggestCompletion(lastWord);
     } else if (line.endsWith(lastWord + ".")) {
       suggestCompletion(lastWord+ ".");
