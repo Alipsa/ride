@@ -1,8 +1,6 @@
 package se.alipsa.ride.code.codetab;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Side;
+import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
@@ -84,6 +82,7 @@ public class CodeTextArea extends TextCodeArea {
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
 
+  ContextMenu suggestionsPopup = new ContextMenu();
 
   public CodeTextArea(CodeTab parent) {
     super(parent);
@@ -152,9 +151,12 @@ public class CodeTextArea extends TextCodeArea {
   public void autoComplete() {
     String line = getText(getCurrentParagraph());
     // TODO is. not working
+    //String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
     String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
     if (line.endsWith(lastWord)) {
       suggestCompletion(lastWord);
+    } else if (line.endsWith(lastWord + ".")) {
+      suggestCompletion(lastWord+ ".");
     }
   }
 
@@ -170,27 +172,33 @@ public class CodeTextArea extends TextCodeArea {
         suggestions.add(function);
       }
     }
-    System.out.println("Suggestions are " + suggestions);
 
-    ContextMenu suggestionsPopup = new ContextMenu();
     List<CustomMenuItem> menuItems = new LinkedList<>();
     for (String result : suggestions) {
       Label entryLabel = new Label(result);
       CustomMenuItem item = new CustomMenuItem(entryLabel, true);
       item.setOnAction(actionEvent -> {
-        //System.out.println("new word should be " + result);
         String replacement = result.substring(lastWord.length());
         insertText(getCaretPosition(), replacement);
         int currentParagraph = getCurrentParagraph();
         moveTo(currentParagraph, getParagraphLength(currentParagraph));
         suggestionsPopup.hide();
+        requestFocus();
       });
       menuItems.add(item);
     }
     suggestionsPopup.getItems().clear();
     suggestionsPopup.getItems().addAll(menuItems);
-    //TODO replace with popup at line, see richtextfx demo
-    suggestionsPopup.show(this, Side.BOTTOM, 0, 0);
+    double screenX = 0;
+    double screenY = 0;
+    Optional<Bounds> bounds = this.caretBoundsProperty().getValue();
+    if (bounds.isPresent()) {
+      Bounds bound = bounds.get();
+      screenX = bound.getMaxX();
+      screenY = bound.getMaxY();
+    }
+    suggestionsPopup.setOnHiding(e -> this.requestFocus());
+    suggestionsPopup.show(this, screenX, screenY);
   }
 
 }

@@ -16,7 +16,6 @@ import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
-import se.alipsa.ride.code.TextCodeArea;
 import se.alipsa.ride.console.ConsoleComponent;
 
 import java.io.File;
