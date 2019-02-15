@@ -1,13 +1,19 @@
 package se.alipsa.ride.code.sqltab;
 
+import javafx.geometry.Bounds;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.TextCodeArea;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SqlTextArea extends TextCodeArea {
 
@@ -95,9 +101,37 @@ public class SqlTextArea extends TextCodeArea {
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
 
+  private ContextMenu suggestionsPopup = new ContextMenu();
+
   public SqlTextArea(SqlTab parent) {
     super(parent);
+    addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+      if (e.isControlDown()) {
+        if (KeyCode.SPACE.equals(e.getCode())) {
+          autoComplete();
+        }
+      } else if (KeyCode.PERIOD.equals(e.getCode())) {
+        suggestMetaData();
+      }
+    });
   }
+
+  @Override
+  public void autoComplete() {
+    String line = getText(getCurrentParagraph());
+    String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
+    if (line.endsWith(lastWord) && !"".equals(lastWord)) {
+      List<String> suggestions = Arrays.stream(KEYWORDS)
+          .filter(p -> p.startsWith(lastWord.toLowerCase()))
+          .collect(Collectors.toList());
+      suggestCompletion(lastWord, suggestions, suggestionsPopup);
+    }
+  }
+
+  private void suggestMetaData() {
+    //TODO: Should suggest a column name here if a recognised table name is used based on meta data
+  }
+
 
   @Override
   protected StyleSpans<Collection<String>> computeHighlighting(String text) {

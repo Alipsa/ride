@@ -4,11 +4,16 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.TextCodeArea;
+import se.alipsa.ride.console.ConsoleComponent;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -93,6 +98,32 @@ public class CodeTextArea extends TextCodeArea {
         parent.disableRunTestsButton();
       }
     });
+    Ride gui = parent.getGui();
+    ConsoleComponent console = gui.getConsoleComponent();
+    addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+      if (e.isControlDown()) {
+        if (KeyCode.ENTER.equals(e.getCode())) {
+          CodeComponent codeComponent = gui.getCodeComponent();
+          String rCode = getText(getCurrentParagraph()); // current line
+
+          String selected = selectedTextProperty().getValue();
+          // if text is selected then go with that instead
+          if (selected != null && !"".equals(selected)) {
+            rCode = codeComponent.getTextFromActiveTab();
+          }
+          console.runScriptAsync(rCode, codeComponent.getActiveScriptName());
+          moveTo(getCurrentParagraph() + 1, 0);
+          int totalLength = getAllTextContent().length();
+          if(getCaretPosition() > totalLength) {
+            moveTo(totalLength);
+          }
+        } else if (KeyCode.QUOTE.equals(e.getCode())) {
+          insertText(getCaretPosition(), "^");
+        } else if (KeyCode.SPACE.equals(e.getCode())) {
+          autoComplete();
+        }
+      }
+    });
   }
 
   protected final StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -150,8 +181,6 @@ public class CodeTextArea extends TextCodeArea {
   @Override
   public void autoComplete() {
     String line = getText(getCurrentParagraph());
-    // TODO is. not working
-    //String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
     String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
     if (line.endsWith(lastWord) && !"".equals(lastWord)) {
       suggestCompletion(lastWord);
@@ -169,36 +198,10 @@ public class CodeTextArea extends TextCodeArea {
     }
     for(String function : FUNCTIONS) {
       if (function.startsWith(lastWord)) {
-        suggestions.add(function);
+        suggestions.add(function + "(");
       }
     }
-
-    List<CustomMenuItem> menuItems = new LinkedList<>();
-    for (String result : suggestions) {
-      Label entryLabel = new Label(result);
-      CustomMenuItem item = new CustomMenuItem(entryLabel, true);
-      item.setOnAction(actionEvent -> {
-        String replacement = result.substring(lastWord.length());
-        insertText(getCaretPosition(), replacement);
-        int currentParagraph = getCurrentParagraph();
-        moveTo(currentParagraph, getParagraphLength(currentParagraph));
-        suggestionsPopup.hide();
-        requestFocus();
-      });
-      menuItems.add(item);
-    }
-    suggestionsPopup.getItems().clear();
-    suggestionsPopup.getItems().addAll(menuItems);
-    double screenX = 0;
-    double screenY = 0;
-    Optional<Bounds> bounds = this.caretBoundsProperty().getValue();
-    if (bounds.isPresent()) {
-      Bounds bound = bounds.get();
-      screenX = bound.getMaxX();
-      screenY = bound.getMaxY();
-    }
-    suggestionsPopup.setOnHiding(e -> this.requestFocus());
-    suggestionsPopup.show(this, screenX, screenY);
+    suggestCompletion(lastWord, suggestions, suggestionsPopup);
   }
 
 }

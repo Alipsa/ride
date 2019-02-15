@@ -63,8 +63,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
     - use ant to launch instead of maven
     - start with ClasspathPackageLoader instead of AetherPackageLoader regardless of user pref    
 
-- Add suggestions when pressing ctrl+tab
+- Add suggestions when pressing ctrl+space (a.k.a autocomplete)
   - For R: base on R keywords + all base R methods (done)
+  - For SQL: use SQL keywords
     
 ### 1.0 Final
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui

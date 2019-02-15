@@ -10,35 +10,35 @@ Create a new runbutton when hamcrest tests are detected
 ### create a database browser (done)
 - Tree structure based on INFORMATION_SCHEMA
     
-### Implement History tab
 ### implement edit menu (partially done)
 undo, find and find/replace seems most pertinent
 
-### Code menu improvements
+### Code menu improvements (done)
 Comment/Uncomment lines + the Ctrl+Shift+C combo (done)
-Format code
-
-### Tools -> Options menu
-Make it possible to customize tab as \t or number of spaces
 
 ### Enable offline mode (done)
 - build fat zip with all dependencies in the lib folder
 - use ant to lauch instead of maven
 - start with ClasspathPackageLoader instead of AetherPackageLoader regardless of user pref
 
-### Add suggestions when pressing ctrl+tab
-- For R: Use R keywords + all base R methods (done)
+### Add suggestions when pressing ctrl+space  (done)
+- For R: Use R keywords + all base R methods
+- For SQL: use SQL keywords
 
 ## version 1.2
 
-### Add suggestions when pressing ctrl+tab
-- For SQL: use SQL keywords + metadata 
+### Implement History tab
+
+### Code menu improvements
+Format code
+
+### Tools -> Options menu
+Make it possible to customize tab as \t or number of spaces
+
+### Add suggestions when pressing . for SQL
+use metadata to determine suggestion 
 
 ### Implements graphics support (grDevices) for javafx
-
-### add Rmd support
-
-### add Roxygen support
 
 ## version 1.3
 
@@ -51,6 +51,10 @@ Should generate code at current cursor
 
 ### Add more syntax highlighting support
 NAMESPACE, SAS, SPSS
+
+### add Rmd support
+
+### add Roxygen support
 
 ## Version 1.4
 ### Enable git integration

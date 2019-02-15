@@ -60,30 +60,6 @@ public class CodeTab extends TextAreaTab {
     disableRunTestsButton();
 
     codeTextArea = new CodeTextArea(this);
-    codeTextArea.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-      if (e.isControlDown()) {
-        if (KeyCode.ENTER.equals(e.getCode())) {
-          CodeComponent codeComponent = gui.getCodeComponent();
-          String rCode = codeTextArea.getText(codeTextArea.getCurrentParagraph()); // current line
-
-          String selected = codeTextArea.selectedTextProperty().getValue();
-          // if text is selected then go with that instead
-          if (selected != null && !"".equals(selected)) {
-            rCode = codeComponent.getTextFromActiveTab();
-          }
-          console.runScriptAsync(rCode, codeComponent.getActiveScriptName());
-          codeTextArea.moveTo(codeTextArea.getCurrentParagraph() + 1, 0);
-          int totalLength = codeTextArea.getAllTextContent().length();
-          if(codeTextArea.getCaretPosition() > totalLength) {
-            codeTextArea.moveTo(totalLength);
-          }
-        } else if (KeyCode.QUOTE.equals(e.getCode())) {
-          codeTextArea.insertText(codeTextArea.getCaretPosition(), "^");
-        } else if (KeyCode.TAB.equals(e.getCode())) {
-          codeTextArea.autoComplete();
-        }
-      }
-    });
     VirtualizedScrollPane<CodeTextArea> vPane = new VirtualizedScrollPane<>(codeTextArea);
     pane.setCenter(vPane);
     setContent(pane);

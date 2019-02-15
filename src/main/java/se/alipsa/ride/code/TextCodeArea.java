@@ -1,5 +1,9 @@
 package se.alipsa.ride.code;
 
+import javafx.geometry.Bounds;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
@@ -9,6 +13,9 @@ import org.fxmisc.richtext.model.StyleSpans;
 import java.io.File;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 public abstract class TextCodeArea extends CodeArea implements TabTextArea {
   protected File file;
@@ -101,5 +108,34 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
 
   public void autoComplete() {
     // do nothing per default
+  }
+
+  protected void suggestCompletion(String lastWord, List<String> keyWords, ContextMenu suggestionsPopup) {
+    List<CustomMenuItem> menuItems = new LinkedList<>();
+    for (String result : keyWords) {
+      Label entryLabel = new Label(result);
+      CustomMenuItem item = new CustomMenuItem(entryLabel, true);
+      item.setOnAction(actionEvent -> {
+        String replacement = result.substring(lastWord.length());
+        insertText(getCaretPosition(), replacement);
+        int currentParagraph = getCurrentParagraph();
+        moveTo(currentParagraph, getParagraphLength(currentParagraph));
+        suggestionsPopup.hide();
+        requestFocus();
+      });
+      menuItems.add(item);
+    }
+    suggestionsPopup.getItems().clear();
+    suggestionsPopup.getItems().addAll(menuItems);
+    double screenX = 0;
+    double screenY = 0;
+    Optional<Bounds> bounds = this.caretBoundsProperty().getValue();
+    if (bounds.isPresent()) {
+      Bounds bound = bounds.get();
+      screenX = bound.getMaxX();
+      screenY = bound.getMaxY();
+    }
+    suggestionsPopup.setOnHiding(e -> this.requestFocus());
+    suggestionsPopup.show(this, screenX, screenY);
   }
 }
