@@ -8,6 +8,17 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <baseDirectory>.</baseDirectory>
 
+    <dependencySets>
+        <dependencySet>
+            <unpack>false</unpack>
+            <scope>runtime</scope>
+            <outputDirectory>lib</outputDirectory>
+            <excludes>
+                <exclude>${project.groupId}:${project.artifactId}</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
+
     <files>
         <file>
             <source>target/${project.artifactId}-${project.version}.jar</source>

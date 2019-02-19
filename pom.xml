@@ -260,6 +260,7 @@ release.tag=${release.tag}
                 <dependency>
                     <groupId>org.jfree</groupId>
                     <artifactId>fxgraphics2d</artifactId>
+                    <scope>provided</scope>
                 </dependency>
 
                 <dependency>
@@ -287,6 +288,12 @@ release.tag=${release.tag}
                 <dependency>
                     <groupId>org.apache.tika</groupId>
                     <artifactId>tika-core</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                    <scope>provided</scope>
                 </dependency>
                 <!-- Git integration Core Library -->
                 <!--dependency>
@@ -353,6 +360,10 @@ release.tag=${release.tag}
                 <dependency>
                     <groupId>se.alipsa</groupId>
                     <artifactId>rideutils</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>org.renjin</groupId>
