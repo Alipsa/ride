@@ -21,6 +21,10 @@
             <source>src/main/resources/image/ride-icon.png</source>
             <outputDirectory>.</outputDirectory>
         </file>
+        <file>
+            <source>src/bin/ride-icon.ico</source>
+            <outputDirectory>.</outputDirectory>
+        </file>
     </files>
 
     <fileSets>
@@ -35,10 +39,9 @@
             <directory>src/bin/</directory>
             <outputDirectory>.</outputDirectory>
             <includes>
-                <include>*.sh</include>
-                <include>*.cmd</include>
+                <include>ride.sh</include>
+                <include>ride.cmd</include>
                 <include>*.md</include>
-                <include>*.ico</include>
             </includes>
             <lineEnding>unix</lineEnding>
             <fileMode>0755</fileMode>

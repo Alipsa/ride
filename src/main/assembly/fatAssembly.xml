@@ -55,8 +55,8 @@
             <directory>src/bin/</directory>
             <outputDirectory>.</outputDirectory>
             <includes>
-                <include>*.sh</include>
-                <include>*.cmd</include>
+                <include>ride-offline.sh</include>
+                <include>ride-offline.cmd</include>
                 <include>*.md</include>
             </includes>
             <lineEnding>unix</lineEnding>

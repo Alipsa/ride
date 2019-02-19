@@ -161,6 +161,20 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
+        </plugins>
+    </build>
     <profiles>
         <profile>
             <id>createProps</id>
@@ -296,7 +310,7 @@ release.tag=${release.tag}
 
             <build>
                 <plugins>
-                    <plugin>
+                    <!--plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
                         <version>3.2.1</version>
@@ -311,7 +325,7 @@ release.tag=${release.tag}
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
+                    </plugin-->
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
                         <executions>
@@ -468,7 +482,7 @@ release.tag=${release.tag}
                                     <goal>single</goal>
                                 </goals>
                                 <configuration>
-                                    <finalName>${project.artifactId}-${release.tag}</finalName>
+                                    <finalName>${project.artifactId}-fat-${release.tag}</finalName>
                                     <descriptors>
                                         <descriptor>src/main/assembly/fatAssembly.xml</descriptor>
                                     </descriptors>
