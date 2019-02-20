@@ -27,8 +27,6 @@ public class CodeTextArea extends TextCodeArea {
 
   private static Logger log = LoggerFactory.getLogger(CodeTextArea.class);
 
-  private static final String TAB = "  ";
-
   // Since T and F are not true keywords (they can be reassigned e.g. T <- FALSE), they are not included below
   private static final String[] KEYWORDS = new String[]{
       "if", "else", "repeat", "while", "function",
@@ -128,80 +126,9 @@ public class CodeTextArea extends TextCodeArea {
         } else if (KeyCode.SPACE.equals(e.getCode())) {
           autoComplete();
         }
-      } else if (e.isShiftDown()) {
-        if (KeyCode.TAB.equals(e.getCode())) {
-          String selected = selectedTextProperty().getValue();
-          if ("".equals(selected)) {
-            String line = getText(getCurrentParagraph());
-            if (line.startsWith(TAB)) {
-              String s = line.substring(TAB.length());
-              int orgPos = getCaretPosition();
-              moveTo(getCurrentParagraph(), 0);
-              int start = getCaretPosition();
-              int end = start + line.length();
-              replaceText(start, end, s);
-              moveTo(orgPos - TAB.length());
-            } else {
-              //NO tab in the beginning, nothing to do
-            }
-          } else {
-            IndexRange range = getSelection();
-            int start = range.getStart();
-            String s = backIndentText(selected);
-            replaceText(range, s);
-            selectRange(start, start + s.length());
-          }
-          e.consume();
-        }
       }
     });
-    InputMap<KeyEvent> im = InputMap.consume(
-        EventPattern.keyPressed(KeyCode.TAB),
-        e -> {
-          String selected = selectedTextProperty().getValue();
-          if (!"".equals(selected)) {
-            IndexRange range = getSelection();
-            int start = range.getStart();
-            String indented = indentText(selected);
-            replaceSelection(indented);
-            selectRange(start, start + indented.length());
-          } else {
-            String line = getText(getCurrentParagraph());
-            int orgPos = getCaretPosition();
-            moveTo(getCurrentParagraph(), 0);
-            int start = getCaretPosition();
-            int end = start + line.length();
-            replaceText(start, end, TAB + line);
-            moveTo(orgPos + TAB.length());
-          }
-        }
-    );
-    Nodes.addInputMap(this, im);
-  }
 
-  private String backIndentText(String selected) {
-    String[] lines = selected.split("\n");
-    List<String> untabbed = new ArrayList<>();
-    for (String line : lines) {
-      if (line.startsWith(TAB)) {
-        untabbed.add(line.substring(2));
-      } else {
-        untabbed.add(line);
-      }
-    }
-    return String.join("\n", untabbed);
-  }
-
-  private String indentText(String selected) {
-    if (selected == null || "".equals(selected)) {
-      return TAB;
-    }
-    String[] lines = selected.split("\n");
-    List<String> tabbed = new ArrayList<>();
-    for (String line : lines) {
-      tabbed.add(TAB + line);
-    }
-    return String.join("\n", tabbed);
   }
 
   protected final StyleSpans<Collection<String>> computeHighlighting(String text) {

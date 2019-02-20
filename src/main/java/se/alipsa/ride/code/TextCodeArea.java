@@ -3,26 +3,30 @@ package se.alipsa.ride.code;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.wellbehaved.event.EventPattern;
+import org.fxmisc.wellbehaved.event.InputMap;
+import org.fxmisc.wellbehaved.event.Nodes;
 
 import java.io.File;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class TextCodeArea extends CodeArea implements TabTextArea {
+
+  protected static final String TAB = "  ";
+
   protected File file;
 
   protected boolean blockChange = false;
 
-  TextAreaTab parentTab;
+  private TextAreaTab parentTab;
 
   public TextCodeArea() {
   }
@@ -58,8 +62,80 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
         } else if (e.isShiftDown() && KeyCode.C.equals(e.getCode())) {
           parentTab.getGui().getMainMenu().commentLines();
         }
+      } else if (e.isShiftDown()) {
+        if (KeyCode.TAB.equals(e.getCode())) {
+          String selected = selectedTextProperty().getValue();
+          if ("".equals(selected)) {
+            String line = getText(getCurrentParagraph());
+            if (line.startsWith(TAB)) {
+              String s = line.substring(TAB.length());
+              int orgPos = getCaretPosition();
+              moveTo(getCurrentParagraph(), 0);
+              int start = getCaretPosition();
+              int end = start + line.length();
+              replaceText(start, end, s);
+              moveTo(orgPos - TAB.length());
+            } else {
+              //NO tab in the beginning, nothing to do
+            }
+          } else {
+            IndexRange range = getSelection();
+            int start = range.getStart();
+            String s = backIndentText(selected);
+            replaceText(range, s);
+            selectRange(start, start + s.length());
+          }
+          e.consume();
+        }
       }
     });
+    InputMap<KeyEvent> im = InputMap.consume(
+        EventPattern.keyPressed(KeyCode.TAB),
+        e -> {
+          String selected = selectedTextProperty().getValue();
+          if (!"".equals(selected)) {
+            IndexRange range = getSelection();
+            int start = range.getStart();
+            String indented = indentText(selected);
+            replaceSelection(indented);
+            selectRange(start, start + indented.length());
+          } else {
+            String line = getText(getCurrentParagraph());
+            int orgPos = getCaretPosition();
+            moveTo(getCurrentParagraph(), 0);
+            int start = getCaretPosition();
+            int end = start + line.length();
+            replaceText(start, end, TAB + line);
+            moveTo(orgPos + TAB.length());
+          }
+        }
+    );
+    Nodes.addInputMap(this, im);
+  }
+
+  protected String backIndentText(String selected) {
+    String[] lines = selected.split("\n");
+    List<String> untabbed = new ArrayList<>();
+    for (String line : lines) {
+      if (line.startsWith(TAB)) {
+        untabbed.add(line.substring(2));
+      } else {
+        untabbed.add(line);
+      }
+    }
+    return String.join("\n", untabbed);
+  }
+
+  protected String indentText(String selected) {
+    if (selected == null || "".equals(selected)) {
+      return TAB;
+    }
+    String[] lines = selected.split("\n");
+    List<String> tabbed = new ArrayList<>();
+    for (String line : lines) {
+      tabbed.add(TAB + line);
+    }
+    return String.join("\n", tabbed);
   }
 
   protected abstract StyleSpans<Collection<String>> computeHighlighting(String text);
