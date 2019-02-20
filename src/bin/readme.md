@@ -1,4 +1,4 @@
-This is version 1.1 of Ride.
+This is version 1.1 beta of Ride.
 
 At this point Ride is usable and provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine.
 It also support SQL querying and updating.
@@ -15,7 +15,7 @@ you can set Ride to use this to resolve packages. You then need to include those
 test that you got all dependencies right before attempting to run the R scripts from the java application (server). 
 
 ## How to install:
-Unzip ride-1.0-final-dist.zip to a directory of choice
+Unzip ride-1.1-beta-dist.zip to a directory of choice
 
 ## How to run:
 
@@ -26,6 +26,9 @@ or on windows
 `$ .\ride.cmd`
 
 ## If you need to run ride offline 
+
+Unzip ride-fat-1.1-beta-dist.zip to a directory of choice
+
 The `ride-offline.sh` / `ride-offline.cmd` starts ride with the Classpath package loader and includes all jars
 in the lib folder. You need to manually add jars to the liv folder if you need a package or jdbc driver that is 
 not included per default. Ant is used to run it (as opposed to maven for online use) so edit the ride.xml if you 
@@ -39,7 +42,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
-### 1.1 SNAPSHOT (TODO change version when released)
+### 1.1 beta
 - Create a new runbutton when hamcrest tests are detected
     - Will run hamcrest tests similar to the renjin-hamcrest-maven-plugin i.e. producing nice output, error messages and
     summary 
