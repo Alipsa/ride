@@ -25,6 +25,12 @@ Comment/Uncomment lines + the Ctrl+Shift+C combo (done)
 - For R: Use R keywords + all base R methods
 - For SQL: use SQL keywords
 
+### indentation (Tabbing) support (done)
+- use 2 spaces for tabs
+- tab anywhere on the line indents the line
+- handle selected text
+- shift tab reverses indentation
+ 
 ## version 1.2
 
 ### Implement History tab

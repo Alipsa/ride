@@ -66,6 +66,12 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Add suggestions when pressing ctrl+space (a.k.a autocomplete)
   - For R: base on R keywords + all base R methods (done)
   - For SQL: use SQL keywords
+  
+- indentation (Tabbing) support
+    - use 2 spaces for tabs
+    - shift tab reverses indentation  
+    - tab anywhere on the line indents the line
+    - handles selected text to indent/unindent whole area
     
 ### 1.0 Final
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui
