@@ -30,7 +30,7 @@ Comment/Uncomment lines + the Ctrl+Shift+C combo (done)
 ### Implement History tab
 
 ### Code menu improvements
-Format code
+Format code, use Hadley Wickham style guide http://adv-r.had.co.nz/Style.html#Assignment
 
 ### Tools -> Options menu
 Make it possible to customize tab as \t or number of spaces

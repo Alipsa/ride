@@ -84,11 +84,11 @@ public class MainMenu extends MenuBar {
       codeArea.replaceText(range, s);
     } else { // toggle current line
       String text = codeArea.getText(codeArea.getCurrentParagraph());
+      String s = toggelComment(text, lineComment);
       int org = codeArea.getCaretPosition();
       codeArea.moveTo(codeArea.getCurrentParagraph(), 0);
       int start = codeArea.getCaretPosition();
       int end = start + text.length();
-      String s = toggelComment(text, lineComment);
       codeArea.replaceText(start, end, s);
       codeArea.moveTo(org);
     }
