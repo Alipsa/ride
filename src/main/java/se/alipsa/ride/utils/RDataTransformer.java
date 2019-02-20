@@ -15,17 +15,18 @@ public class RDataTransformer {
       AttributeMap attributes = df.getAttributes();
       Map<Symbol, SEXP> attrMap = attributes.toMap();
       Symbol s = attrMap.keySet().stream().filter(p -> "names".equals(p.getPrintName())).findAny().orElse(null);
-      Vector colNames = (Vector)attrMap.get(s);
-      for(int i = 0; i < colNames.length(); i++) {
+      Vector colNames = (Vector) attrMap.get(s);
+      for (int i = 0; i < colNames.length(); i++) {
         colList.add(colNames.getElementAsString(i));
       }
     }
     return colList;
   }
+
   public static List<List<Object>> toRowlist(ListVector df) {
     List<Vector> table = new ArrayList<>();
-    for(SEXP col : df) {
-      Vector column = (Vector)col;
+    for (SEXP col : df) {
+      Vector column = (Vector) col;
       table.add(column);
     }
     List<List<Object>> rowList = transpose(table);
@@ -42,8 +43,8 @@ public class RDataTransformer {
           AttributeMap attributes = col.getAttributes();
           Map<Symbol, SEXP> attrMap = attributes.toMap();
           Symbol s = attrMap.keySet().stream().filter(p -> "levels".equals(p.getPrintName())).findAny().orElse(null);
-          Vector vec = (Vector)attrMap.get(s);
-          row.add(vec.getElementAsObject(col.getElementAsInt(i)-1));
+          Vector vec = (Vector) attrMap.get(s);
+          row.add(vec.getElementAsObject(col.getElementAsInt(i) - 1));
         } else {
           row.add(col.getElementAsObject(i));
         }

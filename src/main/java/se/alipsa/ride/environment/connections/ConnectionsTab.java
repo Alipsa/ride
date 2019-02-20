@@ -1,16 +1,13 @@
 package se.alipsa.ride.environment.connections;
 
-import static se.alipsa.ride.Constants.*;
-import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
-import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
-
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
@@ -25,14 +22,16 @@ import se.alipsa.ride.utils.RDataTransformer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ConnectionsTab extends Tab {
+import static se.alipsa.ride.Constants.*;
+import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
+import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
 
-  private BorderPane contentPane;
-  private Ride gui;
+public class ConnectionsTab extends Tab {
 
   private static final String DRIVER_PREF = "ConnectionsTab.driver";
   private static final String URL_PREF = "ConnectionsTab.url";
-
+  private BorderPane contentPane;
+  private Ride gui;
   private TextField nameText;
   private TextField driverText;
   private TextField urlText;
@@ -89,11 +88,11 @@ public class ConnectionsTab extends Tab {
     nameCol.setCellValueFactory(
         new PropertyValueFactory<>("name")
     );
-    TableColumn<ConnectionInfo,String> driverCol = new TableColumn<>("Driver");
+    TableColumn<ConnectionInfo, String> driverCol = new TableColumn<>("Driver");
     driverCol.setCellValueFactory(
         new PropertyValueFactory<>("driver")
     );
-    TableColumn<ConnectionInfo,String> urlCol = new TableColumn<>("URL");
+    TableColumn<ConnectionInfo, String> urlCol = new TableColumn<>("URL");
     urlCol.setCellValueFactory(
         new PropertyValueFactory<>("url")
     );
@@ -213,6 +212,7 @@ public class ConnectionsTab extends Tab {
     scriptThread.setDaemon(false);
     scriptThread.start();
   }
+
   private void setNormalCursor() {
     gui.setNormalCursor();
     contentPane.setCursor(Cursor.DEFAULT);
@@ -231,7 +231,7 @@ public class ConnectionsTab extends Tab {
     tree.setRoot(root);
     Map<String, List<TableMetaData>> tableMap = table.stream()
         .collect(Collectors.groupingBy(TableMetaData::getTableName));
-    tableMap.forEach((k,v) -> {
+    tableMap.forEach((k, v) -> {
       TreeItem<String> tableName = new TreeItem<>(k);
       root.getChildren().add(tableName);
       v.forEach(c -> {
@@ -250,14 +250,6 @@ public class ConnectionsTab extends Tab {
     return tree;
   }
 
-  private class TreeItemComparator implements Comparator<TreeItem<String>> {
-
-    @Override
-    public int compare(TreeItem<String> fileTreeItem, TreeItem<String> t1) {
-      return fileTreeItem.getValue().compareToIgnoreCase(t1.getValue());
-    }
-  }
-
   @SuppressWarnings("rawtypes")
   private void copySelectionToClipboard(final TreeView<?> treeView) {
     TreeItem treeItem = treeView.getSelectionModel().getSelectedItem();
@@ -269,5 +261,13 @@ public class ConnectionsTab extends Tab {
     }
     clipboardContent.putString(value);
     Clipboard.getSystemClipboard().setContent(clipboardContent);
+  }
+
+  private class TreeItemComparator implements Comparator<TreeItem<String>> {
+
+    @Override
+    public int compare(TreeItem<String> fileTreeItem, TreeItem<String> t1) {
+      return fileTreeItem.getValue().compareToIgnoreCase(t1.getValue());
+    }
   }
 }

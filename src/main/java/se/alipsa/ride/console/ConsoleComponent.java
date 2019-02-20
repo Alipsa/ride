@@ -24,8 +24,6 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.RenjinVersion;
 import org.renjin.aether.AetherFactory;
 import org.renjin.aether.AetherPackageLoader;
-import org.renjin.aether.ConsoleRepositoryListener;
-import org.renjin.aether.ConsoleTransferListener;
 import org.renjin.eval.Context;
 import org.renjin.eval.EvalException;
 import org.renjin.eval.Session;
@@ -43,10 +41,10 @@ import se.alipsa.ride.utils.Animation;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
+import javax.script.ScriptException;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.script.ScriptException;
 
 import static se.alipsa.ride.Constants.ICON_HEIGHT;
 import static se.alipsa.ride.Constants.ICON_WIDTH;
@@ -54,30 +52,24 @@ import static se.alipsa.ride.utils.StringUtils.format;
 
 public class ConsoleComponent extends BorderPane {
 
+  public static final Repo RENJIN_REPO = asRepo(AetherFactory.renjinRepo());
+  public static final Repo MVN_CENTRAL_REPO = asRepo(AetherFactory.mavenCentral());
+  public static final String REMOTE_REPOSITORIES_PREF = "ConsoleComponent.RemoteRepositories";
+  public static final String PACKAGE_LOADER_PREF = "ConsoleComponent.PackageLoader";
+  private static final Image IMG_RUNNING = new Image(FileUtils
+      .getResourceUrl("image/running.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
+  private static final Image IMG_WAITING = new Image(FileUtils
+      .getResourceUrl("image/waiting.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
+  private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
   private RenjinScriptEngine engine;
   private Session session;
-
   private ImageView runningView;
   private Button statusButton;
   private ConsoleTextArea console;
   private Ride gui;
   private List<RemoteRepository> remoteRepositories;
   private PackageLoader packageLoader;
-
   private Timeline scriptExecutionTimeline;
-
-  public static final Repo RENJIN_REPO = asRepo(AetherFactory.renjinRepo());
-  public static final Repo MVN_CENTRAL_REPO = asRepo(AetherFactory.mavenCentral());
-  public static final String REMOTE_REPOSITORIES_PREF = "ConsoleComponent.RemoteRepositories";
-  public static final String PACKAGE_LOADER_PREF = "ConsoleComponent.PackageLoader";
-
-  private static final Image IMG_RUNNING = new Image(FileUtils
-      .getResourceUrl("image/running.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
-  private static final Image IMG_WAITING = new Image(FileUtils
-      .getResourceUrl("image/waiting.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
-
-  private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
-
   private Thread scriptThread;
 
   public ConsoleComponent(Ride gui) {
@@ -108,6 +100,10 @@ public class ConsoleComponent extends BorderPane {
     vPane.setMaxHeight(Double.MAX_VALUE);
     setCenter(vPane);
     initRenjin(getStoredRemoteRepositories(), Thread.currentThread().getContextClassLoader());
+  }
+
+  private static Repo asRepo(RemoteRepository repo) {
+    return new Repo(repo.getId(), repo.getContentType(), repo.getUrl());
   }
 
   private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader) {
@@ -160,7 +156,7 @@ public class ConsoleComponent extends BorderPane {
     String pkgLoaderName;
     String overrridePackageLoader = System.getProperty(PACKAGE_LOADER_PREF);
     if (overrridePackageLoader != null) {
-      pkgLoaderName =  overrridePackageLoader;
+      pkgLoaderName = overrridePackageLoader;
     } else {
       pkgLoaderName = gui.getPrefs().get(PACKAGE_LOADER_PREF, AetherPackageLoader.class.getSimpleName());
     }
@@ -173,6 +169,11 @@ public class ConsoleComponent extends BorderPane {
     return packageLoader;
   }
 
+  public void setPackageLoader(Class<?> loader) {
+    packageLoader = packageLoaderForName(Thread.currentThread().getContextClassLoader(), loader.getSimpleName());
+    gui.getPrefs().put(PACKAGE_LOADER_PREF, loader.getSimpleName());
+  }
+
   private PackageLoader packageLoaderForName(ClassLoader parentClassLoader, String pkgLoaderName) {
     if (ClasspathPackageLoader.class.getSimpleName().equals(pkgLoaderName)) {
       return new ClasspathPackageLoader(parentClassLoader);
@@ -182,11 +183,6 @@ public class ConsoleComponent extends BorderPane {
     //loader.setRepositoryListener(new ConsoleRepositoryListener(System.out));
     //loader.setTransferListener(new ConsoleTransferListener(System.out));
     return loader;
-  }
-
-  public void setPackageLoader(Class<?> loader) {
-    packageLoader = packageLoaderForName(Thread.currentThread().getContextClassLoader(), loader.getSimpleName());
-    gui.getPrefs().put(PACKAGE_LOADER_PREF, loader.getSimpleName());
   }
 
   private List<RemoteRepository> asRemoteRepositories(List<Repo> items) {
@@ -203,10 +199,6 @@ public class ConsoleComponent extends BorderPane {
       list.add(asRepo(repo));
     }
     return list;
-  }
-
-  private static Repo asRepo(RemoteRepository repo) {
-    return new Repo(repo.getId(), repo.getContentType(), repo.getUrl());
   }
 
   private List<Repo> getStoredRemoteRepositories() {
@@ -288,7 +280,7 @@ public class ConsoleComponent extends BorderPane {
       running();
       session.setStdOut(out);
       session.setStdErr(err);
-      SEXP sexp = (SEXP)engine.eval(script);
+      SEXP sexp = (SEXP) engine.eval(script);
       waiting();
       return sexp;
     } catch (Exception e) {
@@ -484,7 +476,7 @@ public class ConsoleComponent extends BorderPane {
 
   private TestResult runTestFunction(final Context context, final String title, final Symbol name) {
     String methodName = name.getPrintName().trim() + "()";
-    String testName = title + ": " + methodName ;
+    String testName = title + ": " + methodName;
     console.append(format("\t# Running test function {} in {}", methodName, title));
     String issue;
     Exception exception;
@@ -512,42 +504,28 @@ public class ConsoleComponent extends BorderPane {
     return result;
   }
 
-  class AppenderOutputStream extends OutputStream {
-    @Override
-    public void write(int b) {
-      console.appendChar((char) b);
-    }
-  }
-
-  class WarningAppenderOutputStream extends OutputStream {
-    @Override
-    public void write(int b) {
-      console.appendWarnChar((char) b);
-    }
-  }
-
   private void executeScriptAndReport(String script, String title) throws Exception {
 
-      try (OutputStream out = new AppenderOutputStream();
-           WarningAppenderOutputStream err = new WarningAppenderOutputStream();
-           PrintWriter outputWriter = new PrintWriter(out);
-           PrintWriter errWriter = new PrintWriter(err)
-      ) {
+    try (OutputStream out = new AppenderOutputStream();
+         WarningAppenderOutputStream err = new WarningAppenderOutputStream();
+         PrintWriter outputWriter = new PrintWriter(out);
+         PrintWriter errWriter = new PrintWriter(err)
+    ) {
 
-        engine.put("inout", gui.getInoutComponent());
-        //engine.put("packageLoader", getPackageLoader());
+      engine.put("inout", gui.getInoutComponent());
+      //engine.put("packageLoader", getPackageLoader());
 
-        Platform.runLater(() -> console.append(title));
-        session.setStdOut(outputWriter);
-        session.setStdErr(errWriter);
+      Platform.runLater(() -> console.append(title));
+      session.setStdOut(outputWriter);
+      session.setStdErr(errWriter);
 
-        engine.eval(script);
-        postEvalOutput();
+      engine.eval(script);
+      postEvalOutput();
 
-      } catch (Exception e) {
-        postEvalOutput();
-        throw e;
-      }
+    } catch (Exception e) {
+      postEvalOutput();
+      throw e;
+    }
   }
 
   private void postEvalOutput() throws IOException {
@@ -567,8 +545,8 @@ public class ConsoleComponent extends BorderPane {
     // e.g. for plots, this is the best way to do that.
     scriptExecutionTimeline = new Timeline();
     KeyFrame scriptFrame = new KeyFrame(Duration.seconds(1), evt -> {
-      try (StringWriter warnStrWriter  = new StringWriter();
-           PrintWriter warnWriter = new PrintWriter(warnStrWriter)){
+      try (StringWriter warnStrWriter = new StringWriter();
+           PrintWriter warnWriter = new PrintWriter(warnStrWriter)) {
         engine.put("inout", gui.getInoutComponent());
         engine.getContext().setWriter(outputWriter);
         engine.getContext().setErrorWriter(outputWriter);
@@ -686,5 +664,19 @@ public class ConsoleComponent extends BorderPane {
 
   public void setConsoleMaxSize(int size) {
     console.setConsoleMaxSize(size);
+  }
+
+  class AppenderOutputStream extends OutputStream {
+    @Override
+    public void write(int b) {
+      console.appendChar((char) b);
+    }
+  }
+
+  class WarningAppenderOutputStream extends OutputStream {
+    @Override
+    public void write(int b) {
+      console.appendWarnChar((char) b);
+    }
   }
 }

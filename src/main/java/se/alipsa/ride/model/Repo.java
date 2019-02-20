@@ -23,35 +23,35 @@ public class Repo {
     return id.get();
   }
 
-  public SimpleStringProperty idProperty() {
-    return id;
-  }
-
   public void setId(String id) {
     this.id.set(id);
+  }
+
+  public SimpleStringProperty idProperty() {
+    return id;
   }
 
   public String getType() {
     return type.get();
   }
 
-  public SimpleStringProperty typeProperty() {
-    return type;
-  }
-
   public void setType(String type) {
     this.type.set(type);
+  }
+
+  public SimpleStringProperty typeProperty() {
+    return type;
   }
 
   public String getUrl() {
     return url.get();
   }
 
-  public SimpleStringProperty urlProperty() {
-    return url;
-  }
-
   public void setUrl(String url) {
     this.url.set(url);
+  }
+
+  public SimpleStringProperty urlProperty() {
+    return url;
   }
 }

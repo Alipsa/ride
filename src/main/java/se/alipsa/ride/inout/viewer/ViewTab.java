@@ -4,7 +4,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class ViewTab extends Tab {
       col.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
     }
     ObservableList<List<String>> data = FXCollections.observableArrayList();
-    for (List row: rowList) {
+    for (List row : rowList) {
       List<String> obsRow = new ArrayList<>();
       for (Object obj : row) {
         if (obj instanceof Number) {

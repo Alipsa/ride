@@ -1,13 +1,13 @@
 package se.alipsa.ride.model;
 
-import static se.alipsa.ride.utils.RDataTransformer.*;
-
 import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.ListVector;
 import org.renjin.sexp.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static se.alipsa.ride.utils.RDataTransformer.*;
 
 public class Table {
 

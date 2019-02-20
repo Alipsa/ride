@@ -11,7 +11,7 @@ public class Alerts {
   }
 
   public static void warn(String title, String content) {
-      showAlert(title, content, Alert.AlertType.WARNING);
+    showAlert(title, content, Alert.AlertType.WARNING);
   }
 
   public static void showAlert(String title, String content, Alert.AlertType information) {

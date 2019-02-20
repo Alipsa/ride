@@ -1,11 +1,11 @@
 /**
  * Copyright 2002-2007 Guillaume Laforge
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
- *
- *           http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for
  * the specific language governing permissions and limitations under the License.
@@ -13,12 +13,7 @@
 package se.alipsa.ride.utils;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Collection;
 
@@ -87,19 +82,164 @@ public class CharsetToolkit {
     setDefaultCharset(defaultCharset);
   }
 
+  public static Charset guessEncoding(File f, int bufferLength) throws FileNotFoundException, IOException {
+    FileInputStream fis = new FileInputStream(f);
+    byte[] buffer = new byte[bufferLength];
+    fis.read(buffer);
+    fis.close();
+    CharsetToolkit toolkit = new CharsetToolkit(buffer);
+    toolkit.setDefaultCharset(getDefaultSystemCharset());
+    return toolkit.guessEncoding();
+  }
+
+  public static Charset guessEncoding(File f, int bufferLength, Charset defaultCharset)
+      throws FileNotFoundException, IOException {
+    FileInputStream fis = new FileInputStream(f);
+    byte[] buffer = new byte[bufferLength];
+    fis.read(buffer);
+    fis.close();
+    CharsetToolkit toolkit = new CharsetToolkit(buffer);
+    toolkit.setDefaultCharset(defaultCharset);
+    return toolkit.guessEncoding();
+  }
+
   /**
-   * Defines the default <code>Charset</code> used in case the buffer represents
-   * an 8-bit <code>Charset</code>.
+   * If the byte has the form 10xxxxx, then it's a continuation byte of a multiple byte character;
    *
-   * @param defaultCharset the default <code>Charset</code> to be returned by <code>guessEncoding()</code>
-   *                       if an 8-bit <code>Charset</code> is encountered.
+   * @param b a byte.
+   * @return true if it's a continuation char.
    */
-  public void setDefaultCharset(Charset defaultCharset) {
-    if (defaultCharset != null) {
-      this.defaultCharset = defaultCharset;
-    } else {
-      this.defaultCharset = getDefaultSystemCharset();
+  private static boolean isContinuationChar(byte b) {
+    return -128 <= b && b <= -65;
+  }
+
+  /**
+   * If the byte has the form 110xxxx, then it's the first byte of a two-bytes sequence character.
+   *
+   * @param b a byte.
+   * @return true if it's the first byte of a two-bytes sequence.
+   */
+  private static boolean isTwoBytesSequence(byte b) {
+    return -64 <= b && b <= -33;
+  }
+
+  /**
+   * If the byte has the form 1110xxx, then it's the first byte of a three-bytes sequence character.
+   *
+   * @param b a byte.
+   * @return true if it's the first byte of a three-bytes sequence.
+   */
+  private static boolean isThreeBytesSequence(byte b) {
+    return -32 <= b && b <= -17;
+  }
+
+  /**
+   * If the byte has the form 11110xx, then it's the first byte of a four-bytes sequence character.
+   *
+   * @param b a byte.
+   * @return true if it's the first byte of a four-bytes sequence.
+   */
+  private static boolean isFourBytesSequence(byte b) {
+    return -16 <= b && b <= -9;
+  }
+
+  /**
+   * If the byte has the form 11110xx, then it's the first byte of a five-bytes sequence character.
+   *
+   * @param b a byte.
+   * @return true if it's the first byte of a five-bytes sequence.
+   */
+  private static boolean isFiveBytesSequence(byte b) {
+    return -8 <= b && b <= -5;
+  }
+
+  /**
+   * If the byte has the form 1110xxx, then it's the first byte of a six-bytes sequence character.
+   *
+   * @param b a byte.
+   * @return true if it's the first byte of a six-bytes sequence.
+   */
+  private static boolean isSixBytesSequence(byte b) {
+    return -4 <= b && b <= -3;
+  }
+
+  /**
+   * Retrieve the default charset of the system.
+   *
+   * @return the default <code>Charset</code>.
+   */
+  public static Charset getDefaultSystemCharset() {
+    return Charset.forName(System.getProperty("file.encoding"));
+  }
+
+  /**
+   * Has a Byte Order Marker for UTF-8 (Used by Microsoft's Notepad and other editors).
+   *
+   * @param bom a buffer.
+   * @return true if the buffer has a BOM for UTF8.
+   */
+  private static boolean hasUTF8Bom(byte[] bom) {
+    return (bom[0] == -17 && bom[1] == -69 && bom[2] == -65);
+  }
+
+  /**
+   * Has a Byte Order Marker for UTF-16 Low Endian
+   * (ucs-2le, ucs-4le, and ucs-16le).
+   *
+   * @param bom a buffer.
+   * @return true if the buffer has a BOM for UTF-16 Low Endian.
+   */
+  private static boolean hasUTF16LEBom(byte[] bom) {
+    return (bom[0] == -1 && bom[1] == -2);
+  }
+
+  /**
+   * Has a Byte Order Marker for UTF-16 Big Endian
+   * (utf-16 and ucs-2).
+   *
+   * @param bom a buffer.
+   * @return true if the buffer has a BOM for UTF-16 Big Endian.
+   */
+  private static boolean hasUTF16BEBom(byte[] bom) {
+    return (bom[0] == -2 && bom[1] == -1);
+  }
+
+  /**
+   * Retrieves all the available <code>Charset</code>s on the platform,
+   * among which the default <code>charset</code>.
+   *
+   * @return an array of <code>Charset</code>s.
+   */
+  public static Charset[] getAvailableCharsets() {
+    Collection collection = Charset.availableCharsets().values();
+    return (Charset[]) collection.toArray(new Charset[collection.size()]);
+  }
+
+  public static void main(String[] args) throws FileNotFoundException, IOException {
+//		File file = new File("utf-8.txt");
+    File file = new File("d");
+
+    Charset guessedCharset = CharsetToolkit.guessEncoding(file, 4096);
+    System.err.println("Charset found: " + guessedCharset.displayName());
+
+    FileInputStream fis = new FileInputStream(file);
+    InputStreamReader isr = new InputStreamReader(fis, guessedCharset);
+    BufferedReader br = new BufferedReader(isr);
+
+    String line;
+    while ((line = br.readLine()) != null) {
+      System.out.println(line);
     }
+
+  }
+
+  /**
+   * Gets the enforce8Bit flag, in case we do not want to ever get a US-ASCII encoding.
+   *
+   * @return a boolean representing the flag of use of US-ASCII.
+   */
+  public boolean getEnforce8Bit() {
+    return this.enforce8Bit;
   }
 
   /**
@@ -114,21 +254,27 @@ public class CharsetToolkit {
   }
 
   /**
-   * Gets the enforce8Bit flag, in case we do not want to ever get a US-ASCII encoding.
-   *
-   * @return a boolean representing the flag of use of US-ASCII.
-   */
-  public boolean getEnforce8Bit() {
-    return this.enforce8Bit;
-  }
-
-  /**
    * Retrieves the default Charset
    *
    * @return
    */
   public Charset getDefaultCharset() {
     return defaultCharset;
+  }
+
+  /**
+   * Defines the default <code>Charset</code> used in case the buffer represents
+   * an 8-bit <code>Charset</code>.
+   *
+   * @param defaultCharset the default <code>Charset</code> to be returned by <code>guessEncoding()</code>
+   *                       if an 8-bit <code>Charset</code> is encountered.
+   */
+  public void setDefaultCharset(Charset defaultCharset) {
+    if (defaultCharset != null) {
+      this.defaultCharset = defaultCharset;
+    } else {
+      this.defaultCharset = getDefaultSystemCharset();
+    }
   }
 
   /**
@@ -283,157 +429,5 @@ public class CharsetToolkit {
     } else {
       return 0;
     }
-  }
-
-  public static Charset guessEncoding(File f, int bufferLength) throws FileNotFoundException, IOException {
-    FileInputStream fis = new FileInputStream(f);
-    byte[] buffer = new byte[bufferLength];
-    fis.read(buffer);
-    fis.close();
-    CharsetToolkit toolkit = new CharsetToolkit(buffer);
-    toolkit.setDefaultCharset(getDefaultSystemCharset());
-    return toolkit.guessEncoding();
-  }
-
-  public static Charset guessEncoding(File f, int bufferLength, Charset defaultCharset)
-      throws FileNotFoundException, IOException {
-    FileInputStream fis = new FileInputStream(f);
-    byte[] buffer = new byte[bufferLength];
-    fis.read(buffer);
-    fis.close();
-    CharsetToolkit toolkit = new CharsetToolkit(buffer);
-    toolkit.setDefaultCharset(defaultCharset);
-    return toolkit.guessEncoding();
-  }
-
-  /**
-   * If the byte has the form 10xxxxx, then it's a continuation byte of a multiple byte character;
-   *
-   * @param b a byte.
-   * @return true if it's a continuation char.
-   */
-  private static boolean isContinuationChar(byte b) {
-    return -128 <= b && b <= -65;
-  }
-
-  /**
-   * If the byte has the form 110xxxx, then it's the first byte of a two-bytes sequence character.
-   *
-   * @param b a byte.
-   * @return true if it's the first byte of a two-bytes sequence.
-   */
-  private static boolean isTwoBytesSequence(byte b) {
-    return -64 <= b && b <= -33;
-  }
-
-  /**
-   * If the byte has the form 1110xxx, then it's the first byte of a three-bytes sequence character.
-   *
-   * @param b a byte.
-   * @return true if it's the first byte of a three-bytes sequence.
-   */
-  private static boolean isThreeBytesSequence(byte b) {
-    return -32 <= b && b <= -17;
-  }
-
-  /**
-   * If the byte has the form 11110xx, then it's the first byte of a four-bytes sequence character.
-   *
-   * @param b a byte.
-   * @return true if it's the first byte of a four-bytes sequence.
-   */
-  private static boolean isFourBytesSequence(byte b) {
-    return -16 <= b && b <= -9;
-  }
-
-  /**
-   * If the byte has the form 11110xx, then it's the first byte of a five-bytes sequence character.
-   *
-   * @param b a byte.
-   * @return true if it's the first byte of a five-bytes sequence.
-   */
-  private static boolean isFiveBytesSequence(byte b) {
-    return -8 <= b && b <= -5;
-  }
-
-  /**
-   * If the byte has the form 1110xxx, then it's the first byte of a six-bytes sequence character.
-   *
-   * @param b a byte.
-   * @return true if it's the first byte of a six-bytes sequence.
-   */
-  private static boolean isSixBytesSequence(byte b) {
-    return -4 <= b && b <= -3;
-  }
-
-  /**
-   * Retrieve the default charset of the system.
-   *
-   * @return the default <code>Charset</code>.
-   */
-  public static Charset getDefaultSystemCharset() {
-    return Charset.forName(System.getProperty("file.encoding"));
-  }
-
-  /**
-   * Has a Byte Order Marker for UTF-8 (Used by Microsoft's Notepad and other editors).
-   *
-   * @param bom a buffer.
-   * @return true if the buffer has a BOM for UTF8.
-   */
-  private static boolean hasUTF8Bom(byte[] bom) {
-    return (bom[0] == -17 && bom[1] == -69 && bom[2] == -65);
-  }
-
-  /**
-   * Has a Byte Order Marker for UTF-16 Low Endian
-   * (ucs-2le, ucs-4le, and ucs-16le).
-   *
-   * @param bom a buffer.
-   * @return true if the buffer has a BOM for UTF-16 Low Endian.
-   */
-  private static boolean hasUTF16LEBom(byte[] bom) {
-    return (bom[0] == -1 && bom[1] == -2);
-  }
-
-  /**
-   * Has a Byte Order Marker for UTF-16 Big Endian
-   * (utf-16 and ucs-2).
-   *
-   * @param bom a buffer.
-   * @return true if the buffer has a BOM for UTF-16 Big Endian.
-   */
-  private static boolean hasUTF16BEBom(byte[] bom) {
-    return (bom[0] == -2 && bom[1] == -1);
-  }
-
-  /**
-   * Retrieves all the available <code>Charset</code>s on the platform,
-   * among which the default <code>charset</code>.
-   *
-   * @return an array of <code>Charset</code>s.
-   */
-  public static Charset[] getAvailableCharsets() {
-    Collection collection = Charset.availableCharsets().values();
-    return (Charset[]) collection.toArray(new Charset[collection.size()]);
-  }
-
-  public static void main(String[] args) throws FileNotFoundException, IOException {
-//		File file = new File("utf-8.txt");
-    File file = new File("d");
-
-    Charset guessedCharset = CharsetToolkit.guessEncoding(file, 4096);
-    System.err.println("Charset found: " + guessedCharset.displayName());
-
-    FileInputStream fis = new FileInputStream(file);
-    InputStreamReader isr = new InputStreamReader(fis, guessedCharset);
-    BufferedReader br = new BufferedReader(isr);
-
-    String line;
-    while ((line = br.readLine()) != null)
-    {
-      System.out.println(line);
-    }
-
   }
 }

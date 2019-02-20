@@ -22,7 +22,6 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.MainMenu;
-import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.util.Optional;
@@ -32,6 +31,7 @@ import java.util.prefs.Preferences;
 
 public class Ride extends Application {
 
+  Logger log = LoggerFactory.getLogger(Ride.class);
   private ConsoleComponent consoleComponent;
   private CodeComponent codeComponent;
   private EnvironmentComponent environmentComponent;
@@ -39,8 +39,6 @@ public class Ride extends Application {
   private Stage primaryStage;
   private Scene scene;
   private MainMenu mainMenu;
-
-  Logger log = LoggerFactory.getLogger(Ride.class);
 
   public static void main(String[] args) {
     launch(args);
@@ -101,11 +99,11 @@ public class Ride extends Application {
         alert.setContentText("Are you sure you want to exit \n -even though you have unsaved files?");
 
         Optional<ButtonType> result = alert.showAndWait();
-        if(!result.isPresent()) {
+        if (!result.isPresent()) {
           t.consume();
           return;
         }
-        if (result.get() != ButtonType.OK){
+        if (result.get() != ButtonType.OK) {
           t.consume();
           return;
         }

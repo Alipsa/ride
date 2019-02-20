@@ -10,10 +10,6 @@ public class IntField extends TextField {
   final private int minValue;
   final private int maxValue;
 
-  public int  getValue()                 { return value.getValue(); }
-  public void setValue(int newValue)     { value.setValue(newValue); }
-  public IntegerProperty valueProperty() { return value; }
-
   public IntField(int minValue, int maxValue, int initialValue) {
     if (minValue > maxValue)
       throw new IllegalArgumentException(
@@ -82,5 +78,17 @@ public class IntField extends TextField {
 
       value.set(Integer.parseInt(textProperty().get()));
     });
+  }
+
+  public int getValue() {
+    return value.getValue();
+  }
+
+  public void setValue(int newValue) {
+    value.setValue(newValue);
+  }
+
+  public IntegerProperty valueProperty() {
+    return value;
   }
 }

@@ -1,7 +1,5 @@
 package se.alipsa.ride.inout;
 
-import static se.alipsa.ride.utils.RDataTransformer.*;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -103,11 +101,11 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void display(Node node, String... title) {
-    Platform.runLater(()-> {
-      plotsTab.showPlot(node, title);
-      SingleSelectionModel<Tab> selectionModel = getSelectionModel();
-      selectionModel.select(plotsTab);
-    }
+    Platform.runLater(() -> {
+          plotsTab.showPlot(node, title);
+          SingleSelectionModel<Tab> selectionModel = getSelectionModel();
+          selectionModel.select(plotsTab);
+        }
     );
   }
 
@@ -119,13 +117,13 @@ public class InoutComponent extends TabPane implements InOut {
   public void View(SEXP sexp, String... title) {
     // For some reason polymorfism of Vector, StringVector and Matrix does not work (everything is treated as Vector)
     // so need to differentiate explicitly
-    String type =  sexp.getTypeName();
+    String type = sexp.getTypeName();
     if (sexp instanceof ListVector) {
       log.debug("Identified as ListVector of type {}", type);
-      view((ListVector)sexp, title);
+      view((ListVector) sexp, title);
     } else if (sexp instanceof Vector) {
       log.debug("Identified as Vector of type {}", type);
-      Vector vec = (Vector)sexp;
+      Vector vec = (Vector) sexp;
       if (vec.hasAttributes()) {
         AttributeMap attributes = vec.getAttributes();
         Vector dim = attributes.getDim();
@@ -142,8 +140,7 @@ public class InoutComponent extends TabPane implements InOut {
                 "Result is an array with " + dim.length() + " dimensions. Convert this object to a data.frame to view it!");
           }
         }
-      }
-      else {
+      } else {
         view(vec, title);
       }
     } else {
@@ -171,7 +168,7 @@ public class InoutComponent extends TabPane implements InOut {
     );
   }
 
-  public void view(ListVector listVec, String... title ) {
+  public void view(ListVector listVec, String... title) {
     Table table = new Table(listVec);
     showInViewer(table, title);
   }

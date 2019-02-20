@@ -1,16 +1,16 @@
 package se.alipsa.ride.code.sqltab;
 
-import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.TextCodeArea;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -143,10 +143,10 @@ public class SqlTextArea extends TextCodeArea {
       String styleClass =
           matcher.group("KEYWORD") != null ? "keyword" :
               matcher.group("PAREN") != null ? "paren" :
-                    matcher.group("SEMICOLON") != null ? "semicolon" :
-                        matcher.group("STRING") != null ? "string" :
-                            matcher.group("COMMENT") != null ? "comment" :
-                                      null; /* never happens */
+                  matcher.group("SEMICOLON") != null ? "semicolon" :
+                      matcher.group("STRING") != null ? "string" :
+                          matcher.group("COMMENT") != null ? "comment" :
+                              null; /* never happens */
       assert styleClass != null;
       spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
       spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());

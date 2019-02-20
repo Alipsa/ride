@@ -9,9 +9,8 @@ public class PlotCanvas extends Canvas {
   // TODO consider using https://github.com/brucejohnson/jfxplot
   // in a similar way as https://github.com/brucejohnson/studiofx
 
-  private FXGraphics2D g2bridge;
-
   AwtDevice awtDevice;
+  private FXGraphics2D g2bridge;
 
   public PlotCanvas() {
     awtDevice = new AwtDevice(null, null);

@@ -1,17 +1,10 @@
 package se.alipsa.ride.code.codetab;
 
-import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.IndexRange;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.fxmisc.wellbehaved.event.EventPattern;
-import org.fxmisc.wellbehaved.event.InputMap;
-import org.fxmisc.wellbehaved.event.Nodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
@@ -19,13 +12,14 @@ import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.TextCodeArea;
 import se.alipsa.ride.console.ConsoleComponent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CodeTextArea extends TextCodeArea {
-
-  private static Logger log = LoggerFactory.getLogger(CodeTextArea.class);
 
   // Since T and F are not true keywords (they can be reassigned e.g. T <- FALSE), they are not included below
   private static final String[] KEYWORDS = new String[]{
@@ -35,12 +29,11 @@ public class CodeTextArea extends TextCodeArea {
       "NA_integer_", "NA_real_", "NA_complex_", "NA_character_", "…",
       "library" // not strictly a keyword but RStudio treats it like this so we will too
   };
-
   // See https://www.rdocumentation.org/packages/base/versions/3.5.2 for more, at ns-dblcolon
   // or https://stat.ethz.ch/R-manual/R-devel/library/base/html/00Index.html
   // Will be too long for styling the textarea but useful for suggestions using ctrl + tab
   // see https://github.com/FXMisc/RichTextFX/issues/91 for some ideas
-  private static final String[] FUNCTIONS = new String[] {
+  private static final String[] FUNCTIONS = new String[]{
       "abs", "acos", "addNA", "aggregate", "agrep", "alist", "all", "all.equal", "all.names", "all.vars", "any", "anyDuplicated", "anyNA", "apply", "append", "aperm", "array", "args", "asin", "atan", "atan2", "as.array", "as.call", "as.character", "as.complex", "as.data.frame", "as.Date", "as.difftime", "as.double", "as.environment", "as.expression", "as.factor", "as.hexmode", "as.integer", "as.list", "as.null", "as.matrix", "as.numeric", "as.ordered", "as.pairlist", "as.POSIXct", "as.POSIXlt", "as.single", "as.vector", "attach", "attr", "attributes",
       "backsolve", "baseenv", "basename", "beta", "besselI", "besselK", "besselJ", "besselY", "bindtextdomain", "bitwAnd", "bitwNot", "bitwOr", "bitwShiftL", "bitwShiftR", "bitwXor", "body", "bquote", "browser", "browserCondition", "browserSetDebug", "browserText", "builtins", "by", "bzfile",
       "c", "call", "casefold", "cat", "cbind", "ceiling", "charmatch", "chartr", "chol", "chol2inv", "choose", "class", "close", "col", "colMeans", "colnames", "colSums", "comment", "complex", "conflicts", "cos", "cospi", "cummax", "cummin", "cumsum", "cumprod", "curlGetHeaders", "cut",
@@ -50,21 +43,19 @@ public class CodeTextArea extends TextCodeArea {
       "gamma", "gc", "gcinfo", "get0", "gettext", "getwd", "gl", "globalenv", "gregexpr", "grep", "grepl", "grepRaw", "gsub", "gzcon", "gzfile",
       "iconv", "identical", "identity", "ifelse", "inherits", "integer", "interaction", "interactive", "is.array", "is.atomic", "is.call", "is.character", "is.complex", "is.data.frame", "is.double", "is.environment", "is.expression", "is.factor", "is.function", "is.integer", "is.language", "is.na", "is.null", "is.numeric", "is.matrix", "is.object", "is.ordered", "is.primitive", "is.R", "is.recursive", "is.vector", "isFALSE", "isTRUE", "isIncomplete", "isOpen", "isSymmetric", "I", "ISOdatetime", "ISOdate",
       "lapply", "lbeta", "lchoose", "lfactorial", "lgamma", "library", "list", "local", "log", "log10",
-      "Map", "mapply", "margin.table", "match", "matrix", "max", "mean",  "median", "memCompress", "memDecompress", "merge", "min", "mostattributes",
+      "Map", "mapply", "margin.table", "match", "matrix", "max", "mean", "median", "memCompress", "memDecompress", "merge", "min", "mostattributes",
       "names", "Negate", "new.env", "NextMethod", "ngettext", "nrow", "ncol",
       "ordered", "oldClass", "open",
       "parent.env", "pairlist", "paste", "paste0", "path.package", "pbinom", "pipe", "pmax", "pmin", "pnorm", "Position", "ppois", "prettyNum", "print", "provideDimnames", "psigamma", "punif",
       "qbinom", "qpois", "qnorm", "quantile", "qunif",
       "range", "rbind", "rbinom", "read.dcf", "require", "regexec", "regexpr", "rep", "return", "round", "rowMeans", "rownames", "rowSums", "rpois", "rnorm", "R.home", "Recall", "Reduce", "RNGkind", "RNGversion", "runif",
-      "sapply", "scale", "sd", "seq", "set.seed", "setwd", "signif", "sin", "single", "sinpi", "socketConnection", "sqrt",  "stop", "stopifnot", "str", "strsplit", "sub", "subset", "substr", "sum", "summary", "switch", "Sys.chmod", "Sys.Date", "Sys.getenv", "Sys.getpid", "Sys.junction", "Sys.localeconv", "Sys.setFileTime", "Sys.sleep", "Sys.time", "Sys.umask", "Sys.which",
+      "sapply", "scale", "sd", "seq", "set.seed", "setwd", "signif", "sin", "single", "sinpi", "socketConnection", "sqrt", "stop", "stopifnot", "str", "strsplit", "sub", "subset", "substr", "sum", "summary", "switch", "Sys.chmod", "Sys.Date", "Sys.getenv", "Sys.getpid", "Sys.junction", "Sys.localeconv", "Sys.setFileTime", "Sys.sleep", "Sys.time", "Sys.umask", "Sys.which",
       "table", "tan", "tanpi", "toupper", "tolower", "trigamma", "trunc", "tryCatch", "typeof",
       "unclass", "unz", "url", "UseMethod",
       "Vectorize",
-      "which",  "with", "writeLines", "write.dcf",
+      "which", "with", "writeLines", "write.dcf",
       "xzfile"
   };
-
-
   private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
   //private static final String FUNCTIONS_PATTERN = "\\b(" + String.join("|", FUNCTIONS) + ")\\b";
   private static final String ASSIGNMENT_PATTERN = "->|<-|=(?!=)|~|%>%";
@@ -74,7 +65,6 @@ public class CodeTextArea extends TextCodeArea {
   //private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"|\'([^\'\\\\]|\\\\.)*\'"; // backtracing makes this crazy slow
   private static final String STRING_PATTERN = "\"\"|''|\"[^\"]+\"|'[^']+'";
   private static final String COMMENT_PATTERN = "#[^\n]*";
-
   private static final Pattern PATTERN = Pattern.compile(
       "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
           //+ "|(?<FUNCTIONS>" + FUNCTIONS_PATTERN + ")"
@@ -85,12 +75,11 @@ public class CodeTextArea extends TextCodeArea {
           + "|(?<STRING>" + STRING_PATTERN + ")"
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
-
   private static final Pattern LIGHT_PATTERN = Pattern.compile(
       "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
-
+  private static Logger log = LoggerFactory.getLogger(CodeTextArea.class);
   ContextMenu suggestionsPopup = new ContextMenu();
 
   public CodeTextArea(CodeTab parent) {
@@ -118,7 +107,7 @@ public class CodeTextArea extends TextCodeArea {
           console.runScriptAsync(rCode, codeComponent.getActiveScriptName());
           moveTo(getCurrentParagraph() + 1, 0);
           int totalLength = getAllTextContent().length();
-          if(getCaretPosition() > totalLength) {
+          if (getCaretPosition() > totalLength) {
             moveTo(totalLength);
           }
         } else if (KeyCode.QUOTE.equals(e.getCode())) {
@@ -190,18 +179,18 @@ public class CodeTextArea extends TextCodeArea {
     if (line.endsWith(lastWord) && !"".equals(lastWord)) {
       suggestCompletion(lastWord);
     } else if (line.endsWith(lastWord + ".")) {
-      suggestCompletion(lastWord+ ".");
+      suggestCompletion(lastWord + ".");
     }
   }
 
   private void suggestCompletion(String lastWord) {
     List<String> suggestions = new ArrayList<>();
-    for(String keyword : KEYWORDS) {
+    for (String keyword : KEYWORDS) {
       if (keyword.startsWith(lastWord)) {
         suggestions.add(keyword);
       }
     }
-    for(String function : FUNCTIONS) {
+    for (String function : FUNCTIONS) {
       if (function.startsWith(lastWord)) {
         suggestions.add(function + "(");
       }

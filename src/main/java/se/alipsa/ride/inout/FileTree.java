@@ -2,8 +2,8 @@ package se.alipsa.ride.inout;
 
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.scene.control.*;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.apache.tika.Tika;
@@ -26,17 +26,12 @@ import java.util.Optional;
 
 public class FileTree extends TreeView {
 
-  CodeComponent codeComponent;
-
-  TreeItemComparator treeItemComparator = new TreeItemComparator();
-
-  private final String WORKING_DIR_PREF = "FileTree.WorkingDir";
-
-  Tika contentProber = new Tika();
-
   final String folderUrl = FileUtils.getResourceUrl("image/folder.png").toExternalForm();
   final String fileUrl = FileUtils.getResourceUrl("image/file.png").toExternalForm();
-
+  private final String WORKING_DIR_PREF = "FileTree.WorkingDir";
+  CodeComponent codeComponent;
+  TreeItemComparator treeItemComparator = new TreeItemComparator();
+  Tika contentProber = new Tika();
   Ride gui;
   Logger log = LoggerFactory.getLogger(FileTree.class);
 
@@ -211,8 +206,8 @@ public class FileTree extends TreeView {
           codeComponent.addTab(file, TabType.TXT);
         } else {
           if (isDesktopSupported()) {
-              log.info("Try to open {} in associated application", file.getName());
-              openApplicationExternal(file);
+            log.info("Try to open {} in associated application", file.getName());
+            openApplicationExternal(file);
           } else {
             Alerts.info("Unknown file type",
                 "Unknown file type, not sure what to do with " + file.getName());

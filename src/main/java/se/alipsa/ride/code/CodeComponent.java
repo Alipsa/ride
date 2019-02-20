@@ -139,7 +139,7 @@ public class CodeComponent extends BorderPane {
 
   public boolean hasUnsavedFiles() {
     for (Tab tab : pane.getTabs()) {
-      TextAreaTab taTab = (TextAreaTab)tab;
+      TextAreaTab taTab = (TextAreaTab) tab;
       if (taTab.isChanged()) {
         return true;
       }

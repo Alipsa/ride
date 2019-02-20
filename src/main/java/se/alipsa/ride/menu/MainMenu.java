@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.CodeArea;
@@ -70,10 +69,17 @@ public class MainMenu extends MenuBar {
     CodeArea codeArea = gui.getCodeComponent().getActiveTab().getCodeArea();
     String lineComment;
     switch (gui.getCodeComponent().getActiveTab().getTabType()) {
-      case R: lineComment = "#"; break;
-      case SQL: lineComment = "--"; break;
-      case JAVA: lineComment = "//"; break;
-      default: return;
+      case R:
+        lineComment = "#";
+        break;
+      case SQL:
+        lineComment = "--";
+        break;
+      case JAVA:
+        lineComment = "//";
+        break;
+      default:
+        return;
     }
     String selected = codeArea.selectedTextProperty().getValue();
     // if text is selected then go with that
@@ -271,7 +277,7 @@ public class MainMenu extends MenuBar {
     Menu fileMenu = new Menu("New File");
 
     MenuItem nRScript = new MenuItem("R Script");
-    nRScript.setOnAction(a ->  gui.getCodeComponent().addCodeTab(TabType.R));
+    nRScript.setOnAction(a -> gui.getCodeComponent().addCodeTab(TabType.R));
     fileMenu.getItems().add(nRScript);
 
     MenuItem nText = new MenuItem("Text file");
@@ -294,7 +300,6 @@ public class MainMenu extends MenuBar {
     menu.getItems().addAll(fileMenu, save, saveAs, quit);
     return menu;
   }
-
 
 
   private void saveContent(ActionEvent event) {

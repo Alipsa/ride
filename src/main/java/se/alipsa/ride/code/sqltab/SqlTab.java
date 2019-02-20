@@ -1,8 +1,5 @@
 package se.alipsa.ride.code.sqltab;
 
-import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
-import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
-
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -18,12 +15,14 @@ import org.renjin.sexp.ListVector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
-import se.alipsa.ride.code.TextCodeArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
 import java.util.Set;
+
+import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
+import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
 
 public class SqlTab extends TextAreaTab {
 

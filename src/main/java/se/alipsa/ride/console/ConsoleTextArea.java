@@ -10,10 +10,9 @@ import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 
 public class ConsoleTextArea extends CodeArea {
 
-  Logger log = LoggerFactory.getLogger(ConsoleTextArea.class);
-  public static int MAX_LENGTH = 900_000;
   private static final String WARN_SIZE_MSG = "\nMaximum size for console reached, printing to standard out until console is cleared\n";
-
+  public static int MAX_LENGTH = 900_000;
+  Logger log = LoggerFactory.getLogger(ConsoleTextArea.class);
   private StringBuilder buffer = new StringBuilder();
   private StringBuilder warnBuffer = new StringBuilder();
 
@@ -62,11 +61,11 @@ public class ConsoleTextArea extends CodeArea {
   }
 
   public void appendWarning(String text, boolean... skipNewline) {
-    appendWithStyle(text,"warning", skipNewline);
+    appendWithStyle(text, "warning", skipNewline);
   }
 
   public void appendError(String text, boolean... skipNewline) {
-    appendWithStyle(text,"error", skipNewline);
+    appendWithStyle(text, "error", skipNewline);
   }
 
   private void appendWithStyle(String text, String styleClass, boolean... skipNewline) {

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
-import se.alipsa.ride.code.TextCodeArea;
 
 import java.io.File;
 

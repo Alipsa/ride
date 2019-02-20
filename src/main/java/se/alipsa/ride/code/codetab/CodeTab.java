@@ -1,11 +1,7 @@
 package se.alipsa.ride.code.codetab;
 
-import static se.alipsa.ride.Constants.FLOWPANE_INSETS;
-
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -13,12 +9,13 @@ import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 
 import java.io.File;
+
+import static se.alipsa.ride.Constants.FLOWPANE_INSETS;
 
 public class CodeTab extends TextAreaTab {
 

@@ -45,37 +45,30 @@ public class GifDecoder {
    * File read status: Unable to open source.
    */
   public static final int STATUS_OPEN_ERROR = 2;
-
+  protected static final int MaxStackSize = 4096;
   protected BufferedInputStream in;
   protected int status;
-
   protected int width; // full image width
   protected int height; // full image height
   protected boolean gctFlag; // global color table used
   protected int gctSize; // size of global color table
   protected int loopCount = 1; // iterations; 0 = repeat forever
-
   protected int[] gct; // global color table
   protected int[] lct; // local color table
   protected int[] act; // active color table
-
   protected int bgIndex; // background color index
   protected int bgColor; // background color
   protected int lastBgColor; // previous bg color
   protected int pixelAspect; // pixel aspect ratio
-
   protected boolean lctFlag; // local color table flag
   protected boolean interlace; // interlace flag
   protected int lctSize; // local color table size
-
   protected int ix, iy, iw, ih; // current image rectangle
   protected Rectangle lastRect; // last image rect
   protected BufferedImage image; // current frame
   protected BufferedImage lastImage; // previous frame
-
   protected byte[] block = new byte[256]; // current data block
   protected int blockSize = 0; // block size
-
   // last graphic control extension info
   protected int dispose = 0;
   // 0=no action; 1=leave in place; 2=restore to bg; 3=restore to prev
@@ -83,10 +76,7 @@ public class GifDecoder {
   protected boolean transparency = false; // use transparent color
   protected int delay = 0; // delay in milliseconds
   protected int transIndex; // transparent color index
-
-  protected static final int MaxStackSize = 4096;
   // max decoder pixel stack size
-
   // LZW decoder working arrays
   protected short[] prefix;
   protected byte[] suffix;
@@ -95,16 +85,6 @@ public class GifDecoder {
 
   protected ArrayList frames; // frames read from current file
   protected int frameCount;
-
-  static class GifFrame {
-    public GifFrame(BufferedImage im, int del) {
-      image = im;
-      delay = del;
-    }
-
-    public BufferedImage image;
-    public int delay;
-  }
 
   /**
    * Gets display duration for specified frame.
@@ -775,5 +755,14 @@ public class GifDecoder {
     do {
       readBlock();
     } while ((blockSize > 0) && !err());
+  }
+
+  static class GifFrame {
+    public BufferedImage image;
+    public int delay;
+    public GifFrame(BufferedImage im, int del) {
+      image = im;
+      delay = del;
+    }
   }
 }
