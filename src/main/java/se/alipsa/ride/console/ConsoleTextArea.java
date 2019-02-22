@@ -11,7 +11,7 @@ import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 public class ConsoleTextArea extends CodeArea {
 
   private static final String WARN_SIZE_MSG = "\nMaximum size for console reached, printing to standard out until console is cleared\n";
-  public static int MAX_LENGTH = 900_000;
+  public static int MAX_LENGTH = 1_500_000;
   Logger log = LoggerFactory.getLogger(ConsoleTextArea.class);
   private StringBuilder buffer = new StringBuilder();
   private StringBuilder warnBuffer = new StringBuilder();

@@ -181,4 +181,7 @@ public class Ride extends Application {
     return Preferences.userRoot().node(Ride.class.getName());
   }
 
+  public Scene getScene() {
+    return scene;
+  }
 }

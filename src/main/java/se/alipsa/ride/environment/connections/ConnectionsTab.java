@@ -1,7 +1,9 @@
 package se.alipsa.ride.environment.connections;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -10,6 +12,8 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
@@ -186,12 +190,16 @@ public class ConnectionsTab extends Tab {
         TreeView treeView = createMetaDataTree(metaDataList, connectionName);
         Scene dialog = new Scene(treeView);
         Stage stage = new Stage();
+        stage.initModality(Modality.NONE);
+        stage.initOwner(gui.getStage());
         stage.setTitle(connectionName + " connection view");
         stage.setScene(dialog);
         setNormalCursor();
         stage.show();
-        stage.toFront();
         gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("rm(connectionsTabDf)").toString());
+        stage.toFront();
+        stage.requestFocus();
+        stage.setAlwaysOnTop(false);
       } catch (Exception ex) {
         setNormalCursor();
         ExceptionAlert.showAlert("Failed to create connection tree view", ex);
