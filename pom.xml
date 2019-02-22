@@ -173,6 +173,28 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>testfx-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -313,28 +335,6 @@ release.tag=${release.tag}
                     <artifactId>org.eclipse.jgit</artifactId>
                     <version>5.2.0.201812061821-r</version>
                 </dependency-->
-
-                <dependency>
-                    <groupId>org.junit.jupiter</groupId>
-                    <artifactId>junit-jupiter-api</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-library</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.testfx</groupId>
-                    <artifactId>testfx-core</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.testfx</groupId>
-                    <artifactId>testfx-junit5</artifactId>
-                    <scope>test</scope>
-                </dependency>
-
             </dependencies>
 
             <build>
@@ -489,18 +489,6 @@ release.tag=${release.tag}
                     <artifactId>org.eclipse.jgit</artifactId>
                     <version>5.2.0.201812061821-r</version>
                 </dependency-->
-
-                <dependency>
-                    <groupId>org.junit.jupiter</groupId>
-                    <artifactId>junit-jupiter-api</artifactId>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-library</artifactId>
-                    <scope>test</scope>
-                </dependency>
-
             </dependencies>
 
             <build>
