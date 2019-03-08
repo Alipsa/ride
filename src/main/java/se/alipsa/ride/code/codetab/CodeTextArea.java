@@ -34,7 +34,7 @@ public class CodeTextArea extends TextCodeArea {
   // Will be too long for styling the textarea but useful for suggestions using ctrl + tab
   // see https://github.com/FXMisc/RichTextFX/issues/91 for some ideas
   private static final String[] FUNCTIONS = new String[]{
-      "abs", "acos", "addNA", "aggregate", "agrep", "alist", "all", "all.equal", "all.names", "all.vars", "any", "anyDuplicated", "anyNA", "apply", "append", "aperm", "array", "args", "asin", "atan", "atan2", "as.array", "as.call", "as.character", "as.complex", "as.data.frame", "as.Date", "as.difftime", "as.double", "as.environment", "as.expression", "as.factor", "as.hexmode", "as.integer", "as.list", "as.null", "as.matrix", "as.numeric", "as.ordered", "as.pairlist", "as.POSIXct", "as.POSIXlt", "as.single", "as.vector", "attach", "attr", "attributes",
+      "abs", "acos", "addNA", "aggregate", "agrep", "alist", "all", "all.equal", "all.names", "all.vars", "any", "anyDuplicated", "anyNA", "apply", "append", "aperm", "array", "args", "asin", "atan", "atan2", "as.array", "as.call", "as.character", "as.complex", "as.data.frame", "as.Date", "as.difftime", "as.double", "as.environment", "as.expression", "as.factor", "as.hexmode", "as.integer", "as.list", "as.matrix", "as.null", "as.numeric", "as.ordered", "as.pairlist", "as.POSIXct", "as.POSIXlt", "as.single", "as.vector", "attach", "attr", "attributes",
       "backsolve", "baseenv", "basename", "beta", "besselI", "besselK", "besselJ", "besselY", "bindtextdomain", "bitwAnd", "bitwNot", "bitwOr", "bitwShiftL", "bitwShiftR", "bitwXor", "body", "bquote", "browser", "browserCondition", "browserSetDebug", "browserText", "builtins", "by", "bzfile",
       "c", "call", "casefold", "cat", "cbind", "ceiling", "charmatch", "chartr", "chol", "chol2inv", "choose", "class", "close", "col", "colMeans", "colnames", "colSums", "comment", "complex", "conflicts", "cos", "cospi", "cummax", "cummin", "cumsum", "cumprod", "curlGetHeaders", "cut",
       "data.class", "data.frame", "deparse", "date", "det", "determinant", "detach", "dget", "dbinom", "diag", "diff", "difftime", "digamma", "dim", "dimnames", "dnorm", "dir.create", "dir.exists", "dirname", "do.call", "dontCheck", "dpois", "dput", "drop", "dunif", "duplicated",
@@ -172,6 +172,7 @@ public class CodeTextArea extends TextCodeArea {
     return spansBuilder.create();
   }
 
+  // TODO: as. does not work: find a better way to autocomplete
   @Override
   public void autoComplete() {
     String line = getText(getCurrentParagraph());
