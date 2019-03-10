@@ -1,8 +1,5 @@
 package se.alipsa.ride.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,7 +16,6 @@ import java.util.stream.Collectors;
 
 public class FileUtils {
 
-  private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
   /**
    * Gets a reference to a file or folder in the classpath. Useful for getting test resources and
@@ -120,7 +116,7 @@ public class FileUtils {
     }
 
     if (destFile.exists()) {
-      logger.info("File " + destFile.getAbsolutePath() + " already exists");
+      System.out.println("File " + destFile.getAbsolutePath() + " already exists");
       return destFile;
     }
     toDir.mkdirs();

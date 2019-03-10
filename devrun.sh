@@ -16,6 +16,7 @@ function getProperty {
 }
 
 echo "# Reading property from $PROPERTY_FILE"
+VERSION=$(getProperty "version")
 JAR_NAME=$(getProperty "jar.name")
 RELEASE_TAG=$(getProperty "release.tag")
 
@@ -23,4 +24,5 @@ TARGET=${PWD}/target/${JAR_NAME}
 
 cd src/bin
 mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
+java -cp ~/.m2/repository/se/alipsa/ride/${VERSION}/${JAR_NAME} se.alipsa.ride.splash.SplashScreen &
 mvn exec:java -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}

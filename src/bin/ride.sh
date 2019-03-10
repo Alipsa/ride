@@ -11,6 +11,7 @@ function getProperty {
    echo $PROP_VALUE | xargs
 }
 
+VERSION=$(getProperty "version")
 JAR_NAME=$(getProperty "jar.name")
 RELEASE_TAG=$(getProperty "release.tag")
 
@@ -21,4 +22,5 @@ mkdir -p ${LIB_DIR}
 export PATH=$PATH:${LIB_DIR}
 
 mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
+java -cp ~/.m2/repository/se/alipsa/ride/${VERSION}/${JAR_NAME} se.alipsa.ride.splash.SplashScreen &
 mvn exec:java -Duser.home=$HOME -Djava.library.path=${LIB_DIR} -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG} --no-snapshot-updates
