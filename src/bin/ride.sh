@@ -21,6 +21,8 @@ LIB_DIR=${DIR}/lib
 mkdir -p ${LIB_DIR}
 export PATH=$PATH:${LIB_DIR}
 
+java -cp ${JAR_NAME} se.alipsa.ride.splash.SplashScreen &
+
 mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
-java -cp ~/.m2/repository/se/alipsa/ride/${VERSION}/${JAR_NAME} se.alipsa.ride.splash.SplashScreen &
+
 mvn exec:java -Duser.home=$HOME -Djava.library.path=${LIB_DIR} -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG} --no-snapshot-updates

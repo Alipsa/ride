@@ -20,8 +20,8 @@ if not exist %LIB_DIR% mkdir %LIB_DIR%
 
 set "PATH=%PATH%;%LIB_DIR%"
 
-call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
+start javaw -cp %JAR_NAME% se.alipsa.ride.splash.SplashScreen
 
-start javaw -cp ~\.m2\repository\se\alipsa\ride\%VERSION%\%JAR_NAME% se.alipsa.ride.splash.SplashScreen
+call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
 
 call mvn "exec:java" -Djava.library.path="%LIB_DIR%" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG% --no-snapshot-updates

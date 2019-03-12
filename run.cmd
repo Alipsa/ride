@@ -16,8 +16,8 @@ set TARGET=%DIR%\target\%jar.name%
 
 cd src/bin
 
-call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
+start javaw -cp %TARGET% se.alipsa.ride.splash.SplashScreen
 
-start javaw -cp ~\.m2\repository\se\alipsa\ride\%VERSION%\%JAR_NAME% se.alipsa.ride.splash.SplashScreen
+:: call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
 
 call mvn "exec:java" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%

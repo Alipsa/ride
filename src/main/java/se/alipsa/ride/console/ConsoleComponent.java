@@ -399,6 +399,7 @@ public class ConsoleComponent extends BorderPane {
     console.append("");
     console.append("Running hamcrest tests");
     console.append("----------------------");
+    engine.put("inout", gui.getInoutComponent());
     List<TestResult> results = new ArrayList<>();
     results.add(runTest(script, title));
     //now run each testFunction in that file, in the same Session
