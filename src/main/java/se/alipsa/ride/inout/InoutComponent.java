@@ -161,7 +161,7 @@ public class InoutComponent extends TabPane implements InOut {
 
   private void showInViewer(Table table, String[] title) {
     Platform.runLater(() -> {
-          viewer.viewTable(table.getColList(), table.getRowList(), title);
+          viewer.viewTable(table, title);
           SingleSelectionModel<Tab> selectionModel = getSelectionModel();
           selectionModel.select(viewer);
         }

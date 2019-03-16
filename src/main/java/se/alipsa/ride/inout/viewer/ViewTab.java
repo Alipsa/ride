@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import se.alipsa.ride.model.Table;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -25,7 +26,9 @@ public class ViewTab extends Tab {
     setContent(viewPane);
   }
 
-  public void viewTable(List<String> colList, List<List<Object>> rowList, String... title) {
+  public void viewTable(Table table, String... title) {
+    List<String> colList = table.getColList();
+    List<List<Object>> rowList = table.getRowList();
     NumberFormat numberFormatter = NumberFormat.getInstance();
     numberFormatter.setGroupingUsed(false);
 
