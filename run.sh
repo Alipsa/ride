@@ -24,4 +24,4 @@ cd src/bin
 
 java -cp ${TARGET} se.alipsa.ride.splash.SplashScreen &
 #mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
-mvn exec:java -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
+mvn exec:java -Dride.jar=${TARGET} -Drelease.tag=${VERSION}

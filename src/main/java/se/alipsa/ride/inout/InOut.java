@@ -20,4 +20,7 @@ public interface InOut {
    * display data in the Viewer tab
    */
   void View(SEXP sexp, String... title);
+
+  /** Return the current active script file or null if is has not been saved yet */
+  String scriptFile();
 }

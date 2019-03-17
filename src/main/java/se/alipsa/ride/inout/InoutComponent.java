@@ -20,6 +20,9 @@ import se.alipsa.ride.model.Table;
 import se.alipsa.ride.utils.Alerts;
 
 import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class InoutComponent extends TabPane implements InOut {
 
@@ -148,6 +151,21 @@ public class InoutComponent extends TabPane implements InOut {
     }
   }
 
+  @Override
+  public String scriptFile() {
+
+    final FutureTask<String> query = new FutureTask<>(() -> {
+      File file = gui.getCodeComponent().getActiveTab().getFile();
+      return file == null ? null : file.getAbsolutePath();
+    });
+    Platform.runLater(query);
+    try {
+      return query.get();
+    } catch (InterruptedException | ExecutionException e) {
+      e.printStackTrace();
+      return null;
+    }
+  }
 
   private void view(Matrix mat, String... title) {
     Table table = new Table(mat);

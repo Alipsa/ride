@@ -92,7 +92,6 @@ public class CodeComponent extends BorderPane {
   }
 
   public void addTab(File file, TabType type) {
-    List<String> lines;
     TextAreaTab tab;
     String title = file.getName();
     switch (type) {
@@ -115,8 +114,6 @@ public class CodeComponent extends BorderPane {
         tab = new TxtTab(title, gui);
     }
     try {
-      //lines = Files.readAllLines(file.toPath(), Charset.defaultCharset());
-      //String content = String.join("\n", lines);
       byte[] textBytes = FileUtils.readFileToByteArray(file);
       CharsetToolkit toolkit = new CharsetToolkit(textBytes);
       toolkit.setEnforce8Bit(true);
