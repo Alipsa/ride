@@ -18,6 +18,4 @@ cd src/bin
 
 start javaw -cp %TARGET% se.alipsa.ride.splash.SplashScreen
 
-:: call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
-
-call mvn "exec:java" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
+call mvn "exec:java" -Dride.jar=%TARGET% -Drelease.tag=%VERSION%
