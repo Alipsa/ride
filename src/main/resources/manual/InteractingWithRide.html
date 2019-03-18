@@ -1,0 +1,60 @@
+<html>
+<head>
+    <style>
+        .javadoc {
+            color: gray;
+        }
+    </style>
+</head>
+<h1>Interacting with Ride</h1>
+Ride injects an inout component into the session.<br/>
+<br/>
+It is defined as follows:<br/>
+<div class="javadoc">
+<br/>
+/**<br/>
+* display an image in the Plot tab<br/>
+*/
+</div>
+void display(Node node, String... title);<br/>
+<br/>
+<div class="javadoc">
+/**<br/>
+* display an image in the Plot tab<br/>
+*/
+</div>
+void display(Image img, String... title);<br/>
+<br/>
+Here is an example:<br/>
+<div style="background-color: aliceblue">
+    library(grDevices)<br/>
+    library(graphics)<br/>
+    <br/>
+    # plot a svg image to a file<br/>
+    fileName <- "/tmp/svgplot.svg"<br/>
+    svg(fileName)<br/>
+    plot(sin, -pi, 2*pi)<br/>
+    <br/>
+    dev.off()<br/>
+    <br/>
+    # rideutils provides ways to bridge over from R to Java to be able to interact with the IDE<br/>
+    library("se.alipsa:rideutils")<br/>
+    # convert the image to a a javafx Image and display it in ride<br/>
+    inout$display(readImage(fileName), "svgplot")<br/>
+</div>
+<div class="javadoc">
+<br/>
+/**<br/>
+* display data in the Viewer tab, e.g. list, data.frame, matrix<br/>
+*/
+</div>
+void View(SEXP sexp, String... title);<br/>
+<br/>
+<div class="javadoc">
+/** Return the current active script file or null if is has not been saved yet */
+</div>
+String scriptFile();<br/>
+<br/>
+
+
+</html>

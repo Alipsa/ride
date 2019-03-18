@@ -3,8 +3,12 @@ package se.alipsa.ride.menu;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.fxmisc.richtext.CodeArea;
 import org.renjin.eval.Session;
@@ -23,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -158,11 +163,52 @@ public class MainMenu extends MenuBar {
 
   private Menu createHelpMenu() {
     Menu menu = new Menu("Help");
+    
+    MenuItem manual = new MenuItem("User Manual");
+    manual.setOnAction(this::diplayUserManual);
+    
     MenuItem about = new MenuItem("About Ride");
     about.setOnAction(this::displayAbout);
 
-    menu.getItems().addAll(about);
+    menu.getItems().addAll(manual, about);
     return menu;
+  }
+
+  private void diplayUserManual(ActionEvent actionEvent) {
+    WebView browser = new WebView();
+    WebEngine webEngine = browser.getEngine();
+    BorderPane borderPane = new BorderPane();
+    borderPane.setCenter(browser);
+
+    FlowPane linkPane = new FlowPane();
+    borderPane.setTop(linkPane);
+
+    URL interactionUrl = FileUtils.getResourceUrl("manual/InteractingWithRide.html");
+    URL shortcutsUrl = FileUtils.getResourceUrl("manual/KeyBoardShortcuts.html");
+
+    Button rideShortCuts = new Button("Ride keyboard shortcuts");
+    rideShortCuts.setOnAction(e -> webEngine.load(shortcutsUrl.toExternalForm()));
+
+    Button interactingWithRideButton = new Button("Interacting with Ride");
+    interactingWithRideButton.setOnAction(e -> webEngine.load(interactionUrl.toExternalForm()));
+
+    linkPane.getChildren().addAll(rideShortCuts, interactingWithRideButton);
+
+
+    Scene dialog = new Scene(borderPane);
+    Stage stage = new Stage();
+    stage.initModality(Modality.NONE);
+    stage.initOwner(gui.getStage());
+    stage.setTitle("User Manual");
+    stage.setScene(dialog);
+    stage.show();
+    webEngine.load(shortcutsUrl.toExternalForm());
+    stage.toFront();
+    stage.requestFocus();
+    stage.setAlwaysOnTop(false);
+
+
+
   }
 
   private void displayAbout(ActionEvent actionEvent) {
