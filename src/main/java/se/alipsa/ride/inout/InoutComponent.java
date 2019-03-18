@@ -18,6 +18,7 @@ import se.alipsa.ride.inout.plot.PlotsTab;
 import se.alipsa.ride.inout.viewer.ViewTab;
 import se.alipsa.ride.model.Table;
 import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
 import java.util.concurrent.Callable;
@@ -151,6 +152,11 @@ public class InoutComponent extends TabPane implements InOut {
     }
   }
 
+  /**
+   * As this is called from the script engine which runs on a separate thread
+   * any gui interaction must be performed in a Platform.runLater
+   * @return the file from the active tab or null if the active tab has never been saved
+   */
   @Override
   public String scriptFile() {
 
@@ -162,7 +168,7 @@ public class InoutComponent extends TabPane implements InOut {
     try {
       return query.get();
     } catch (InterruptedException | ExecutionException e) {
-      e.printStackTrace();
+      Platform.runLater(() -> ExceptionAlert.showAlert("Failed to get file from active tab", e));
       return null;
     }
   }

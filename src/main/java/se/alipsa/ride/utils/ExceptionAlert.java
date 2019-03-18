@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -37,6 +38,7 @@ public class ExceptionAlert extends Alert {
 
     textArea.setMaxWidth(Double.MAX_VALUE);
     textArea.setMaxHeight(Double.MAX_VALUE);
+    textArea.setMinHeight(Region.USE_PREF_SIZE);
 
 
     Label label = new Label("The exception stacktrace was:");
@@ -47,9 +49,12 @@ public class ExceptionAlert extends Alert {
     expContent.setMaxWidth(Double.MAX_VALUE);
     expContent.add(label, 0, 0);
     expContent.add(textArea, 0, 1);
+    expContent.setMinHeight(Region.USE_PREF_SIZE);
 
     // Set expandable Exception into the dialog pane.
     alert.getDialogPane().setExpandableContent(expContent);
+
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
     alert.showAndWait();
   }
