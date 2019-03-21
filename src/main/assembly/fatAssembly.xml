@@ -48,7 +48,9 @@
       <directory>src/bin/</directory>
       <outputDirectory>.</outputDirectory>
       <includes>
-        <include>*.xml</include>
+        <include>ride.xml</include>
+        <include>*.md</include>
+        <include>ride-offline.cmd</include>
       </includes>
     </fileSet>
     <fileSet>
@@ -56,8 +58,6 @@
       <outputDirectory>.</outputDirectory>
       <includes>
         <include>ride-offline.sh</include>
-        <include>ride-offline.cmd</include>
-        <include>*.md</include>
       </includes>
       <lineEnding>unix</lineEnding>
       <fileMode>0755</fileMode>

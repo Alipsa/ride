@@ -43,7 +43,9 @@
       <directory>src/bin/</directory>
       <outputDirectory>.</outputDirectory>
       <includes>
-        <include>*.xml</include>
+        <include>pom.xml</include>
+        <include>*.md</include>
+        <include>ride.cmd</include>
       </includes>
     </fileSet>
     <fileSet>
@@ -51,8 +53,6 @@
       <outputDirectory>.</outputDirectory>
       <includes>
         <include>ride.sh</include>
-        <include>ride.cmd</include>
-        <include>*.md</include>
       </includes>
       <lineEnding>unix</lineEnding>
       <fileMode>0755</fileMode>
