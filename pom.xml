@@ -53,7 +53,7 @@
             <dependency>
                 <groupId>org.renjin.cran</groupId>
                 <artifactId>RJDBC</artifactId>
-                <version>10.0.14</version>
+                <version>10.0.15-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -115,6 +115,33 @@
                 <artifactId>org.eclipse.jgit</artifactId>
                 <version>5.2.0.201812061821-r</version>
             </dependency-->
+
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>1.4.197</version>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>42.2.5</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-simple</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.15</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>7.2.0.jre8</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -278,12 +305,7 @@ release.tag=${release.tag}
                 <dependency>
                     <groupId>org.renjin.cran</groupId>
                     <artifactId>RJDBC</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>joda-time</groupId>
-                    <artifactId>joda-time</artifactId>
-                    <scope>provided</scope>
+                    <!--scope>provided</scope-->
                 </dependency>
 
                 <dependency>
@@ -454,34 +476,20 @@ release.tag=${release.tag}
                     <artifactId>RJDBC</artifactId>
                 </dependency>
                 <dependency>
-                    <groupId>joda-time</groupId>
-                    <artifactId>joda-time</artifactId>
-                </dependency>
-                <dependency>
                     <groupId>com.h2database</groupId>
                     <artifactId>h2</artifactId>
-                    <version>1.4.197</version>
                 </dependency>
                 <dependency>
                     <groupId>org.postgresql</groupId>
                     <artifactId>postgresql</artifactId>
-                    <version>42.2.5</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.slf4j</groupId>
-                            <artifactId>slf4j-simple</artifactId>
-                        </exclusion>
-                    </exclusions>
                 </dependency>
                 <dependency>
                     <groupId>mysql</groupId>
                     <artifactId>mysql-connector-java</artifactId>
-                    <version>8.0.15</version>
                 </dependency>
                 <dependency>
                     <groupId>com.microsoft.sqlserver</groupId>
                     <artifactId>mssql-jdbc</artifactId>
-                    <version>7.2.0.jre8</version>
                 </dependency>
                 <!-- Git integration Core Library -->
                 <!--dependency>
