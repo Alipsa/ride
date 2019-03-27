@@ -305,12 +305,7 @@ release.tag=${release.tag}
                 <dependency>
                     <groupId>org.renjin.cran</groupId>
                     <artifactId>RJDBC</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>joda-time</groupId>
-                    <artifactId>joda-time</artifactId>
-                    <scope>provided</scope>
+                    <!--scope>provided</scope-->
                 </dependency>
 
                 <dependency>
@@ -479,10 +474,6 @@ release.tag=${release.tag}
                 <dependency>
                     <groupId>org.renjin.cran</groupId>
                     <artifactId>RJDBC</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>joda-time</groupId>
-                    <artifactId>joda-time</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>com.h2database</groupId>
