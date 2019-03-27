@@ -22,6 +22,6 @@ set "PATH=%PATH%;%LIB_DIR%"
 
 start javaw -cp %JAR_NAME% se.alipsa.ride.splash.SplashScreen
 
-call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
+call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG% --no-snapshot-updates
 
 call mvn "exec:java" -Djava.library.path="%LIB_DIR%" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG% --no-snapshot-updates
