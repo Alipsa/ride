@@ -100,9 +100,8 @@
         <dependency>
             <groupId>org.renjin.cran</groupId>
             <artifactId>RJDBC</artifactId>
-            <version>10.0.14</version>
+            <version>10.0.15-SNAPSHOT</version>
         </dependency>
-        <!-- temp fix for missing joda-time in RJDBC -->
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -194,6 +193,19 @@
                             <version>1.0-SNAPSHOT</version>
                             <packaging>jar</packaging>
                             <file>lib/rideutils-1.0-SNAPSHOT.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>installRJDBC</id>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>org.renjin.cran</groupId>
+                            <artifactId>RJDBC</artifactId>
+                            <version>10.0.15-SNAPSHOT</version>
+                            <packaging>jar</packaging>
+                            <file>lib/RJDBC-10.0.15-SNAPSHOT.jar</file>
                         </configuration>
                     </execution>
                 </executions>
