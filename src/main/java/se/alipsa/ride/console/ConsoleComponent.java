@@ -178,7 +178,7 @@ public class ConsoleComponent extends BorderPane {
     if (ClasspathPackageLoader.class.getSimpleName().equals(pkgLoaderName)) {
       return new ClasspathPackageLoader(parentClassLoader);
     }
-    log.info("parentClassLoader = {}, remoteRepositories = {}", parentClassLoader, remoteRepositories);
+    //log.info("parentClassLoader = {}, remoteRepositories = {}", parentClassLoader, remoteRepositories);
     AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
     //loader.setRepositoryListener(new ConsoleRepositoryListener(System.out));
     //loader.setTransferListener(new ConsoleTransferListener(System.out));

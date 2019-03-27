@@ -52,6 +52,11 @@
             </dependency>
             <dependency>
                 <groupId>org.renjin.cran</groupId>
+                <artifactId>DBI</artifactId>
+                <version>1.0.0-b9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.renjin.cran</groupId>
                 <artifactId>RJDBC</artifactId>
                 <version>10.0.15-SNAPSHOT</version>
             </dependency>
@@ -304,8 +309,12 @@ release.tag=${release.tag}
                 </dependency>
                 <dependency>
                     <groupId>org.renjin.cran</groupId>
+                    <artifactId>DBI</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.renjin.cran</groupId>
                     <artifactId>RJDBC</artifactId>
-                    <!--scope>provided</scope-->
                 </dependency>
 
                 <dependency>
@@ -470,6 +479,10 @@ release.tag=${release.tag}
                 <dependency>
                     <groupId>org.apache.tika</groupId>
                     <artifactId>tika-core</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.renjin.cran</groupId>
+                    <artifactId>DBI</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>org.renjin.cran</groupId>

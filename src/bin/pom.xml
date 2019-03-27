@@ -99,6 +99,11 @@
         </dependency>
         <dependency>
             <groupId>org.renjin.cran</groupId>
+            <artifactId>DBI</artifactId>
+            <version>1.0.0-b9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.renjin.cran</groupId>
             <artifactId>RJDBC</artifactId>
             <version>10.0.15-SNAPSHOT</version>
         </dependency>
@@ -197,6 +202,7 @@
                     </execution>
                     <execution>
                         <id>installRJDBC</id>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>install-file</goal>
                         </goals>
