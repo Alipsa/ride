@@ -154,22 +154,29 @@ public class InoutComponent extends TabPane implements InOut {
 
   /**
    * As this is called from the script engine which runs on a separate thread
-   * any gui interaction must be performed in a Platform.runLater
+   * any gui interaction must be performed in a Platform.runLater (not sure if this qualifies as gui interaction though)
+   * TODO: If the error is not printed after extensive testing then remove the catch IllegalStateException block
    * @return the file from the active tab or null if the active tab has never been saved
    */
   @Override
   public String scriptFile() {
 
-    final FutureTask<String> query = new FutureTask<>(() -> {
+    try {
       File file = gui.getCodeComponent().getActiveTab().getFile();
       return file == null ? null : file.getAbsolutePath();
-    });
-    Platform.runLater(query);
-    try {
-      return query.get();
-    } catch (InterruptedException | ExecutionException e) {
-      Platform.runLater(() -> ExceptionAlert.showAlert("Failed to get file from active tab", e));
-      return null;
+    } catch (IllegalStateException e) {
+      log.info("Not on javafx thread", e);
+      final FutureTask<String> query = new FutureTask<>(() -> {
+        File file = gui.getCodeComponent().getActiveTab().getFile();
+        return file == null ? null : file.getAbsolutePath();
+      });
+      Platform.runLater(query);
+      try {
+        return query.get();
+      } catch (InterruptedException | ExecutionException e1) {
+        Platform.runLater(() -> ExceptionAlert.showAlert("Failed to get file from active tab", e1));
+        return null;
+      }
     }
   }
 

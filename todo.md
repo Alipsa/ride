@@ -1,6 +1,10 @@
 # Todo / Roadmap
 
 ## version 1.1
+
+###
+Output to console also when running hamcrest tests
+
 ### Run hamcrest tests (done)
 Create a new runbutton when hamcrest tests are detected
  
