@@ -87,13 +87,13 @@ public class ConsoleTextArea extends CodeArea {
     }
   }
 
-  private void appendToFxThread(String text) {
+  public void appendToFxThread(String text) {
     Platform.runLater(() -> {
       appendText(text);
     });
   }
 
-  private void appendWarnToFxThread(String text) {
+  public void appendWarnToFxThread(String text) {
     Platform.runLater(() -> {
       appendWarning(text, true);
     });

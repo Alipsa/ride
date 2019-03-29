@@ -399,9 +399,9 @@ public class ConsoleComponent extends BorderPane {
   }
 
   public void runTests(String script, String title) {
-    console.append("");
-    console.append("Running hamcrest tests");
-    console.append("----------------------");
+    console.appendToFxThread("");
+    console.appendToFxThread("Running hamcrest tests");
+    console.appendToFxThread("----------------------");
     long start = System.currentTimeMillis();
     engine.put("inout", gui.getInoutComponent());
     List<TestResult> results = new ArrayList<>();
@@ -437,12 +437,13 @@ public class ConsoleComponent extends BorderPane {
       long end = System.currentTimeMillis();
 
       String duration = DurationFormatUtils.formatDuration(end-start, "'minutes: 'mm' seconds: 'ss' millis: 'SSS");
-      console.append("R tests summary:");
-      console.append("----------------");
-      console.append(format("Tests run: {}, Sucesses: {}, Failures: {}, Errors: {}",
+      console.appendToFxThread("R tests summary:");
+      console.appendToFxThread("----------------");
+      console.appendToFxThread(format("Tests run: {}, Sucesses: {}, Failures: {}, Errors: {}",
           results.size(), successCount, failCount, errorCount));
-      console.append("Time: " + duration);
+      console.appendToFxThread("Time: " + duration);
     } catch (IOException e) {
+      console.appendWarnToFxThread("Failed to run test");
       ExceptionAlert.showAlert("Failed to run test", e);
     }
     updateEnvironment();
@@ -458,7 +459,7 @@ public class ConsoleComponent extends BorderPane {
     try {
       engine.eval(script);
       result.setResult(TestResult.OutCome.SUCCESS);
-      console.append(format("\t# {}: Success", testName));
+      console.appendToFxThread(format("\t# {}: Success", testName));
       return result;
     } catch (org.renjin.parser.ParseException e) {
       exception = e;
@@ -473,7 +474,7 @@ public class ConsoleComponent extends BorderPane {
       exception = e;
       issue = e.getClass().getSimpleName() + " thrown when running script " + testName;
     }
-    console.appendWarning(format("\t# {}: Failure detected: {}", testName, formatMessage(exception)));
+    console.appendWarnToFxThread(format("\t# {}: Failure detected: {}", testName, formatMessage(exception)));
     result.setResult(TestResult.OutCome.FAILURE);
     result.setError(exception);
     result.setIssue(issue);
