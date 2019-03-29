@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.vfs2.FileSystemException;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -43,6 +44,8 @@ import se.alipsa.ride.utils.FileUtils;
 
 import javax.script.ScriptException;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -399,35 +402,49 @@ public class ConsoleComponent extends BorderPane {
     console.append("");
     console.append("Running hamcrest tests");
     console.append("----------------------");
+    long start = System.currentTimeMillis();
     engine.put("inout", gui.getInoutComponent());
     List<TestResult> results = new ArrayList<>();
-    results.add(runTest(script, title));
-    //now run each testFunction in that file, in the same Session
-    for (Symbol name : session.getGlobalEnvironment().getSymbolNames()) {
-      String methodName = name.getPrintName().trim();
-      if (methodName.startsWith("test.")) {
-        SEXP value = session.getGlobalEnvironment().getVariable(session.getTopLevelContext(), name);
-        if (isNoArgsFunction(value)) {
-          Context context = session.getTopLevelContext();
-          results.add(runTestFunction(context, title, name));
+    try (OutputStream out = new AppenderOutputStream();
+         WarningAppenderOutputStream err = new WarningAppenderOutputStream();
+         PrintWriter outputWriter = new PrintWriter(out);
+         PrintWriter errWriter = new PrintWriter(err)
+    ) {
+      session.setStdOut(outputWriter);
+      session.setStdErr(errWriter);
+      results.add(runTest(script, title));
+      //now run each testFunction in that file, in the same Session
+      for (Symbol name : session.getGlobalEnvironment().getSymbolNames()) {
+        String methodName = name.getPrintName().trim();
+        if (methodName.startsWith("test.")) {
+          SEXP value = session.getGlobalEnvironment().getVariable(session.getTopLevelContext(), name);
+          if (isNoArgsFunction(value)) {
+            Context context = session.getTopLevelContext();
+            results.add(runTestFunction(context, title, name));
+          }
         }
       }
+      Map<TestResult.OutCome, List<TestResult>> resultMap = results.stream()
+          .collect(Collectors.groupingBy(TestResult::getResult));
+
+      List<TestResult> successResults = resultMap.get(TestResult.OutCome.SUCCESS);
+      List<TestResult> failureResults = resultMap.get(TestResult.OutCome.FAILURE);
+      List<TestResult> errorResults = resultMap.get(TestResult.OutCome.ERROR);
+      long successCount = successResults == null ? 0 : successResults.size();
+      long failCount = failureResults == null ? 0 : failureResults.size();
+      long errorCount = errorResults == null ? 0 : errorResults.size();
+
+      long end = System.currentTimeMillis();
+
+      String duration = DurationFormatUtils.formatDuration(end-start, "'minutes: 'mm' seconds: 'ss' millis: 'SSS");
+      console.append("R tests summary:");
+      console.append("----------------");
+      console.append(format("Tests run: {}, Sucesses: {}, Failures: {}, Errors: {}",
+          results.size(), successCount, failCount, errorCount));
+      console.append("Time: " + duration);
+    } catch (IOException e) {
+      ExceptionAlert.showAlert("Failed to run test", e);
     }
-    Map<TestResult.OutCome, List<TestResult>> resultMap = results.stream()
-        .collect(Collectors.groupingBy(TestResult::getResult));
-
-    List<TestResult> successResults = resultMap.get(TestResult.OutCome.SUCCESS);
-    List<TestResult> failureResults = resultMap.get(TestResult.OutCome.FAILURE);
-    List<TestResult> errorResults = resultMap.get(TestResult.OutCome.ERROR);
-    long successCount = successResults == null ? 0 : successResults.size();
-    long failCount = failureResults == null ? 0 : failureResults.size();
-    long errorCount = errorResults == null ? 0 : errorResults.size();
-
-    console.append("R tests summary:");
-    console.append("----------------");
-    console.append(format("Tests run: {}, Sucesses: {}, Failures: {}, Errors: {}",
-        results.size(), successCount, failCount, errorCount));
-
     updateEnvironment();
     promptAndScrollToEnd();
   }
