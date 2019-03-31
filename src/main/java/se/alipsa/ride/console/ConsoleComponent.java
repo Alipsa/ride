@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.vfs2.FileSystemException;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -399,20 +400,31 @@ public class ConsoleComponent extends BorderPane {
   }
 
   public void runTests(String script, String title) {
-    console.appendToFxThread("");
-    console.appendToFxThread("Running hamcrest tests");
-    console.appendToFxThread("----------------------");
+    console.append("");
+    console.append("Running hamcrest tests");
+    console.append("----------------------");
     long start = System.currentTimeMillis();
     engine.put("inout", gui.getInoutComponent());
     List<TestResult> results = new ArrayList<>();
-    try (OutputStream out = new AppenderOutputStream();
-         WarningAppenderOutputStream err = new WarningAppenderOutputStream();
+    try (StringWriter out = new StringWriter();
+         StringWriter err = new StringWriter();
          PrintWriter outputWriter = new PrintWriter(out);
          PrintWriter errWriter = new PrintWriter(err)
     ) {
       session.setStdOut(outputWriter);
       session.setStdErr(errWriter);
-      results.add(runTest(script, title));
+      TestResult result =  runTest(script, title);
+      results.add(result);
+      console.append(prefixLine(out, "\t"));
+      out.getBuffer().setLength(0);
+      console.append(prefixLine(err, "\t"));
+      err.getBuffer().setLength(0);
+      if (TestResult.OutCome.SUCCESS.equals(result.getResult())) {
+        console.append(format("\t# {}: Success", title));
+      } else {
+        console.appendWarning(format("\t# {}: Failure detected: {}", title, formatMessage(result.getError())));
+      }
+
       //now run each testFunction in that file, in the same Session
       for (Symbol name : session.getGlobalEnvironment().getSymbolNames()) {
         String methodName = name.getPrintName().trim();
@@ -421,6 +433,16 @@ public class ConsoleComponent extends BorderPane {
           if (isNoArgsFunction(value)) {
             Context context = session.getTopLevelContext();
             results.add(runTestFunction(context, title, name));
+            console.append(prefixLine(out, "\t\t"));
+            out.getBuffer().setLength(0);
+            console.append(prefixLine(err, "\t\t"));
+            err.getBuffer().setLength(0);
+            String testName = title + ": " + methodName;
+            if (TestResult.OutCome.SUCCESS.equals(result.getResult())) {
+              console.append(format("\t\t# {}: Success", testName));
+            } else {
+              console.appendWarning(format("\t\t# {}: Failure detected: {}", testName, formatMessage(result.getError())));
+            }
           }
         }
       }
@@ -436,18 +458,27 @@ public class ConsoleComponent extends BorderPane {
 
       long end = System.currentTimeMillis();
 
-      String duration = DurationFormatUtils.formatDuration(end-start, "'minutes: 'mm' seconds: 'ss' millis: 'SSS");
-      console.appendToFxThread("R tests summary:");
-      console.appendToFxThread("----------------");
-      console.appendToFxThread(format("Tests run: {}, Sucesses: {}, Failures: {}, Errors: {}",
+      String duration = DurationFormatUtils.formatDuration(end-start, "mm 'minutes, 'ss' seconds, 'SSS' millis '");
+      console.append("R tests summary:");
+      console.append("----------------");
+      console.append(format("Tests run: {}, Successes: {}, Failures: {}, Errors: {}",
           results.size(), successCount, failCount, errorCount));
-      console.appendToFxThread("Time: " + duration);
+      console.append("Time: " + duration + "\n");
     } catch (IOException e) {
-      console.appendWarnToFxThread("Failed to run test");
+      console.appendWarning("Failed to run test");
       ExceptionAlert.showAlert("Failed to run test", e);
     }
     updateEnvironment();
     promptAndScrollToEnd();
+  }
+
+  private String prefixLine(StringWriter out, String prefix) {
+    StringBuffer buf = new StringBuffer();
+    String lines = out.toString() == null ? "" : out.toString();
+    for(String line : lines.trim().split("\n")) {
+      buf.append(prefix).append(line).append("\n");
+    }
+    return StringUtils.stripEnd(buf.toString(), "\n");
   }
 
 
@@ -456,10 +487,10 @@ public class ConsoleComponent extends BorderPane {
     String issue;
     Exception exception;
     String testName = title;
+    console.append(format("\t# Running test {}", title));
     try {
       engine.eval(script);
       result.setResult(TestResult.OutCome.SUCCESS);
-      console.appendToFxThread(format("\t# {}: Success", testName));
       return result;
     } catch (org.renjin.parser.ParseException e) {
       exception = e;
@@ -474,7 +505,6 @@ public class ConsoleComponent extends BorderPane {
       exception = e;
       issue = e.getClass().getSimpleName() + " thrown when running script " + testName;
     }
-    console.appendWarnToFxThread(format("\t# {}: Failure detected: {}", testName, formatMessage(exception)));
     result.setResult(TestResult.OutCome.FAILURE);
     result.setError(exception);
     result.setIssue(issue);
@@ -502,7 +532,6 @@ public class ConsoleComponent extends BorderPane {
     TestResult result = new TestResult(title);
     try {
       context.evaluate(FunctionCall.newCall(name));
-      console.append(format("\t\t# {}: Success", testName));
       result.setResult(TestResult.OutCome.SUCCESS);
       return result;
     } catch (EvalException e) {
@@ -515,8 +544,6 @@ public class ConsoleComponent extends BorderPane {
       exception = e;
       issue = e.getClass().getSimpleName() + " thrown when running script " + testName;
     }
-
-    console.appendWarning(format("\t\t# {}: Failure detected: {}", testName, formatMessage(exception)));
     result.setResult(TestResult.OutCome.FAILURE);
     result.setError(exception);
     result.setIssue(issue);

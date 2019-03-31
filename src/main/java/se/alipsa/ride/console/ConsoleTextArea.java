@@ -60,6 +60,12 @@ public class ConsoleTextArea extends CodeArea {
     }
   }
 
+  public void appendFx(String text, boolean... skipNewline) {
+    Platform.runLater(() -> {
+      append(text, skipNewline);
+    });
+  }
+
   public void appendWarning(String text, boolean... skipNewline) {
     appendWithStyle(text, "warning", skipNewline);
   }
@@ -87,7 +93,7 @@ public class ConsoleTextArea extends CodeArea {
     }
   }
 
-  public void appendToFxThread(String text) {
+  private void appendToFxThread(String text) {
     Platform.runLater(() -> {
       appendText(text);
     });

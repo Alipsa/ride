@@ -111,6 +111,14 @@ Copyright Fasterxml under Apache 2.0 license.
 Used to detect file types as Files.probeContentType is inconsistent over different OS's;
 Apache 2.0 license.
 
+### org.apache.commons-lang3
+Used for time and string formatting
+Apache 2.0 license.
+
+### org.apache.commons-io
+Used for reading files content
+Apache 2.0 license.
+
 ### codehaus:guessencoding
 Used to detect file encoding (Charset). Copyright 2002-2007 Guillaume Laforge under Apache 2.0 License
 
