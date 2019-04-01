@@ -1,5 +1,7 @@
 package se.alipsa.ride.code;
 
+import static se.alipsa.ride.Constants.INDENT;
+
 import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
@@ -19,8 +21,6 @@ import java.time.Duration;
 import java.util.*;
 
 public abstract class TextCodeArea extends CodeArea implements TabTextArea {
-
-  protected static final String TAB = "  ";
 
   protected File file;
 
@@ -67,14 +67,14 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
           String selected = selectedTextProperty().getValue();
           if ("".equals(selected)) {
             String line = getText(getCurrentParagraph());
-            if (line.startsWith(TAB)) {
-              String s = line.substring(TAB.length());
+            if (line.startsWith(INDENT)) {
+              String s = line.substring(INDENT.length());
               int orgPos = getCaretPosition();
               moveTo(getCurrentParagraph(), 0);
               int start = getCaretPosition();
               int end = start + line.length();
               replaceText(start, end, s);
-              moveTo(orgPos - TAB.length());
+              moveTo(orgPos - INDENT.length());
             } else {
               //NO tab in the beginning, nothing to do
             }
@@ -105,8 +105,8 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
             moveTo(getCurrentParagraph(), 0);
             int start = getCaretPosition();
             int end = start + line.length();
-            replaceText(start, end, TAB + line);
-            moveTo(orgPos + TAB.length());
+            replaceText(start, end, INDENT + line);
+            moveTo(orgPos + INDENT.length());
           }
         }
     );
@@ -117,7 +117,7 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
     String[] lines = selected.split("\n");
     List<String> untabbed = new ArrayList<>();
     for (String line : lines) {
-      if (line.startsWith(TAB)) {
+      if (line.startsWith(INDENT)) {
         untabbed.add(line.substring(2));
       } else {
         untabbed.add(line);
@@ -128,12 +128,12 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
 
   protected String indentText(String selected) {
     if (selected == null || "".equals(selected)) {
-      return TAB;
+      return INDENT;
     }
     String[] lines = selected.split("\n");
     List<String> tabbed = new ArrayList<>();
     for (String line : lines) {
-      tabbed.add(TAB + line);
+      tabbed.add(INDENT + line);
     }
     return String.join("\n", tabbed);
   }

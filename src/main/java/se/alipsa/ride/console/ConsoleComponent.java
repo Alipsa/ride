@@ -18,7 +18,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.vfs2.FileSystemException;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -50,8 +49,7 @@ import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static se.alipsa.ride.Constants.ICON_HEIGHT;
-import static se.alipsa.ride.Constants.ICON_WIDTH;
+import static se.alipsa.ride.Constants.*;
 import static se.alipsa.ride.utils.StringUtils.format;
 
 public class ConsoleComponent extends BorderPane {
@@ -64,6 +62,7 @@ public class ConsoleComponent extends BorderPane {
       .getResourceUrl("image/running.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
   private static final Image IMG_WAITING = new Image(FileUtils
       .getResourceUrl("image/waiting.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
+  private static final String DOUBLE_INDENT = INDENT + INDENT;
   private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
   private RenjinScriptEngine engine;
   private Session session;
@@ -400,6 +399,7 @@ public class ConsoleComponent extends BorderPane {
   }
 
   public void runTests(String script, String title) {
+    running();
     console.append("");
     console.append("Running hamcrest tests");
     console.append("----------------------");
@@ -415,15 +415,7 @@ public class ConsoleComponent extends BorderPane {
       session.setStdErr(errWriter);
       TestResult result =  runTest(script, title);
       results.add(result);
-      console.append(prefixLine(out, "\t"));
-      out.getBuffer().setLength(0);
-      console.append(prefixLine(err, "\t"));
-      err.getBuffer().setLength(0);
-      if (TestResult.OutCome.SUCCESS.equals(result.getResult())) {
-        console.append(format("\t# {}: Success", title));
-      } else {
-        console.appendWarning(format("\t# {}: Failure detected: {}", title, formatMessage(result.getError())));
-      }
+      printResult(title, out, err, result, DOUBLE_INDENT);
 
       //now run each testFunction in that file, in the same Session
       for (Symbol name : session.getGlobalEnvironment().getSymbolNames()) {
@@ -432,20 +424,13 @@ public class ConsoleComponent extends BorderPane {
           SEXP value = session.getGlobalEnvironment().getVariable(session.getTopLevelContext(), name);
           if (isNoArgsFunction(value)) {
             Context context = session.getTopLevelContext();
-            results.add(runTestFunction(context, title, name));
-            console.append(prefixLine(out, "\t\t"));
-            out.getBuffer().setLength(0);
-            console.append(prefixLine(err, "\t\t"));
-            err.getBuffer().setLength(0);
-            String testName = title + ": " + methodName;
-            if (TestResult.OutCome.SUCCESS.equals(result.getResult())) {
-              console.append(format("\t\t# {}: Success", testName));
-            } else {
-              console.appendWarning(format("\t\t# {}: Failure detected: {}", testName, formatMessage(result.getError())));
-            }
+            result = runTestFunction(context, title, name);
+            results.add(result);
+            printResult(methodName, out, err, result, DOUBLE_INDENT);
           }
         }
       }
+      long end = System.currentTimeMillis();
       Map<TestResult.OutCome, List<TestResult>> resultMap = results.stream()
           .collect(Collectors.groupingBy(TestResult::getResult));
 
@@ -456,10 +441,8 @@ public class ConsoleComponent extends BorderPane {
       long failCount = failureResults == null ? 0 : failureResults.size();
       long errorCount = errorResults == null ? 0 : errorResults.size();
 
-      long end = System.currentTimeMillis();
-
       String duration = DurationFormatUtils.formatDuration(end-start, "mm 'minutes, 'ss' seconds, 'SSS' millis '");
-      console.append("R tests summary:");
+      console.append("\nR tests summary:");
       console.append("----------------");
       console.append(format("Tests run: {}, Successes: {}, Failures: {}, Errors: {}",
           results.size(), successCount, failCount, errorCount));
@@ -470,15 +453,34 @@ public class ConsoleComponent extends BorderPane {
     }
     updateEnvironment();
     promptAndScrollToEnd();
+    waiting();
   }
 
-  private String prefixLine(StringWriter out, String prefix) {
+  private void printResult(String title, StringWriter out, StringWriter err, TestResult result, String indent) {
+    String lines = prefixLines(out, indent);
+    if (!"".equals(lines.trim())) {
+      console.append(lines);
+    }
+    out.getBuffer().setLength(0);
+    lines = prefixLines(err, indent);
+    if (!"".equals(lines.trim())) {
+      console.append(lines);
+    }
+    err.getBuffer().setLength(0);
+    if (TestResult.OutCome.SUCCESS.equals(result.getResult())) {
+      console.append(indent + format("# {}: Success", title));
+    } else {
+      console.appendWarning(indent + format("# {}: Failure detected: {}", title, formatMessage(result.getError())));
+    }
+  }
+
+  private String prefixLines(StringWriter out, String prefix) {
     StringBuffer buf = new StringBuffer();
     String lines = out.toString() == null ? "" : out.toString();
     for(String line : lines.trim().split("\n")) {
       buf.append(prefix).append(line).append("\n");
     }
-    return StringUtils.stripEnd(buf.toString(), "\n");
+    return prefix + buf.toString().trim();
   }
 
 
@@ -487,7 +489,7 @@ public class ConsoleComponent extends BorderPane {
     String issue;
     Exception exception;
     String testName = title;
-    console.append(format("\t# Running test {}", title));
+    console.append(INDENT + format("# Running test {}", title).trim());
     try {
       engine.eval(script);
       result.setResult(TestResult.OutCome.SUCCESS);
@@ -526,7 +528,7 @@ public class ConsoleComponent extends BorderPane {
   private TestResult runTestFunction(final Context context, final String title, final Symbol name) {
     String methodName = name.getPrintName().trim() + "()";
     String testName = title + ": " + methodName;
-    console.append(format("\t# Running test function {} in {}", methodName, title));
+    console.append(INDENT + format("# Running test function {} in {}", methodName, title).trim());
     String issue;
     Exception exception;
     TestResult result = new TestResult(title);

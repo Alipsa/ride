@@ -15,4 +15,6 @@ public class Constants {
   public static final Insets FLOWPANE_INSETS = new Insets(5, 10, 5, 5);
 
   public static final KeyCodeCombination KEY_CODE_COPY = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
+
+  public static final String INDENT = "  ";
 }

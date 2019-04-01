@@ -10,7 +10,8 @@ greaterThan <- function(expected) {
 
 test.readImage <- function() {
     import(javafx.scene.image.Image)
-    
+    print("reading image")
+    print("another line")
     img <- readImage("image/logo.png")
     assertTrue(exists("img"))
     assertThat(img$getHeight(), greaterThan(0))
@@ -21,10 +22,15 @@ test.failure <- function() {
 }
 
 test.testwith1args <- function(arg1) {
-	assertTrue(TRUE)
+  print("Some output in test.testwith1args")  
+  assertTrue(TRUE)
 }
 test.testwith2args <- function(arg1, arg2) {
 	assertTrue(TRUE)
+}
+
+test.testWithZeroArgs <- function() {
+  test.testwith1args(TRUE)
 }
 
 runTests <- function() {
