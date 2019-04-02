@@ -26,6 +26,10 @@
     -fx-background-color: rgba(50, 50, 50, 255);
 }
 
+.styled-text-area .selection {
+    -fx-fill: darkslateblue;
+}
+
 /* see https://www.rapidtables.com/web/css/css-color.html for color names */
 .assign {
     -fx-fill: lightgray;
