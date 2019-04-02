@@ -2,6 +2,10 @@
     /*-fx-base: rgba(60, 63, 65, 255); // dark*/
     -fx-base: rgba(40, 40, 40, 255);
     /*-fx-base: darkslategray;*/
+    /*
+    -fx-accent: darkslateblue;
+    -fx-focus-color: darkslateblue;
+    */
 }
 
 .text {
@@ -10,7 +14,9 @@
 .styled-text-area {
     /*-fx-background-color: darkslategray;*/
     -fx-background-color: rgba(40, 40, 40, 255);
+    -fx-highlight-fill: red; /* does not work! */
 }
+
 .lineno {
     /*-fx-background-color: rgba(45, 48, 50, 255);*/
     -fx-background-color: rgba(30, 30, 30, 255);
@@ -26,8 +32,18 @@
     -fx-background-color: rgba(50, 50, 50, 255);
 }
 
-.styled-text-area .selection {
-    -fx-fill: darkslateblue;
+
+.styled-text-area .text {
+    /*
+    -fx-accent: darkslateblue;
+    -fx-focus-color: darkslateblue;
+    -fx-background-fill: red;
+     */
+    -fx-highlight-fill: red;
+}
+
+.styled-text-area .caret {
+    -fx-stroke: yellow;
 }
 
 /* see https://www.rapidtables.com/web/css/css-color.html for color names */
