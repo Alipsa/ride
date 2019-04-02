@@ -20,6 +20,7 @@ import se.alipsa.ride.utils.TableViewWithVisibleRowCount;
 
 import java.util.List;
 
+import static se.alipsa.ride.Constants.*;
 import static se.alipsa.ride.console.ConsoleComponent.PACKAGE_LOADER_PREF;
 import static se.alipsa.ride.console.ConsoleTextArea.MAX_LENGTH;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
@@ -29,6 +30,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
   private TableViewWithVisibleRowCount<Repo> reposTable;
   private ComboBox<Class> pkgLoaderCb;
   private IntField intField;
+  private ComboBox<String> themes;
 
   public GlobalOptionsDialog(Ride gui) {
     setTitle("Global options");
@@ -139,6 +141,13 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     intField = new IntField(1000, Integer.MAX_VALUE, gui.getPrefs().getInt(CONSOLE_MAX_LENGTH_PREF, MAX_LENGTH));
     grid.add(intField, 1, 2);
 
+    Label styleTheme = new Label("Style theme");
+    grid.add(styleTheme, 0, 3);
+    themes = new ComboBox<>();
+    themes.getItems().addAll(DARK_THEME, BRIGHT_THEME);
+    themes.getSelectionModel().select(gui.getPrefs().get(THEME, BRIGHT_THEME));
+    grid.add(themes, 1, 3);
+
     getDialogPane().setPrefSize(800, 400);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     setResizable(true);
@@ -173,6 +182,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     result.put(GlobalOptions.REMOTE_REPOSITORIES, reposTable.getItems());
     result.put(GlobalOptions.PKG_LOADER, pkgLoaderCb.getSelectionModel().getSelectedItem());
     result.put(CONSOLE_MAX_LENGTH_PREF, intField.getValue());
+    result.put(THEME, themes.getValue());
     return result;
   }
 

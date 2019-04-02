@@ -1,0 +1,114 @@
+.root {
+    /*-fx-base: rgba(60, 63, 65, 255); // dark*/
+    -fx-base: rgba(40, 40, 40, 255);
+    /*-fx-base: darkslategray;*/
+}
+
+.text {
+    -fx-fill: white;
+}
+.styled-text-area {
+    /*-fx-background-color: darkslategray;*/
+    -fx-background-color: rgba(40, 40, 40, 255);
+}
+.lineno {
+    /*-fx-background-color: rgba(45, 48, 50, 255);*/
+    -fx-background-color: rgba(30, 30, 30, 255);
+}
+
+.lineno .text {
+    -fx-fill: darkgray;
+}
+
+.paragraph-box:has-caret {
+    /*-fx-background-color: rgba(70, 73, 75, 255);*/
+    /*-fx-background-color: rgba(57, 89, 89, 255); */
+    -fx-background-color: rgba(50, 50, 50, 255);
+}
+
+/* see https://www.rapidtables.com/web/css/css-color.html for color names */
+.assign {
+    -fx-fill: lightgray;
+    -fx-font-weight: bold;
+}
+
+.brace {
+    -fx-fill: silver;
+    -fx-font-weight: bold;
+}
+
+.bracket {
+    -fx-fill: silver;
+    -fx-font-weight: bold;
+}
+
+.comment {
+    /*-fx-fill: darkseagreen;*/
+    -fx-fill: gray
+}
+
+.digit {
+    -fx-fill: lightblue;
+    /* -fx-fill:navy; */
+}
+
+.error {
+    -fx-fill: red;
+}
+
+.function {
+    -fx-font-style: italic;
+}
+
+.keyword {
+    -fx-fill: lightskyblue;
+    /* -fx-font-weight: bold; */
+}
+
+.operator {
+    /*-fx-fill: darkslategray;*/
+    -fx-fill: gainsboro;
+}
+
+.paren {
+    -fx-fill: silver;
+    -fx-font-weight: bold;
+}
+
+.console {
+    -fx-font-family: consolas;
+    -fx-font-size: 10pt;
+}
+
+.semicolon {
+    -fx-font-weight: bold;
+}
+
+.string {
+    -fx-fill: lightgreen;
+}
+
+.warning {
+    -fx-fill: red;
+}
+
+.xml_tagmark {
+    -fx-fill: gray;
+}
+.xml_anytag {
+    -fx-fill: blue;
+}
+.xml_paren {
+    -fx-fill: darkgray;
+    -fx-font-weight: bold;
+}
+.xml_attribute {
+    -fx-fill: magenta;
+}
+.xml_avalue {
+    -fx-fill: green;
+}
+
+.xml_comment {
+    -fx-fill: darkseagreen;
+}

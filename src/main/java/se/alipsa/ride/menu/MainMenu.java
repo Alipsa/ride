@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
+import static se.alipsa.ride.Constants.THEME;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 
 public class MainMenu extends MenuBar {
@@ -269,6 +270,13 @@ public class MainMenu extends MenuBar {
     int consoleMaxLength = result.getInt(CONSOLE_MAX_LENGTH_PREF);
     gui.getPrefs().putInt(CONSOLE_MAX_LENGTH_PREF, consoleMaxLength);
     gui.getConsoleComponent().setConsoleMaxSize(consoleMaxLength);
+
+    String theme = (String)result.get(THEME);
+    if (!gui.getScene().getStylesheets().contains(theme)) {
+      gui.getScene().getStylesheets().clear();
+      gui.addStyleSheet(theme);
+      gui.getPrefs().put(THEME, theme);
+    }
   }
 
   public void disableInterruptMenuItem() {

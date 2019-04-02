@@ -17,4 +17,8 @@ public class Constants {
   public static final KeyCodeCombination KEY_CODE_COPY = new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY);
 
   public static final String INDENT = "  ";
+
+  public static final String THEME = "theme";
+  public static final String DARK_THEME = "darkTheme.css";
+  public static final String BRIGHT_THEME = "brightTheme.css";
 }

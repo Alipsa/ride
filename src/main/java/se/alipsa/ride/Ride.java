@@ -1,5 +1,8 @@
 package se.alipsa.ride;
 
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
@@ -60,8 +63,8 @@ public class Ride extends Application {
     root.setTop(mainMenu);
 
     scene = new Scene(root, 1366, 768);
-    addStyleSheet("keywords.css");
-    addStyleSheet("xml-keywords.css");
+
+    addStyleSheet(getPrefs().get(THEME, BRIGHT_THEME));
 
     SplitPane leftSplitPane = new SplitPane();
     leftSplitPane.setOrientation(Orientation.VERTICAL);
