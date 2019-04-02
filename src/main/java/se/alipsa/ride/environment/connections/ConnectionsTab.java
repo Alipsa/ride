@@ -1,9 +1,9 @@
 package se.alipsa.ride.environment.connections;
 
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
-import javafx.geometry.Rectangle2D;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -12,7 +12,6 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
@@ -57,39 +56,55 @@ public class ConnectionsTab extends Tab {
     inputBox.getChildren().addAll(topInputPane, bottomInputPane);
 
     topInputPane.setPadding(FLOWPANE_INSETS);
-    topInputPane.setSpacing(HGAP);
+    topInputPane.setSpacing(2);
     bottomInputPane.setPadding(FLOWPANE_INSETS);
-    bottomInputPane.setSpacing(HGAP);
+    bottomInputPane.setSpacing(2);
     //inputPane.setVgap(VGAP);
     //inputPane.setHgap(HGAP);
     contentPane.setTop(inputBox);
 
+    VBox nameBox = new VBox();
     Label nameLabel = new Label("Name:");
-    topInputPane.getChildren().add(nameLabel);
+    //topInputPane.getChildren().add(nameLabel);
     nameText = new TextField();
     nameText.setPrefWidth(80);
-    topInputPane.getChildren().add(nameText);
+    nameBox.getChildren().addAll(nameLabel, nameText);
+    topInputPane.getChildren().add(nameBox);
+    topInputPane.setHgrow(nameBox, Priority.SOMETIMES);
 
+    VBox userBox = new VBox();
     Label userLabel = new Label("User:");
-    topInputPane.getChildren().add(userLabel);
+    //topInputPane.getChildren().add(userLabel);
     userText = new TextField(getPrefOrBlank(USER_PREF));
-    topInputPane.getChildren().add(userText);
+    //topInputPane.getChildren().add(userText);
+    topInputPane.setHgrow(userBox, Priority.SOMETIMES);
+    userBox.getChildren().addAll(userLabel, userText);
+    topInputPane.getChildren().add(userBox);
 
+    VBox passwordBox = new VBox();
     Label passwordLabel = new Label("Password:");
-    topInputPane.getChildren().add(passwordLabel);
+    //topInputPane.getChildren().add(passwordLabel);
     passwordField = new PasswordField();
-    topInputPane.getChildren().add(passwordField);
+    //topInputPane.getChildren().add(passwordField);
+    topInputPane.setHgrow(passwordBox, Priority.SOMETIMES);
+    passwordBox.getChildren().addAll(passwordLabel, passwordField);
+    topInputPane.getChildren().add(passwordBox);
 
+    VBox driverBox = new VBox();
     Label driverLabel = new Label("Driver:");
-    bottomInputPane.getChildren().add(driverLabel);
+    //bottomInputPane.getChildren().add(driverLabel);
     driverText = new TextField(getPrefOrBlank(DRIVER_PREF));
-    bottomInputPane.getChildren().add(driverText);
+    bottomInputPane.setHgrow(driverBox, Priority.SOMETIMES);
+    driverBox.getChildren().addAll(driverLabel, driverText);
+    bottomInputPane.getChildren().add(driverBox);
 
+    VBox urlBox = new VBox();
     Label urlLabel = new Label("Url:");
-    bottomInputPane.getChildren().add(urlLabel);
+    //bottomInputPane.getChildren().add(urlLabel);
     urlText = new TextField(getPrefOrBlank(URL_PREF));
-    bottomInputPane.getChildren().add(urlText);
-    bottomInputPane.setHgrow(urlText, Priority.ALWAYS);
+    urlBox.getChildren().addAll(urlLabel, urlText);
+    bottomInputPane.setHgrow(urlBox, Priority.ALWAYS);
+    bottomInputPane.getChildren().add(urlBox);
 
     Button addButton = new Button("Add");
     createConnectionTableView();
@@ -105,7 +120,12 @@ public class ConnectionsTab extends Tab {
         connectionsTable.getItems().add(con);
       }
     });
-    topInputPane.getChildren().add(addButton);
+    VBox buttonBox = new VBox();
+    buttonBox.setPadding(new Insets(10, 10, 0, 10));
+    buttonBox.setSpacing(VGAP);
+    buttonBox.getChildren().add(addButton);
+    buttonBox.alignmentProperty().setValue(Pos.BOTTOM_CENTER);
+    topInputPane.getChildren().add(buttonBox);
   }
 
   private TableView<ConnectionInfo> createConnectionTableView() {
@@ -113,14 +133,19 @@ public class ConnectionsTab extends Tab {
     nameCol.setCellValueFactory(
         new PropertyValueFactory<>("name")
     );
+    nameCol.prefWidthProperty().bind(connectionsTable.widthProperty().multiply(0.2));
+
     TableColumn<ConnectionInfo, String> driverCol = new TableColumn<>("Driver");
     driverCol.setCellValueFactory(
         new PropertyValueFactory<>("driver")
     );
+    driverCol.prefWidthProperty().bind(connectionsTable.widthProperty().multiply(0.3));
+
     TableColumn<ConnectionInfo, String> urlCol = new TableColumn<>("URL");
     urlCol.setCellValueFactory(
         new PropertyValueFactory<>("url")
     );
+    urlCol.prefWidthProperty().bind(connectionsTable.widthProperty().multiply(0.5));
 
     connectionsTable.getColumns().addAll(nameCol, driverCol, urlCol);
     connectionsTable.setRowFactory(tableView -> {
