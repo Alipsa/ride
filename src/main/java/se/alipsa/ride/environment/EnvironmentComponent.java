@@ -2,7 +2,7 @@ package se.alipsa.ride.environment;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
+import org.fxmisc.richtext.InlineCssTextArea;
 import org.renjin.eval.Context;
 import org.renjin.sexp.Environment;
 import org.renjin.sexp.StringVector;
@@ -14,16 +14,16 @@ import java.util.Set;
 
 public class EnvironmentComponent extends TabPane {
 
-  TextArea envTA;
+  InlineCssTextArea envTa;
 
   ConnectionsTab connectionsTab;
 
   public EnvironmentComponent(Ride gui) {
     Tab environment = new Tab();
     environment.setText("Environment");
-    envTA = new TextArea();
-    envTA.setText("Environment");
-    environment.setContent(envTA);
+    envTa = new InlineCssTextArea();
+    envTa.appendText("Environment");
+    environment.setContent(envTa);
     getTabs().add(environment);
 
     Tab history = new Tab();
@@ -37,19 +37,27 @@ public class EnvironmentComponent extends TabPane {
   }
 
   public void setEnvironment(Environment env, Context ctx) {
+    envTa.clear();
     StringVector names = env.getNames();
-    StringBuffer buf = new StringBuffer();
+    //StringBuffer buf = new StringBuffer();
     for (String varName : names) {
+      int start = envTa.getContent().getLength();
+      envTa.appendText(varName);
+      envTa.setStyle(start, start + varName.length(), "-fx-font-weight: bold;");
+      envTa.appendText("\t" + env.getVariable(ctx, varName).toString() + "\n");
+      /*
       buf.append(varName);
       buf.append("\t");
       buf.append(env.getVariable(ctx, varName).toString());
       buf.append("\n");
+      */
     }
-    envTA.setText(buf.toString());
+    //envTa.appendText(buf.toString());
   }
 
   public void clearEnvironment() {
-    envTA.setText("");
+    //envTa.setText("");
+    envTa.clear();
   }
 
   public Set<ConnectionInfo> getConnections() {
