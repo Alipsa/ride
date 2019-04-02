@@ -10,8 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -34,11 +33,14 @@ public class ConnectionsTab extends Tab {
 
   private static final String DRIVER_PREF = "ConnectionsTab.driver";
   private static final String URL_PREF = "ConnectionsTab.url";
+  private static final String USER_PREF = "ConnectionsTab.user";
   private BorderPane contentPane;
   private Ride gui;
   private TextField nameText;
   private TextField driverText;
   private TextField urlText;
+  private TextField userText;
+  private PasswordField passwordField;
   private TableView<ConnectionInfo> connectionsTable = new TableView<>();
 
   private TreeItemComparator treeItemComparator = new TreeItemComparator();
@@ -49,42 +51,61 @@ public class ConnectionsTab extends Tab {
     contentPane = new BorderPane();
     setContent(contentPane);
 
-    FlowPane inputPane = new FlowPane();
-    inputPane.setPadding(FLOWPANE_INSETS);
-    inputPane.setVgap(VGAP);
-    inputPane.setHgap(HGAP);
-    contentPane.setTop(inputPane);
+    VBox inputBox = new VBox();
+    HBox topInputPane = new HBox();
+    HBox bottomInputPane = new HBox();
+    inputBox.getChildren().addAll(topInputPane, bottomInputPane);
+
+    topInputPane.setPadding(FLOWPANE_INSETS);
+    topInputPane.setSpacing(HGAP);
+    bottomInputPane.setPadding(FLOWPANE_INSETS);
+    bottomInputPane.setSpacing(HGAP);
+    //inputPane.setVgap(VGAP);
+    //inputPane.setHgap(HGAP);
+    contentPane.setTop(inputBox);
 
     Label nameLabel = new Label("Name:");
-    inputPane.getChildren().add(nameLabel);
+    topInputPane.getChildren().add(nameLabel);
     nameText = new TextField();
     nameText.setPrefWidth(80);
-    inputPane.getChildren().add(nameText);
+    topInputPane.getChildren().add(nameText);
+
+    Label userLabel = new Label("User:");
+    topInputPane.getChildren().add(userLabel);
+    userText = new TextField(getPrefOrBlank(USER_PREF));
+    topInputPane.getChildren().add(userText);
+
+    Label passwordLabel = new Label("Password:");
+    topInputPane.getChildren().add(passwordLabel);
+    passwordField = new PasswordField();
+    topInputPane.getChildren().add(passwordField);
 
     Label driverLabel = new Label("Driver:");
-    inputPane.getChildren().add(driverLabel);
+    bottomInputPane.getChildren().add(driverLabel);
     driverText = new TextField(getPrefOrBlank(DRIVER_PREF));
-    inputPane.getChildren().add(driverText);
+    bottomInputPane.getChildren().add(driverText);
 
     Label urlLabel = new Label("Url:");
-    inputPane.getChildren().add(urlLabel);
+    bottomInputPane.getChildren().add(urlLabel);
     urlText = new TextField(getPrefOrBlank(URL_PREF));
-    inputPane.getChildren().add(urlText);
+    bottomInputPane.getChildren().add(urlText);
+    bottomInputPane.setHgrow(urlText, Priority.ALWAYS);
 
     Button addButton = new Button("Add");
     createConnectionTableView();
     contentPane.setCenter(connectionsTable);
 
     addButton.setOnAction(e -> {
-      ConnectionInfo con = new ConnectionInfo(nameText.getText(), driverText.getText(), urlText.getText());
+      ConnectionInfo con = new ConnectionInfo(nameText.getText(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
       //connections.add(con);
       setPref(DRIVER_PREF, driverText.getText());
       setPref(URL_PREF, urlText.getText());
+      setPref(USER_PREF, userText.getText());
       if (!connectionsTable.getItems().contains(con)) {
         connectionsTable.getItems().add(con);
       }
     });
-    inputPane.getChildren().add(addButton);
+    topInputPane.getChildren().add(addButton);
   }
 
   private TableView<ConnectionInfo> createConnectionTableView() {

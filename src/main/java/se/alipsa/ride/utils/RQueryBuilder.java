@@ -6,9 +6,22 @@ public class RQueryBuilder {
 
   public static StringBuilder baseRQueryString(ConnectionInfo con, String command, String sql) {
     StringBuilder str = new StringBuilder();
+    String user = con.getUser() == null ? "" : con.getUser().trim();
+    String userString = "";
+    if (!"".equals(user)) {
+      userString = ", user = '" + user + "'";
+    }
+    String password = con.getPassword() == null ? "" : con.getPassword().trim();
+    String passwordString = "";
+    if (!"".equals(password)) {
+      passwordString = ", password = '" + password + "'";
+    }
     str.append("library('DBI')\n library('org.renjin.cran:RJDBC')\n")
         .append("RQueryBuilderDrv <- JDBC('").append(con.getDriver()).append("')\n")
-        .append("RQueryBuilderCon <- dbConnect(RQueryBuilderDrv, url='").append(con.getUrl()).append("')\n")
+        .append("RQueryBuilderCon <- dbConnect(RQueryBuilderDrv, url = '").append(con.getUrl()).append("'")
+        .append(userString)
+        .append(passwordString)
+        .append(")\n")
         .append(command).append("(RQueryBuilderCon, \"").append(sql).append("\")");
     return str;
   }

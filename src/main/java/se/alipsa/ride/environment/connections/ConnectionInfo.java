@@ -7,17 +7,23 @@ public class ConnectionInfo implements Comparable {
   private final SimpleStringProperty name;
   private final SimpleStringProperty driver;
   private final SimpleStringProperty url;
+  private final SimpleStringProperty user;
+  private final SimpleStringProperty password;
 
   public ConnectionInfo() {
     this.name = new SimpleStringProperty();
     this.driver = new SimpleStringProperty();
     this.url = new SimpleStringProperty();
+    this.user = new SimpleStringProperty();
+    this.password = new SimpleStringProperty();
   }
 
-  public ConnectionInfo(String name, String driver, String url) {
+  public ConnectionInfo(String name, String driver, String url, String user, String password) {
     this.name = new SimpleStringProperty(name);
     this.driver = new SimpleStringProperty(driver);
     this.url = new SimpleStringProperty(url);
+    this.user = new SimpleStringProperty(user);
+    this.password = new SimpleStringProperty(password);
   }
 
   public String getName() {
@@ -46,6 +52,22 @@ public class ConnectionInfo implements Comparable {
 
   public String toString() {
     return name.get();
+  }
+
+  public String getUser() {
+    return user.get();
+  }
+
+  public void setUser(String user) {
+    this.user.set(user);
+  }
+
+  public String getPassword() {
+    return password.get();
+  }
+
+  public void setPassword(String password) {
+    this.password.set(password);
   }
 
   @Override
