@@ -43,8 +43,11 @@ public class EnvironmentComponent extends TabPane {
     for (String varName : names) {
       int start = envTa.getContent().getLength();
       envTa.appendText(varName);
-      envTa.setStyle(start, start + varName.length(), "-fx-font-weight: bold;");
-      envTa.appendText("\t" + env.getVariable(ctx, varName).toString() + "\n");
+      int endVar = start + varName.length();
+      envTa.setStyle(start, endVar, "-fx-font-weight: bold;");
+      String content = env.getVariable(ctx, varName).toString();
+      envTa.appendText("\t" + content + "\n");
+      envTa.setStyle(endVar + 1 , endVar + content.length(), "-fx-font-weight: normal;");
       /*
       buf.append(varName);
       buf.append("\t");

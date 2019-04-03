@@ -39,6 +39,8 @@ public class FileTree extends TreeView {
     this.gui = gui;
     this.codeComponent = gui.getCodeComponent();
 
+    this.getStyleClass().add("fileTree");
+
     String currentPath = new File(getWorkingDirPref()).getAbsolutePath();
     File current = new File(currentPath);
     setWorkingDir(current);

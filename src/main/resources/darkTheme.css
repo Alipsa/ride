@@ -1,18 +1,26 @@
 .root {
-    /*-fx-base: rgba(60, 63, 65, 255); // dark*/
     -fx-base: rgba(40, 40, 40, 255);
-    /*-fx-base: darkslategray;*/
+    -fx-accent: navy;
+    -fx-focus-color: silver;
 }
 
 .text {
     -fx-fill: white;
 }
-.styled-text-area {
-    /*-fx-background-color: darkslategray;*/
+
+.fileTree .tree-cell {
     -fx-background-color: rgba(40, 40, 40, 255);
 }
+
+.fileTree .tree-cell:selected {
+    -fx-background-color: navy;
+}
+
+.styled-text-area {
+    -fx-background-color: rgba(40, 40, 40, 255);
+}
+
 .lineno {
-    /*-fx-background-color: rgba(45, 48, 50, 255);*/
     -fx-background-color: rgba(30, 30, 30, 255);
 }
 
@@ -21,14 +29,11 @@
 }
 
 .paragraph-box:has-caret {
-    /*-fx-background-color: rgba(70, 73, 75, 255);*/
-    /*-fx-background-color: rgba(57, 89, 89, 255); */
     -fx-background-color: rgba(50, 50, 50, 255);
 }
 
-/* TODO: DOES NOT WORK */
-.styled-text-area .selection {
-    -fx-background-color: red;
+.styled-text-area .caret {
+    -fx-stroke: yellow;
 }
 
 /* see https://www.rapidtables.com/web/css/css-color.html for color names */
