@@ -2,7 +2,9 @@ package se.alipsa.ride.model;
 
 import javafx.beans.property.SimpleStringProperty;
 
-public class Repo {
+import java.util.Objects;
+
+public class Repo implements Comparable<Repo> {
   private final SimpleStringProperty id;
   private final SimpleStringProperty type;
   private final SimpleStringProperty url;
@@ -53,5 +55,30 @@ public class Repo {
 
   public SimpleStringProperty urlProperty() {
     return url;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Repo)) return false;
+    Repo repo = (Repo) o;
+    return Objects.equals(id, repo.id) &&
+        Objects.equals(type, repo.type) &&
+        Objects.equals(url, repo.url);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, type, url);
+  }
+
+  @Override
+  public int compareTo(Repo o) {
+    if (o == null) {
+      return -1;
+    }
+    String oStr = o == null ? null : o.getId() + o.getType() + o.getUrl();
+    String tStr = getId() + getType() + getUrl();
+    return tStr.compareTo(oStr);
   }
 }

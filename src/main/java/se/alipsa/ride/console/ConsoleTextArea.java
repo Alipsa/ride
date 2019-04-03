@@ -126,4 +126,8 @@ public class ConsoleTextArea extends CodeArea {
   public void setConsoleMaxSize(int size) {
     MAX_LENGTH = size;
   }
+
+  public int getConsoleMaxSize() {
+    return MAX_LENGTH;
+  }
 }

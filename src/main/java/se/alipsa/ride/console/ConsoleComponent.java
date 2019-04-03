@@ -715,6 +715,10 @@ public class ConsoleComponent extends BorderPane {
     console.setConsoleMaxSize(size);
   }
 
+  public int getConsoleMaxSize() {
+    return console.getConsoleMaxSize();
+  }
+
   class AppenderOutputStream extends OutputStream {
     @Override
     public void write(int b) {

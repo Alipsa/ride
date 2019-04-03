@@ -28,10 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 import static se.alipsa.ride.Constants.THEME;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
@@ -262,14 +259,26 @@ public class MainMenu extends MenuBar {
     }
     GlobalOptions result = res.get();
 
-    gui.getConsoleComponent().setPackageLoader((Class) result.get(GlobalOptions.PKG_LOADER));
-    gui.getConsoleComponent().setRemoterepositories(
-        (List<Repo>) result.get(GlobalOptions.REMOTE_REPOSITORIES),
-        Thread.currentThread().getContextClassLoader()
-    );
+    Class selectedPkgLoader = (Class) result.get(GlobalOptions.PKG_LOADER);
+    if (!selectedPkgLoader.isInstance(gui.getConsoleComponent().getPackageLoader())) {
+      gui.getConsoleComponent().setPackageLoader(selectedPkgLoader);
+    }
+    List<Repo> selectedRepos = (List<Repo>)result.get(GlobalOptions.REMOTE_REPOSITORIES);
+    Collections.sort(selectedRepos);
+    List<Repo> currentRepos = gui.getConsoleComponent().getRemoteRepositories();
+    Collections.sort(currentRepos);
+
+    if (!currentRepos.equals(selectedRepos)) {
+      gui.getConsoleComponent().setRemoterepositories(selectedRepos,
+          Thread.currentThread().getContextClassLoader()
+      );
+    }
+
     int consoleMaxLength = result.getInt(CONSOLE_MAX_LENGTH_PREF);
-    gui.getPrefs().putInt(CONSOLE_MAX_LENGTH_PREF, consoleMaxLength);
-    gui.getConsoleComponent().setConsoleMaxSize(consoleMaxLength);
+    if (gui.getConsoleComponent().getConsoleMaxSize() != consoleMaxLength) {
+      gui.getPrefs().putInt(CONSOLE_MAX_LENGTH_PREF, consoleMaxLength);
+      gui.getConsoleComponent().setConsoleMaxSize(consoleMaxLength);
+    }
 
     String theme = (String)result.get(THEME);
     if (!gui.getScene().getStylesheets().contains(theme)) {
