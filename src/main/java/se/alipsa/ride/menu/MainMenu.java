@@ -262,7 +262,9 @@ public class MainMenu extends MenuBar {
     Class selectedPkgLoader = (Class) result.get(GlobalOptions.PKG_LOADER);
     if (!selectedPkgLoader.isInstance(gui.getConsoleComponent().getPackageLoader())) {
       gui.getConsoleComponent().setPackageLoader(selectedPkgLoader);
+      restartR();
     }
+
     List<Repo> selectedRepos = (List<Repo>)result.get(GlobalOptions.REMOTE_REPOSITORIES);
     Collections.sort(selectedRepos);
     List<Repo> currentRepos = gui.getConsoleComponent().getRemoteRepositories();
@@ -330,6 +332,10 @@ public class MainMenu extends MenuBar {
   }
 
   private void restartR(ActionEvent evt) {
+    restartR();
+  }
+
+  private void restartR() {
     gui.getConsoleComponent().restartR();
     gui.getInoutComponent().setPackages(null);
   }
