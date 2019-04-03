@@ -62,14 +62,14 @@ public class Repo implements Comparable<Repo> {
     if (this == o) return true;
     if (!(o instanceof Repo)) return false;
     Repo repo = (Repo) o;
-    return Objects.equals(id, repo.id) &&
-        Objects.equals(type, repo.type) &&
-        Objects.equals(url, repo.url);
+    return Objects.equals(getId(), repo.getId()) &&
+        Objects.equals(getType(), repo.getType()) &&
+        Objects.equals(getUrl(), repo.getUrl());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, type, url);
+    return Objects.hash(getId(), getType(), getUrl());
   }
 
   @Override
@@ -80,5 +80,10 @@ public class Repo implements Comparable<Repo> {
     String oStr = o == null ? null : o.getId() + o.getType() + o.getUrl();
     String tStr = getId() + getType() + getUrl();
     return tStr.compareTo(oStr);
+  }
+
+  @Override
+  public String toString() {
+    return "Repo(id=" + getId() + ", type=" + getType() + ", url=" + getUrl() + ")";
   }
 }

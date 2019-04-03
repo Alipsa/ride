@@ -20,6 +20,8 @@ public class EnvironmentComponent extends TabPane {
 
   ConnectionsTab connectionsTab;
 
+  int MAX_CONTENT_LENGTH = 200;
+
   public EnvironmentComponent(Ride gui) {
     Tab environment = new Tab();
     environment.setText("Environment");
@@ -48,7 +50,11 @@ public class EnvironmentComponent extends TabPane {
       int endVar = start + varName.length();
       envTa.setStyle(start, endVar, "-fx-font-weight: bold;");
       String content = env.getVariable(ctx, varName).toString();
-      envTa.appendText(INDENT + content + "\n");
+      if (content.length() > MAX_CONTENT_LENGTH) {
+        content = content.substring(0, MAX_CONTENT_LENGTH) + "... (length = " + content.length() + ")";
+      }
+      content = INDENT + content;
+      envTa.appendText( content + "\n");
       envTa.setStyle(endVar + 1 , endVar + content.length(), "-fx-font-weight: normal;");
       /*
       buf.append(varName);

@@ -262,6 +262,7 @@ public class MainMenu extends MenuBar {
     Class selectedPkgLoader = (Class) result.get(GlobalOptions.PKG_LOADER);
     if (!selectedPkgLoader.isInstance(gui.getConsoleComponent().getPackageLoader())) {
       gui.getConsoleComponent().setPackageLoader(selectedPkgLoader);
+      log.info("Package loader changed, restarting R session");
       restartR();
     }
 
@@ -271,6 +272,8 @@ public class MainMenu extends MenuBar {
     Collections.sort(currentRepos);
 
     if (!currentRepos.equals(selectedRepos)) {
+      log.info("Remote repositories changed, restarting R session");
+      log.info("selectedRepos = {}\n currentRepos = {}", selectedRepos, currentRepos);
       gui.getConsoleComponent().setRemoterepositories(selectedRepos,
           Thread.currentThread().getContextClassLoader()
       );
