@@ -1,6 +1,6 @@
 .root {
     -fx-base: rgba(40, 40, 40, 255);
-    -fx-accent: navy;
+    -fx-accent: darkslateblue;
     -fx-focus-color: silver;
 }
 
@@ -13,8 +13,17 @@
 }
 
 .fileTree .tree-cell:selected {
-    -fx-background-color: navy;
+    -fx-background-color: darkslateblue;
 }
+
+.table-view {
+    -fx-background-color: rgba(40, 40, 40, 255);
+}
+
+.table-row-cell:selected {
+    -fx-background-color: darkslateblue;
+}
+
 
 .styled-text-area {
     -fx-background-color: rgba(40, 40, 40, 255);
@@ -33,7 +42,7 @@
 }
 
 .styled-text-area .caret {
-    -fx-stroke: yellow;
+    -fx-stroke: orange;
 }
 
 /* see https://www.rapidtables.com/web/css/css-color.html for color names */
