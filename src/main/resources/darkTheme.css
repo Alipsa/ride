@@ -26,8 +26,9 @@
     -fx-background-color: rgba(50, 50, 50, 255);
 }
 
+/* TODO: DOES NOT WORK */
 .styled-text-area .selection {
-    -fx-fill: darkslateblue;
+    -fx-background-color: red;
 }
 
 /* see https://www.rapidtables.com/web/css/css-color.html for color names */
