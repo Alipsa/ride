@@ -1,5 +1,7 @@
 package se.alipsa.ride.environment;
 
+import static se.alipsa.ride.Constants.INDENT;
+
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.fxmisc.richtext.InlineCssTextArea;
@@ -46,7 +48,7 @@ public class EnvironmentComponent extends TabPane {
       int endVar = start + varName.length();
       envTa.setStyle(start, endVar, "-fx-font-weight: bold;");
       String content = env.getVariable(ctx, varName).toString();
-      envTa.appendText("\t" + content + "\n");
+      envTa.appendText(INDENT + content + "\n");
       envTa.setStyle(endVar + 1 , endVar + content.length(), "-fx-font-weight: normal;");
       /*
       buf.append(varName);
