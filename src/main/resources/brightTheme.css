@@ -1,3 +1,11 @@
+.styled-text-area .env-varName {
+    -fx-fill: black;
+}
+
+.styled-text-area .env-varValue {
+    -fx-fill: dimgray;
+}
+
 /* see https://www.rapidtables.com/web/css/css-color.html for color names */
 .assign {
     -fx-fill: dimgray;

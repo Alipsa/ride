@@ -45,6 +45,14 @@
     -fx-stroke: orange;
 }
 
+.styled-text-area .env-varName {
+    -fx-fill: lightgray;
+}
+
+.styled-text-area .env-varValue {
+    -fx-fill: darkgray;
+}
+
 /* see https://www.rapidtables.com/web/css/css-color.html for color names */
 .assign {
     -fx-fill: lightgray;

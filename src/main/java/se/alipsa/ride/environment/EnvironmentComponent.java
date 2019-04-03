@@ -4,7 +4,9 @@ import static se.alipsa.ride.Constants.INDENT;
 
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.InlineCssTextArea;
+import org.fxmisc.richtext.StyleClassedTextArea;
 import org.renjin.eval.Context;
 import org.renjin.sexp.Environment;
 import org.renjin.sexp.StringVector;
@@ -16,7 +18,7 @@ import java.util.Set;
 
 public class EnvironmentComponent extends TabPane {
 
-  InlineCssTextArea envTa;
+  StyleClassedTextArea envTa;
 
   ConnectionsTab connectionsTab;
 
@@ -25,9 +27,10 @@ public class EnvironmentComponent extends TabPane {
   public EnvironmentComponent(Ride gui) {
     Tab environment = new Tab();
     environment.setText("Environment");
-    envTa = new InlineCssTextArea();
+    envTa = new StyleClassedTextArea();
     envTa.appendText("Environment");
-    environment.setContent(envTa);
+    VirtualizedScrollPane<StyleClassedTextArea> scrollPane = new VirtualizedScrollPane<>(envTa);
+    environment.setContent(scrollPane);
     getTabs().add(environment);
 
     Tab history = new Tab();
@@ -48,14 +51,18 @@ public class EnvironmentComponent extends TabPane {
       int start = envTa.getContent().getLength();
       envTa.appendText(varName);
       int endVar = start + varName.length();
-      envTa.setStyle(start, endVar, "-fx-font-weight: bold;");
+      //envTa.setStyle(start, endVar, "-fx-font-weight: bold;");
+      //envTa.setStyle(start, endVar, "-fx-font-style: italic;");
+      envTa.setStyleClass(start, endVar, "env-varName");
       String content = env.getVariable(ctx, varName).toString();
       if (content.length() > MAX_CONTENT_LENGTH) {
         content = content.substring(0, MAX_CONTENT_LENGTH) + "... (length = " + content.length() + ")";
       }
       content = INDENT + content;
       envTa.appendText( content + "\n");
-      envTa.setStyle(endVar + 1 , endVar + content.length(), "-fx-font-weight: normal;");
+      //envTa.setStyle(endVar + 1 , endVar + content.length(), "-fx-font-weight: normal;");
+      //envTa.setStyle(endVar + 1 , endVar + content.length(), "-fx-font-style: normal;");
+      envTa.setStyleClass(endVar + 1 , endVar + content.length(), "env-varValue");
       /*
       buf.append(varName);
       buf.append("\t");
