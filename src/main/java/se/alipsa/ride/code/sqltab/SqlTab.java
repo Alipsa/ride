@@ -34,14 +34,6 @@ public class SqlTab extends TextAreaTab {
   public SqlTab(String title, Ride gui) {
     super(gui, TabType.SQL);
     setTitle(title);
-    BorderPane pane = new BorderPane();
-
-    FlowPane buttonPane = new FlowPane();
-    buttonPane.setHgap(5);
-    buttonPane.setPadding(new Insets(5, 10, 5, 5));
-    pane.setTop(buttonPane);
-
-    buttonPane.getChildren().add(saveButton);
 
     runButton = new Button("Run select");
     runButton.setDisable(true);
@@ -74,7 +66,6 @@ public class SqlTab extends TextAreaTab {
     sqlTextArea = new SqlTextArea(this);
     VirtualizedScrollPane<SqlTextArea> scrollPane = new VirtualizedScrollPane<>(sqlTextArea);
     pane.setCenter(scrollPane);
-    setContent(pane);
   }
 
   private void runSelectQuery(ActionEvent actionEvent) {

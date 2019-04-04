@@ -1,5 +1,6 @@
 package se.alipsa.ride.code.txttab;
 
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TabType;
@@ -15,7 +16,8 @@ public class TxtTab extends TextAreaTab {
     super(gui, TabType.TXT);
     setTitle(title);
     txtTextArea = new TxtTextArea(this);
-    setContent(txtTextArea);
+    VirtualizedScrollPane<TxtTextArea> txtPane = new VirtualizedScrollPane<>(txtTextArea);
+    pane.setCenter(txtPane);
   }
 
   @Override

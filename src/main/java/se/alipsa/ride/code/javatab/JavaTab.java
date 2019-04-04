@@ -20,8 +20,8 @@ public class JavaTab extends TextAreaTab {
     super(gui, TabType.JAVA);
     setTitle(title);
     javaTextArea = new JavaTextArea(this);
-    VirtualizedScrollPane<JavaTextArea> pane = new VirtualizedScrollPane<>(javaTextArea);
-    setContent(pane);
+    VirtualizedScrollPane<JavaTextArea> javaPane = new VirtualizedScrollPane<>(javaTextArea);
+    pane.setCenter(javaPane);
   }
 
   @Override

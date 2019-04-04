@@ -34,15 +34,6 @@ public class CodeTab extends TextAreaTab {
 
     setTitle(title);
 
-    BorderPane pane = new BorderPane();
-
-    FlowPane buttonPane = new FlowPane();
-    buttonPane.setHgap(5);
-    buttonPane.setPadding(FLOWPANE_INSETS);
-    pane.setTop(buttonPane);
-
-    buttonPane.getChildren().add(saveButton);
-
     //Button runButton = new Button("Run sync");
     //runButton.setOnAction(this::handleRunAction);
 
@@ -59,7 +50,6 @@ public class CodeTab extends TextAreaTab {
     codeTextArea = new CodeTextArea(this);
     VirtualizedScrollPane<CodeTextArea> vPane = new VirtualizedScrollPane<>(codeTextArea);
     pane.setCenter(vPane);
-    setContent(pane);
   }
 
   private void handleRunAction(ActionEvent event) {
