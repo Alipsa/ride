@@ -1,5 +1,6 @@
 package se.alipsa.ride.inout.viewer;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -38,6 +39,22 @@ public class ViewTab extends Tab {
       if (KEY_CODE_COPY.match(event)) {
         copySelectionToClipboard(tableView);
       }
+    });
+
+    tableView.setRowFactory(tv -> {
+      final TableRow<List<String>> row = new TableRow<>();
+      final ContextMenu contextMenu = new ContextMenu();
+      final MenuItem copyMenuItem = new MenuItem("copy");
+      copyMenuItem.setOnAction(event -> {
+        copySelectionToClipboard(tv);
+      });
+      contextMenu.getItems().addAll(copyMenuItem);
+      row.contextMenuProperty().bind(
+          Bindings.when(row.emptyProperty())
+              .then((ContextMenu) null)
+              .otherwise(contextMenu)
+      );
+      return row;
     });
 
     for (int i = 0; i < colList.size(); i++) {

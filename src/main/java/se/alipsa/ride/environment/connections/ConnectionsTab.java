@@ -159,7 +159,6 @@ public class ConnectionsTab extends Tab {
       final MenuItem viewMenuItem = new MenuItem("view connection");
       viewMenuItem.setOnAction(event -> {
         showConnectionMetaData(row.getItem());
-        //Alerts.info("Not yet implemented","Viewing connection meta data is not yet implemented");
       });
       contextMenu.getItems().addAll(viewMenuItem, removeMenuItem);
       row.contextMenuProperty().bind(
