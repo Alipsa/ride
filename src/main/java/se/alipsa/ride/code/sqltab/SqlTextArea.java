@@ -34,7 +34,7 @@ public class SqlTextArea extends TextCodeArea {
       "delete", "depth", "deref", "desc", "descriptor", "destructor", "diagnostics", "dictionary",
       "disconnect", "distinct", "do", "domain", "double", "drop",
 
-      "element", "end", "end-exec", "equals", "escape", "except", "exception", "execute",
+      "element", "else", "end", "end-exec", "equals", "escape", "except", "exception", "execute",
       "exists", "exit", "expand", "expanding",
 
       "false", "first", "float", "for", "foreign", "free", "from", "function", "fusion",
