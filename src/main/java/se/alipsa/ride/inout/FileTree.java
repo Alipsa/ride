@@ -1,10 +1,14 @@
 package se.alipsa.ride.inout;
 
+import static se.alipsa.ride.Constants.KEY_CODE_COPY;
+
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import org.apache.tika.Tika;
 import org.slf4j.Logger;
@@ -24,7 +28,7 @@ import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.Optional;
 
-public class FileTree extends TreeView {
+public class FileTree extends TreeView<File> {
 
   final String folderUrl = FileUtils.getResourceUrl("image/folder.png").toExternalForm();
   final String fileUrl = FileUtils.getResourceUrl("image/file.png").toExternalForm();
@@ -64,6 +68,12 @@ public class FileTree extends TreeView {
       }
     });
 
+    setOnKeyPressed(event -> {
+      if (KEY_CODE_COPY.match(event)) {
+        copySelectionToClipboard();
+      }
+    });
+
     setOnMouseClicked(this::handleClick);
 
     setContextMenu(createContextMenu());
@@ -71,9 +81,13 @@ public class FileTree extends TreeView {
 
   private ContextMenu createContextMenu() {
     ContextMenu menu = new ContextMenu();
+
+    MenuItem copyMI = new MenuItem("Copy name");
+    copyMI.setOnAction(e -> copySelectionToClipboard());
+
     MenuItem createDirMI = new MenuItem("Create dir");
     createDirMI.setOnAction(e -> {
-      TreeItem<File> currentNode = (TreeItem) getSelectionModel().getSelectedItem();
+      TreeItem<File> currentNode = getSelectionModel().getSelectedItem();
       File currentFile = currentNode.getValue();
       File newDir = promptForFile(currentFile, "Create and add dir", "Enter the dir name:");
       if (newDir == null) {
@@ -89,7 +103,7 @@ public class FileTree extends TreeView {
 
     MenuItem createFileMI = new MenuItem("Create file");
     createFileMI.setOnAction(e -> {
-      TreeItem<File> currentNode = (TreeItem) getSelectionModel().getSelectedItem();
+      TreeItem<File> currentNode = getSelectionModel().getSelectedItem();
       File currentFile = currentNode.getValue();
       File newFile = promptForFile(currentFile, "Create and add file", "Enter the file name:");
       if (newFile == null) {
@@ -105,7 +119,7 @@ public class FileTree extends TreeView {
 
     MenuItem deleteMI = new MenuItem("Delete");
     deleteMI.setOnAction(e -> {
-      TreeItem<File> currentNode = (TreeItem) getSelectionModel().getSelectedItem();
+      TreeItem<File> currentNode = getSelectionModel().getSelectedItem();
       File currentFile = currentNode.getValue();
       String fileType = "file";
       try {
@@ -121,7 +135,7 @@ public class FileTree extends TreeView {
       }
     });
 
-    menu.getItems().addAll(createDirMI, createFileMI, deleteMI);
+    menu.getItems().addAll(copyMI, createDirMI, createFileMI, deleteMI);
     return menu;
   }
 
@@ -145,7 +159,7 @@ public class FileTree extends TreeView {
 
 
   public File getRootDir() {
-    return (File) getRoot().getValue();
+    return getRoot().getValue();
   }
 
   private String getWorkingDirPref() {
@@ -178,7 +192,7 @@ public class FileTree extends TreeView {
 
   private void handleClick(MouseEvent event) {
     if (event.getClickCount() == 2) {
-      TreeItem<File> item = (TreeItem) getSelectionModel().getSelectedItem();
+      TreeItem<File> item = getSelectionModel().getSelectedItem();
       if (item == null) {
         return;
       }
@@ -199,7 +213,7 @@ public class FileTree extends TreeView {
           codeComponent.addTab(file, TabType.XML);
         } else if (strEndsWith(fileNameLower, ".java")) {
           codeComponent.addTab(file, TabType.JAVA);
-        } else if (strEquals(type, "text/x-sql", "application/sql")) {
+        } else if (strEquals(type, "text/x-sql", "application/sql") || strEndsWith(fileNameLower, "sql")) {
           codeComponent.addTab(file, TabType.SQL);
         } else if (strStartsWith(type, "text")
             || strEquals(type, "application/x-bat",
@@ -321,7 +335,7 @@ public class FileTree extends TreeView {
   }
 
   public void refresh() {
-    File current = (File) getRoot().getValue();
+    File current = getRoot().getValue();
     setRoot(createTree(current));
     sortTree(getRoot());
     getRoot().setExpanded(true);
@@ -359,5 +373,11 @@ public class FileTree extends TreeView {
     }
   }
 
-
+  private void copySelectionToClipboard() {
+    TreeItem<File> treeItem = getSelectionModel().getSelectedItem();
+    final ClipboardContent clipboardContent = new ClipboardContent();
+    String value = treeItem.getValue().getName();
+    clipboardContent.putString(value);
+    Clipboard.getSystemClipboard().setContent(clipboardContent);
+  }
 }
