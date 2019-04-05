@@ -117,7 +117,7 @@
         <dependency>
             <groupId>org.renjin.cran</groupId>
             <artifactId>RJDBC</artifactId>
-            <version>10.0.15-SNAPSHOT</version>
+            <version>10.0.16-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -221,9 +221,9 @@
                         <configuration>
                             <groupId>org.renjin.cran</groupId>
                             <artifactId>RJDBC</artifactId>
-                            <version>10.0.15-SNAPSHOT</version>
+                            <version>10.0.16-SNAPSHOT</version>
                             <packaging>jar</packaging>
-                            <file>lib/RJDBC-10.0.15-SNAPSHOT.jar</file>
+                            <file>lib/RJDBC-10.0.16-SNAPSHOT.jar</file>
                         </configuration>
                     </execution>
                 </executions>

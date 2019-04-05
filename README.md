@@ -64,9 +64,13 @@ a connection and choose "view connection".
 
 # Building and compiling
 
+Ride depends on two other repos (snapshot artifacts) that must be built first:
+
 Download rideutils from https://github.com/perNyfelt/rideutils and build it with `mvn install`
 
-To build ride then simply do ` mvn clean install`
+Download renjin-dbi from https://github.com/perNyfelt/renjin-dbi and build it with `mvn install` on linux (windows build does not work for some reason)
+
+To build Ride then simply do ` mvn clean install`
 
 There are some wrapper scripts that you might find useful.  
 To create a runnable jar and run it do 

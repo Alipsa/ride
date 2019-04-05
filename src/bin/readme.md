@@ -42,6 +42,33 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.1 beta 2
+- Theme support
+    - There is now a dark theme in addition to the default theme (now called bright theme). Change theme in global options
+    
+- Add dependency on forked rjdbc
+    - Since there are several bugfixes to RJDBC (sql server datatypes, postgres datatypes, proper handling of datetime etc.) 
+    that i submitted but have yet to be accepted into upstream i decided to bundle a snapshot version with ride. 
+    If you want the old ones just edit the version in the pom file. 
+    
+- Improved hamcrest testing
+    - now properly prints console output while executing tests
+    - add elapsed test time at the end
+    
+- more copy support
+    - select and copy content from View tab
+    - select file/dir name from file tree   
+    
+- Improved connections tab
+    - add separate username and password fields as putting username and password in the url does not always work for all databases
+    
+- All code editors now have a button bar
+    - this means a save button is always present
+        
+- Quite few minor bug fixes
+    - Since Ride is now good enough for me to use as my primary data analysis tool at work, I use it for several hours daily. 
+    Hence there were quite a few minor quirks that I could spot and fix.       
+           
 ### 1.1 beta
 - Create a new runbutton when hamcrest tests are detected
     - Will run hamcrest tests similar to the renjin-hamcrest-maven-plugin i.e. producing nice output, error messages and
