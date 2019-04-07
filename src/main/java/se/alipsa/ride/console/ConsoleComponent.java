@@ -398,12 +398,13 @@ public class ConsoleComponent extends BorderPane {
     // log.info("Working dir is {}", engine.getSession().getWorkingDirectory().getName().getPath());
   }
 
-  // TODO run async just like runScriptAsync
+  // TODO run async
   public void runTests(String script, String title) {
     running();
     console.append("");
     console.append("Running hamcrest tests");
     console.append("----------------------");
+
     long start = System.currentTimeMillis();
     engine.put("inout", gui.getInoutComponent());
     List<TestResult> results = new ArrayList<>();
