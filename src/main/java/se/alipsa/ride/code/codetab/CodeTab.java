@@ -34,13 +34,10 @@ public class CodeTab extends TextAreaTab {
 
     setTitle(title);
 
-    //Button runButton = new Button("Run sync");
-    //runButton.setOnAction(this::handleRunAction);
 
-    Button runInThreadButton = new Button("Run"); // async
-    runInThreadButton.setOnAction(event -> console.runScriptAsync(codeTextArea.getTextContent(), getTitle()));
-    buttonPane.getChildren().add(runInThreadButton);
-    //buttonPane.getChildren().addAll(runButton, runInThreadButton);
+    Button runButton = new Button("Run"); // async
+    runButton.setOnAction(event -> console.runScriptAsync(codeTextArea.getTextContent(), getTitle()));
+    buttonPane.getChildren().add(runButton);
 
     runTestsButton = new Button("Run tests");
     runTestsButton.setOnAction(evt -> console.runTests(codeTextArea.getTextContent(), getTitle()));
@@ -50,12 +47,6 @@ public class CodeTab extends TextAreaTab {
     codeTextArea = new CodeTextArea(this);
     VirtualizedScrollPane<CodeTextArea> vPane = new VirtualizedScrollPane<>(codeTextArea);
     pane.setCenter(vPane);
-  }
-
-  private void handleRunAction(ActionEvent event) {
-    String rCode = codeTextArea.getTextContent();
-    log.debug("Running r code {}", rCode);
-    console.runScriptSync(rCode, getTitle());
   }
 
   @Override

@@ -298,16 +298,6 @@ public class ConsoleComponent extends BorderPane {
     return global.getVariable(topContext, varName);
   }
 
-  public void runScriptSync(String script, String title) {
-    running();
-    try (StringWriter outputWriter = new StringWriter()) {
-      executeScriptAndReport(script, title, outputWriter);
-    } catch (IOException e) {
-      waiting();
-      ExceptionAlert.showAlert("Failed to close writer capturing renjin results: ", e);
-    }
-  }
-
   public void runScriptAsync(String script, String title) {
     running();
 
@@ -398,64 +388,92 @@ public class ConsoleComponent extends BorderPane {
     // log.info("Working dir is {}", engine.getSession().getWorkingDirectory().getName().getPath());
   }
 
-  // TODO run async
   public void runTests(String script, String title) {
     running();
     console.append("");
     console.append("Running hamcrest tests");
     console.append("----------------------");
 
-    long start = System.currentTimeMillis();
-    engine.put("inout", gui.getInoutComponent());
-    List<TestResult> results = new ArrayList<>();
-    try (StringWriter out = new StringWriter();
-         StringWriter err = new StringWriter();
-         PrintWriter outputWriter = new PrintWriter(out);
-         PrintWriter errWriter = new PrintWriter(err)
-    ) {
-      session.setStdOut(outputWriter);
-      session.setStdErr(errWriter);
-      TestResult result =  runTest(script, title);
-      results.add(result);
-      printResult(title, out, err, result, DOUBLE_INDENT);
+    Task<Void> task = new Task<Void>() {
 
-      //now run each testFunction in that file, in the same Session
-      for (Symbol name : session.getGlobalEnvironment().getSymbolNames()) {
-        String methodName = name.getPrintName().trim();
-        if (methodName.startsWith("test.")) {
-          SEXP value = session.getGlobalEnvironment().getVariable(session.getTopLevelContext(), name);
-          if (isNoArgsFunction(value)) {
-            Context context = session.getTopLevelContext();
-            result = runTestFunction(context, title, name);
-            results.add(result);
-            printResult(methodName, out, err, result, DOUBLE_INDENT);
+      long start;
+      long end;
+
+      @Override
+      public Void call() throws Exception {
+        start = System.currentTimeMillis();
+        engine.put("inout", gui.getInoutComponent());
+        List<TestResult> results = new ArrayList<>();
+        try (StringWriter out = new StringWriter();
+             StringWriter err = new StringWriter();
+             PrintWriter outputWriter = new PrintWriter(out);
+             PrintWriter errWriter = new PrintWriter(err)
+        ) {
+          session.setStdOut(outputWriter);
+          session.setStdErr(errWriter);
+          TestResult result = runTest(script, title);
+          results.add(result);
+          Platform.runLater(() -> printResult(title, out, err, result, DOUBLE_INDENT));
+
+          //now run each testFunction in that file, in the same Session
+          for (Symbol name : session.getGlobalEnvironment().getSymbolNames()) {
+            String methodName = name.getPrintName().trim();
+            if (methodName.startsWith("test.")) {
+              SEXP value = session.getGlobalEnvironment().getVariable(session.getTopLevelContext(), name);
+              if (isNoArgsFunction(value)) {
+                Context context = session.getTopLevelContext();
+                TestResult funcResult = runTestFunction(context, title, name);
+                results.add(result);
+                Platform.runLater(() -> printResult(methodName, out, err, funcResult, DOUBLE_INDENT));
+              }
+            }
           }
+          end = System.currentTimeMillis();
+          Map<TestResult.OutCome, List<TestResult>> resultMap = results.stream()
+              .collect(Collectors.groupingBy(TestResult::getResult));
+
+          List<TestResult> successResults = resultMap.get(TestResult.OutCome.SUCCESS);
+          List<TestResult> failureResults = resultMap.get(TestResult.OutCome.FAILURE);
+          List<TestResult> errorResults = resultMap.get(TestResult.OutCome.ERROR);
+          long successCount = successResults == null ? 0 : successResults.size();
+          long failCount = failureResults == null ? 0 : failureResults.size();
+          long errorCount = errorResults == null ? 0 : errorResults.size();
+
+          String duration = DurationFormatUtils.formatDuration(end - start, "mm 'minutes, 'ss' seconds, 'SSS' millis '");
+          console.appendFx("\nR tests summary:");
+          console.appendFx("----------------");
+          console.appendFx(format("Tests run: {}, Successes: {}, Failures: {}, Errors: {}",
+              results.size(), successCount, failCount, errorCount));
+          console.appendFx("Time: " + duration + "\n");
+        } catch (IOException e) {
+          console.appendWarningFx("Failed to run test");
+          ExceptionAlert.showAlert("Failed to run test", e);
         }
+        return null;
       }
-      long end = System.currentTimeMillis();
-      Map<TestResult.OutCome, List<TestResult>> resultMap = results.stream()
-          .collect(Collectors.groupingBy(TestResult::getResult));
+    };
+       task.setOnSucceeded(e -> {
+        waiting();
+        updateEnvironment();
+        promptAndScrollToEnd();
+      });
+    task.setOnFailed(e -> {
+        waiting();
+        updateEnvironment();
+        Throwable throwable = task.getException();
+        Throwable ex = throwable.getCause();
+        if (ex == null) {
+          ex = throwable;
+        }
 
-      List<TestResult> successResults = resultMap.get(TestResult.OutCome.SUCCESS);
-      List<TestResult> failureResults = resultMap.get(TestResult.OutCome.FAILURE);
-      List<TestResult> errorResults = resultMap.get(TestResult.OutCome.ERROR);
-      long successCount = successResults == null ? 0 : successResults.size();
-      long failCount = failureResults == null ? 0 : failureResults.size();
-      long errorCount = errorResults == null ? 0 : errorResults.size();
+        String msg = createMessageFromEvalException(ex);
 
-      String duration = DurationFormatUtils.formatDuration(end-start, "mm 'minutes, 'ss' seconds, 'SSS' millis '");
-      console.append("\nR tests summary:");
-      console.append("----------------");
-      console.append(format("Tests run: {}, Successes: {}, Failures: {}, Errors: {}",
-          results.size(), successCount, failCount, errorCount));
-      console.append("Time: " + duration + "\n");
-    } catch (IOException e) {
-      console.appendWarning("Failed to run test");
-      ExceptionAlert.showAlert("Failed to run test", e);
-    }
-    updateEnvironment();
-    promptAndScrollToEnd();
-    waiting();
+        ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
+        promptAndScrollToEnd();
+      });
+      scriptThread = new Thread(task);
+      scriptThread.setDaemon(false);
+      scriptThread.start();
   }
 
   private void printResult(String title, StringWriter out, StringWriter err, TestResult result, String indent) {
@@ -491,7 +509,7 @@ public class ConsoleComponent extends BorderPane {
     String issue;
     Exception exception;
     String testName = title;
-    console.append(INDENT + format("# Running test {}", title).trim());
+    console.appendFx(INDENT + format("# Running test {}", title).trim());
     try {
       engine.eval(script);
       result.setResult(TestResult.OutCome.SUCCESS);
@@ -530,7 +548,7 @@ public class ConsoleComponent extends BorderPane {
   private TestResult runTestFunction(final Context context, final String title, final Symbol name) {
     String methodName = name.getPrintName().trim() + "()";
     String testName = title + ": " + methodName;
-    console.append(INDENT + format("# Running test function {} in {}", methodName, title).trim());
+    console.appendFx(INDENT + format("# Running test function {} in {}", methodName, title).trim());
     String issue;
     Exception exception;
     TestResult result = new TestResult(title);
@@ -587,54 +605,6 @@ public class ConsoleComponent extends BorderPane {
       Platform.runLater(() -> console.appendWarning(warnStrWriter.toString()));
       session.clearWarnings();
     }
-  }
-
-  private void executeScriptAndReport(String script, String title, StringWriter outputWriter) {
-    // A bit unorthodox use of timeline but this allows us to interrupt a running script
-    // since the running script must be on the jfx thread to allow interaction with the gui
-    // e.g. for plots, this is the best way to do that.
-    scriptExecutionTimeline = new Timeline();
-    KeyFrame scriptFrame = new KeyFrame(Duration.seconds(1), evt -> {
-      try (StringWriter warnStrWriter = new StringWriter();
-           PrintWriter warnWriter = new PrintWriter(warnStrWriter)) {
-        engine.put("inout", gui.getInoutComponent());
-        engine.getContext().setWriter(outputWriter);
-        engine.getContext().setErrorWriter(outputWriter);
-        outputWriter.write(title + "\n");
-        engine.eval(script);
-        console.append(outputWriter.toString(), true);
-
-        session.setStdOut(warnWriter);
-        session.printWarnings();
-        console.appendWarning(warnStrWriter.toString());
-        session.clearWarnings();
-        //outputWriter.write(">");
-
-      } catch (org.renjin.parser.ParseException e) {
-        Platform.runLater(() ->
-            ExceptionAlert.showAlert("Error parsing R script: " + e.getMessage(), e));
-      } catch (ScriptException | EvalException e) {
-        Platform.runLater(() ->
-            ExceptionAlert.showAlert("Error running R script: " + e.getMessage(), e));
-      } catch (RuntimeException e) {
-        Platform.runLater(() ->
-            ExceptionAlert.showAlert("A runtime error occurred running R script: " + e.getMessage(), e));
-      } catch (Exception e) {
-        Platform.runLater(() ->
-            ExceptionAlert.showAlert("Exception thrown when running script: " + e.getMessage(), e));
-      }
-    });
-
-    KeyFrame pkgFrame = new KeyFrame(Duration.seconds(1), evt -> {
-      waiting();
-      updateEnvironment();
-      promptAndScrollToEnd();
-    });
-
-    scriptExecutionTimeline.getKeyFrames().addAll(scriptFrame, pkgFrame);
-    scriptExecutionTimeline.setCycleCount(1);
-    scriptExecutionTimeline.play();
-
   }
 
   public List<Repo> getRemoteRepositories() {

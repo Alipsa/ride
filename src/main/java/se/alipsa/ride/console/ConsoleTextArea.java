@@ -88,18 +88,13 @@ public class ConsoleTextArea extends CodeArea {
     buffer.append(b);
     if (b == '\n') {
       String text = buffer.toString();
-      appendToFxThread(text);
+      appendFx(text);
       buffer.setLength(0);
     }
   }
 
-  private void appendToFxThread(String text) {
-    Platform.runLater(() -> {
-      appendText(text);
-    });
-  }
 
-  public void appendWarnToFxThread(String text) {
+  public void appendWarningFx(String text) {
     Platform.runLater(() -> {
       appendWarning(text, true);
     });
@@ -109,7 +104,7 @@ public class ConsoleTextArea extends CodeArea {
     warnBuffer.append(b);
     if (b == '\n') {
       String text = warnBuffer.toString();
-      appendWarnToFxThread(text);
+      appendWarningFx(text);
       warnBuffer.setLength(0);
     }
   }
