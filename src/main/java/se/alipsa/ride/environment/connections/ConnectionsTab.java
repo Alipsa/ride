@@ -13,6 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -228,10 +229,15 @@ public class ConnectionsTab extends Tab {
       }
       res.close();
       TextArea ta = new TextArea();
-      ta.setText(String.join("\n", dbList));
-      ta.setPrefHeight(dbList.size() * 22);
+      String content = String.join("\n", dbList);
+      Text text = new Text(content);
+      text.setFont(ta.getFont());
+      ta.setText(content);
+      // This should work but last line is not counted for some reason so need to add som extra height
+      ta.setPrefHeight(text.getLayoutBounds().getHeight() + ta.getFont().getSize() * 2);
+      //ta.setPrefHeight(dbList.size() * 22);
       String title = "Databases for connection " + connectionInfo.getName();
-      ta.setPrefWidth(title.length() * 15);
+      //ta.setPrefWidth(title.length() * 15);
       ta.setEditable(false);
       createAndShowWindow(title, ta);
     } catch (SQLException e) {
