@@ -5,6 +5,8 @@ import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -22,6 +24,7 @@ import se.alipsa.ride.model.TableMetaData;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.RDataTransformer;
 
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -160,7 +163,12 @@ public class ConnectionsTab extends Tab {
       viewMenuItem.setOnAction(event -> {
         showConnectionMetaData(row.getItem());
       });
-      contextMenu.getItems().addAll(viewMenuItem, removeMenuItem);
+      final MenuItem viewDatabasesMenuItem = new MenuItem("view databases");
+      viewDatabasesMenuItem.setOnAction(event -> {
+        showDatabases(row.getItem());
+      });
+
+      contextMenu.getItems().addAll(viewMenuItem, viewDatabasesMenuItem, removeMenuItem);
       row.contextMenuProperty().bind(
           Bindings.when(row.emptyProperty())
               .then((ContextMenu) null)
@@ -210,6 +218,28 @@ public class ConnectionsTab extends Tab {
     runScriptInThread(rCode, "connectionsTabDf", con.getName());
   }
 
+  private void showDatabases(ConnectionInfo connectionInfo) {
+    try (Connection con = DriverManager.getConnection(connectionInfo.getUrl(), connectionInfo.getUser(), connectionInfo.getPassword())) {
+      DatabaseMetaData meta = con.getMetaData();
+      ResultSet res = meta.getCatalogs();
+      List<String> dbList = new ArrayList<>();
+      while (res.next()) {
+        dbList.add(res.getString("TABLE_CAT"));
+      }
+      res.close();
+      TextArea ta = new TextArea();
+      ta.setText(String.join("\n", dbList));
+      ta.setPrefHeight(dbList.size() * 22);
+      String title = "Databases for connection " + connectionInfo.getName();
+      ta.setPrefWidth(title.length() * 15);
+      ta.setEditable(false);
+      createAndShowWindow(title, ta);
+    } catch (SQLException e) {
+      String msg = gui.getConsoleComponent().createMessageFromEvalException(e);
+      ExceptionAlert.showAlert(msg + e.getMessage(), e);
+    }
+  }
+
   void runScriptInThread(String rCode, String varname, String connectionName) {
     Task<Void> task = new Task<Void>() {
       @Override
@@ -235,17 +265,7 @@ public class ConnectionsTab extends Tab {
         gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("rm(connectionsTabDf)").toString());
         setNormalCursor();
         TreeView treeView = createMetaDataTree(metaDataList, connectionName);
-        Scene dialog = new Scene(treeView);
-        Stage stage = new Stage();
-        stage.initStyle(StageStyle.DECORATED);
-        stage.initModality(Modality.NONE);
-        stage.setTitle(connectionName + " connection view");
-        stage.setScene(dialog);
-        stage.setAlwaysOnTop(false);
-        stage.setResizable(true);
-        stage.show();
-        stage.toFront();
-        stage.requestFocus();
+        createAndShowWindow(connectionName + " connection view", treeView);
       } catch (Exception ex) {
         setNormalCursor();
         ExceptionAlert.showAlert("Failed to create connection tree view", ex);
@@ -265,6 +285,20 @@ public class ConnectionsTab extends Tab {
     Thread scriptThread = new Thread(task);
     scriptThread.setDaemon(false);
     scriptThread.start();
+  }
+
+  private void createAndShowWindow(String title, Parent view) {
+    Scene dialog = new Scene(view);
+    Stage stage = new Stage();
+    stage.initStyle(StageStyle.DECORATED);
+    stage.initModality(Modality.NONE);
+    stage.setTitle(title);
+    stage.setScene(dialog);
+    stage.setAlwaysOnTop(false);
+    stage.setResizable(true);
+    stage.show();
+    stage.toFront();
+    stage.requestFocus();
   }
 
   private void setNormalCursor() {
