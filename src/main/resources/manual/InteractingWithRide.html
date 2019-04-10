@@ -1,8 +1,20 @@
 <html>
 <head>
     <style>
-        .javadoc {
+        .comment {
             color: gray;
+        }
+        .keyword {
+            color: navy;
+        }
+        .string {
+            color: darkgreen;
+        }
+        .codeblock {
+            background-color: lightgrey;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -10,7 +22,7 @@
 Ride injects an inout component into the session.<br/>
 <br/>
 It is defined as follows:<br/>
-<div class="javadoc">
+<div class="comment">
 <br/>
 /**<br/>
 * display an image in the Plot tab<br/>
@@ -18,7 +30,7 @@ It is defined as follows:<br/>
 </div>
 void display(Node node, String... title);<br/>
 <br/>
-<div class="javadoc">
+<div class="comment">
 /**<br/>
 * display an image in the Plot tab<br/>
 */
@@ -26,23 +38,23 @@ void display(Node node, String... title);<br/>
 void display(Image img, String... title);<br/>
 <br/>
 Here is an example; also showing the use of rideutils (readImage) which is always awailable in Ride:<br/>
-<div style="background-color: aliceblue">
-    library("grDevices")<br/>
-    library("graphics")<br/>
-    # rideutils provides ways to bridge over from R to Java to be able to interact with the IDE<br/>
-    library("se.alipsa:rideutils")
+<div class="codeblock">
+    library(<span class="string">"grDevices"</span>)<br/>
+    library(<span class="string">"graphics"</span>)<br/>
+    <span class="comment"># rideutils provides ways to bridge over from R to Java to be able to interact with the IDE</span><br/>
+    library(<span class="string">"se.alipsa:rideutils"</span>)
     <br/>
-    # plot a svg image to a file<br/>
-    fileName <- "/tmp/svgplot.svg"<br/>
+    <span class="comment"># plot a svg image to a file</span><br/>
+    fileName <- <span class="string">"/tmp/svgplot.svg"</span><br/>
     svg(fileName)<br/>
     plot(sin, -pi, 2*pi)<br/>
     <br/>
     dev.off()<br/>
     <br/>
-    # convert the image to a a javafx Image and display it in ride, the second argument is the title of the window (optional)<br/>
-    inout$display(readImage(fileName), "svgplot")<br/>
+    <span class="comment"># convert the image to a a javafx Image and display it in ride, the second argument is the title of the window (optional)</span><br/>
+    inout$display(readImage(fileName), <span class="string">"svgplot"</span>)<br/>
 </div>
-<div class="javadoc">
+<div class="comment">
 <br/>
 /**<br/>
 * display data in the Viewer tab, e.g. list, data.frame, matrix<br/>
@@ -51,17 +63,17 @@ Here is an example; also showing the use of rideutils (readImage) which is alway
 void View(SEXP sexp, String... title);<br/>
 <br/>
 Here is an example:<br/>
-<div style="background-color: aliceblue">
-    # read a csv file into a data.frame<br/>
-    df <- read.csv("/tmp/sample.csv")<br/>
+<div class="codeblock">
+    <span class="comment"># read a csv file into a data.frame</span><br/>
+    df <- read.csv(<span class="string">"/tmp/sample.csv"</span>)<br/>
     inout$View(df)<br/>
     <br/>
-    # if you use the rideutils library you can simplify it to<br/>
-    library("se.alipsa:rideutils")<br/>
+    <span class="comment"># if you use the rideutils library you can simplify it to</span><br/>
+    library(<span class="string">"se.alipsa:rideutils"</span>)<br/>
     View(df)<br/>
 </div>
 <br/>
-<div class="javadoc">
+<div class="comment">
 /** Return the current active script file or null if is has not been saved yet */
 </div>
 String scriptFile();<br/>

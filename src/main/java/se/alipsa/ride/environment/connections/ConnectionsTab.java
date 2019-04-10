@@ -22,6 +22,7 @@ import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.ListVector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.model.TableMetaData;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.RDataTransformer;
 
@@ -160,7 +161,7 @@ public class ConnectionsTab extends Tab {
       removeMenuItem.setOnAction(event -> {
         connectionsTable.getItems().remove(row.getItem());
       });
-      final MenuItem viewMenuItem = new MenuItem("view connection");
+      final MenuItem viewMenuItem = new MenuItem("view tables");
       viewMenuItem.setOnAction(event -> {
         showConnectionMetaData(row.getItem());
       });
@@ -169,15 +170,52 @@ public class ConnectionsTab extends Tab {
         showDatabases(row.getItem());
       });
 
-      contextMenu.getItems().addAll(viewMenuItem, viewDatabasesMenuItem, removeMenuItem);
+      final MenuItem viewRcodeMenuItem = new MenuItem("show R connection code");
+      viewRcodeMenuItem.setOnAction(event -> {
+        showRConnectionCode();
+      });
+
+      contextMenu.getItems().addAll(viewMenuItem, viewDatabasesMenuItem, removeMenuItem, viewRcodeMenuItem);
       row.contextMenuProperty().bind(
           Bindings.when(row.emptyProperty())
               .then((ContextMenu) null)
               .otherwise(contextMenu)
       );
+
+      connectionsTable.getSelectionModel().selectedIndexProperty().addListener(e -> {
+        ConnectionInfo info = connectionsTable.getSelectionModel().getSelectedItem();
+        nameText.setText(info.getName());
+        driverText.setText(info.getDriver());
+        urlText.setText(info.getUrl());
+        userText.setText(info.getUser());
+        passwordField.setText(info.getPassword());
+      });
       return row;
     });
     return connectionsTable;
+  }
+
+  private void showRConnectionCode() {
+    ConnectionInfo info = connectionsTable.getSelectionModel().getSelectedItem();
+    StringBuilder code = new StringBuilder();
+    String con = info.getName() + "_con";
+    code.append("library('org.renjin.cran:DBI')\n")
+        .append("library('org.renjin.cran:RJDBC')\n\n")
+        .append(con).append(" <- dbConnect(\n")
+        .append("  JDBC('").append(info.getDriver()).append("')\n")
+        .append("  ,url = '").append(info.getUrl()).append("'\n");
+    if (!"".equals(userText.getText().trim())) {
+      code.append("  ,user = '").append(info.getUser()).append("'\n");
+    }
+    if (!"".equals(passwordField.getText().trim())) {
+      code.append("  ,password = '").append(info.getPassword()).append("'\n");
+    }
+    code.append(")\n\n")
+        .append("# execute some queries...\n")
+        .append("sqlDf <- dbGetQuery(").append(con).append(", 'select * from someTable')\n")
+        .append("# close the connection\n")
+        .append("dbDisconnect(").append(con).append(")\n");
+    displayTextInWindow("R connection code for " + info.getName(), code.toString());
   }
 
   private String getPrefOrBlank(String pref) {
@@ -228,22 +266,27 @@ public class ConnectionsTab extends Tab {
         dbList.add(res.getString("TABLE_CAT"));
       }
       res.close();
-      TextArea ta = new TextArea();
       String content = String.join("\n", dbList);
-      Text text = new Text(content);
-      text.setFont(ta.getFont());
-      ta.setText(content);
-      // This should work but last line is not counted for some reason so need to add som extra height
-      ta.setPrefHeight(text.getLayoutBounds().getHeight() + ta.getFont().getSize() * 2);
-      //ta.setPrefHeight(dbList.size() * 22);
       String title = "Databases for connection " + connectionInfo.getName();
-      //ta.setPrefWidth(title.length() * 15);
-      ta.setEditable(false);
-      createAndShowWindow(title, ta);
+
+      displayTextInWindow(title, content);
     } catch (SQLException e) {
       String msg = gui.getConsoleComponent().createMessageFromEvalException(e);
       ExceptionAlert.showAlert(msg + e.getMessage(), e);
     }
+  }
+
+  private void displayTextInWindow(String title, String content) {
+    TextArea ta = new TextArea();
+    Text text = new Text(content);
+    text.setFont(ta.getFont());
+    ta.setText(content);
+    // This should work but last line is not counted for some reason so need to add som extra height
+    ta.setPrefHeight(text.getLayoutBounds().getHeight() + ta.getFont().getSize() * 2);
+    //ta.setPrefHeight(dbList.size() * 22);
+    //ta.setPrefWidth(title.length() * 15);
+    ta.setEditable(false);
+    createAndShowWindow(title, ta);
   }
 
   void runScriptInThread(String rCode, String varname, String connectionName) {

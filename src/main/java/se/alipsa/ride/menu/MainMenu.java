@@ -183,6 +183,7 @@ public class MainMenu extends MenuBar {
 
     URL interactionUrl = FileUtils.getResourceUrl("manual/InteractingWithRide.html");
     URL shortcutsUrl = FileUtils.getResourceUrl("manual/KeyBoardShortcuts.html");
+    URL examplesUrl = FileUtils.getResourceUrl("manual/examples.html");
 
     Button rideShortCuts = new Button("Ride keyboard shortcuts");
     rideShortCuts.setOnAction(e -> webEngine.load(shortcutsUrl.toExternalForm()));
@@ -190,7 +191,10 @@ public class MainMenu extends MenuBar {
     Button interactingWithRideButton = new Button("Interacting with Ride");
     interactingWithRideButton.setOnAction(e -> webEngine.load(interactionUrl.toExternalForm()));
 
-    linkPane.getChildren().addAll(rideShortCuts, interactingWithRideButton);
+    Button examplesButton = new Button("Examples");
+    examplesButton.setOnAction(e -> webEngine.load(examplesUrl.toExternalForm()));
+
+    linkPane.getChildren().addAll(rideShortCuts, interactingWithRideButton, examplesButton);
 
 
     Scene dialog = new Scene(borderPane);
