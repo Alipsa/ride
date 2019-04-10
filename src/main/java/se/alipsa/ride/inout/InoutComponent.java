@@ -78,6 +78,8 @@ public class InoutComponent extends TabPane implements InOut {
     viewer = new ViewTab();
 
     getTabs().add(viewer);
+
+    setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
   }
 
   private void handleChangeDir(ActionEvent actionEvent) {

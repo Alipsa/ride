@@ -41,6 +41,7 @@ public class EnvironmentComponent extends TabPane {
     connectionsTab = new ConnectionsTab(gui);
 
     getTabs().add(connectionsTab);
+    setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
   }
 
   public void setEnvironment(Environment env, Context ctx) {

@@ -25,6 +25,7 @@ public class ViewTab extends Tab {
     setText("Viewer");
     viewPane = new TabPane();
     setContent(viewPane);
+    viewPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
   }
 
   public void viewTable(Table table, String... title) {
