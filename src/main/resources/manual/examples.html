@@ -1,4 +1,4 @@
-<html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <style>
         .comment {
@@ -17,8 +17,17 @@
             margin-bottom: 10px;
         }
     </style>
+    <title>Examples</title>
 </head>
-<h2>Querying a database</h2>
+<h1>Table of content</h1>
+<ul>
+    <li><a href="#querying_db">Querying a database</a></li>
+    <li><a href="#using_packages">Using packages</a></li>
+    <li><a href="#reusing_code">Reusing code</a></li>
+</ul>
+
+
+<h2 id="querying_db">Querying a database</h2>
 You can of course use any R package to work with a database but many of them does not fully work in Renjin yet.
 Ride comes with a patched version of RJDBC that, in my experience, works well. The SQL support in Ride uses RJDBC to
 execute queries. I find the following workflow to work well:
@@ -76,5 +85,53 @@ I like to save these kind of queries with the extension psql (parameterized sql)
     <br/>
     <span class="comment"># Set the first parameter:</span><br/>
     fancyQuery <- gsub(<span class="string">"?1"</span>, <span class="string">"Per"</span>, fancyQuery, fixed=<span class="keyword">TRUE</span>)
+</div>
+
+<h2 id="using_packages">Using Packages</h2>
+Since the renjin gcc compiler bridge is not 100% complete there are many packages that does not work in Renjin yet.
+You can get some idea of support from <a href="http://packages.renjin.org/">Renjin packages list</a> but this will
+only give you a hint.<br/>
+<br/>
+Some of the basic packages that works flawlessly from my own personal experience are listed below.<br/>
+
+<table width="100%" border="1">
+    <thead>
+        <tr>
+            <th>What</th>
+            <th>package name</th>
+            <th>comment</th>
+        </tr>
+    </thead>
+    <tr>
+        <td>talk to a relational database</td>
+        <td>org.renjin.cran:DBI<br/>
+            org.renjin,cran:RJDBC
+        </td>
+        <td>Use DBI ver 1.0.0-b9 and the patched version of RJDBC that comes with Ride (10.0.16-SNAPSHOT)</td>
+    </tr>
+    <tr>
+        <td>import excel files</td>
+        <td>org.renjin.cran:xlsx</td>
+        <td>Used version 0.6.1-b7</td>
+    </tr>
+    <tr>
+        <td>handle json</td>
+        <td>org.renjin.cran:rjson</td>
+        <td>Used version 0.2.15-renjin-21</td>
+    </tr>
+</table>
+
+
+<h2 id="reusing_code">Reusing code</h2>
+The, perhaps, simplest way to reuse code is to put utility functions or other code that you want to reuse multiple times
+in a separate file and then load it using source. Perhaps you want to make sure to only load it once; one way os to look for something unique such as a
+variable or function with exists. E.g:
+<div class="codeblock">
+    <span class="keyword">if</span>(<span class="keyword">!</span>exists(<span class="string">"repairDf"</span>)) source(<span class="string">"R/repairEvents.R"</span>)<br/>
+    <br/>
+    <span class="comment"># same thing but for a function</span><br/>
+    <span class="keyword">if</span>(<span class="keyword">!</span>exists(<span class="string">"readParamSql"</span> mode=<span class="string">"function"</span>)) source(<span class="string">"some/path/utils.R"</span>)<br/>
+
+
 </div>
 </html>
