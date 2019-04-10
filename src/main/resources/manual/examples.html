@@ -30,28 +30,28 @@ execute queries. I find the following workflow to work well:
 Here is an example:
 <h4>You have the following SQL file saved as fancy.sql</h4>
 <div class="codeblock">
-    <span class="keyword">Select</span> * <span class="keyword">from</span> someTable
+    <span class="keyword">select</span> * <span class="keyword">from</span> someTable
 </div>
 <h4>Now you can use this query as follows:</h4>
 <div class="codeblock">
-    <span class="keyword">library</span>(<span class="string">'org.renjin.cran:DBI'</span>)<br/>
-    <span class="keyword">library</span>(<span class="string">'org.renjin.cran:RJDBC'</span>)<br/>
-    <span class="keyword">library</span>(<span class="string">'se.alipsa:rideutils'</span>) <span class="comment"># enable us to use View</span><br/>
+    <span class="keyword">library</span>(<span class="string">"org.renjin.cran:DBI"</span>)<br/>
+    <span class="keyword">library</span>(<span class="string">"org.renjin.cran:RJDBC"</span>)<br/>
+    <span class="keyword">library</span>(<span class="string">"se.alipsa:rideutils"</span>) <span class="comment"># enable us to use View</span><br/>
     <br/>
     readFile <- <span class="keyword">function</span>(fileName) {<br/>
         &nbsp;&nbsp;paste(readLines(fileName), collapse=<span class="string">"\n"</span>)<br/>
     }<br/>
     <br/>
-    drv <- JDBC(<span class="string">'com.microsoft.sqlserver.jdbc.SQLServerDriver'</span>)<br/>
+    drv <- JDBC(<span class="string">"com.microsoft.sqlserver.jdbc.SQLServerDriver"</span>)<br/>
 
     fancyCon <- dbConnect(drv<br/>
-    &nbsp;&nbsp;, url=<span class="string">'jdbc:sqlserver://mydbserver:1433;databaseName=fancy;'</span><br/>
-    &nbsp;&nbsp;, user=<span class="string">'mmbla'</span><br/>
-    &nbsp;&nbsp;, password=<span class="string">'s3cretpassword'</span><br/>
+    &nbsp;&nbsp;, url=<span class="string">"jdbc:sqlserver://mydbserver:1433;databaseName=fancy;"</span><br/>
+    &nbsp;&nbsp;, user=<span class="string">"mmbla"</span><br/>
+    &nbsp;&nbsp;, password=<span class="string">"s3cretpassword"</span><br/>
     )<br/>
     <br/>
     <span class="comment"># Read the sql file:</span><br/>
-    fancyQuery <- readFile(<span class="string">'fancy.sql'</span>)<br/>
+    fancyQuery <- readFile(<span class="string">"fancy.sql"</span>)<br/>
     <br/>
     <span class="comment"># Execute the query:</span><br/>
     fancyDf <- dbGetQuery(fancyCon, fancyQuery)<br/>
@@ -60,19 +60,19 @@ Here is an example:
     <span class="comment"># Do some stuff with the data frame:</span><br/>
     str(fancyDf)<br/>
     m_fancyDf <- colMeans(fancyDf)<br/>
-    View(m_fancyDf, <span class="string">'fancyDf'</span>)<br/>
+    View(m_fancyDf, <span class="string">"fancyDf"</span>)<br/>
 </div>
 
 <h3>Parameterized queries</h3>
 A simple trick is to use ?1, ?2 etc for replaceable parameters, e.g.
 <div class="codeblock">
-    <span class="keyword">Select</span> * <span class="keyword">from</span> someTable <span class="keyword">where</span> name = <span class="string">'?1'</span>
+    <span class="keyword">select</span> * <span class="keyword">from</span> someTable <span class="keyword">where</span> name = <span class="string">'?1'</span>
 </div>
 <br/>
 I like to save these kind of queries with the extension psql (parameterized sql) so it is easy to spot them later, e.g.
 <div class="codeblock">
     <span class="comment"># Read the sql file containing the SQL code above:</span><br/>
-    fancyQuery <- readFile(<span class="string">'fancy.psql'</span>)<br/>
+    fancyQuery <- readFile(<span class="string">"fancy.psql"</span>)<br/>
     <br/>
     <span class="comment"># Set the first parameter:</span><br/>
     fancyQuery <- gsub(<span class="string">"?1"</span>, <span class="string">"Per"</span>, fancyQuery, fixed=<span class="keyword">TRUE</span>)

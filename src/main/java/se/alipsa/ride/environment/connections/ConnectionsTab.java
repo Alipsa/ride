@@ -124,6 +124,7 @@ public class ConnectionsTab extends Tab {
       setPref(USER_PREF, userText.getText());
       if (!connectionsTable.getItems().contains(con)) {
         connectionsTable.getItems().add(con);
+        connectionsTable.getSelectionModel().select(con);
       }
     });
     VBox buttonBox = new VBox();
@@ -199,20 +200,20 @@ public class ConnectionsTab extends Tab {
     ConnectionInfo info = connectionsTable.getSelectionModel().getSelectedItem();
     StringBuilder code = new StringBuilder();
     String con = info.getName() + "_con";
-    code.append("library('org.renjin.cran:DBI')\n")
-        .append("library('org.renjin.cran:RJDBC')\n\n")
+    code.append("library(\"org.renjin.cran:DBI\")\n")
+        .append("library(\"org.renjin.cran:RJDBC\")\n\n")
         .append(con).append(" <- dbConnect(\n")
-        .append("  JDBC('").append(info.getDriver()).append("')\n")
-        .append("  ,url = '").append(info.getUrl()).append("'\n");
+        .append("  JDBC(\"").append(info.getDriver()).append("\")\n")
+        .append("  ,url = \"").append(info.getUrl()).append("\"\n");
     if (!"".equals(userText.getText().trim())) {
-      code.append("  ,user = '").append(info.getUser()).append("'\n");
+      code.append("  ,user = \"").append(info.getUser()).append("\"\n");
     }
     if (!"".equals(passwordField.getText().trim())) {
-      code.append("  ,password = '").append(info.getPassword()).append("'\n");
+      code.append("  ,password = \"").append(info.getPassword()).append("\"\n");
     }
     code.append(")\n\n")
         .append("# execute some queries...\n")
-        .append("sqlDf <- dbGetQuery(").append(con).append(", 'select * from someTable')\n")
+        .append("sqlDf <- dbGetQuery(").append(con).append(", \"select * from someTable\")\n")
         .append("# close the connection\n")
         .append("dbDisconnect(").append(con).append(")\n");
     displayTextInWindow("R connection code for " + info.getName(), code.toString());
