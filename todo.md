@@ -2,11 +2,9 @@
 
 ## version 1.1
 
-###
-Output to console also when running hamcrest tests
-
 ### Run hamcrest tests (done)
-Create a new runbutton when hamcrest tests are detected
+- Create a new runbutton when hamcrest tests are detected
+- Output to console also when running hamcrest tests
  
 ### enable execution of SQL queries  (done)
 - A run query button in the SQL code tab
@@ -34,6 +32,8 @@ Comment/Uncomment lines + the Ctrl+Shift+C combo (done)
 - tab anywhere on the line indents the line
 - handle selected text
 - shift tab reverses indentation
+
+### Theme support (done)
  
 ## version 1.2
 
@@ -55,6 +55,11 @@ use metadata to determine suggestion
 ### Tools -> Generate menu
 Create Maven pom (not in Rstudio). Create a Maven pom stub with dependencies for 
 Renjin + whatever is needed for all library() commands to work.
+
+### Add support for creating extensions (packages)
+- create dir layout
+- create pom
+- run using maven-embedder: http://maven.apache.org/ref/3-LATEST/maven-embedder/summary.html
 
 ### Add import dataSet in File meny
 Should generate code at current cursor

@@ -61,13 +61,20 @@ In those cases just copy the native files to the lib dir, the startup script poi
     
 - Improved connections tab
     - add separate username and password fields as putting username and password in the url does not always work for all databases
+    - Add "view databases" right click menu option
+    - Add "view R code" i.e. generate R code to set up the connection
     
 - All code editors now have a button bar
     - this means a save button is always present
         
 - Quite few minor bug fixes
     - Since Ride is now good enough for me to use as my primary data analysis tool at work, I use it for several hours daily. 
-    Hence there were quite a few minor quirks that I could spot and fix.       
+    Hence there were quite a few minor quirks that I could spot and fix.      
+    
+- User manual
+    - Ride short cuts
+    - Ride interaction
+    - examples     
            
 ### 1.1 beta
 - Create a new runbutton when hamcrest tests are detected
