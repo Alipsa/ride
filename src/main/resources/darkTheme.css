@@ -5,7 +5,8 @@
 }
 
 .text {
-    -fx-fill: white;
+    /*-fx-fill: white;*/
+    -fx-fill: ivory;
 }
 
 .fileTree .tree-cell {
@@ -88,7 +89,7 @@
 }
 
 .keyword {
-    -fx-fill: lightskyblue;
+    -fx-fill: #82C9F5;
     /* -fx-font-weight: bold; */
 }
 
@@ -112,7 +113,7 @@
 }
 
 .string {
-    -fx-fill: lightgreen;
+    -fx-fill: #6A9159;
 }
 
 .warning {
