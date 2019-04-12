@@ -1,5 +1,5 @@
 library("DBI")
-library("RJDBC")
+library("se.alipsa:R2JDBC")
 library("hamcrest")
 
 

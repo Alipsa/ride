@@ -115,8 +115,8 @@
             <version>1.0.0-b9</version>
         </dependency>
         <dependency>
-            <groupId>org.renjin.cran</groupId>
-            <artifactId>RJDBC</artifactId>
+            <groupId>se.alipsa</groupId>
+            <artifactId>R2JDBC</artifactId>
             <version>10.0.16-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -213,17 +213,17 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>installRJDBC</id>
+                        <id>installR2JDBC</id>
                         <phase>initialize</phase>
                         <goals>
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <groupId>org.renjin.cran</groupId>
-                            <artifactId>RJDBC</artifactId>
+                            <groupId>se.alipsa</groupId>
+                            <artifactId>R2JDBC</artifactId>
                             <version>10.0.16-SNAPSHOT</version>
                             <packaging>jar</packaging>
-                            <file>lib/RJDBC-10.0.16-SNAPSHOT.jar</file>
+                            <file>lib/R2JDBC-10.0.16-SNAPSHOT.jar</file>
                         </configuration>
                     </execution>
                 </executions>

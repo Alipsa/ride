@@ -62,8 +62,8 @@
                 <version>1.0.0-b9</version>
             </dependency>
             <dependency>
-                <groupId>org.renjin.cran</groupId>
-                <artifactId>RJDBC</artifactId>
+                <groupId>se.alipsa</groupId>
+                <artifactId>R2JDBC</artifactId>
                 <version>10.0.16-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -329,12 +329,17 @@ release.tag=${release.tag}
                     <scope>provided</scope>
                 </dependency>
                 <dependency>
-                    <groupId>org.renjin.cran</groupId>
-                    <artifactId>RJDBC</artifactId>
+                    <groupId>se.alipsa</groupId>
+                    <artifactId>R2JDBC</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>org.apache.commons</groupId>
                     <artifactId>commons-lang3</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
                     <scope>provided</scope>
                 </dependency>
 
@@ -374,16 +379,6 @@ release.tag=${release.tag}
                 <dependency>
                     <groupId>org.apache.tika</groupId>
                     <artifactId>tika-core</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
                     <scope>provided</scope>
                 </dependency>
                 <!-- Git integration Core Library -->
@@ -443,6 +438,10 @@ release.tag=${release.tag}
                 <dependency>
                     <groupId>de.codecentric.centerdevice</groupId>
                     <artifactId>javafxsvg</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>commons-io</groupId>
@@ -511,20 +510,12 @@ release.tag=${release.tag}
                     <artifactId>tika-core</artifactId>
                 </dependency>
                 <dependency>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </dependency>
-                <dependency>
                     <groupId>org.renjin.cran</groupId>
                     <artifactId>DBI</artifactId>
                 </dependency>
                 <dependency>
-                    <groupId>org.renjin.cran</groupId>
-                    <artifactId>RJDBC</artifactId>
+                    <groupId>se.alipsa</groupId>
+                    <artifactId>R2JDBC</artifactId>
                 </dependency>
                 <dependency>
                     <groupId>joda-time</groupId>

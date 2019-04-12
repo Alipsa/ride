@@ -16,7 +16,7 @@ public class RQueryBuilder {
     if (!"".equals(password)) {
       passwordString = ", password = '" + password + "'";
     }
-    str.append("library('DBI')\n library('org.renjin.cran:RJDBC')\n")
+    str.append("library('DBI')\n library('se.alipsa:R2JDBC')\n")
         .append("RQueryBuilderDrv <- JDBC('").append(con.getDriver()).append("')\n")
         .append("RQueryBuilderCon <- dbConnect(RQueryBuilderDrv, url = '").append(con.getUrl()).append("'")
         .append(userString)
