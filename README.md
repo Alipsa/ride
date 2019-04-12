@@ -64,11 +64,9 @@ a connection and choose "view connection".
 
 # Building and compiling
 
-Ride depends on two other repos (snapshot artifacts) that must be built first:
+Ride depends on one other repo (snapshot artifact) that must be built first:
 
 Download rideutils from https://github.com/perNyfelt/rideutils and build it with `mvn install`
-
-Download renjin-dbi from https://github.com/perNyfelt/renjin-dbi and build it with `mvn install` on linux (windows build does not work for some reason)
 
 To build Ride then simply do ` mvn clean install`
 

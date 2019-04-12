@@ -117,7 +117,7 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>R2JDBC</artifactId>
-            <version>10.0.16-SNAPSHOT</version>
+            <version>10.0.16</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -210,20 +210,6 @@
                             <version>1.0-SNAPSHOT</version>
                             <packaging>jar</packaging>
                             <file>lib/rideutils-1.0-SNAPSHOT.jar</file>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>installR2JDBC</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>se.alipsa</groupId>
-                            <artifactId>R2JDBC</artifactId>
-                            <version>10.0.16-SNAPSHOT</version>
-                            <packaging>jar</packaging>
-                            <file>lib/R2JDBC-10.0.16-SNAPSHOT.jar</file>
                         </configuration>
                     </execution>
                 </executions>
