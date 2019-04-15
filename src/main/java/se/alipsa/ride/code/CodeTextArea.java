@@ -20,7 +20,14 @@ import java.io.File;
 import java.time.Duration;
 import java.util.*;
 
-public abstract class TextCodeArea extends CodeArea implements TabTextArea {
+
+/** TODO: if possible, change to extending StyleClassedTextArea instead
+ * there is only one css property that needs to be added, i.e.
+ * .code-area {
+ *     -fx-font-family: monospace;
+ * }
+*/
+public abstract class CodeTextArea extends CodeArea implements TabTextArea {
 
   protected File file;
 
@@ -28,10 +35,25 @@ public abstract class TextCodeArea extends CodeArea implements TabTextArea {
 
   private TextAreaTab parentTab;
 
-  public TextCodeArea() {
+  public CodeTextArea() {
+    getStyleClass().add("codeTextArea");
+
+    Iterator<String> it = getStylesheets().iterator();
+    while (it.hasNext()) {
+      if (it.next().contains("styled-text-area.css")) {
+        it.remove();
+      }
+    }
+    /*
+    System.out.println("Stylesheets for " + getClass().getSimpleName());
+    for (String sheet : getStylesheets()) {
+      System.out.println(sheet);
+    }
+    */
   }
 
-  public TextCodeArea(TextAreaTab parent) {
+  public CodeTextArea(TextAreaTab parent) {
+    this();
     this.parentTab = parent;
     setParagraphGraphicFactory(LineNumberFactory.get(this));
     // recompute the syntax highlighting 400 ms after user stops editing area

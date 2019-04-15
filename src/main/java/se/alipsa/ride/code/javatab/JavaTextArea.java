@@ -2,14 +2,14 @@ package se.alipsa.ride.code.javatab;
 
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import se.alipsa.ride.code.TextCodeArea;
+import se.alipsa.ride.code.CodeTextArea;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class JavaTextArea extends TextCodeArea {
+public class JavaTextArea extends CodeTextArea {
 
   private static final String[] KEYWORDS = new String[]{
       "abstract", "assert", "boolean", "break", "byte",

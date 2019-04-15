@@ -1,28 +1,25 @@
 package se.alipsa.ride.code.sqltab;
 
+import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
+import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
+
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.CodeArea;
 import org.renjin.sexp.ListVector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
 import java.util.Set;
-
-import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
-import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
 
 public class SqlTab extends TextAreaTab {
 
@@ -147,7 +144,7 @@ public class SqlTab extends TextAreaTab {
   }
 
   @Override
-  public CodeArea getCodeArea() {
+  public CodeTextArea getCodeArea() {
     return sqlTextArea;
   }
 }

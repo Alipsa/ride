@@ -1,19 +1,48 @@
+* {
+    -fx-selected-bgcolor: navy;
+    -fx-base-bgcolor: rgba(40, 40, 40, 255);
+}
+
 .root {
-    -fx-base: rgba(40, 40, 40, 255);
-    -fx-accent: darkslateblue;
+    -fx-base: -fx-base-bgcolor;
+    -fx-accent: -fx-selected-bgcolor;
     -fx-focus-color: silver;
+    -fx-highlight-fill: navy;
 }
 
 .text {
     -fx-fill: rgba(178, 192, 198, 255);
 }
 
+.text:selected {
+    -fx-background-color: -fx-selected-bgcolor;
+}
+
+.menu-item,
+.context-menu {
+    -fx-background-color: -fx-base-bgcolor;
+}
+
+.menu:hover,
+.menu:selected {
+    /*-fx-background-color: rgba(70, 70, 70, 255);*/
+    -fx-background-color: -fx-selected-bgcolor;
+}
+
+.menu-item:hover,
+.menu-item:selected,
+.context-menu:hover,
+.context-menu:selected{
+    /*-fx-background-color: rgba(70, 70, 70, 255); */
+    -fx-background-color: -fx-selected-bgcolor;
+}
+
 .fileTree .tree-cell {
-    -fx-background-color: rgba(40, 40, 40, 255);
+    -fx-background-color: -fx-base-bgcolor;
 }
 
 .fileTree .tree-cell:selected {
-    -fx-background-color: darkslateblue;
+    -fx-background-color: -fx-selected-bgcolor;
 }
 
 .table-view {
@@ -58,7 +87,7 @@
 
 
 .table-row-cell:selected {
-    -fx-background-color: darkslateblue;
+    -fx-background-color: -fx-selected-bgcolor;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
 }
@@ -78,11 +107,11 @@
 }
 
 .table-view .filler {
-    -fx-background-color: rgba(40, 40, 40, 255);
+    -fx-background-color: -fx-base-bgcolor;
 }
 
 .styled-text-area {
-    -fx-background-color: rgba(40, 40, 40, 255);
+    -fx-background-color: -fx-base-bgcolor;
 }
 
 .lineno {
@@ -97,8 +126,28 @@
     -fx-background-color: rgba(50, 50, 50, 255);
 }
 
+.styled-text-area {
+    -fx-cursor: text;
+}
+
+.styled-text-area .paragraph-box .paragraph-text {
+    -fx-padding: 0 2px;
+}
+
+.styled-text-area .selection {
+    -fx-fill: -fx-selected-bgcolor;
+    -fx-stroke-width: 0;
+    -fx-background-color:  -fx-selected-bgcolor;
+    /* these are apparently not doing anything
+    -fx-highlight-fill:  -fx-selected-bgcolor;
+    -rtfx-background-color: -fx-selected-bgcolor;
+     */
+}
+
 .styled-text-area .caret {
     -fx-stroke: orange;
+    -rtfx-blink-rate: 500ms;
+    -fx-stroke-width: 1.0;
 }
 
 .styled-text-area .env-varName {

@@ -1,9 +1,6 @@
-package se.alipsa.ride.code.codetab;
+package se.alipsa.ride.code.rtab;
 
-import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
@@ -15,20 +12,18 @@ import se.alipsa.ride.console.ConsoleComponent;
 
 import java.io.File;
 
-import static se.alipsa.ride.Constants.FLOWPANE_INSETS;
+public class RTab extends TextAreaTab {
 
-public class CodeTab extends TextAreaTab {
-
-  private CodeTextArea codeTextArea;
+  private RTextArea rTextArea;
 
   private ConsoleComponent console;
 
   private Button runTestsButton;
   private boolean isRunTestButtonDisabled = false;
 
-  private Logger log = LoggerFactory.getLogger(CodeTab.class);
+  private Logger log = LoggerFactory.getLogger(RTab.class);
 
-  public CodeTab(String title, Ride gui) {
+  public RTab(String title, Ride gui) {
     super(gui, TabType.R);
     this.console = gui.getConsoleComponent();
 
@@ -36,42 +31,42 @@ public class CodeTab extends TextAreaTab {
 
 
     Button runButton = new Button("Run"); // async
-    runButton.setOnAction(event -> console.runScriptAsync(codeTextArea.getTextContent(), getTitle()));
+    runButton.setOnAction(event -> console.runScriptAsync(rTextArea.getTextContent(), getTitle()));
     buttonPane.getChildren().add(runButton);
 
     runTestsButton = new Button("Run tests");
-    runTestsButton.setOnAction(evt -> console.runTests(codeTextArea.getTextContent(), getTitle()));
+    runTestsButton.setOnAction(evt -> console.runTests(rTextArea.getTextContent(), getTitle()));
     buttonPane.getChildren().add(runTestsButton);
     disableRunTestsButton();
 
-    codeTextArea = new CodeTextArea(this);
-    VirtualizedScrollPane<CodeTextArea> vPane = new VirtualizedScrollPane<>(codeTextArea);
+    rTextArea = new RTextArea(this);
+    VirtualizedScrollPane<RTextArea> vPane = new VirtualizedScrollPane<>(rTextArea);
     pane.setCenter(vPane);
   }
 
   @Override
   public File getFile() {
-    return codeTextArea.getFile();
+    return rTextArea.getFile();
   }
 
   @Override
   public void setFile(File file) {
-    codeTextArea.setFile(file);
+    rTextArea.setFile(file);
   }
 
   @Override
   public String getTextContent() {
-    return codeTextArea.getTextContent();
+    return rTextArea.getTextContent();
   }
 
   @Override
   public String getAllTextContent() {
-    return codeTextArea.getAllTextContent();
+    return rTextArea.getAllTextContent();
   }
 
   @Override
   public void replaceContentText(int start, int end, String content) {
-    codeTextArea.replaceContentText(start, end, content);
+    rTextArea.replaceContentText(start, end, content);
   }
 
   public void enableRunTestsButton() {
@@ -90,6 +85,6 @@ public class CodeTab extends TextAreaTab {
 
   @Override
   public CodeArea getCodeArea() {
-    return codeTextArea;
+    return rTextArea;
   }
 }

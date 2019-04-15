@@ -1,4 +1,4 @@
-package se.alipsa.ride.code.codetab;
+package se.alipsa.ride.code.rtab;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyCode;
@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
-import se.alipsa.ride.code.TextCodeArea;
+import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.console.ConsoleComponent;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CodeTextArea extends TextCodeArea {
+public class RTextArea extends CodeTextArea {
 
   // Since T and F are not true keywords (they can be reassigned e.g. T <- FALSE), they are not included below
   private static final String[] KEYWORDS = new String[]{
@@ -29,6 +29,7 @@ public class CodeTextArea extends TextCodeArea {
       "NA_integer_", "NA_real_", "NA_complex_", "NA_character_", "…",
       "library" // not strictly a keyword but RStudio treats it like this so we will too
   };
+
   // See https://www.rdocumentation.org/packages/base/versions/3.5.2 for more, at ns-dblcolon
   // or https://stat.ethz.ch/R-manual/R-devel/library/base/html/00Index.html
   // Will be too long for styling the textarea but useful for suggestions using ctrl + tab
@@ -79,10 +80,10 @@ public class CodeTextArea extends TextCodeArea {
       "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
-  private static Logger log = LoggerFactory.getLogger(CodeTextArea.class);
+  private static Logger log = LoggerFactory.getLogger(RTextArea.class);
   ContextMenu suggestionsPopup = new ContextMenu();
 
-  public CodeTextArea(CodeTab parent) {
+  public RTextArea(RTab parent) {
     super(parent);
     textProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue.contains("hamcrest")) {
@@ -117,7 +118,6 @@ public class CodeTextArea extends TextCodeArea {
         }
       }
     });
-
   }
 
   protected final StyleSpans<Collection<String>> computeHighlighting(String text) {

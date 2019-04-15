@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.code.codetab.CodeTab;
+import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.code.javatab.JavaTab;
 import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
@@ -20,7 +20,6 @@ import se.alipsa.ride.utils.ExceptionAlert;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.List;
 
 public class CodeComponent extends BorderPane {
 
@@ -64,8 +63,8 @@ public class CodeComponent extends BorderPane {
   }
 
   private TextAreaTab createCodeTab(String title) {
-    CodeTab codeTab = new CodeTab(title, gui);
-    return codeTab;
+    RTab rTab = new RTab(title, gui);
+    return rTab;
   }
 
   private TabTextArea addTabAndActivate(TextAreaTab codeTab) {
@@ -96,7 +95,7 @@ public class CodeComponent extends BorderPane {
     String title = file.getName();
     switch (type) {
       case R:
-        tab = new CodeTab(title, gui);
+        tab = new RTab(title, gui);
         break;
       case TXT:
         tab = new TxtTab(title, gui);

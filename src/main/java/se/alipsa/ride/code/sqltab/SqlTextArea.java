@@ -5,7 +5,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import se.alipsa.ride.code.TextCodeArea;
+import se.alipsa.ride.code.CodeTextArea;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class SqlTextArea extends TextCodeArea {
+public class SqlTextArea extends CodeTextArea {
 
   private static final String[] KEYWORDS = new String[]{
       "absolute", "action", "add", "admin", "after", "aggregate", "alias", "all", "allocate", "alter",

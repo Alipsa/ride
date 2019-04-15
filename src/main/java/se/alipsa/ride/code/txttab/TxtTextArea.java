@@ -3,12 +3,14 @@ package se.alipsa.ride.code.txttab;
 import javafx.beans.InvalidationListener;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.model.StyleSpans;
 import se.alipsa.ride.code.TabTextArea;
+import se.alipsa.ride.code.CodeTextArea;
 
 import java.io.File;
+import java.util.Collection;
 
-public class TxtTextArea extends CodeArea implements TabTextArea {
+public class TxtTextArea extends CodeTextArea implements TabTextArea {
 
   private File file;
   private boolean contentChanged = false;
@@ -29,6 +31,10 @@ public class TxtTextArea extends CodeArea implements TabTextArea {
     this.textProperty().addListener(contentChangeListener);
   }
 
+  @Override
+  protected StyleSpans<Collection<String>> computeHighlighting(String text) {
+    return null;
+  }
 
   @Override
   public File getFile() {
