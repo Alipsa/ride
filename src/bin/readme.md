@@ -46,9 +46,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Theme support
     - There is now a dark theme in addition to the default theme (now called bright theme). Change theme in global options
     
-- Add dependency on forked rjdbc
+- Add dependency on R2JDBC (forked from rjdbc)
     - Since there are several bugfixes to RJDBC (sql server datatypes, postgres datatypes, proper handling of datetime etc.) 
-    that i submitted but have yet to be accepted into upstream i decided to bundle a snapshot version with ride. 
+    that i submitted but have yet to be accepted into upstream i decided to bundle a forked version with ride. 
     If you want the old ones just edit the version in the pom file. 
     
 - Improved hamcrest testing

@@ -115,9 +115,9 @@
             <version>1.0.0-b9</version>
         </dependency>
         <dependency>
-            <groupId>org.renjin.cran</groupId>
-            <artifactId>RJDBC</artifactId>
-            <version>10.0.16-SNAPSHOT</version>
+            <groupId>se.alipsa</groupId>
+            <artifactId>R2JDBC</artifactId>
+            <version>10.0.16</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -210,20 +210,6 @@
                             <version>1.0-SNAPSHOT</version>
                             <packaging>jar</packaging>
                             <file>lib/rideutils-1.0-SNAPSHOT.jar</file>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>installRJDBC</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <configuration>
-                            <groupId>org.renjin.cran</groupId>
-                            <artifactId>RJDBC</artifactId>
-                            <version>10.0.16-SNAPSHOT</version>
-                            <packaging>jar</packaging>
-                            <file>lib/RJDBC-10.0.16-SNAPSHOT.jar</file>
                         </configuration>
                     </execution>
                 </executions>

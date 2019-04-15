@@ -1,6 +1,6 @@
 print("Loading libraries")
 library("DBI")
-library("RJDBC")
+library("se.alipsa:R2JDBC")
 
 #import(org.renjin.primitives.packaging.FqPackageName)
 #package <- packageLoader$load(FqPackageName$new("org.postgresql","postgresql"))

@@ -5,8 +5,7 @@
 }
 
 .text {
-    /*-fx-fill: white;*/
-    -fx-fill: ivory;
+    -fx-fill: rgba(178, 192, 198, 255);
 }
 
 .fileTree .tree-cell {
@@ -18,13 +17,69 @@
 }
 
 .table-view {
-    -fx-background-color: rgba(40, 40, 40, 255);
+    /*-fx-background-color: rgba(40, 40, 40, 255); */
+    -fx-background-color: transparent;
 }
+
+.table-view:focused {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(#131313 0%, #424141 100%);
+}
+
+.table-view .column-header-background .label {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(178, 192, 198, 255);
+}
+
+.table-view .table-cell{
+    -fx-text-fill: rgba(178, 192, 198, 255);
+}
+
+.table-row-cell {
+    -fx-table-cell-border-color: black;
+    -fx-background-color: rgba(50, 50, 50, 1);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-row-cell:odd {
+    -fx-table-cell-border-color: black;
+    -fx-background-color: rgba(40, 40, 40, 1);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
 
 .table-row-cell:selected {
     -fx-background-color: darkslateblue;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
 }
 
+.table-view > .virtual-flow > .scroll-bar:vertical,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track-background,
+.table-view > .virtual-flow > .scroll-bar:horizontal,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
+    -fx-background-color: transparent;
+}
+
+.table-view > .virtual-flow > .scroll-bar > .increment-button,
+.table-view > .virtual-flow > .scroll-bar > .decrement-button {
+    -fx-opacity: 0;
+}
+
+.table-view .filler {
+    -fx-background-color: rgba(40, 40, 40, 255);
+}
 
 .styled-text-area {
     -fx-background-color: rgba(40, 40, 40, 255);
@@ -47,7 +102,8 @@
 }
 
 .styled-text-area .env-varName {
-    -fx-fill: lightgray;
+    /*-fx-fill: lightgray; */
+    -fx-fill: rgba(178, 192, 198, 255);
 }
 
 .styled-text-area .env-varValue {
@@ -89,7 +145,7 @@
 }
 
 .keyword {
-    -fx-fill: #82C9F5;
+    -fx-fill: lightskyblue;
     /* -fx-font-weight: bold; */
 }
 
@@ -113,7 +169,7 @@
 }
 
 .string {
-    -fx-fill: #6A9159;
+    -fx-fill: rgba(111, 140, 94, 255);
 }
 
 .warning {

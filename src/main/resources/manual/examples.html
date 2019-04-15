@@ -29,7 +29,7 @@
 
 <h2 id="querying_db">Querying a database</h2>
 You can of course use any R package to work with a database but many of them does not fully work in Renjin yet.
-Ride comes with a patched version of RJDBC that, in my experience, works well. The SQL support in Ride uses RJDBC to
+Ride comes with R2JDBC, a forked version of RJDBC that, in my experience, works well. The SQL support in Ride uses R2JDBC to
 execute queries. I find the following workflow to work well:
 
 <ol>
@@ -44,7 +44,7 @@ Here is an example:
 <h4>Now you can use this query as follows:</h4>
 <div class="codeblock">
     <span class="keyword">library</span>(<span class="string">"org.renjin.cran:DBI"</span>)<br/>
-    <span class="keyword">library</span>(<span class="string">"org.renjin.cran:RJDBC"</span>)<br/>
+    <span class="keyword">library</span>(<span class="string">"se.alipsa:R2JDBC"</span>)<br/>
     <span class="keyword">library</span>(<span class="string">"se.alipsa:rideutils"</span>) <span class="comment"># enable us to use View</span><br/>
     <br/>
     readFile <- <span class="keyword">function</span>(fileName) {<br/>
@@ -105,9 +105,9 @@ Some of the basic packages that works flawlessly from my own personal experience
     <tr>
         <td>talk to a relational database</td>
         <td>org.renjin.cran:DBI<br/>
-            org.renjin,cran:RJDBC
+            se.alipsa:R2JDBC
         </td>
-        <td>Use DBI ver 1.0.0-b9 and the patched version of RJDBC that comes with Ride (10.0.16-SNAPSHOT)</td>
+        <td>Use DBI ver 1.0.0-b9 and the R2JDBC that comes with Ride (10.0.16-SNAPSHOT)</td>
     </tr>
     <tr>
         <td>import excel files</td>

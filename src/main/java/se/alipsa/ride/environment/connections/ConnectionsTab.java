@@ -201,7 +201,7 @@ public class ConnectionsTab extends Tab {
     StringBuilder code = new StringBuilder();
     String con = info.getName() + "_con";
     code.append("library(\"org.renjin.cran:DBI\")\n")
-        .append("library(\"org.renjin.cran:RJDBC\")\n\n")
+        .append("library(\"se.alipsa:R2JDBC\")\n\n")
         .append(con).append(" <- dbConnect(\n")
         .append("  JDBC(\"").append(info.getDriver()).append("\")\n")
         .append("  ,url = \"").append(info.getUrl()).append("\"\n");
