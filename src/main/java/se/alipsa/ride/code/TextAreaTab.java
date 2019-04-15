@@ -73,7 +73,7 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
     saveToolTip.setText("Save " + title.replace("*", ""));
   }
 
-  public abstract CodeArea getCodeArea();
+  public abstract CodeTextArea getCodeArea();
 
   public void contentChanged() {
     setTitle(getTitle() + "*");

@@ -3,6 +3,7 @@ package se.alipsa.ride.code.xmltab;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
 
@@ -46,7 +47,7 @@ public class XmlTab extends TextAreaTab {
   }
 
   @Override
-  public CodeArea getCodeArea() {
+  public CodeTextArea getCodeArea() {
     return xmlTextArea;
   }
 }

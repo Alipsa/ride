@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.StyleClassedTextArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
@@ -27,7 +28,7 @@ import java.util.*;
  *     -fx-font-family: monospace;
  * }
 */
-public abstract class CodeTextArea extends CodeArea implements TabTextArea {
+public abstract class CodeTextArea extends StyleClassedTextArea implements TabTextArea {
 
   protected File file;
 
@@ -36,7 +37,13 @@ public abstract class CodeTextArea extends CodeArea implements TabTextArea {
   private TextAreaTab parentTab;
 
   public CodeTextArea() {
+
+    getStyleClass().add("styled-text-area");
+    getStyleClass().add("code-area");
     getStyleClass().add("codeTextArea");
+    setUseInitialStyleForInsertion(true);
+
+
 
     Iterator<String> it = getStylesheets().iterator();
     while (it.hasNext()) {
@@ -44,12 +51,14 @@ public abstract class CodeTextArea extends CodeArea implements TabTextArea {
         it.remove();
       }
     }
-    /*
     System.out.println("Stylesheets for " + getClass().getSimpleName());
     for (String sheet : getStylesheets()) {
       System.out.println(sheet);
     }
-    */
+        System.out.println("Style classes for " + getClass().getSimpleName());
+    for (String styleClass : getStyleClass()) {
+      System.out.println(styleClass);
+    }
   }
 
   public CodeTextArea(TextAreaTab parent) {

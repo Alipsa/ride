@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
@@ -69,7 +70,7 @@ public class MainMenu extends MenuBar {
   }
 
   public void commentLines() {
-    CodeArea codeArea = gui.getCodeComponent().getActiveTab().getCodeArea();
+    CodeTextArea codeArea = gui.getCodeComponent().getActiveTab().getCodeArea();
     String lineComment;
     switch (gui.getCodeComponent().getActiveTab().getTabType()) {
       case R:
@@ -139,7 +140,7 @@ public class MainMenu extends MenuBar {
     Button findButton = new Button("search");
     findButton.setOnAction(e -> {
       TextAreaTab codeTab = gui.getCodeComponent().getActiveTab();
-      CodeArea codeArea = codeTab.getCodeArea();
+      CodeTextArea codeArea = codeTab.getCodeArea();
       int caretPos = codeArea.getCaretPosition();
       String text = codeTab.getAllTextContent().substring(caretPos);
       String searchWord = searchTF.getText();

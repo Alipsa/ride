@@ -77,6 +77,9 @@ public class ConsoleComponent extends BorderPane {
 
   public ConsoleComponent(Ride gui) {
     this.gui = gui;
+    console = new ConsoleTextArea(gui);
+    console.setEditable(false);
+
     Button clearButton = new Button("Clear");
     clearButton.setOnAction(e -> {
       console.clear();
@@ -94,9 +97,6 @@ public class ConsoleComponent extends BorderPane {
 
     topPane.getChildren().addAll(statusButton, clearButton);
     setTop(topPane);
-
-    console = new ConsoleTextArea(gui);
-    console.setEditable(false);
 
     VirtualizedScrollPane<ConsoleTextArea> vPane = new VirtualizedScrollPane<>(console);
     vPane.setMaxWidth(Double.MAX_VALUE);

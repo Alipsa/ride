@@ -126,8 +126,14 @@
     -fx-background-color: rgba(50, 50, 50, 255);
 }
 
+.code-area {
+    -fx-font-family: monospace;
+}
+
+
 .styled-text-area {
     -fx-cursor: text;
+    -fx-font-family: monospace;
 }
 
 .styled-text-area .paragraph-box .paragraph-text {

@@ -8,6 +8,7 @@
 
 .styled-text-area {
     -fx-cursor: text;
+    -fx-font-family: monospace;
 }
 
 .styled-text-area .paragraph-box .paragraph-text {

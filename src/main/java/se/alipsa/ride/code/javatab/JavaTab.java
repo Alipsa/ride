@@ -5,6 +5,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.TabType;
 import se.alipsa.ride.code.TextAreaTab;
 
@@ -50,7 +51,7 @@ public class JavaTab extends TextAreaTab {
   }
 
   @Override
-  public CodeArea getCodeArea() {
+  public CodeTextArea getCodeArea() {
     return javaTextArea;
   }
 }
