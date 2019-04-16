@@ -5,12 +5,12 @@ import static se.alipsa.ride.Constants.INDENT;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.InlineCssTextArea;
 import org.fxmisc.richtext.StyleClassedTextArea;
 import org.renjin.eval.Context;
 import org.renjin.sexp.Environment;
 import org.renjin.sexp.StringVector;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.environment.connections.ConnectionsTab;
 
@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class EnvironmentComponent extends TabPane {
 
-  StyleClassedTextArea envTa;
+  UnStyledCodeArea envTa;
 
   ConnectionsTab connectionsTab;
 
@@ -27,7 +27,8 @@ public class EnvironmentComponent extends TabPane {
   public EnvironmentComponent(Ride gui) {
     Tab environment = new Tab();
     environment.setText("Environment");
-    envTa = new StyleClassedTextArea();
+    envTa = new UnStyledCodeArea();
+    envTa.getStyleClass().add("environment");
     envTa.appendText("Environment");
     VirtualizedScrollPane<StyleClassedTextArea> scrollPane = new VirtualizedScrollPane<>(envTa);
     environment.setContent(scrollPane);

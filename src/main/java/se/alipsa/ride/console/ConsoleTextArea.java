@@ -1,17 +1,14 @@
 package se.alipsa.ride.console;
 
+import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
+
 import javafx.application.Platform;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.StyleClassedTextArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.UnStyledCodeArea;
 
-import java.util.Iterator;
-
-import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
-
-public class ConsoleTextArea extends StyleClassedTextArea {
+public class ConsoleTextArea extends UnStyledCodeArea {
 
   private static final String WARN_SIZE_MSG = "\nMaximum size for console reached, printing to standard out until console is cleared\n";
   public static int MAX_LENGTH = 1_500_000;
@@ -23,16 +20,8 @@ public class ConsoleTextArea extends StyleClassedTextArea {
 
 
   private ConsoleTextArea() {
-    Iterator<String> it = getStylesheets().iterator();
-    while (it.hasNext()) {
-      if (it.next().contains("styled-text-area.css")) {
-        it.remove();
-      }
-    }
     getStyleClass().add("console");
-    getStyleClass().add("styled-text-area");
-    getStyleClass().add("code-area");
-    setUseInitialStyleForInsertion(false);
+    //setUseInitialStyleForInsertion(false);
     System.out.println("Stylesheets for " + getClass().getSimpleName());
     for (String sheet : getStylesheets()) {
       System.out.println(sheet);

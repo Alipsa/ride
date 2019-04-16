@@ -2,6 +2,8 @@
 
 ## version 1.1
 
+### Disable run buttons when code is running
+
 ### Run hamcrest tests (done)
 - Create a new runbutton when hamcrest tests are detected
 - Output to console also when running hamcrest tests

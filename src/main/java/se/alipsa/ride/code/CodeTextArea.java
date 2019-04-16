@@ -9,26 +9,22 @@ import javafx.scene.control.IndexRange;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.StyleClassedTextArea;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
+import se.alipsa.ride.UnStyledCodeArea;
 
 import java.io.File;
 import java.time.Duration;
 import java.util.*;
 
 
-/** TODO: if possible, change to extending StyleClassedTextArea instead
- * there is only one css property that needs to be added, i.e.
- * .code-area {
- *     -fx-font-family: monospace;
- * }
+/**
+ * Base class for all code areas
 */
-public abstract class CodeTextArea extends StyleClassedTextArea implements TabTextArea {
+public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextArea {
 
   protected File file;
 
@@ -38,19 +34,11 @@ public abstract class CodeTextArea extends StyleClassedTextArea implements TabTe
 
   public CodeTextArea() {
 
-    getStyleClass().add("styled-text-area");
-    getStyleClass().add("code-area");
     getStyleClass().add("codeTextArea");
     setUseInitialStyleForInsertion(true);
 
-
-
     Iterator<String> it = getStylesheets().iterator();
-    while (it.hasNext()) {
-      if (it.next().contains("styled-text-area.css")) {
-        it.remove();
-      }
-    }
+
     System.out.println("Stylesheets for " + getClass().getSimpleName());
     for (String sheet : getStylesheets()) {
       System.out.println(sheet);
