@@ -1,10 +1,11 @@
 package se.alipsa.ride.console;
 
+import static se.alipsa.ride.Constants.*;
+import static se.alipsa.ride.utils.StringUtils.format;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -17,7 +18,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.vfs2.FileSystemException;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -37,20 +37,15 @@ import org.renjin.sexp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.model.Repo;
-import se.alipsa.ride.utils.Animation;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
-import javax.script.ScriptException;
 import java.io.*;
-import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static se.alipsa.ride.Constants.*;
-import static se.alipsa.ride.utils.StringUtils.format;
+import javax.script.ScriptException;
 
 public class ConsoleComponent extends BorderPane {
 
@@ -72,7 +67,6 @@ public class ConsoleComponent extends BorderPane {
   private Ride gui;
   private List<RemoteRepository> remoteRepositories;
   private PackageLoader packageLoader;
-  private Timeline scriptExecutionTimeline;
   private Thread scriptThread;
 
   public ConsoleComponent(Ride gui) {
@@ -255,11 +249,6 @@ public class ConsoleComponent extends BorderPane {
    */
   public void interruptR() {
     log.info("Interrupting runnning script");
-    if (scriptExecutionTimeline != null && Animation.Status.RUNNING.equals(scriptExecutionTimeline.getStatus())) {
-      console.appendText("\nInterrupting Renjin...\n>");
-      // Would be nice with something like engine.stop() here;
-      scriptExecutionTimeline.stop();
-    }
     // This is a nasty piece of code but a brutal stop() is the only thing that will break out of the script engine
     if (scriptThread != null && scriptThread.isAlive()) {
       console.append("\nInterrupting Renjin thread...");
@@ -298,13 +287,15 @@ public class ConsoleComponent extends BorderPane {
     return global.getVariable(topContext, varName);
   }
 
-  public void runScriptAsync(String script, String title) {
+  public void runScriptAsync(String script, String title, TaskListener taskListener) {
+
     running();
 
     Task<Void> task = new Task<Void>() {
       @Override
       public Void call() throws Exception {
         try {
+          taskListener.taskStarted();
           executeScriptAndReport(script, title);
         } catch (RuntimeException e) {
           // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
@@ -317,16 +308,19 @@ public class ConsoleComponent extends BorderPane {
     };
 
     task.setOnSucceeded(e -> {
+      taskListener.taskEnded();
       waiting();
       updateEnvironment();
       promptAndScrollToEnd();
     });
     task.setOnSucceeded(e -> {
+      taskListener.taskEnded();
       waiting();
       updateEnvironment();
       promptAndScrollToEnd();
     });
     task.setOnFailed(e -> {
+      taskListener.taskEnded();
       waiting();
       updateEnvironment();
       Throwable throwable = task.getException();
@@ -388,7 +382,7 @@ public class ConsoleComponent extends BorderPane {
     // log.info("Working dir is {}", engine.getSession().getWorkingDirectory().getName().getPath());
   }
 
-  public void runTests(String script, String title) {
+  public void runTests(String script, String title, TaskListener taskListener) {
     running();
     console.append("");
     console.append("Running hamcrest tests");
@@ -400,7 +394,8 @@ public class ConsoleComponent extends BorderPane {
       long end;
 
       @Override
-      public Void call() throws Exception {
+      public Void call() {
+        taskListener.taskStarted();
         start = System.currentTimeMillis();
         engine.put("inout", gui.getInoutComponent());
         List<TestResult> results = new ArrayList<>();
@@ -452,25 +447,27 @@ public class ConsoleComponent extends BorderPane {
         return null;
       }
     };
-       task.setOnSucceeded(e -> {
+     task.setOnSucceeded(e -> {
+       taskListener.taskEnded();
         waiting();
         updateEnvironment();
         promptAndScrollToEnd();
-      });
+    });
     task.setOnFailed(e -> {
-        waiting();
-        updateEnvironment();
-        Throwable throwable = task.getException();
-        Throwable ex = throwable.getCause();
-        if (ex == null) {
-          ex = throwable;
-        }
+      taskListener.taskEnded();
+      waiting();
+      updateEnvironment();
+      Throwable throwable = task.getException();
+      Throwable ex = throwable.getCause();
+      if (ex == null) {
+        ex = throwable;
+      }
 
-        String msg = createMessageFromEvalException(ex);
+      String msg = createMessageFromEvalException(ex);
 
-        ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
-        promptAndScrollToEnd();
-      });
+      ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
+      promptAndScrollToEnd();
+    });
       scriptThread = new Thread(task);
       scriptThread.setDaemon(false);
       scriptThread.start();
@@ -661,7 +658,7 @@ public class ConsoleComponent extends BorderPane {
     Timer timer = new Timer();
     TimerTask task = new TimerTask() {
       public void run() {
-        Platform.runLater(() -> customTooltip.hide());
+        Platform.runLater(customTooltip::hide);
       }
     };
     timer.schedule(task, 800);

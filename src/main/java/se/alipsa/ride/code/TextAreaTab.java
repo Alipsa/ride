@@ -7,7 +7,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import org.fxmisc.richtext.CodeArea;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.utils.FileUtils;
 
@@ -98,4 +97,5 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
   public TabType getTabType() {
     return tabType;
   }
+
 }

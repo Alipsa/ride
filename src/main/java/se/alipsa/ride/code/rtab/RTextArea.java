@@ -105,7 +105,7 @@ public class RTextArea extends CodeTextArea {
           if (selected != null && !"".equals(selected)) {
             rCode = codeComponent.getTextFromActiveTab();
           }
-          console.runScriptAsync(rCode, codeComponent.getActiveScriptName());
+          console.runScriptAsync(rCode, codeComponent.getActiveScriptName(), parent);
           moveTo(getCurrentParagraph() + 1, 0);
           int totalLength = getAllTextContent().length();
           if (getCaretPosition() > totalLength) {

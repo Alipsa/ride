@@ -1,6 +1,6 @@
 * {
     -fx-selected-bgcolor: navy;
-    -fx-base-bgcolor: rgba(40, 40, 40, 255);
+    -fx-base-bgcolor: rgba(35, 35, 35, 255);
 }
 
 .root {
@@ -123,7 +123,8 @@
 }
 
 .paragraph-box:has-caret {
-    -fx-background-color: rgba(50, 50, 50, 255);
+    /* Sligtly brighter */
+    -fx-background-color: derive(-fx-base-bgcolor, 10%);
 }
 
 .code-area {
@@ -224,7 +225,7 @@
 }
 
 .string {
-    -fx-fill: rgba(111, 140, 94, 255);
+    -fx-fill: rgba(112, 142, 95, 255);
 }
 
 .warning {
