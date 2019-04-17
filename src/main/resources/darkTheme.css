@@ -115,7 +115,7 @@
 }
 
 .lineno {
-    -fx-background-color: rgba(30, 30, 30, 255);
+    -fx-background-color: derive(-fx-base-bgcolor, -20%);
 }
 
 .lineno .text {
