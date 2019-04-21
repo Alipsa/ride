@@ -18,9 +18,9 @@ VERSION=$(getProperty "version")
 JAR_NAME=$(getProperty "jar.name")
 RELEASE_TAG=$(getProperty "release.tag")
 
-TARGET=${PWD}/target/${JAR_NAME}
-
-cd src/bin
+#TARGET=${PWD}/target/${JAR_NAME}
+cd ${DIR}/src/bin
+TARGET=~/.m2/repository/se/alipsa/ride/${VERSION}/${JAR_NAME}
 
 java -cp ${TARGET} se.alipsa.ride.splash.SplashScreen &
 mvn exec:java -Dride.jar=${TARGET} -Drelease.tag=${VERSION}
