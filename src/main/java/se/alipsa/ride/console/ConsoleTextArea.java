@@ -22,6 +22,7 @@ public class ConsoleTextArea extends UnStyledCodeArea {
   private ConsoleTextArea() {
     getStyleClass().add("console");
     //setUseInitialStyleForInsertion(false);
+    /*
     System.out.println("Stylesheets for " + getClass().getSimpleName());
     for (String sheet : getStylesheets()) {
       System.out.println(sheet);
@@ -30,6 +31,7 @@ public class ConsoleTextArea extends UnStyledCodeArea {
     for (String styleClass : getStyleClass()) {
       System.out.println(styleClass);
     }
+     */
   }
 
   public ConsoleTextArea(Ride gui) {

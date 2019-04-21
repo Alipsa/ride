@@ -178,6 +178,10 @@ public class MainMenu extends MenuBar {
     WebEngine webEngine = browser.getEngine();
     BorderPane borderPane = new BorderPane();
     borderPane.setCenter(browser);
+    String cssPath = gui.getStyleSheets().get(0);
+    log.info("Adding style sheet {}", cssPath);
+    webEngine.setUserStyleSheetLocation(cssPath);
+    browser.getStylesheets().addAll(gui.getStyleSheets());
 
     FlowPane linkPane = new FlowPane();
     borderPane.setTop(linkPane);

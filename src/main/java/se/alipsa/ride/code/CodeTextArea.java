@@ -39,6 +39,7 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
 
     Iterator<String> it = getStylesheets().iterator();
 
+    /*
     System.out.println("Stylesheets for " + getClass().getSimpleName());
     for (String sheet : getStylesheets()) {
       System.out.println(sheet);
@@ -47,6 +48,7 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
     for (String styleClass : getStyleClass()) {
       System.out.println(styleClass);
     }
+    */
   }
 
   public CodeTextArea(TextAreaTab parent) {

@@ -1,24 +1,8 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-    <style>
-        .comment {
-            color: gray;
-        }
-        .keyword {
-            color: navy;
-        }
-        .string {
-            color: darkgreen;
-        }
-        .codeblock {
-            background-color: lightgrey;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
     <title>Examples</title>
 </head>
+<body>
 <h1>Table of content</h1>
 <ul>
     <li><a href="#querying_db">Querying a database</a></li>
@@ -107,7 +91,7 @@ Some of the basic packages that works flawlessly from my own personal experience
         <td>org.renjin.cran:DBI<br/>
             se.alipsa:R2JDBC
         </td>
-        <td>Use DBI ver 1.0.0-b9 and the R2JDBC that comes with Ride (10.0.16-SNAPSHOT)</td>
+        <td>Use DBI ver 1.0.0-b9 and the R2JDBC that comes with Ride (10.0.16, available from maven central)</td>
     </tr>
     <tr>
         <td>import excel files</td>
@@ -136,4 +120,5 @@ variable or function with exists. E.g:
 A more "proper" way to reuse code is to create a package. How to do that is described in <a href="http://docs.renjin.org/en/latest/writing-renjin-extensions.html">the dokumentation</a>.<br/>
 <br/>
 I plan to add specific support (wizards etc) for creating packages with Ride in the future.
+</body>
 </html>

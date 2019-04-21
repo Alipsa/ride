@@ -5,6 +5,7 @@ import static se.alipsa.ride.Constants.THEME;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -122,6 +123,10 @@ public class Ride extends Application {
 
   public void addStyleSheet(String styleSheetPath) {
     scene.getStylesheets().add(FileUtils.getResourceUrl(styleSheetPath).toExternalForm());
+  }
+
+  public ObservableList<String> getStyleSheets() {
+    return scene.getStylesheets();
   }
 
   public void endProgram() {

@@ -42,9 +42,10 @@
 }
 
 .comment {
-    /*-fx-fill: darkseagreen;*/
-    -fx-fill: gray
+    -fx-fill: gray;
+    color: gray; /* web view */
 }
+
 
 .digit {
     /* -fx-fill:darkslateblue; */
@@ -62,6 +63,7 @@
 .keyword {
     -fx-fill: mediumblue;
     /* -fx-font-weight: bold; */
+    color: mediumblue; /* web view */
 }
 
 .operator {
@@ -89,6 +91,7 @@
 
 .string {
     -fx-fill: darkgreen;
+    color: darkgreen; /* web view */
 }
 
 .warning {
@@ -114,4 +117,17 @@
 
 .xml_comment {
     -fx-fill: darkseagreen;
+}
+
+/** WebView styles */
+body {
+    background-color: white;
+    color: black;
+}
+
+.codeblock {
+    background-color: gainsboro;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

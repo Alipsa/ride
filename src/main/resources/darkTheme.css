@@ -183,13 +183,12 @@
 }
 
 .comment {
-    /*-fx-fill: darkseagreen;*/
-    -fx-fill: gray
+    -fx-fill: gray;
+    color: gray; /* web view */
 }
 
 .digit {
     -fx-fill: lightblue;
-    /* -fx-fill:navy; */
 }
 
 .error {
@@ -202,7 +201,7 @@
 
 .keyword {
     -fx-fill: lightskyblue;
-    /* -fx-font-weight: bold; */
+    color: lightskyblue; /* web view */
 }
 
 .operator {
@@ -226,6 +225,7 @@
 
 .string {
     -fx-fill: rgba(112, 145, 95, 255);
+    color: rgba(112, 145, 95, 255); /* web view */
 }
 
 .warning {
@@ -251,4 +251,22 @@
 
 .xml_comment {
     -fx-fill: darkseagreen;
+}
+
+/** WebView styles */
+body {
+    background-color: rgb(35, 35, 35);
+    color: rgb(178, 192, 198);
+}
+
+.codeblock {
+    background-color: rgb(45, 45, 45);
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-family: monospace;
+}
+
+a {
+    color: royalblue;
 }

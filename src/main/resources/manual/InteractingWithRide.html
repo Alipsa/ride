@@ -1,43 +1,31 @@
 <html lang="en">
 <head>
-    <style>
-        .comment {
-            color: gray;
-        }
-        .keyword {
-            color: navy;
-        }
-        .string {
-            color: darkgreen;
-        }
-        .codeblock {
-            background-color: lightgrey;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-    </style>
     <title>Interacting with Ride</title>
 </head>
+<body>
 <h1>Interacting with Ride</h1>
 Ride injects an inout component into the session.<br/>
 <br/>
 It is defined as follows:<br/>
-<div class="comment">
-<br/>
-/**<br/>
-* display an image in the Plot tab<br/>
-*/
+
+<h4>Display images in the Plot tab</h4>
+<div class="codeblock">
+    <div class="comment">
+    /**<br/>
+    * display an image in the Plot tab<br/>
+    */
+    </div>
+    void display(Node node, String... title);<br/>
 </div>
-void display(Node node, String... title);<br/>
-<br/>
-<div class="comment">
-/**<br/>
-* display an image in the Plot tab<br/>
-*/
+
+<div class="codeblock">
+    <div class="comment">
+    /**<br/>
+    * display an image in the Plot tab<br/>
+    */
+    </div>
+    void display(Image img, String... title);<br/>
 </div>
-void display(Image img, String... title);<br/>
-<br/>
 Here is an example; also showing the use of rideutils (readImage) which is always awailable in Ride:<br/>
 <div class="codeblock">
     library(<span class="string">"grDevices"</span>)<br/>
@@ -55,14 +43,16 @@ Here is an example; also showing the use of rideutils (readImage) which is alway
     <span class="comment"># convert the image to a a javafx Image and display it in ride, the second argument is the title of the window (optional)</span><br/>
     inout$display(readImage(fileName), <span class="string">"svgplot"</span>)<br/>
 </div>
-<div class="comment">
-<br/>
-/**<br/>
-* display data in the Viewer tab, e.g. list, data.frame, matrix<br/>
-*/
+
+<h4>Display tabular data in the View tab</h4>
+<div class="codeblock">
+    <div class="comment">
+        /**<br/>
+        * display data in the Viewer tab, e.g. list, data.frame, matrix<br/>
+        */
+    </div>
+    void View(SEXP sexp, String... title);<br/>
 </div>
-void View(SEXP sexp, String... title);<br/>
-<br/>
 Here is an example:<br/>
 <div class="codeblock">
     <span class="comment"># read a csv file into a data.frame</span><br/>
@@ -73,12 +63,14 @@ Here is an example:<br/>
     library(<span class="string">"se.alipsa:rideutils"</span>)<br/>
     View(df)<br/>
 </div>
-<br/>
-<div class="comment">
-/** Return the current active script file or null if is has not been saved yet */
+
+<h4>File and dir contexts</h4>
+<div class="codeblock">
+    <div class="comment">
+    /** Return the current active script file or null if is has not been saved yet */
+    </div>
+    String scriptFile();<br/>
 </div>
-String scriptFile();<br/>
-<br/>
 
-
+</body>
 </html>
