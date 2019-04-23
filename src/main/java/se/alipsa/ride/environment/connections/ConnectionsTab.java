@@ -292,17 +292,27 @@ public class ConnectionsTab extends Tab {
     Text text = new Text(content);
     if (CodeType.R.equals(codeType)) {
       ta = new RTextArea();
+      text.setStyle("-fx-font-family: monospace;");
     } else {
       ta = new UnStyledCodeArea();
       ta.setStyle("-fx-font-family:" + Font.getDefault().getFamily());
+      text.setStyle("-fx-font-family:" + Font.getDefault().getFamily());
     }
-    ta.getStyleClass().add("txtarea");
 
+    ta.getStyleClass().add("txtarea");
+    ta.setWrapText(false);
     ta.replaceText(content);
 
-    double fontSize = text.getFont().getSize(); // ta.getFont().getSize() does not exist
-    double prefHeight = text.getLayoutBounds().getHeight() +  fontSize * 2;
-    ta.setPrefHeight( prefHeight > 640  ? 640 : prefHeight);
+    //TODO: get the fontsize from the ta instead of the below!
+    double fontSize = 8.5; // ta.getFont().getSize() does not exist
+
+    //log.info("FontSize = {}", fontSize);
+
+    double height = text.getLayoutBounds().getHeight() +  fontSize * 2;
+    double prefHeight = height < 100.0 ? 100.0 : height;
+    prefHeight = prefHeight > 640  ? 640 : prefHeight;
+    ta.setPrefHeight( prefHeight );
+
     double maxWidth = 0;
     for (String line : content.split("\n")) {
       double length = line.length() * fontSize;
@@ -310,10 +320,12 @@ public class ConnectionsTab extends Tab {
         maxWidth = length;
       }
     }
-    ta.setPrefWidth(maxWidth > 800 ? 800 : maxWidth);
-    //ta.setPrefHeight(dbList.size() * 22);
-    //ta.setPrefWidth(title.length() * 15);
-    log.info("PrefHeight = {}, PrefWidth = {}", ta.getPrefHeight(), ta.getPrefWidth());
+    //log.info("maxWidth = {}", maxWidth);
+    double prefWidth = maxWidth < 150 ? 150 : maxWidth;
+    prefWidth = prefWidth > 800 ? 800 : prefWidth;
+    ta.setPrefWidth(prefWidth);
+
+    //log.info("PrefHeight = {}, PrefWidth = {}", ta.getPrefHeight(), ta.getPrefWidth());
     ta.autosize();
 
     ta.setEditable(false);
