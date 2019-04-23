@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
-import se.alipsa.ride.code.TabType;
+import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
@@ -205,21 +205,21 @@ public class FileTree extends TreeView<File> {
       if (file.isFile()) {
         String fileNameLower = file.getName().toLowerCase();
         if (strEndsWith(fileNameLower, ".r", ".s") || strEquals(type, "text/x-rsrc")) {
-          codeComponent.addTab(file, TabType.R);
+          codeComponent.addTab(file, CodeType.R);
         } else if (strEquals(type, "application/xml", "text/xml")
             || strEndsWith(type, "+xml")
           // in case an xml declaration was omitted:
           /*|| strEndsWith(fileNameLower,".xml")*/) {
-          codeComponent.addTab(file, TabType.XML);
+          codeComponent.addTab(file, CodeType.XML);
         } else if (strEndsWith(fileNameLower, ".java")) {
-          codeComponent.addTab(file, TabType.JAVA);
+          codeComponent.addTab(file, CodeType.JAVA);
         } else if (strEquals(type, "text/x-sql", "application/sql") || strEndsWith(fileNameLower, "sql")) {
-          codeComponent.addTab(file, TabType.SQL);
+          codeComponent.addTab(file, CodeType.SQL);
         } else if (strStartsWith(type, "text")
             || strEquals(type, "application/x-bat",
             "application/x-sh", "application/json", "application/x-sas")
           /*|| strEndsWith(fileNameLower, ".txt", ".md", ".csv")*/) {
-          codeComponent.addTab(file, TabType.TXT);
+          codeComponent.addTab(file, CodeType.TXT);
         } else {
           if (isDesktopSupported()) {
             log.info("Try to open {} in associated application", file.getName());

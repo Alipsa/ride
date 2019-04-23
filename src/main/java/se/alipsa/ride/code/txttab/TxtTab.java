@@ -2,7 +2,7 @@ package se.alipsa.ride.code.txttab;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.code.TabType;
+import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.CodeTextArea;
 
@@ -13,7 +13,7 @@ public class TxtTab extends TextAreaTab {
   private TxtTextArea txtTextArea;
 
   public TxtTab(String title, Ride gui) {
-    super(gui, TabType.TXT);
+    super(gui, CodeType.TXT);
     setTitle(title);
     txtTextArea = new TxtTextArea(this);
     VirtualizedScrollPane<TxtTextArea> txtPane = new VirtualizedScrollPane<>(txtTextArea);

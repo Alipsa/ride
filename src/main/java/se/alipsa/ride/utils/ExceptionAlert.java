@@ -2,10 +2,10 @@ package se.alipsa.ride.utils;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import se.alipsa.ride.UnStyledCodeArea;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -32,7 +32,9 @@ public class ExceptionAlert extends Alert {
     throwable.printStackTrace(pw);
     String exceptionText = sw.toString();
 
-    TextArea textArea = new TextArea(exceptionText);
+    UnStyledCodeArea textArea = new UnStyledCodeArea();
+    textArea.getStyleClass().add("txtarea");
+    textArea.replaceText(exceptionText);
     textArea.setEditable(false);
     textArea.setWrapText(true);
 

@@ -1,38 +1,46 @@
 package se.alipsa.ride.environment.connections;
 
+import static se.alipsa.ride.Constants.*;
+import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
+import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
+
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.ListVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.UnStyledCodeArea;
+import se.alipsa.ride.code.CodeType;
+import se.alipsa.ride.code.rtab.RTextArea;
 import se.alipsa.ride.model.TableMetaData;
-import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.RDataTransformer;
 
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static se.alipsa.ride.Constants.*;
-import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
-import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
 
 public class ConnectionsTab extends Tab {
 
@@ -49,6 +57,8 @@ public class ConnectionsTab extends Tab {
   private TableView<ConnectionInfo> connectionsTable = new TableView<>();
 
   private TreeItemComparator treeItemComparator = new TreeItemComparator();
+
+  private Logger log = LoggerFactory.getLogger(ConnectionsTab.class);
 
   public ConnectionsTab(Ride gui) {
     setText("Connections");
@@ -216,7 +226,7 @@ public class ConnectionsTab extends Tab {
         .append("sqlDf <- dbGetQuery(").append(con).append(", \"select * from someTable\")\n")
         .append("# close the connection\n")
         .append("dbDisconnect(").append(con).append(")\n");
-    displayTextInWindow("R connection code for " + info.getName(), code.toString());
+    displayTextInWindow("R connection code for " + info.getName(), code.toString(), CodeType.R);
   }
 
   private String getPrefOrBlank(String pref) {
@@ -270,24 +280,45 @@ public class ConnectionsTab extends Tab {
       String content = String.join("\n", dbList);
       String title = "Databases for connection " + connectionInfo.getName();
 
-      displayTextInWindow(title, content);
+      displayTextInWindow(title, content, CodeType.TXT);
     } catch (SQLException e) {
       String msg = gui.getConsoleComponent().createMessageFromEvalException(e);
       ExceptionAlert.showAlert(msg + e.getMessage(), e);
     }
   }
 
-  private void displayTextInWindow(String title, String content) {
-    TextArea ta = new TextArea();
+  private void displayTextInWindow(String title, String content, CodeType codeType) {
+    UnStyledCodeArea ta;
     Text text = new Text(content);
-    text.setFont(ta.getFont());
-    ta.setText(content);
-    // This should work but last line is not counted for some reason so need to add som extra height
-    ta.setPrefHeight(text.getLayoutBounds().getHeight() + ta.getFont().getSize() * 2);
+    if (CodeType.R.equals(codeType)) {
+      ta = new RTextArea();
+    } else {
+      ta = new UnStyledCodeArea();
+      ta.setStyle("-fx-font-family:" + Font.getDefault().getFamily());
+    }
+    ta.getStyleClass().add("txtarea");
+
+    ta.replaceText(content);
+
+    double fontSize = text.getFont().getSize(); // ta.getFont().getSize() does not exist
+    double prefHeight = text.getLayoutBounds().getHeight() +  fontSize * 2;
+    ta.setPrefHeight( prefHeight > 640  ? 640 : prefHeight);
+    double maxWidth = 0;
+    for (String line : content.split("\n")) {
+      double length = line.length() * fontSize;
+      if (maxWidth < length) {
+        maxWidth = length;
+      }
+    }
+    ta.setPrefWidth(maxWidth > 800 ? 800 : maxWidth);
     //ta.setPrefHeight(dbList.size() * 22);
     //ta.setPrefWidth(title.length() * 15);
+    log.info("PrefHeight = {}, PrefWidth = {}", ta.getPrefHeight(), ta.getPrefWidth());
+    ta.autosize();
+
     ta.setEditable(false);
-    createAndShowWindow(title, ta);
+    VirtualizedScrollPane<UnStyledCodeArea> scrollPane = new VirtualizedScrollPane<>(ta);
+    createAndShowWindow(title, scrollPane);
   }
 
   void runScriptInThread(String rCode, String varname, String connectionName) {
@@ -339,6 +370,7 @@ public class ConnectionsTab extends Tab {
 
   private void createAndShowWindow(String title, Parent view) {
     Scene dialog = new Scene(view);
+    dialog.getStylesheets().addAll(gui.getStyleSheets());
     Stage stage = new Stage();
     stage.initStyle(StageStyle.DECORATED);
     stage.initModality(Modality.NONE);

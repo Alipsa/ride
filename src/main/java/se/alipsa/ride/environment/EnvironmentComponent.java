@@ -29,7 +29,7 @@ public class EnvironmentComponent extends TabPane {
     environment.setText("Environment");
     envTa = new UnStyledCodeArea();
     envTa.getStyleClass().add("environment");
-    envTa.appendText("Environment");
+    envTa.replaceText("Environment");
     VirtualizedScrollPane<StyleClassedTextArea> scrollPane = new VirtualizedScrollPane<>(envTa);
     environment.setContent(scrollPane);
     getTabs().add(environment);

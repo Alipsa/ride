@@ -83,6 +83,9 @@ public class RTextArea extends CodeTextArea {
   private static Logger log = LoggerFactory.getLogger(RTextArea.class);
   ContextMenu suggestionsPopup = new ContextMenu();
 
+  public RTextArea() {
+  }
+
   public RTextArea(RTab parent) {
     super(parent);
     textProperty().addListener((observable, oldValue, newValue) -> {

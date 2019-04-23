@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.CodeTextArea;
-import se.alipsa.ride.code.TabType;
+import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 
@@ -26,7 +26,7 @@ public class RTab extends TextAreaTab implements TaskListener {
   private Logger log = LoggerFactory.getLogger(RTab.class);
 
   public RTab(String title, Ride gui) {
-    super(gui, TabType.R);
+    super(gui, CodeType.R);
     this.console = gui.getConsoleComponent();
 
     setTitle(title);

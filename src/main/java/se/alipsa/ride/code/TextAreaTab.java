@@ -20,13 +20,13 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
   protected Button saveButton = new Button();
   protected Ride gui;
   private Tooltip saveToolTip;
-  private TabType tabType;
+  private CodeType codeType;
   protected BorderPane pane;
   protected FlowPane buttonPane;
 
-  public TextAreaTab(Ride gui, TabType tabType) {
+  public TextAreaTab(Ride gui, CodeType codeType) {
     this.gui = gui;
-    this.tabType = tabType;
+    this.codeType = codeType;
     saveButton.setGraphic(new ImageView(IMG_SAVE));
     saveButton.setDisable(true);
     saveButton.setOnAction(a -> gui.getMainMenu().saveContent(this));
@@ -94,8 +94,8 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
     return gui;
   }
 
-  public TabType getTabType() {
-    return tabType;
+  public CodeType getCodeType() {
+    return codeType;
   }
 
 }

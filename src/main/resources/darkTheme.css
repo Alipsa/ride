@@ -1,17 +1,19 @@
 * {
-    -fx-selected-bgcolor: navy;
+    /*-fx-selected-bgcolor: navy;*/
     -fx-base-bgcolor: rgba(35, 35, 35, 255);
+    -fx-base-text-color: rgba(178, 192, 195, 255);
+    -fx-selected-bgcolor: rgba(35, 55, 85, 255);
 }
 
 .root {
     -fx-base: -fx-base-bgcolor;
     -fx-accent: -fx-selected-bgcolor;
     -fx-focus-color: silver;
-    -fx-highlight-fill: navy;
+    -fx-highlight-fill: -fx-selected-bgcolor;
 }
 
 .text {
-    -fx-fill: rgba(178, 192, 198, 255);
+    -fx-fill: -fx-base-text-color;
 }
 
 .text:selected {
@@ -37,11 +39,11 @@
     -fx-background-color: -fx-selected-bgcolor;
 }
 
-.fileTree .tree-cell {
+.tree-cell {
     -fx-background-color: -fx-base-bgcolor;
 }
 
-.fileTree .tree-cell:selected {
+.tree-cell:selected {
     -fx-background-color: -fx-selected-bgcolor;
 }
 

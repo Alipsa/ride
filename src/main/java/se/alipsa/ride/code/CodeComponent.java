@@ -34,10 +34,10 @@ public class CodeComponent extends BorderPane {
 
     pane = new TabPane();
     setCenter(pane);
-    addCodeTab(TabType.R);
+    addCodeTab(CodeType.R);
   }
 
-  public void addCodeTab(TabType type) {
+  public void addCodeTab(CodeType type) {
     final String untitled = "Untitled";
     TextAreaTab tab;
     switch (type) {
@@ -90,7 +90,7 @@ public class CodeComponent extends BorderPane {
     return (TextAreaTab) selectionModel.getSelectedItem();
   }
 
-  public void addTab(File file, TabType type) {
+  public void addTab(File file, CodeType type) {
     TextAreaTab tab;
     String title = file.getName();
     switch (type) {

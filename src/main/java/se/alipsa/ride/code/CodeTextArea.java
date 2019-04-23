@@ -37,9 +37,22 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
     getStyleClass().add("codeTextArea");
     setUseInitialStyleForInsertion(true);
 
-    Iterator<String> it = getStylesheets().iterator();
+    setParagraphGraphicFactory(LineNumberFactory.get(this));
+    // recompute the syntax highlighting 400 ms after user stops editing area
+
+    // plain changes = ignore style changes that are emitted when syntax highlighting is reapplied
+    // multi plain changes = save computation by not rerunning the code multiple times
+    //   when making multiple changes (e.g. renaming a method at multiple parts in file)
+    multiPlainChanges()
+
+        // do not emit an event until 400 ms have passed since the last emission of previous stream
+        .successionEnds(Duration.ofMillis(400))
+
+        // run the following code block when previous stream emits an event
+        .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
 
     /*
+    Iterator<String> it = getStylesheets().iterator();
     System.out.println("Stylesheets for " + getClass().getSimpleName());
     for (String sheet : getStylesheets()) {
       System.out.println(sheet);
@@ -54,19 +67,6 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
   public CodeTextArea(TextAreaTab parent) {
     this();
     this.parentTab = parent;
-    setParagraphGraphicFactory(LineNumberFactory.get(this));
-    // recompute the syntax highlighting 400 ms after user stops editing area
-
-    // plain changes = ignore style changes that are emitted when syntax highlighting is reapplied
-    // multi plain changes = save computation by not rerunning the code multiple times
-    //   when making multiple changes (e.g. renaming a method at multiple parts in file)
-    multiPlainChanges()
-
-        // do not emit an event until 400 ms have passed since the last emission of previous stream
-        .successionEnds(Duration.ofMillis(400))
-
-        // run the following code block when previous stream emits an event
-        .subscribe(ignore -> setStyleSpans(0, computeHighlighting(getText())));
 
     plainTextChanges().subscribe(ptc -> {
       if (parentTab.isChanged() == false && !blockChange) {

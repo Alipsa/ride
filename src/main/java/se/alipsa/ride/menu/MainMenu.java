@@ -1,5 +1,8 @@
 package se.alipsa.ride.menu;
 
+import static se.alipsa.ride.Constants.THEME;
+import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
+
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -10,14 +13,14 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.fxmisc.richtext.CodeArea;
 import org.renjin.eval.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.code.CodeTextArea;
-import se.alipsa.ride.code.TabType;
+import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
@@ -30,9 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
-
-import static se.alipsa.ride.Constants.THEME;
-import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 
 public class MainMenu extends MenuBar {
 
@@ -72,7 +72,7 @@ public class MainMenu extends MenuBar {
   public void commentLines() {
     CodeTextArea codeArea = gui.getCodeComponent().getActiveTab().getCodeArea();
     String lineComment;
-    switch (gui.getCodeComponent().getActiveTab().getTabType()) {
+    switch (gui.getCodeComponent().getActiveTab().getCodeType()) {
       case R:
         lineComment = "#";
         break;
@@ -243,9 +243,10 @@ public class MainMenu extends MenuBar {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle(title);
     alert.setHeaderText(null);
-    TextArea ta = new TextArea();
+    UnStyledCodeArea ta = new UnStyledCodeArea();
+    ta.getStyleClass().add("txtarea");
     ta.setWrapText(true);
-    ta.setText(content.toString());
+    ta.replaceText(content.toString());
     alert.getDialogPane().setContent(ta);
     alert.setResizable(true);
     alert.showAndWait();
@@ -358,15 +359,15 @@ public class MainMenu extends MenuBar {
     Menu fileMenu = new Menu("New File");
 
     MenuItem nRScript = new MenuItem("R Script");
-    nRScript.setOnAction(a -> gui.getCodeComponent().addCodeTab(TabType.R));
+    nRScript.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.R));
     fileMenu.getItems().add(nRScript);
 
     MenuItem nText = new MenuItem("Text file");
-    nText.setOnAction(a -> gui.getCodeComponent().addCodeTab(TabType.TXT));
+    nText.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.TXT));
     fileMenu.getItems().add(nText);
 
     MenuItem nSql = new MenuItem("SQL file");
-    nSql.setOnAction(a -> gui.getCodeComponent().addCodeTab(TabType.SQL));
+    nSql.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.SQL));
     fileMenu.getItems().add(nSql);
 
     MenuItem save = new MenuItem("Save  ctrl+S");

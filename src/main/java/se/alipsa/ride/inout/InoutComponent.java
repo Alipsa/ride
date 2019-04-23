@@ -14,6 +14,7 @@ import org.renjin.sexp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.inout.plot.PlotsTab;
 import se.alipsa.ride.inout.viewer.ViewTab;
 import se.alipsa.ride.model.Table;
@@ -21,7 +22,6 @@ import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -66,7 +66,9 @@ public class InoutComponent extends TabPane implements InOut {
 
     packages = new Tab();
     packages.setText("Packages");
-    packages.setContent(new TextArea());
+    UnStyledCodeArea ta = new UnStyledCodeArea();
+    ta.getStyleClass().add("txtarea");
+    packages.setContent(ta);
 
     getTabs().add(packages);
 

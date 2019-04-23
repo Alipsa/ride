@@ -1,5 +1,5 @@
 package se.alipsa.ride.code;
 
-public enum TabType {
+public enum CodeType {
   TXT, R, XML, JAVA, SQL
 }

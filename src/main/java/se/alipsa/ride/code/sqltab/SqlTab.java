@@ -12,7 +12,7 @@ import javafx.scene.control.Tooltip;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.sexp.ListVector;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.code.TabType;
+import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
@@ -29,7 +29,7 @@ public class SqlTab extends TextAreaTab {
   private ComboBox<ConnectionInfo> connectionCombo;
 
   public SqlTab(String title, Ride gui) {
-    super(gui, TabType.SQL);
+    super(gui, CodeType.SQL);
     setTitle(title);
 
     runButton = new Button("Run select");
