@@ -209,7 +209,7 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void setPackages(StringVector pkgs) {
-    TextArea ta = (TextArea) packages.getContent();
+    UnStyledCodeArea ta = (UnStyledCodeArea) packages.getContent();
     ta.clear();
     if (pkgs == null) {
       return;
