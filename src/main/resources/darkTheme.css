@@ -3,6 +3,7 @@
     -fx-base-bgcolor: rgba(35, 35, 35, 255);
     -fx-base-text-color: rgba(178, 192, 195, 255);
     -fx-selected-bgcolor: rgba(35, 55, 85, 255);
+    -fx-string-color: rgba(112, 145, 95, 255);
 }
 
 .root {
@@ -226,8 +227,8 @@
 }
 
 .string {
-    -fx-fill: rgba(112, 145, 95, 255);
-    color: rgba(112, 145, 95, 255); /* web view */
+    -fx-fill: -fx-string-color;
+    color: -fx-string-color; /* web view */
 }
 
 .warning {
@@ -238,7 +239,7 @@
     -fx-fill: gray;
 }
 .xml_anytag {
-    -fx-fill: blue;
+    -fx-fill: royalblue;
 }
 .xml_paren {
     -fx-fill: darkgray;
@@ -248,7 +249,7 @@
     -fx-fill: magenta;
 }
 .xml_avalue {
-    -fx-fill: green;
+    -fx-fill: -fx-string-color;
 }
 
 .xml_comment {
