@@ -1,5 +1,5 @@
 # Ride
-A RStudio like gui for Renjin 
+An integrated development environment Renjin R
 
 The purpose of this gui is to provide a nice R development environment, similar to R Studio, for the Renjin 
 JVM implementation of R (www.renjin.org). It runs R code in the renjin ScriptEngine thus allowing you to run and verify 
@@ -9,8 +9,7 @@ much like you would use R Studio.
 It was created to have a familiar (similar to RStudio) interface to develop R scripts that
 will later run in embedded mode on application servers such as Wildfly or Play Framework.
 I use it daily at work and have been doing so for several months now. It started as a tool to develop and test R code 
-that I created using RStudio but needed a manageable intermediary to make sure my code worked in Renjin before integrating it 
-with the java application servers I use at work - due to fact that many packages commonly used in GNU R does not yet work 
+that I created using RStudio but needed a manageable intermediary to make sure my code worked in Renjin before integrating it with the java application servers I use at work - due to fact that many packages commonly used in GNU R does not yet work 
 in Renjin. Later, it evolved to the point where I now use it as my primary data analysis tool.
 
 
@@ -55,6 +54,15 @@ This is useful when moving from development to test to make sure dependencies ar
 prior to integration testing in embedded mode on e.g. an app server. In the Packages tab you can see
 a list of packages loaded for the session (in case you missed a library call in the script but loaded 
 it from another script - the session is shared).
+
+### Installing and Running ride
+There are two distributions of Ride. Go to the releases tab and expand the assets section at the bottom of the release. The zip file called ride-<version>-dist.zip e.g. ride-1.1-beta-dist.zip is the "slim" distribution whereas the ride-fat-<version>-dist.zip e.g. ride-fat-1.1-beta-dist.zip is the "fat" distribution.
+
+#### Ride slim
+This uses maven as the means to download resources and start Ride. All external dependencies are described in the pom.xml file. When preparing for your R code to be intergrated into your application it is quite useful to use the ClasspathPackageLoader and modify the pom.xml to include your dependencies and then verify that your code runs as expected. If it does you can be sure it will work in your application as well once you have added those same dependecies. 
+
+#### Ride fat
+This uses ant to start Ride. It contains all the atrefacts needed to run Ride. Anything that is in the lib folder will be added to the classpath. To add a new artefact just put it in the lib dir and restart ride. This is useful if you are working off the grid or manage your artefacts in some other way that makes them unavailable from a maven remote repository. Note that you can combine Ride off line with AetherPackageLoader to still dynamically download packages as needed. 
 
 ### A SQL script screenshot
 Showing the result of a select query in the viewer tab and the connection view that is shown when you right click 
