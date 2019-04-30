@@ -109,7 +109,7 @@ public class MainMenu extends MenuBar {
     List<String> commented = new ArrayList<>();
     for (String line : lines) {
       if (line.startsWith(lineComment)) {
-        commented.add(line.substring(1));
+        commented.add(line.substring(lineComment.length()));
       } else {
         commented.add(lineComment + line);
       }
