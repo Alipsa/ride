@@ -1,5 +1,5 @@
 # Ride
-An integrated development environment Renjin R
+An integrated development environment for Renjin R
 
 The purpose of this gui is to provide a nice R development environment, similar to R Studio, for the Renjin 
 JVM implementation of R (www.renjin.org). It runs R code in the renjin ScriptEngine thus allowing you to run and verify 
@@ -58,11 +58,15 @@ it from another script - the session is shared).
 ### Installing and Running ride
 There are two distributions of Ride. Go to the releases tab and expand the assets section at the bottom of the release. The zip file called ride-<version>-dist.zip e.g. ride-1.1-beta-dist.zip is the "slim" distribution whereas the ride-fat-<version>-dist.zip e.g. ride-fat-1.1-beta-dist.zip is the "fat" distribution.
 
+There are icons for windows and Linux in the base folder of the unpacked zip that can be used to create a desktop shortcut/launcher.
+
 #### Ride slim
 This uses maven as the means to download resources and start Ride. All external dependencies are described in the pom.xml file. When preparing for your R code to be intergrated into your application it is quite useful to use the ClasspathPackageLoader and modify the pom.xml to include your dependencies and then verify that your code runs as expected. If it does you can be sure it will work in your application as well once you have added those same dependecies. 
+Use ride.cmd or ride.sh to start ride. 
 
 #### Ride fat
-This uses ant to start Ride. It contains all the atrefacts needed to run Ride. Anything that is in the lib folder will be added to the classpath. To add a new artefact just put it in the lib dir and restart ride. This is useful if you are working off the grid or manage your artefacts in some other way that makes them unavailable from a maven remote repository. Note that you can combine Ride off line with AetherPackageLoader to still dynamically download packages as needed. 
+This uses ant to start Ride. It contains all the artifacts needed to run Ride. Anything that is in the lib folder will be added to the classpath. To add a new artefact just put it in the lib dir and restart ride. This is useful if you are working off the grid or manage your artefacts in some other way that makes them unavailable from a maven remote repository. Note that you can combine Ride off line with AetherPackageLoader to still dynamically download packages as needed. 
+Use ride-offline.cmd or ride-offline.sh to start ride. 
 
 ### A SQL script screenshot
 Showing the result of a select query in the viewer tab and the connection view that is shown when you right click 
@@ -131,6 +135,9 @@ Apache 2.0 license.
 
 ### codehaus:guessencoding
 Used to detect file encoding (Charset). Copyright 2002-2007 Guillaume Laforge under Apache 2.0 License
+
+### Various jdbc drivers
+These are included for convenience only. Licenced under various open source licenses. There is no direct dependency on any jdbc driver in Ride.
 
 # Contributing
 If you are interested in helping out, reporting issues, creating tests or implementing new features
