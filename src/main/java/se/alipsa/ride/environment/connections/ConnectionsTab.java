@@ -170,7 +170,7 @@ public class ConnectionsTab extends Tab {
       final ContextMenu contextMenu = new ContextMenu();
       final MenuItem removeMenuItem = new MenuItem("delete connection");
       removeMenuItem.setOnAction(event -> {
-        connectionsTable.getItems().remove(row.getItem());
+        tableView.getItems().remove(row.getItem());
       });
       final MenuItem viewMenuItem = new MenuItem("view tables");
       viewMenuItem.setOnAction(event -> {
@@ -193,8 +193,8 @@ public class ConnectionsTab extends Tab {
               .otherwise(contextMenu)
       );
 
-      connectionsTable.getSelectionModel().selectedIndexProperty().addListener(e -> {
-        ConnectionInfo info = connectionsTable.getSelectionModel().getSelectedItem();
+      tableView.getSelectionModel().selectedIndexProperty().addListener(e -> {
+        ConnectionInfo info = tableView.getSelectionModel().getSelectedItem();
         nameText.setText(info.getName());
         driverText.setText(info.getDriver());
         urlText.setText(info.getUrl());

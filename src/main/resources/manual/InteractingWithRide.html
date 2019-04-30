@@ -15,7 +15,7 @@ It is defined as follows:<br/>
     * display an image in the Plot tab<br/>
     */
     </div>
-    void display(Node node, String... title);<br/>
+    <span class="keyword">void</span> display(Node node, String... title);<br/>
 </div>
 
 <div class="codeblock">
@@ -24,12 +24,12 @@ It is defined as follows:<br/>
     * display an image in the Plot tab<br/>
     */
     </div>
-    void display(Image img, String... title);<br/>
+    <span class="keyword">void</span> display(Image img, String... title);<br/>
 </div>
 Here is an example; also showing the use of rideutils (readImage) which is always awailable in Ride:<br/>
 <div class="codeblock">
-    library(<span class="string">"grDevices"</span>)<br/>
-    library(<span class="string">"graphics"</span>)<br/>
+    <span class="keyword">library</span>(<span class="string">"grDevices"</span>)<br/>
+    <span class="keyword">library</span>(<span class="string">"graphics"</span>)<br/>
     <span class="comment"># rideutils provides ways to bridge over from R to Java to be able to interact with the IDE</span><br/>
     library(<span class="string">"se.alipsa:rideutils"</span>)
     <br/>
@@ -51,7 +51,7 @@ Here is an example; also showing the use of rideutils (readImage) which is alway
         * display data in the Viewer tab, e.g. list, data.frame, matrix<br/>
         */
     </div>
-    void View(SEXP sexp, String... title);<br/>
+    <span class="keyword">void</span> View(SEXP sexp, String... title);<br/>
 </div>
 Here is an example:<br/>
 <div class="codeblock">

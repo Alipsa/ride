@@ -228,7 +228,7 @@
 
 .string {
     -fx-fill: -fx-string-color;
-    color: -fx-string-color; /* web view */
+    color: rgba(112, 145, 95, 255); /* web view */
 }
 
 .warning {

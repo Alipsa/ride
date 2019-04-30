@@ -87,12 +87,12 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.9.3</version>
+            <version>0.10.0</version>
         </dependency>
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>fxgraphics2d</artifactId>
-            <version>1.7</version>
+            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
+            <version>3.9</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.197</version>
+            <version>1.4.199</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -145,7 +145,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.15</version>
+            <version>8.0.16</version>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
@@ -165,7 +165,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>7.2.1.jre8</version>
+            <version>7.2.2.jre8</version>
         </dependency>
     </dependencies>
 
@@ -174,6 +174,11 @@
             <id>bedatadriven</id>
             <name>bedatadriven public repo</name>
             <url>https://nexus.bedatadriven.com/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>http://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
 

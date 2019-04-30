@@ -24,4 +24,4 @@ start javaw -cp %JAR_NAME% se.alipsa.ride.splash.SplashScreen
 
 call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG% --no-snapshot-updates
 
-call mvn "exec:java" -Djava.library.path="%LIB_DIR%" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG% --no-snapshot-updates
+call mvn "exec:java" -Duser.home=%USERPROFILE% -Djava.library.path="%LIB_DIR%" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG% --no-snapshot-updates
