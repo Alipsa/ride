@@ -80,7 +80,7 @@ public class SqlTab extends TextAreaTab {
     }
     // cleanup
     try {
-      gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("rm(sqlTabDf)").toString());
+      gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("if(exists(\"sqlTabDf\")) rm(sqlTabDf)").toString());
     } catch (Exception e) {
       setNormalCursor();
       ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
