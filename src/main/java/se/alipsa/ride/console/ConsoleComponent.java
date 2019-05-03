@@ -224,6 +224,10 @@ public class ConsoleComponent extends BorderPane {
   }
 
   private void addDefaultRepos(List<Repo> list) {
+    log.info("add local repo");
+    String localRepoPath = System.getProperty("localRepository"); // c:/Users/blah/.m2/repository
+    Repo local = new Repo("local", "default", "file:" + localRepoPath);
+    list.add(local);
     log.info("add renjin repo");
     list.add(RENJIN_REPO);
     log.info("add maven central repo");
