@@ -2,6 +2,10 @@ package se.alipsa.ride.environment.connections;
 
 import javafx.beans.property.SimpleStringProperty;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class ConnectionInfo implements Comparable {
 
   private final SimpleStringProperty name;
@@ -87,5 +91,9 @@ public class ConnectionInfo implements Comparable {
     } else {
       return false;
     }
+  }
+
+  public Connection connect() throws SQLException {
+    return DriverManager.getConnection(getUrl(), getUser(), getPassword());
   }
 }

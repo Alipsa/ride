@@ -6,6 +6,8 @@ import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
 
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -24,6 +26,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
@@ -34,6 +37,7 @@ import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.rtab.RTextArea;
+import se.alipsa.ride.model.Table;
 import se.alipsa.ride.model.TableMetaData;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.RDataTransformer;
@@ -265,11 +269,11 @@ public class ConnectionsTab extends Tab {
     String rCode = baseRQueryString(con, "connectionsTabDf <- dbGetQuery", sql).toString();
 
     // runScriptSilent newer returns so have to run in a thread
-    runScriptInThread(rCode, "connectionsTabDf", con.getName());
+    runScriptInThread(rCode, "connectionsTabDf", con);
   }
 
   private void showDatabases(ConnectionInfo connectionInfo) {
-    try (Connection con = DriverManager.getConnection(connectionInfo.getUrl(), connectionInfo.getUser(), connectionInfo.getPassword())) {
+    try (Connection con = connectionInfo.connect()) {
       DatabaseMetaData meta = con.getMetaData();
       ResultSet res = meta.getCatalogs();
       List<String> dbList = new ArrayList<>();
@@ -333,7 +337,8 @@ public class ConnectionsTab extends Tab {
     createAndShowWindow(title, scrollPane);
   }
 
-  void runScriptInThread(String rCode, String varname, String connectionName) {
+  void runScriptInThread(String rCode, String varname, ConnectionInfo con) {
+    String connectionName = con.getName();
     Task<Void> task = new Task<Void>() {
       @Override
       public Void call() throws Exception {
@@ -357,7 +362,7 @@ public class ConnectionsTab extends Tab {
         rows.forEach(r -> metaDataList.add(new TableMetaData(r)));
         gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("rm(connectionsTabDf)").toString());
         setNormalCursor();
-        TreeView treeView = createMetaDataTree(metaDataList, connectionName);
+        TreeView treeView = createMetaDataTree(metaDataList, con);
         createAndShowWindow(connectionName + " connection view", treeView);
       } catch (Exception ex) {
         setNormalCursor();
@@ -407,8 +412,9 @@ public class ConnectionsTab extends Tab {
     connectionsTable.setCursor(Cursor.WAIT);
   }
 
-  private TreeView createMetaDataTree(List<TableMetaData> table, String connectionName) {
-    TreeView tree = new TreeView();
+  private TreeView createMetaDataTree(List<TableMetaData> table, ConnectionInfo con) {
+    String connectionName = con.getName();
+    TreeView<String> tree = new TreeView<>();
     TreeItem<String> root = new TreeItem<>(connectionName);
     tree.setRoot(root);
     Map<String, List<TableMetaData>> tableMap = table.stream()
@@ -429,14 +435,23 @@ public class ConnectionsTab extends Tab {
         copySelectionToClipboard(tree);
       }
     });
+    tree.setCellFactory(new Callback<TreeView<String>,TreeCell<String>>(){
+      @Override
+      public TreeCell<String> call(TreeView<String> p) {
+        return new TableNameTreeCell(con);
+      }
+    });
     return tree;
   }
 
-  @SuppressWarnings("rawtypes")
-  private void copySelectionToClipboard(final TreeView<?> treeView) {
-    TreeItem treeItem = treeView.getSelectionModel().getSelectedItem();
+  private void copySelectionToClipboard(final TreeView<String> treeView) {
+    TreeItem<String> treeItem = treeView.getSelectionModel().getSelectedItem();
+    copySelectionToClipboard(treeItem);
+  }
+
+  private void copySelectionToClipboard(final TreeItem<String> treeItem) {
     final ClipboardContent clipboardContent = new ClipboardContent();
-    String value = treeItem.getValue().toString();
+    String value = treeItem.getValue();
     int idx = value.indexOf(TableMetaData.COLUMN_META_START);
     if (idx > -1) {
       value = value.substring(0, idx);
@@ -450,6 +465,69 @@ public class ConnectionsTab extends Tab {
     @Override
     public int compare(TreeItem<String> fileTreeItem, TreeItem<String> t1) {
       return fileTreeItem.getValue().compareToIgnoreCase(t1.getValue());
+    }
+  }
+
+  private final class TableNameTreeCell extends TreeCell<String> {
+    private ContextMenu tableRightClickMenu = new ContextMenu();
+    private ContextMenu columnRightClickMenu = new ContextMenu();
+
+    TableNameTreeCell(ConnectionInfo con) {
+      MenuItem copyItem = new MenuItem("copy");
+      tableRightClickMenu.getItems().add(copyItem);
+      copyItem.setOnAction( event -> copySelectionToClipboard(getTreeItem()) );
+
+      MenuItem copyItem2 = new MenuItem("copy");
+      columnRightClickMenu.getItems().add(copyItem2);
+      copyItem2.setOnAction( event -> copySelectionToClipboard(getTreeItem()) );
+
+      MenuItem sampleContent = new MenuItem("View 200 rows");
+      tableRightClickMenu.getItems().add(sampleContent);
+      sampleContent.setOnAction(event -> {
+        try (Connection connection = con.connect()) {
+          Statement stm = connection.createStatement();
+          stm.setMaxRows(200);
+          String tableName = getTreeItem().getValue();
+          ResultSet rs = stm.executeQuery("SELECT * from " + tableName);
+          rs.setFetchSize(200);
+          List<String> columnList = new ArrayList<>();
+          List<List<Object>> rowList = new ArrayList<>();
+          ResultSetMetaData rsMeta = rs.getMetaData();
+          int numColumns = rsMeta.getColumnCount();
+          for (int i = 1; i <= numColumns; i++) {
+            columnList.add(rsMeta.getColumnName(i));
+          }
+          while (rs.next()) {
+            List<Object> row = new ArrayList<>();
+            for (int i = 1; i <= numColumns; i++) {
+              row.add(rs.getObject(i));
+            }
+            rowList.add(row);
+          }
+          Table table = new Table(columnList, rowList);
+          gui.getInoutComponent().showInViewer(table, tableName);
+
+        } catch (SQLException e) {
+          ExceptionAlert.showAlert("Failed to sample table", e);
+        }
+      });
+    }
+
+    @Override
+    public void updateItem(String item, boolean empty) {
+      super.updateItem(item, empty);
+      if (empty) {
+        setText(null);
+        setGraphic(null);
+      } else {
+        setText(item);
+        setGraphic(getTreeItem().getGraphic());
+        if ( (!getTreeItem().isLeaf()) && (getTreeItem().getParent() != null) ) {
+          setContextMenu(tableRightClickMenu);
+        } else if (getTreeItem().isLeaf()) {
+          setContextMenu(columnRightClickMenu);
+        }
+      }
     }
   }
 }
