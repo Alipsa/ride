@@ -15,7 +15,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <release.tag>1.1-beta</release.tag>
+    <release.tag>1.1-beta2</release.tag>
   </properties>
 
   <dependencyManagement>

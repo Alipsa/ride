@@ -1,4 +1,4 @@
-This is version 1.1 beta of Ride.
+This is version 1.1 beta2 of Ride.
 
 At this point Ride is usable and provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine.
 It also support SQL querying and updating.
@@ -9,13 +9,14 @@ If you use open JDK on Linux then you might need to do something like `sudo apt-
 Ride is started using maven (see ride.sh/ride.cmd for details). 
 This is because renjin is not included in the fat jar and needs to be wired in to the classpath upon startup. 
 You can specify a different renjin version in the pom if you like but note that it requires renjin version 0.9.2716 or later to work. 
+An offline version with everything needed to run is available that does not require maven or an internet connection.
 
 Since you probably want to run the ScriptEngine with the ClassPathPackageLoader when embedding your R app, 
 you can set Ride to use this to resolve packages. You then need to include those dependencies to the maven.pom and hence
 test that you got all dependencies right before attempting to run the R scripts from the java application (server). 
 
 ## How to install:
-Unzip ride-1.1-beta-dist.zip to a directory of choice
+Unzip ride-1.1-beta2-dist.zip to a directory of choice
 
 ## How to run:
 
@@ -27,7 +28,7 @@ or on windows
 
 ## If you need to run ride offline 
 
-Unzip ride-fat-1.1-beta-dist.zip to a directory of choice
+Unzip ride-fat-1.1-beta2-dist.zip to a directory of choice
 
 The `ride-offline.sh` / `ride-offline.cmd` starts ride with the Classpath package loader and includes all jars
 in the lib folder. You need to manually add jars to the liv folder if you need a package or jdbc driver that is 
@@ -62,6 +63,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Improved connections tab
     - add separate username and password fields as putting username and password in the url does not always work for all databases
     - Add "view databases" right click menu option
+        - Add view top 200 rows option when right clicking a table.
     - Add "view R code" i.e. generate R code to set up the connection
     
 - All code editors now have a button bar
