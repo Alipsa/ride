@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.web.PopupFeatures;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -45,16 +46,16 @@ public class MainMenu extends MenuBar {
     Menu menuFile = createFileMenu();
     Menu menuEdit = createEditMenu();
     Menu menuCode = createCodeMenu();
-    Menu menuView = new Menu("View");
-    Menu menuPlots = new Menu("Plots");
+    //Menu menuView = new Menu("View");
+    //Menu menuPlots = new Menu("Plots");
     Menu menuSession = createSessionMenu();
-    Menu menuBuild = new Menu("Build");
+    //Menu menuBuild = new Menu("Build");
     Menu menuDebug = new Menu("Debug");
-    Menu menuProfile = new Menu("Profile");
+    //Menu menuProfile = new Menu("Profile");
     Menu menuTools = createToolsMenu();
     Menu menuHelp = createHelpMenu();
-    getMenus().addAll(menuFile, menuEdit, menuCode, menuView, menuPlots, menuSession,
-        menuBuild, menuDebug, menuProfile, menuTools, menuHelp);
+    getMenus().addAll(menuFile, menuEdit, menuCode, /*menuView, menuPlots,*/ menuSession,
+        /*menuBuild, */ menuDebug, /*menuProfile, */ menuTools, menuHelp);
   }
 
   private Menu createCodeMenu() {
@@ -200,6 +201,19 @@ public class MainMenu extends MenuBar {
     examplesButton.setOnAction(e -> webEngine.load(examplesUrl.toExternalForm()));
 
     linkPane.getChildren().addAll(rideShortCuts, interactingWithRideButton, examplesButton);
+
+    webEngine.setCreatePopupHandler(
+       (PopupFeatures config) -> {
+         WebView nBrowser = new WebView();
+         // Always use bright theme as external links will usually look funny when coming from dark mode
+         nBrowser.getEngine().setUserStyleSheetLocation(FileUtils.getResourceUrl(Constants.BRIGHT_THEME).toExternalForm());
+         nBrowser.getStylesheets().addAll(gui.getStyleSheets());
+         Scene scene = new Scene(nBrowser);
+         Stage stage = new Stage();
+         stage.setScene(scene);
+         stage.show();
+         return nBrowser.getEngine();
+       });
 
 
     Scene dialog = new Scene(borderPane);

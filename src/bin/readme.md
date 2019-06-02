@@ -42,6 +42,10 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.1
+- Fixed links in the user manual when selecting "open link in new window"
+- Removed empty menus (View, plots, Build, Profile) 
+
 ### 1.1 beta 2
 - Theme support
     - There is now a dark theme in addition to the default theme (now called bright theme). Change theme in global options
