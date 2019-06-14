@@ -86,7 +86,10 @@ public class InoutComponent extends TabPane implements InOut {
 
   private void handleChangeDir(ActionEvent actionEvent) {
     DirectoryChooser dirChooser = new DirectoryChooser();
-    dirChooser.setInitialDirectory(gui.getInoutComponent().getRootDir());
+    File rootDir = gui.getInoutComponent().getRootDir();
+    if (rootDir != null && rootDir.exists()) {
+      dirChooser.setInitialDirectory(rootDir);
+    }
     File selectedDirectory = dirChooser.showDialog(gui.getStage());
 
     if (selectedDirectory == null) {

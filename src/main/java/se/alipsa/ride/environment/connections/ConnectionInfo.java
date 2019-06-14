@@ -1,12 +1,16 @@
 package se.alipsa.ride.environment.connections;
 
 import javafx.beans.property.SimpleStringProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionInfo implements Comparable {
+
+  private Logger log = LoggerFactory.getLogger(ConnectionInfo.class);
 
   private final SimpleStringProperty name;
   private final SimpleStringProperty driver;
@@ -31,47 +35,47 @@ public class ConnectionInfo implements Comparable {
   }
 
   public String getName() {
-    return name.get();
+    return name.getValue();
   }
 
   public void setName(String name) {
-    this.name.set(name);
+    this.name.setValue(name);
   }
 
   public String getDriver() {
-    return driver.get();
+    return driver.getValue();
   }
 
   public void setDriver(String driver) {
-    this.driver.set(driver);
+    this.driver.setValue(driver);
   }
 
   public String getUrl() {
-    return url.get();
+    return url.getValue();
   }
 
   public void setUrl(String url) {
-    this.url.set(url);
+    this.url.setValue(url);
   }
 
   public String toString() {
-    return name.get();
+    return name.getValue();
   }
 
   public String getUser() {
-    return user.get();
+    return user.getValue();
   }
 
   public void setUser(String user) {
-    this.user.set(user);
+    this.user.setValue(user);
   }
 
   public String getPassword() {
-    return password.get();
+    return password.getValue();
   }
 
   public void setPassword(String password) {
-    this.password.set(password);
+    this.password.setValue(password);
   }
 
   @Override
@@ -94,6 +98,19 @@ public class ConnectionInfo implements Comparable {
   }
 
   public Connection connect() throws SQLException {
-    return DriverManager.getConnection(getUrl(), getUser(), getPassword());
+    String user = getUser();
+    String password = getPassword();
+    String theUrl = getUrl();
+
+    if ( urlContainsLogin() ) {
+      log.info("Skipping specified user/password since it is part of the url");
+      return DriverManager.getConnection(theUrl);
+    }
+    return DriverManager.getConnection(theUrl, user, password);
+  }
+
+  public boolean urlContainsLogin() {
+    String safeLcUrl = url.getValueSafe().toLowerCase();
+    return ( safeLcUrl.contains("user") && safeLcUrl.contains("pass") ) || safeLcUrl.contains("@");
   }
 }
