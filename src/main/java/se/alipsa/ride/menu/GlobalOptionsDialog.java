@@ -144,7 +144,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     Label styleTheme = new Label("Style theme");
     grid.add(styleTheme, 0, 3);
     themes = new ComboBox<>();
-    themes.getItems().addAll(DARK_THEME, BRIGHT_THEME);
+    themes.getItems().addAll(DARK_THEME, BRIGHT_THEME, BLUE_THEME);
     themes.getSelectionModel().select(gui.getPrefs().get(THEME, BRIGHT_THEME));
     grid.add(themes, 1, 3);
 

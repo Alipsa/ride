@@ -1,0 +1,275 @@
+* {
+    /*-fx-selected-bgcolor: navy;*/
+    -fx-base-bgcolor: rgba(25, 40, 80, 255);
+    -fx-base-text-color: rgba(178, 192, 195, 255);
+    -fx-selected-bgcolor: rgba(0, 51, 102, 255);
+    -fx-string-color: rgba(115, 155, 105, 255);
+}
+
+.root {
+    -fx-base: -fx-base-bgcolor;
+    -fx-accent: -fx-selected-bgcolor;
+    -fx-focus-color: silver;
+    -fx-highlight-fill: -fx-selected-bgcolor;
+}
+
+.text {
+    -fx-fill: -fx-base-text-color;
+}
+
+.text:selected {
+    -fx-background-color: -fx-selected-bgcolor;
+}
+
+.menu-item,
+.context-menu {
+    -fx-background-color: -fx-base-bgcolor;
+}
+
+.menu:hover,
+.menu:selected {
+    /*-fx-background-color: rgba(70, 70, 70, 255);*/
+    -fx-background-color: -fx-selected-bgcolor;
+}
+
+.menu-item:hover,
+.menu-item:selected,
+.context-menu:hover,
+.context-menu:selected{
+    /*-fx-background-color: rgba(70, 70, 70, 255); */
+    -fx-background-color: -fx-selected-bgcolor;
+}
+
+.tree-cell {
+    -fx-background-color: -fx-base-bgcolor;
+}
+
+.tree-cell:selected {
+    -fx-background-color: -fx-selected-bgcolor;
+}
+
+.table-view {
+    /*-fx-background-color: rgba(40, 40, 40, 255); */
+    -fx-background-color: transparent;
+}
+
+.table-view:focused {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(rgb(0, 55, 110)  0%, rgb(0, 15, 70) 100%);
+}
+
+.table-view .column-header-background .label {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(178, 192, 198, 255);
+}
+
+.table-view .table-cell{
+    -fx-text-fill: rgba(178, 192, 198, 255);
+}
+
+.table-row-cell {
+    -fx-table-cell-border-color: rgb(0, 0, 30);
+    -fx-background-color: rgba(0, 10, 60, 1);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-row-cell:odd {
+    -fx-table-cell-border-color: rgb(0, 0, 30) ;
+    -fx-background-color: rgba(0, 5, 50, 1);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+
+.table-row-cell:selected {
+    -fx-background-color: -fx-selected-bgcolor;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
+.table-view > .virtual-flow > .scroll-bar:vertical,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track-background,
+.table-view > .virtual-flow > .scroll-bar:horizontal,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
+    -fx-background-color: transparent;
+}
+
+.table-view > .virtual-flow > .scroll-bar > .increment-button,
+.table-view > .virtual-flow > .scroll-bar > .decrement-button {
+    -fx-opacity: 0;
+}
+
+.table-view .filler {
+    -fx-background-color: -fx-base-bgcolor;
+}
+
+.styled-text-area {
+    -fx-background-color: -fx-base-bgcolor;
+}
+
+.lineno {
+    -fx-background-color: derive(-fx-base-bgcolor, -20%);
+}
+
+.lineno .text {
+    -fx-fill: darkgray;
+}
+
+.paragraph-box:has-caret {
+    /* Sligtly brighter */
+    -fx-background-color: derive(-fx-base-bgcolor, 10%);
+}
+
+.code-area {
+    -fx-font-family: monospace;
+}
+
+
+.styled-text-area {
+    -fx-cursor: text;
+    -fx-font-family: monospace;
+}
+
+.styled-text-area .paragraph-box .paragraph-text {
+    -fx-padding: 0 2px;
+}
+
+.styled-text-area .selection {
+    -fx-fill: -fx-selected-bgcolor;
+    -fx-stroke-width: 0;
+    -fx-background-color:  -fx-selected-bgcolor;
+    /* these are apparently not doing anything
+    -fx-highlight-fill:  -fx-selected-bgcolor;
+    -rtfx-background-color: -fx-selected-bgcolor;
+     */
+}
+
+.styled-text-area .caret {
+    -fx-stroke: orange;
+    -rtfx-blink-rate: 500ms;
+    -fx-stroke-width: 1.0;
+}
+
+.styled-text-area .env-varName {
+    /*-fx-fill: lightgray; */
+    -fx-fill: rgba(178, 192, 198, 255);
+}
+
+.styled-text-area .env-varValue {
+    -fx-fill: darkgray;
+}
+
+/* see https://www.rapidtables.com/web/css/css-color.html for color names */
+.assign {
+    -fx-fill: lightgray;
+    -fx-font-weight: bold;
+}
+
+.brace {
+    -fx-fill: silver;
+    -fx-font-weight: bold;
+}
+
+.bracket {
+    -fx-fill: silver;
+    -fx-font-weight: bold;
+}
+
+.comment {
+    -fx-fill: gray;
+    color: gray; /* web view */
+}
+
+.digit {
+    -fx-fill: lightblue;
+}
+
+.error {
+    -fx-fill: red;
+}
+
+.function {
+    -fx-font-style: italic;
+}
+
+.keyword {
+    -fx-fill: lightskyblue;
+    color: lightskyblue; /* web view */
+}
+
+.operator {
+    /*-fx-fill: darkslategray;*/
+    -fx-fill: gainsboro;
+}
+
+.paren {
+    -fx-fill: silver;
+    -fx-font-weight: bold;
+}
+
+.console {
+    -fx-font-family: consolas;
+    -fx-font-size: 10pt;
+}
+
+.semicolon {
+    -fx-font-weight: bold;
+}
+
+.string {
+    -fx-fill: -fx-string-color;
+    color: rgba(112, 145, 95, 255); /* web view */
+}
+
+.warning {
+    -fx-fill: red;
+}
+
+.xml_tagmark {
+    -fx-fill: gray;
+}
+.xml_anytag {
+    -fx-fill: royalblue;
+}
+.xml_paren {
+    -fx-fill: darkgray;
+    -fx-font-weight: bold;
+}
+.xml_attribute {
+    -fx-fill: magenta;
+}
+.xml_avalue {
+    -fx-fill: -fx-string-color;
+}
+
+.xml_comment {
+    -fx-fill: darkseagreen;
+}
+
+/** WebView styles */
+body {
+    background-color: rgb(0, 35, 35);
+    color: rgb(178, 192, 198);
+}
+
+.codeblock {
+    background-color: rgb(0, 45, 45);
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-family: monospace;
+}
+
+a {
+    color: royalblue;
+}

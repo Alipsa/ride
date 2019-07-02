@@ -21,4 +21,5 @@ public class Constants {
   public static final String THEME = "theme";
   public static final String DARK_THEME = "darkTheme.css";
   public static final String BRIGHT_THEME = "brightTheme.css";
+  public static final String BLUE_THEME = "blueTheme.css";
 }
