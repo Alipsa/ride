@@ -1,0 +1,78 @@
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>Packages</title>
+</head>
+<body>
+<h2 id="using_packages">Using Packages</h2>
+Since the renjin gcc compiler bridge is not 100% complete there are many packages that does not work in Renjin yet.
+You can get some idea of support from <a href="http://packages.renjin.org/">Renjin packages list</a> but this will
+only give you a hint.<br/>
+<br/>
+Some of the basic packages that works flawlessly from my own personal experience are listed below.<br/>
+
+<table width="100%" border="1">
+    <thead>
+    <tr>
+        <th>What</th>
+        <th>Package name</th>
+        <th>Comment</th>
+        <th>Example</th>
+    </tr>
+    </thead>
+    <tr>
+        <td>talk to a relational database</td>
+        <td>org.renjin.cran:DBI<br/>
+            se.alipsa:R2JDBC
+        </td>
+        <td>Use DBI ver 1.0.0-b9 and the R2JDBC that comes with Ride (10.0.19, available from maven central)</td>
+        <td>See the "Examples" tab</td>
+    </tr>
+    <tr>
+        <td>import excel files</td>
+        <td>org.renjin.cran:xlsx</td>
+        <td>Used version 0.6.1-b7</td>
+        <td><div class="codeblock"><span class="keyword">library</span>(xlsx)<br/>
+            <span class="comment"># Read </span><br/>
+            sheetIndex <- 2<br/>
+            excelDf <- read.xlsx(
+                file,
+                sheetIndex,
+                header=<span class="keyword">TRUE</span>,
+                colClasses=<span class="keyword">NA</span>,
+                stringsAsFactors=<span class="keyword">FALSE</span>
+            )<br/>
+            <span class="comment"># Write</span><br/>
+            write.xlsx(
+                someDf,
+                file = <span class="string">"data_sum.xlsx"</span>,
+                sheetName = <span class="string">"Sheet1"</span>
+            )<br/>
+            <span class="comment"># Alternatively</span><br/>
+            write.xlsx2(
+                result,
+                outfile,
+                sheetName=name,
+                col.names=<span class="keyword">TRUE</span>,
+                row.names=<span class="keyword">FALSE</span>,
+                append=<span class="keyword">TRUE</span>
+            )
+        </div></td>
+    </tr>
+    <tr>
+        <td>Handle json</td>
+        <td>org.renjin.cran:rjson</td>
+        <td>Used version 0.2.15-renjin-21</td>
+        <td><div class="codeblock"><span class="keyword">library</span>(<span class="string">'org.renjin.cran:rjson'</span>)<br/>
+            myJson <- fromJSON(someJsonString)
+        </div>
+        </td>
+    </tr>
+    <tr>
+        <td>Import csv files</td>
+        <td>Base R, no additional package required</td>
+        <td></td>
+        <td><div class="codeblock">customerData <- read.csv(file=<span class="string">"some/path/input.csv"</span>, header=<span class="keyword">TRUE</span>, sep=<span class="string">","</span>)</div></td>
+    </tr>
+</table>
+</body>
+</html>

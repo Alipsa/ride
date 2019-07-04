@@ -1,13 +1,10 @@
 package se.alipsa.ride.environment.connections;
 
 import static se.alipsa.ride.Constants.*;
-import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
-import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
+import static se.alipsa.ride.utils.RQueryBuilder.*;
 
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -41,6 +38,7 @@ import se.alipsa.ride.model.Table;
 import se.alipsa.ride.model.TableMetaData;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.RDataTransformer;
+import se.alipsa.ride.utils.RQueryBuilder;
 
 import java.sql.*;
 import java.util.*;
@@ -212,6 +210,13 @@ public class ConnectionsTab extends Tab {
 
   private void showRConnectionCode() {
     ConnectionInfo info = connectionsTable.getSelectionModel().getSelectedItem();
+    StringBuilder code = RQueryBuilder.baseRQueryString(info, "sqlDf <- dbGetQuery", "select * from someTable")
+        .append("\n# close the connection\n")
+        .append("dbDisconnect(").append(CONNECTION_VAR_NAME).append(")\n");
+    String rCode = code.toString();
+    rCode = rCode.replace(DRIVER_VAR_NAME, "drv");
+    rCode = rCode.replace(CONNECTION_VAR_NAME, "con");
+    /*
     StringBuilder code = new StringBuilder();
     String con = info.getName() + "_con";
     code.append("library(\"org.renjin.cran:DBI\")\n")
@@ -230,7 +235,10 @@ public class ConnectionsTab extends Tab {
         .append("sqlDf <- dbGetQuery(").append(con).append(", \"select * from someTable\")\n")
         .append("# close the connection\n")
         .append("dbDisconnect(").append(con).append(")\n");
-    displayTextInWindow("R connection code for " + info.getName(), code.toString(), CodeType.R);
+
+     */
+
+    displayTextInWindow("R connection code for " + info.getName(), rCode, CodeType.R);
   }
 
   private String getPrefOrBlank(String pref) {

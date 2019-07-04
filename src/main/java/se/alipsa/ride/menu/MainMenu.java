@@ -190,6 +190,7 @@ public class MainMenu extends MenuBar {
     URL interactionUrl = FileUtils.getResourceUrl("manual/InteractingWithRide.html");
     URL shortcutsUrl = FileUtils.getResourceUrl("manual/KeyBoardShortcuts.html");
     URL examplesUrl = FileUtils.getResourceUrl("manual/examples.html");
+    URL packagesUrl = FileUtils.getResourceUrl("manual/packages.html");
 
     Button rideShortCuts = new Button("Ride keyboard shortcuts");
     rideShortCuts.setOnAction(e -> webEngine.load(shortcutsUrl.toExternalForm()));
@@ -200,7 +201,10 @@ public class MainMenu extends MenuBar {
     Button examplesButton = new Button("Examples");
     examplesButton.setOnAction(e -> webEngine.load(examplesUrl.toExternalForm()));
 
-    linkPane.getChildren().addAll(rideShortCuts, interactingWithRideButton, examplesButton);
+    Button packagesButton = new Button("Packages");
+    packagesButton.setOnAction(e -> webEngine.load(packagesUrl.toExternalForm()));
+
+    linkPane.getChildren().addAll(rideShortCuts, interactingWithRideButton, examplesButton, packagesButton);
 
     webEngine.setCreatePopupHandler(
        (PopupFeatures config) -> {

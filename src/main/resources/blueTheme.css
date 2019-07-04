@@ -1,6 +1,6 @@
 * {
     /*-fx-selected-bgcolor: navy;*/
-    -fx-base-bgcolor: rgba(25, 40, 80, 255);
+    -fx-base-bgcolor: rgba(0, 35, 55, 255);
     -fx-base-text-color: rgba(178, 192, 195, 255);
     -fx-selected-bgcolor: rgba(0, 51, 102, 255);
     -fx-string-color: rgba(115, 155, 105, 255);
@@ -258,12 +258,12 @@
 
 /** WebView styles */
 body {
-    background-color: rgb(0, 35, 35);
+    background-color: rgb(0, 35, 55);
     color: rgb(178, 192, 198);
 }
 
 .codeblock {
-    background-color: rgb(0, 45, 45);
+    background-color: rgb(0, 45, 75);
     padding: 10px;
     margin-top: 10px;
     margin-bottom: 10px;

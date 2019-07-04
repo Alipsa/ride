@@ -71,41 +71,6 @@ I like to save these kind of queries with the extension psql (parameterized sql)
     fancyQuery <- gsub(<span class="string">"?1"</span>, <span class="string">"Per"</span>, fancyQuery, fixed=<span class="keyword">TRUE</span>)
 </div>
 
-<h2 id="using_packages">Using Packages</h2>
-Since the renjin gcc compiler bridge is not 100% complete there are many packages that does not work in Renjin yet.
-You can get some idea of support from <a href="http://packages.renjin.org/">Renjin packages list</a> but this will
-only give you a hint.<br/>
-<br/>
-Some of the basic packages that works flawlessly from my own personal experience are listed below.<br/>
-
-<table width="100%" border="1">
-    <thead>
-        <tr>
-            <th>What</th>
-            <th>package name</th>
-            <th>comment</th>
-        </tr>
-    </thead>
-    <tr>
-        <td>talk to a relational database</td>
-        <td>org.renjin.cran:DBI<br/>
-            se.alipsa:R2JDBC
-        </td>
-        <td>Use DBI ver 1.0.0-b9 and the R2JDBC that comes with Ride (10.0.18, available from maven central)</td>
-    </tr>
-    <tr>
-        <td>import excel files</td>
-        <td>org.renjin.cran:xlsx</td>
-        <td>Used version 0.6.1-b7</td>
-    </tr>
-    <tr>
-        <td>handle json</td>
-        <td>org.renjin.cran:rjson</td>
-        <td>Used version 0.2.15-renjin-21</td>
-    </tr>
-</table>
-
-
 <h2 id="reusing_code">Reusing code</h2>
 The, perhaps, simplest way to reuse code is to put utility functions or other code that you want to reuse multiple times
 in a separate file and then load it using source. Perhaps you want to make sure to only load it once; one way os to look for something unique such as a
