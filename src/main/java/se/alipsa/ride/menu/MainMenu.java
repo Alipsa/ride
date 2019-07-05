@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Region;
 import javafx.scene.web.PopupFeatures;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -198,13 +199,13 @@ public class MainMenu extends MenuBar {
     Button interactingWithRideButton = new Button("Interacting with Ride");
     interactingWithRideButton.setOnAction(e -> webEngine.load(interactionUrl.toExternalForm()));
 
-    Button examplesButton = new Button("Examples");
+    Button examplesButton = new Button("Tips and tricks");
     examplesButton.setOnAction(e -> webEngine.load(examplesUrl.toExternalForm()));
 
     Button packagesButton = new Button("Packages");
     packagesButton.setOnAction(e -> webEngine.load(packagesUrl.toExternalForm()));
 
-    linkPane.getChildren().addAll(rideShortCuts, interactingWithRideButton, examplesButton, packagesButton);
+    linkPane.getChildren().addAll(rideShortCuts, interactingWithRideButton, packagesButton, examplesButton);
 
     webEngine.setCreatePopupHandler(
        (PopupFeatures config) -> {
@@ -253,11 +254,11 @@ public class MainMenu extends MenuBar {
     content.append("\nRelease tag: ");
     content.append(releaseTag);
     content.append("\n\n See https://github.com/perNyfelt/ride/ for more info or to report issues");
-    showInfoAlert("About Ride", content);
+    showInfoAlert("About Ride", content,500, 200);
 
   }
 
-  private void showInfoAlert(String title, StringBuilder content) {
+  private void showInfoAlert(String title, StringBuilder content, double contentWidth, double contentHeight) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle(title);
     alert.setHeaderText(null);
@@ -266,7 +267,13 @@ public class MainMenu extends MenuBar {
     ta.setWrapText(true);
     ta.replaceText(content.toString());
     alert.getDialogPane().setContent(ta);
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
     alert.setResizable(true);
+
+    alert.getDialogPane().setPrefHeight(contentHeight);
+    alert.getDialogPane().setPrefWidth(contentWidth);
+
     alert.showAndWait();
   }
 
@@ -355,7 +362,7 @@ public class MainMenu extends MenuBar {
     content.append("\nWorking dir: ");
     content.append(session.getWorkingDirectory());
     content.append("\n\n Please execute print(sessionInfo()) for other relevant session info");
-    showInfoAlert("Session info", content);
+    showInfoAlert("Session info", content, 600, 300);
   }
 
   private void interruptR(ActionEvent actionEvent) {

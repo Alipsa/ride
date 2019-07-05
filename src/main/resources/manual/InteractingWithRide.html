@@ -71,6 +71,13 @@ Here is an example:<br/>
     </div>
     String scriptFile();<br/>
 </div>
+Here is an example:<br/>
+<div class="codeblock">
+    dir <- dirname(inout$scriptFile())<br/>
+    file <- paste0(dir, <span class="string">"/test.csv"</span>)<br/>
+    write.csv(mtcars, file)<br/>
+</div>
+
 
 </body>
 </html>
