@@ -1,5 +1,6 @@
 package se.alipsa.ride.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
@@ -17,11 +18,13 @@ public class RQueryBuilder {
     String url = con.getUrl();
     String user = con.getUser() == null ? "" : con.getUser().trim();
     String userString;
-    if (!"".equals(user) && !con.urlContainsLogin()) {
+    if (!StringUtils.isBlank(user) && !con.urlContainsLogin()) {
       userString = ", user = '" + user + "'";
     } else {
       userString = "";
-      url = url + ";user=NA";
+      if (!con.urlContainsLogin()) {
+        url = url + ";user=NA";
+      }
     }
     String password = con.getPassword() == null ? "" : con.getPassword().trim();
     String passwordString;
@@ -29,7 +32,9 @@ public class RQueryBuilder {
       passwordString = ", password = '" + password + "'";
     } else {
       passwordString = "";
-      url = url + ";password=NA";
+      if (!con.urlContainsLogin()) {
+        url = url + ";password=NA";
+      }
     }
     str.append("library('DBI')\nlibrary('se.alipsa:R2JDBC')\n")
         .append(DRIVER_VAR_NAME).append(" <- JDBC('").append(con.getDriver()).append("')\n")
