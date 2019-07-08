@@ -221,8 +221,10 @@ public class MainMenu extends MenuBar {
        });
 
 
-    Scene dialog = new Scene(borderPane);
+    Scene dialog = new Scene(borderPane, 1024, 768);
     Stage stage = new Stage();
+    stage.setWidth(1024);
+    stage.setHeight(768);
     stage.initModality(Modality.NONE);
     stage.initOwner(gui.getStage());
     stage.setTitle("User Manual");
