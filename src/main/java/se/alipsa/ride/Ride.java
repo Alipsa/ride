@@ -15,6 +15,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Control;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -24,10 +26,12 @@ import org.slf4j.LoggerFactory;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.EnvironmentComponent;
+import se.alipsa.ride.inout.FileOpener;
 import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.MainMenu;
 import se.alipsa.ride.utils.FileUtils;
 
+import java.io.File;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,6 +47,8 @@ public class Ride extends Application {
   private Stage primaryStage;
   private Scene scene;
   private MainMenu mainMenu;
+
+  private FileOpener fileOpener;
 
   public static void main(String[] args) {
     launch(args);
@@ -77,6 +83,7 @@ public class Ride extends Application {
     stretch(codeComponent, root);
     leftSplitPane.getItems().addAll(codeComponent, consoleComponent);
 
+    fileOpener = new FileOpener(codeComponent);
 
     SplitPane rightSplitPane = new SplitPane();
     rightSplitPane.setOrientation(Orientation.VERTICAL);
@@ -118,7 +125,35 @@ public class Ride extends Application {
     primaryStage.setTitle("Ride, a Renjin IDE");
     primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
     primaryStage.setScene(scene);
+    enableDragDrop(scene);
     primaryStage.show();
+  }
+
+  private void enableDragDrop(Scene scene) {
+
+    scene.setOnDragOver(event -> {
+      Dragboard db = event.getDragboard();
+      if (db.hasFiles()) {
+        // I wish there was a TransferMode.OPEN but there is not
+        event.acceptTransferModes(TransferMode.LINK);
+        db.setDragView(new Image("image/file.png"));
+      } else {
+        event.consume();
+      }
+    });
+    // Dropping over surface
+    scene.setOnDragDropped(event -> {
+      Dragboard db = event.getDragboard();
+      boolean success = false;
+      if (db.hasFiles()) {
+        success = true;
+        for (File file:db.getFiles()) {
+          fileOpener.openFile(file);
+        }
+      }
+      event.setDropCompleted(success);
+      event.consume();
+    });
   }
 
   public void addStyleSheet(String styleSheetPath) {
