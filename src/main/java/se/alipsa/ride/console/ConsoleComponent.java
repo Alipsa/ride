@@ -317,12 +317,6 @@ public class ConsoleComponent extends BorderPane {
       updateEnvironment();
       promptAndScrollToEnd();
     });
-    task.setOnSucceeded(e -> {
-      taskListener.taskEnded();
-      waiting();
-      updateEnvironment();
-      promptAndScrollToEnd();
-    });
     task.setOnFailed(e -> {
       taskListener.taskEnded();
       waiting();
