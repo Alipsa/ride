@@ -148,7 +148,7 @@ public class Ride extends Application {
       if (db.hasFiles()) {
         success = true;
         for (File file:db.getFiles()) {
-          fileOpener.openFile(file);
+          fileOpener.openFile(file, false);
         }
       }
       event.setDropCompleted(success);

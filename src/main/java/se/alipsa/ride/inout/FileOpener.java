@@ -24,7 +24,10 @@ public class FileOpener {
     this.codeComponent = codeComponent;
   }
 
-  public void openFile(File file) {
+  public void openFile(File file, boolean... openExternalIfUnknownType) {
+
+    final boolean allowOpenExternal = openExternalIfUnknownType.length > 0 ? openExternalIfUnknownType[0] : true;
+
     String type = guessContentType(file);
     log.debug("File ContentType for {} detected as {}", file.getName(), type);
     if (file.isFile()) {
@@ -46,7 +49,7 @@ public class FileOpener {
         /*|| strEndsWith(fileNameLower, ".txt", ".md", ".csv")*/) {
         codeComponent.addTab(file, CodeType.TXT);
       } else {
-        if (isDesktopSupported()) {
+        if (allowOpenExternal && isDesktopSupported()) {
           log.info("Try to open {} in associated application", file.getName());
           openApplicationExternal(file);
         } else {
