@@ -6,8 +6,8 @@
 
   <groupId>se.alipsa</groupId>
   <artifactId>ride</artifactId>
-  <!--version>1.2-SNAPSHOT</version-->
-  <version>1.1</version>
+  <version>1.2-SNAPSHOT</version>
+  <!--version>1.1</version-->
   <packaging>jar</packaging>
 
   <properties>
@@ -15,7 +15,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <release.tag>1.1-final</release.tag>
+    <release.tag>1.2-beta</release.tag>
   </properties>
 
   <dependencyManagement>
@@ -442,6 +442,7 @@
           </plugin-->
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.1.1</version>
             <executions>
               <execution>
                 <id>dist</id>
@@ -588,6 +589,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.1.1</version>
             <executions>
               <execution>
                 <id>dist</id>
