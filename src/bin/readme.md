@@ -16,6 +16,10 @@ you can set Ride to use this to resolve packages. You then need to include those
 test that you got all dependencies right before attempting to run the R scripts from the java application (server). 
 
 ## How to install:
+Pre requisites:
+- Java 8 with java fx
+- Maven 
+
 Unzip ride-1.1-beta2-dist.zip to a directory of choice
 
 ## How to run:
@@ -44,8 +48,14 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.1
-- Fixed links in the user manual when selecting "open link in new window"
 - Removed empty menus (View, plots, Build, Profile) 
+- Add drag and drop support
+- Connections: Handle urls containing username and password
+- Add dark blue theme
+- Dependency versions upgrades
+- Expand on user manual
+- Fixed links in the user manual when selecting "open link in new window"
+- Fixed several minor quirks
 
 ### 1.1 beta 2
 - Theme support
