@@ -56,7 +56,7 @@ a list of packages loaded for the session (in case you missed a library call in 
 it from another script - the session is shared).
 
 ### Installing and Running ride
-There are two distributions of Ride. Go to the releases tab and expand the assets section at the bottom of the release. The zip file called ride-<version>-dist.zip e.g. ride-1.1-beta-dist.zip is the "slim" distribution whereas the ride-fat-<version>-dist.zip e.g. ride-fat-1.1-beta-dist.zip is the "fat" distribution.
+There are two distributions of Ride. Go to the releases tab and expand the assets section at the bottom of the release. The zip file called ride-<version>-dist.zip e.g. ride-1.1-final-dist.zip is the "slim" distribution whereas the ride-fat-<version>-dist.zip e.g. ride-fat-1.1-final-dist.zip is the "fat" distribution.
 
 There are icons for windows and Linux in the base folder of the unpacked zip that can be used to create a desktop shortcut/launcher.
 
