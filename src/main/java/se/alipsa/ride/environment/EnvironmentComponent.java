@@ -18,7 +18,9 @@ import java.util.Set;
 
 public class EnvironmentComponent extends TabPane {
 
-  UnStyledCodeArea envTa;
+  private UnStyledCodeArea envTa;
+
+  private UnStyledCodeArea historyTa;
 
   ConnectionsTab connectionsTab;
 
@@ -28,6 +30,7 @@ public class EnvironmentComponent extends TabPane {
     Tab environment = new Tab();
     environment.setText("Environment");
     envTa = new UnStyledCodeArea();
+    envTa.setEditable(false);
     envTa.getStyleClass().add("environment");
     envTa.replaceText("Environment");
     VirtualizedScrollPane<StyleClassedTextArea> scrollPane = new VirtualizedScrollPane<>(envTa);
@@ -36,7 +39,11 @@ public class EnvironmentComponent extends TabPane {
 
     Tab history = new Tab();
     history.setText("History");
-
+    historyTa = new UnStyledCodeArea();
+    historyTa.setEditable(false);
+    historyTa.getStyleClass().add("history");
+    VirtualizedScrollPane<StyleClassedTextArea> historyScrollPane = new VirtualizedScrollPane<>(historyTa);
+    history.setContent(historyScrollPane);
     getTabs().add(history);
 
     connectionsTab = new ConnectionsTab(gui);
@@ -76,11 +83,22 @@ public class EnvironmentComponent extends TabPane {
   }
 
   public void clearEnvironment() {
-    //envTa.setText("");
     envTa.clear();
   }
 
   public Set<ConnectionInfo> getConnections() {
     return connectionsTab.getConnections();
+  }
+
+  public void addInputHistory(String text) {
+    historyTa.appendText( text + "\n");
+  }
+
+  public void addOutputHistory(String text) {
+    historyTa.appendText( text + "\n");
+  }
+
+  public void clearHistoryt() {
+    historyTa.clear();
   }
 }
