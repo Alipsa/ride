@@ -82,22 +82,24 @@ public class CharsetToolkit {
     setDefaultCharset(defaultCharset);
   }
 
-  public static Charset guessEncoding(File f, int bufferLength) throws FileNotFoundException, IOException {
-    FileInputStream fis = new FileInputStream(f);
-    byte[] buffer = new byte[bufferLength];
-    fis.read(buffer);
-    fis.close();
+  public static Charset guessEncoding(File f, int bufferLength) throws IOException {
+    byte[] buffer;
+    try(FileInputStream fis = new FileInputStream(f)) {
+      buffer = new byte[bufferLength];
+      fis.read(buffer);
+    }
     CharsetToolkit toolkit = new CharsetToolkit(buffer);
     toolkit.setDefaultCharset(getDefaultSystemCharset());
     return toolkit.guessEncoding();
   }
 
-  public static Charset guessEncoding(File f, int bufferLength, Charset defaultCharset)
-      throws FileNotFoundException, IOException {
-    FileInputStream fis = new FileInputStream(f);
-    byte[] buffer = new byte[bufferLength];
-    fis.read(buffer);
-    fis.close();
+  public static Charset guessEncoding(File f, int bufferLength, Charset defaultCharset) throws IOException {
+    byte[] buffer;
+
+    try(FileInputStream fis = new FileInputStream(f)) {
+      buffer = new byte[bufferLength];
+      fis.read(buffer);
+    }
     CharsetToolkit toolkit = new CharsetToolkit(buffer);
     toolkit.setDefaultCharset(defaultCharset);
     return toolkit.guessEncoding();

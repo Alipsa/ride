@@ -29,6 +29,8 @@ import java.util.ArrayList;
  *
  * @author Kevin Weiner, FM Software; LZW decoder adapted from John Cristy's ImageMagick.
  * @version 1.03 November 2003
+ *
+ * Note: The original code has been modified / cleaned up here
  */
 public class GifDecoder {
   /**
@@ -193,6 +195,9 @@ public class GifDecoder {
             case 4:
               iline = 1;
               inc = 2;
+              break;
+            default:
+              // do nothing
           }
         }
         line = iline;
@@ -263,7 +268,9 @@ public class GifDecoder {
       status = STATUS_OPEN_ERROR;
     }
     try {
-      is.close();
+      if (is != null) {
+        is.close();
+      }
     } catch (IOException e) {
     }
     return status;
@@ -292,7 +299,9 @@ public class GifDecoder {
       status = STATUS_OPEN_ERROR;
     }
     try {
-      is.close();
+      if (is != null) {
+        is.close();
+      }
     } catch (IOException e) {
     }
     return status;
@@ -568,11 +577,11 @@ public class GifDecoder {
 
             case 0xff: // application extension
               readBlock();
-              String app = "";
+              StringBuilder app = new StringBuilder();
               for (int i = 0; i < 11; i++) {
-                app += (char) block[i];
+                app.append((char) block[i]);
               }
-              if (app.equals("NETSCAPE2.0")) {
+              if (app.toString().equals("NETSCAPE2.0")) {
                 readNetscapeExt();
               } else
                 skip(); // don't care
@@ -616,11 +625,11 @@ public class GifDecoder {
    * Reads GIF file header information.
    */
   protected void readHeader() {
-    String id = "";
+    StringBuilder id = new StringBuilder();
     for (int i = 0; i < 6; i++) {
-      id += (char) read();
+      id.append((char) read());
     }
-    if (!id.startsWith("GIF")) {
+    if (!id.toString().startsWith("GIF")) {
       status = STATUS_FORMAT_ERROR;
       return;
     }

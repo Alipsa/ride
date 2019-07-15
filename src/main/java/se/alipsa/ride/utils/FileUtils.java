@@ -159,10 +159,12 @@ public class FileUtils {
       return null;
     }
     File[] files = dir.listFiles();
-    for (File file : files) {
-      if (file.isFile()) {
-        if (file.getName().startsWith(prefix) && file.getName().endsWith(suffix)) {
-          return file;
+    if (files != null) {
+      for (File file : files) {
+        if (file.isFile()) {
+          if (file.getName().startsWith(prefix) && file.getName().endsWith(suffix)) {
+            return file;
+          }
         }
       }
     }

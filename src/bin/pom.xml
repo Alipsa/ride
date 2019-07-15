@@ -59,9 +59,14 @@
             <artifactId>renjin-aether-package-loader</artifactId>
             <version>${renjin.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.renjin</groupId>
             <artifactId>gcc-runtime</artifactId>
+            <version>${renjin.version}</version>
+        </dependency-->
+        <dependency>
+            <groupId>org.renjin</groupId>
+            <artifactId>renjin-repl</artifactId>
             <version>${renjin.version}</version>
         </dependency>
         <dependency>

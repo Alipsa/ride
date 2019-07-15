@@ -11,7 +11,9 @@ import se.alipsa.ride.UnStyledCodeArea;
 public class ConsoleTextArea extends UnStyledCodeArea {
 
   private static final String WARN_SIZE_MSG = "\nMaximum size for console reached, printing to standard out until console is cleared\n";
-  public static int MAX_LENGTH = 1_500_000;
+
+  public static final int CONSOLE_MAX_LENGTH_DEFAULT = 1_500_000;
+  private int consoleMaxLength = CONSOLE_MAX_LENGTH_DEFAULT;
   Logger log = LoggerFactory.getLogger(ConsoleTextArea.class);
   private StringBuilder buffer = new StringBuilder();
   private StringBuilder warnBuffer = new StringBuilder();
@@ -36,7 +38,7 @@ public class ConsoleTextArea extends UnStyledCodeArea {
 
   public ConsoleTextArea(Ride gui) {
     this();
-    MAX_LENGTH = gui.getPrefs().getInt(CONSOLE_MAX_LENGTH_PREF, MAX_LENGTH);
+    consoleMaxLength = gui.getPrefs().getInt(CONSOLE_MAX_LENGTH_PREF, CONSOLE_MAX_LENGTH_DEFAULT);
   }
 
   @Override
@@ -48,7 +50,7 @@ public class ConsoleTextArea extends UnStyledCodeArea {
   @Override
   public void appendText(String text) {
     int textSize = getText().length();
-    if (textSize > MAX_LENGTH) {
+    if (textSize > consoleMaxLength) {
       if (!sizeWWarningPrinted) {
         printSizeWarning();
       }
@@ -135,10 +137,10 @@ public class ConsoleTextArea extends UnStyledCodeArea {
   }
 
   public void setConsoleMaxSize(int size) {
-    MAX_LENGTH = size;
+    consoleMaxLength = size;
   }
 
   public int getConsoleMaxSize() {
-    return MAX_LENGTH;
+    return consoleMaxLength;
   }
 }

@@ -18,6 +18,7 @@ import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.util.Comparator;
@@ -246,13 +247,13 @@ public class FileTree extends TreeView<File> {
     if (item != null && item.getValue().equals(value)) {
       return item;
     }
-
-    for (TreeItem<File> child : item.getChildren()) {
-      TreeItem<File> s = findTreeViewItem(child, value);
-      if (s != null) {
-        return s;
+    if (item != null) {
+      for (TreeItem<File> child : item.getChildren()) {
+        TreeItem<File> s = findTreeViewItem(child, value);
+        if (s != null) {
+          return s;
+        }
       }
-
     }
     return null;
   }
@@ -265,7 +266,7 @@ public class FileTree extends TreeView<File> {
     }
   }
 
-  private class TreeItemComparator implements Comparator<TreeItem<File>> {
+  private static class TreeItemComparator implements Comparator<TreeItem<File>>, Serializable {
 
     @Override
     public int compare(TreeItem<File> fileTreeItem, TreeItem<File> t1) {

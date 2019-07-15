@@ -8,12 +8,11 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.code.javatab.JavaTab;
+import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
 import se.alipsa.ride.code.xmltab.XmlTab;
-import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.utils.CharsetToolkit;
 import se.alipsa.ride.utils.ExceptionAlert;
 
@@ -30,7 +29,6 @@ public class CodeComponent extends BorderPane {
 
   public CodeComponent(Ride gui) {
     this.gui = gui;
-    ConsoleComponent console = gui.getConsoleComponent();
 
     pane = new TabPane();
     setCenter(pane);

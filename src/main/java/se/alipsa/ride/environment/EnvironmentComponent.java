@@ -14,15 +14,15 @@ import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.environment.connections.ConnectionsTab;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class EnvironmentComponent extends TabPane {
 
   private UnStyledCodeArea envTa;
 
-  private UnStyledCodeArea historyTa;
-
   ConnectionsTab connectionsTab;
+  HistoryTab historyTab;
 
   int MAX_CONTENT_LENGTH = 200;
 
@@ -37,14 +37,8 @@ public class EnvironmentComponent extends TabPane {
     environment.setContent(scrollPane);
     getTabs().add(environment);
 
-    Tab history = new Tab();
-    history.setText("History");
-    historyTa = new UnStyledCodeArea();
-    historyTa.setEditable(false);
-    historyTa.getStyleClass().add("history");
-    VirtualizedScrollPane<StyleClassedTextArea> historyScrollPane = new VirtualizedScrollPane<>(historyTa);
-    history.setContent(historyScrollPane);
-    getTabs().add(history);
+    historyTab = new HistoryTab();
+    getTabs().add(historyTab);
 
     connectionsTab = new ConnectionsTab(gui);
 
@@ -91,14 +85,14 @@ public class EnvironmentComponent extends TabPane {
   }
 
   public void addInputHistory(String text) {
-    historyTa.appendText( text + "\n");
+    historyTab.addInputHistory(text);
   }
 
   public void addOutputHistory(String text) {
-    historyTa.appendText( text + "\n");
+    historyTab.addOutputHistory(text);
   }
 
-  public void clearHistoryt() {
-    historyTa.clear();
+  public void rRestarted() {
+    historyTab.rRestarted();
   }
 }

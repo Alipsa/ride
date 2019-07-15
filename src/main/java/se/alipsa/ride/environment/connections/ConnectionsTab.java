@@ -40,6 +40,7 @@ import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.RDataTransformer;
 import se.alipsa.ride.utils.RQueryBuilder;
 
+import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -468,7 +469,7 @@ public class ConnectionsTab extends Tab {
     Clipboard.getSystemClipboard().setContent(clipboardContent);
   }
 
-  private class TreeItemComparator implements Comparator<TreeItem<String>> {
+  private static class TreeItemComparator implements Comparator<TreeItem<String>>, Serializable {
 
     @Override
     public int compare(TreeItem<String> fileTreeItem, TreeItem<String> t1) {
@@ -492,25 +493,27 @@ public class ConnectionsTab extends Tab {
       MenuItem sampleContent = new MenuItem("View 200 rows");
       tableRightClickMenu.getItems().add(sampleContent);
       sampleContent.setOnAction(event -> {
-        try (Connection connection = con.connect()) {
-          Statement stm = connection.createStatement();
+
+        try (Connection connection = con.connect();
+             Statement stm = connection.createStatement()) {
           stm.setMaxRows(200);
           String tableName = getTreeItem().getValue();
-          ResultSet rs = stm.executeQuery("SELECT * from " + tableName);
-          rs.setFetchSize(200);
           List<String> columnList = new ArrayList<>();
           List<List<Object>> rowList = new ArrayList<>();
-          ResultSetMetaData rsMeta = rs.getMetaData();
-          int numColumns = rsMeta.getColumnCount();
-          for (int i = 1; i <= numColumns; i++) {
-            columnList.add(rsMeta.getColumnName(i));
-          }
-          while (rs.next()) {
-            List<Object> row = new ArrayList<>();
+          try(ResultSet rs = stm.executeQuery("SELECT * from " + tableName)){
+            rs.setFetchSize(200);
+            ResultSetMetaData rsMeta = rs.getMetaData();
+            int numColumns = rsMeta.getColumnCount();
             for (int i = 1; i <= numColumns; i++) {
-              row.add(rs.getObject(i));
+              columnList.add(rsMeta.getColumnName(i));
             }
-            rowList.add(row);
+            while (rs.next()) {
+              List<Object> row = new ArrayList<>();
+              for (int i = 1; i <= numColumns; i++) {
+                row.add(rs.getObject(i));
+              }
+              rowList.add(row);
+            }
           }
           Table table = new Table(columnList, rowList);
           gui.getInoutComponent().showInViewer(table, tableName);

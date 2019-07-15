@@ -3,6 +3,7 @@ package se.alipsa.ride.menu;
 import static se.alipsa.ride.Constants.THEME;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -16,6 +17,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.renjin.eval.Session;
+import org.renjin.eval.SessionBuilder;
+import org.renjin.repl.JlineRepl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Constants;
@@ -29,10 +32,7 @@ import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -285,7 +285,35 @@ public class MainMenu extends MenuBar {
     MenuItem globalOption = new MenuItem("Global Options");
     globalOption.setOnAction(this::handleGlobalOptions);
     toolsMenu.getItems().add(globalOption);
+
+    MenuItem replMI = new MenuItem("Run REPL in console");
+    replMI.setOnAction(this::runRepl);
+    toolsMenu.getItems().add(replMI);
     return toolsMenu;
+  }
+
+  private void runRepl(ActionEvent actionEvent) {
+    System.out.println();
+    System.out.println("Console is now running the Renjin REPL, type quit() to exit");
+    System.out.println();
+
+    Task<Void> task = new Task<Void>() {
+      @Override
+      public Void call() throws Exception {
+        try {
+          JlineRepl repl = new JlineRepl(SessionBuilder.buildDefault());
+          repl.run();
+        } catch (RuntimeException e) {
+          throw new Exception(e);
+        }
+        return null;
+      }
+    };
+    task.setOnSucceeded(e -> System.out.println("Bye!"));
+    task.setOnFailed(e -> ExceptionAlert.showAlert("Failure in REPL", task.getException()));
+    Thread replThread = new Thread(task);
+    replThread.setDaemon(false);
+    replThread.start();
   }
 
   private void handleGlobalOptions(ActionEvent actionEvent) {
@@ -378,6 +406,7 @@ public class MainMenu extends MenuBar {
   private void restartR() {
     gui.getConsoleComponent().restartR();
     gui.getInoutComponent().setPackages(null);
+    gui.getEnvironmentComponent().rRestarted();
   }
 
   private Menu createFileMenu() {

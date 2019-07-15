@@ -77,7 +77,7 @@ public class Repo implements Comparable<Repo> {
     if (o == null) {
       return -1;
     }
-    String oStr = o == null ? null : o.getId() + o.getType() + o.getUrl();
+    String oStr = o.getId() + o.getType() + o.getUrl();
     String tStr = getId() + getType() + getUrl();
     return tStr.compareTo(oStr);
   }

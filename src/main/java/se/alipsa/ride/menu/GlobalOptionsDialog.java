@@ -22,7 +22,7 @@ import java.util.List;
 
 import static se.alipsa.ride.Constants.*;
 import static se.alipsa.ride.console.ConsoleComponent.PACKAGE_LOADER_PREF;
-import static se.alipsa.ride.console.ConsoleTextArea.MAX_LENGTH;
+import static se.alipsa.ride.console.ConsoleTextArea.CONSOLE_MAX_LENGTH_DEFAULT;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 
 public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
@@ -138,7 +138,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
     Label consoleMaxSizeLabel = new Label("Console max size");
     grid.add(consoleMaxSizeLabel, 0, 2);
-    intField = new IntField(1000, Integer.MAX_VALUE, gui.getPrefs().getInt(CONSOLE_MAX_LENGTH_PREF, MAX_LENGTH));
+    intField = new IntField(1000, Integer.MAX_VALUE, gui.getPrefs().getInt(CONSOLE_MAX_LENGTH_PREF, CONSOLE_MAX_LENGTH_DEFAULT));
     grid.add(intField, 1, 2);
 
     Label styleTheme = new Label("Style theme");

@@ -38,11 +38,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
+import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.script.ScriptException;
@@ -235,7 +237,7 @@ public class ConsoleComponent extends BorderPane {
   }
 
   private String getStars(int length) {
-    StringBuffer buf = new StringBuffer(length);
+    StringBuilder buf = new StringBuilder(length);
     for (int i = 0; i < length; i++) {
       buf.append("*");
     }
@@ -491,7 +493,7 @@ public class ConsoleComponent extends BorderPane {
 
   private String prefixLines(StringWriter out, String prefix) {
     StringBuffer buf = new StringBuffer();
-    String lines = out.toString() == null ? "" : out.toString();
+    String lines = out == null ? "" : out.toString();
     for(String line : lines.trim().split("\n")) {
       buf.append(prefix).append(line).append("\n");
     }
@@ -569,7 +571,9 @@ public class ConsoleComponent extends BorderPane {
 
   private void executeScriptAndReport(String script, String title) throws Exception {
 
-    try (OutputStream out = new AppenderOutputStream();
+    StringBuffer outSb = new StringBuffer();
+    EnvironmentComponent env = gui.getEnvironmentComponent();
+    try (OutputStream out = new AppenderOutputStream(outSb);
          WarningAppenderOutputStream err = new WarningAppenderOutputStream();
          PrintWriter outputWriter = new PrintWriter(out);
          PrintWriter errWriter = new PrintWriter(err)
@@ -578,14 +582,19 @@ public class ConsoleComponent extends BorderPane {
       engine.put("inout", gui.getInoutComponent());
       //engine.put("packageLoader", getPackageLoader());
 
-      Platform.runLater(() -> console.append(title));
+      Platform.runLater(() -> {
+        console.append(title);
+        env.addInputHistory(script);
+      });
+
       session.setStdOut(outputWriter);
       session.setStdErr(errWriter);
 
       engine.eval(script);
+      Platform.runLater(() -> env.addOutputHistory(outSb.toString()));
       postEvalOutput();
 
-    } catch (Exception e) {
+    } catch (ScriptException | RuntimeException e) {
       postEvalOutput();
       throw e;
     }
@@ -686,16 +695,38 @@ public class ConsoleComponent extends BorderPane {
   }
 
   class AppenderOutputStream extends OutputStream {
+    StringBuffer str = null;
+
+    AppenderOutputStream() {}
+
+    AppenderOutputStream(StringBuffer stringBuf) {
+      str = stringBuf;
+    }
+
     @Override
     public void write(int b) {
       console.appendChar((char) b);
+      if (str != null) {
+        str.append((char) b);
+      }
     }
   }
 
   class WarningAppenderOutputStream extends OutputStream {
+    StringBuffer str = null;
+
+    WarningAppenderOutputStream() {}
+
+    WarningAppenderOutputStream(StringBuffer stringBuf) {
+      str = stringBuf;
+    }
+
     @Override
     public void write(int b) {
       console.appendWarnChar((char) b);
+      if(str != null) {
+        str.append((char) b);
+      }
     }
   }
 }

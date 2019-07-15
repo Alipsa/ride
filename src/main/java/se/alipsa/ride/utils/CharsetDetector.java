@@ -21,13 +21,9 @@ public class CharsetDetector {
     // String probe = StandardCharsets.UTF_8.name();
     for (Charset charset : charsets) {
       String content = new String(value, charset);
-      if (Arrays.equals(value, content.getBytes())) {
+      if (Arrays.equals(value, content.getBytes(Charset.defaultCharset()))) {
         return charset;
       }
-      /*
-        if(value.equals(convert(convert(value, charset.name(), probe), probe, charset.name()))) {
-          return charset;
-      }*/
     }
     return StandardCharsets.UTF_8;
   }
