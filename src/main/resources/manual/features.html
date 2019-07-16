@@ -1,0 +1,60 @@
+<html lang="en">
+<body>
+<h1>Features</h1>
+
+<h2>Table of content</h2>
+<ul>
+    <li><a href="#running_code">Running code</a></li>
+    <li>
+        <h4>Menu options</h4>
+        <ul>
+            <li><a href="#tools-global_options">Tools -> Global options</a></li>
+            <li><a href="#tools-running_the_repl_console">Tools -> Run REPL in console</a></li>
+        </ul>
+    </li>
+</ul>
+
+<h4 id="running_code">Running code</h4>
+    <p>Running code works more or less the same regardless if it is R or SQL code.
+    If you select a certain portion of text and click the Run button or ctrl+enter the selection only will
+    be executed. To execute the whole script, either have no selected code or all of the code selected (ctrl+a).
+    If nothing is selected and you hit ctrl-enter the current line will be executed.
+    </p>
+
+    <p>
+        Ride will detect the presence of hamcrest test and enable the "Run test" button which works a bit different than
+        the Run button in the sense that first the code will be executed (so that all test methods will be loaded) and then
+        will run each individual test method.
+    </p>
+    <p>
+        For SQL you first need to reference a connection (i.e. create one in the connections tab) and then pick it in the
+        drop-down. You need to choose the execution type. Executing "Run select" will display the result in the Viewer tab
+        whereas Run update will just execute an update (anything other than a select query e.g. insert, create, drop, update etc)
+    </p>
+</div>
+
+<h3>Menu options</h3>
+<h4 id="tools-global_options">Tools -> Global options</h4>
+<div>
+    <p>
+    The AetherPackageLoader is used per default so libraries will be fetched automatically from
+    bedatadriven or maven central repos. This can be modified in the Global Options menu.</p>
+    <p>If you change to the ClasspathPackageLoader you need to add dependencies to the maven pom.xml
+    when running Ride. The change of package loader is persistent so add any required dependency to the pom and restart Ride.</p>
+    <p>This is useful when moving from development to test to make sure dependencies are correct
+    prior to integration testing in embedded mode on e.g. an app server. In the Packages tab you can see
+    a list of packages loaded for the session (in case you missed a library call in the script but loaded
+    it from another script - the session is shared).</p>
+</div>
+<h4 id="tools-running_the_repl_console">Tools -> Run REPL in console</h4>
+<div>
+    <p>The menu option "Tools" -> "Run REPL in console" is a convenient way to to run the Renjin repl (in a new Session).
+    Its main purpose is to make it possible to verify that code that does not work is not due to some quirk in Ride but
+        is actually a Renjin bug i.e. to help determine bugs in Renjin.</p>
+    <p>
+    After you have selected the menu option you will find the repl running in the console that started Renjin.
+    </p>
+</div>
+
+</body>
+</html>

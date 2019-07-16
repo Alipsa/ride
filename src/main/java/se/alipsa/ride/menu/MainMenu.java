@@ -188,10 +188,14 @@ public class MainMenu extends MenuBar {
     FlowPane linkPane = new FlowPane();
     borderPane.setTop(linkPane);
 
+    URL featuresUrl = FileUtils.getResourceUrl("manual/features.html");
     URL interactionUrl = FileUtils.getResourceUrl("manual/InteractingWithRide.html");
     URL shortcutsUrl = FileUtils.getResourceUrl("manual/KeyBoardShortcuts.html");
     URL examplesUrl = FileUtils.getResourceUrl("manual/examples.html");
     URL packagesUrl = FileUtils.getResourceUrl("manual/packages.html");
+
+    Button featuresButton = new Button("Ride features");
+    featuresButton.setOnAction(e -> webEngine.load(featuresUrl.toExternalForm()));
 
     Button rideShortCuts = new Button("Ride keyboard shortcuts");
     rideShortCuts.setOnAction(e -> webEngine.load(shortcutsUrl.toExternalForm()));
@@ -205,7 +209,7 @@ public class MainMenu extends MenuBar {
     Button packagesButton = new Button("Packages");
     packagesButton.setOnAction(e -> webEngine.load(packagesUrl.toExternalForm()));
 
-    linkPane.getChildren().addAll(rideShortCuts, interactingWithRideButton, packagesButton, examplesButton);
+    linkPane.getChildren().addAll(featuresButton, rideShortCuts, interactingWithRideButton, packagesButton, examplesButton);
 
     webEngine.setCreatePopupHandler(
        (PopupFeatures config) -> {
@@ -230,7 +234,7 @@ public class MainMenu extends MenuBar {
     stage.setTitle("User Manual");
     stage.setScene(dialog);
     stage.show();
-    webEngine.load(shortcutsUrl.toExternalForm());
+    webEngine.load(featuresUrl.toExternalForm());
     stage.toFront();
     stage.requestFocus();
     stage.setAlwaysOnTop(false);
