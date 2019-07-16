@@ -18,5 +18,14 @@ RELEASE_TAG=$(getProperty "release.tag")
 LIB_DIR=${DIR}/lib
 export PATH=$PATH:${LIB_DIR}
 
+# This is just to avoid warnings about missing native BLAS libs when running the REPL
+# i.e. we will fall back to pure java
+BLAS=com.github.fommil.netlib.F2jBLAS
+LAPACK=com.github.fommil.netlib.F2jLAPACK
+ARPACK=com.github.fommil.netlib.F2jARPACK
+
 java -cp ${LIB_DIR}/${JAR_NAME} se.alipsa.ride.splash.SplashScreen &
-java -Djava.library.path=${LIB_DIR} -jar ant-launcher.jar -f ride.xml
+java -Djava.library.path=${LIB_DIR} -jar ant-launcher.jar -f ride.xml \
+-Dcom.github.fommil.netlib.BLAS=${BLAS} \
+-Dcom.github.fommil.netlib.LAPACK=${LAPACK} \
+-Dcom.github.fommil.netlib.ARPACK=${ARPACK}
