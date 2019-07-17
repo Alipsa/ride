@@ -137,6 +137,12 @@
         <artifactId>commons-io</artifactId>
         <version>2.6</version>
       </dependency>
+      <!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
+      <dependency>
+        <groupId>com.github.jsqlparser</groupId>
+        <artifactId>jsqlparser</artifactId>
+        <version>2.1</version>
+      </dependency>
       <!-- Git integration Core Library -->
       <!--dependency>
           <groupId>org.eclipse.jgit</groupId>
@@ -432,8 +438,15 @@
         <dependency>
           <groupId>org.apache.tika</groupId>
           <artifactId>tika-core</artifactId>
+
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
+        <dependency>
+          <groupId>com.github.jsqlparser</groupId>
+          <artifactId>jsqlparser</artifactId>
           <scope>provided</scope>
         </dependency>
+
         <!-- Git integration Core Library -->
         <!--dependency>
             <groupId>org.eclipse.jgit</groupId>
@@ -600,6 +613,11 @@
           <groupId>com.microsoft.sqlserver</groupId>
           <artifactId>mssql-jdbc</artifactId>
         </dependency>
+        <dependency>
+          <groupId>com.github.jsqlparser</groupId>
+          <artifactId>jsqlparser</artifactId>
+        </dependency>
+
         <!-- Git integration Core Library -->
         <!--dependency>
             <groupId>org.eclipse.jgit</groupId>

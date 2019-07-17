@@ -136,6 +136,10 @@ Apache 2.0 license.
 ### codehaus:guessencoding
 Used to detect file encoding (Charset). Copyright 2002-2007 Guillaume Laforge under Apache 2.0 License
 
+###  com.github.jsqlparser:jsqlparser
+Used to validate and analyse SQL code. Apache Software License, Version 2.0.
+
+
 ### Various jdbc drivers
 These are included for convenience only. Licenced under various open source licenses. There is no direct dependency on any jdbc driver in Ride.
 

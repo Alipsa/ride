@@ -120,6 +120,11 @@
             <version>2.6</version>
         </dependency>
         <dependency>
+            <groupId>com.github.jsqlparser</groupId>
+            <artifactId>jsqlparser</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
             <groupId>org.renjin.cran</groupId>
             <artifactId>DBI</artifactId>
             <version>1.0.0-b9</version>
