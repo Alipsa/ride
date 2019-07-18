@@ -213,8 +213,8 @@ public class CharsetToolkit {
    * @return an array of <code>Charset</code>s.
    */
   public static Charset[] getAvailableCharsets() {
-    Collection collection = Charset.availableCharsets().values();
-    return (Charset[]) collection.toArray(new Charset[collection.size()]);
+    Collection<Charset> collection = Charset.availableCharsets().values();
+    return collection.toArray(new Charset[collection.size()]);
   }
 
   public static void main(String[] args) throws FileNotFoundException, IOException {

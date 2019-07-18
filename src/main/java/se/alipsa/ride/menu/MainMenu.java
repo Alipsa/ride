@@ -38,9 +38,9 @@ import java.util.*;
 
 public class MainMenu extends MenuBar {
 
-  Ride gui;
-  MenuItem interruptMI;
-  Logger log = LoggerFactory.getLogger(MainMenu.class);
+  private Ride gui;
+  private MenuItem interruptMI;
+  private Logger log = LoggerFactory.getLogger(MainMenu.class);
 
   public MainMenu(Ride gui) {
     this.gui = gui;
@@ -195,19 +195,19 @@ public class MainMenu extends MenuBar {
     URL packagesUrl = FileUtils.getResourceUrl("manual/packages.html");
 
     Button featuresButton = new Button("Ride features");
-    featuresButton.setOnAction(e -> webEngine.load(featuresUrl.toExternalForm()));
+    featuresButton.setOnAction(e -> webEngine.load(Objects.requireNonNull(featuresUrl).toExternalForm()));
 
     Button rideShortCuts = new Button("Ride keyboard shortcuts");
-    rideShortCuts.setOnAction(e -> webEngine.load(shortcutsUrl.toExternalForm()));
+    rideShortCuts.setOnAction(e -> webEngine.load(Objects.requireNonNull(shortcutsUrl).toExternalForm()));
 
     Button interactingWithRideButton = new Button("Interacting with Ride");
-    interactingWithRideButton.setOnAction(e -> webEngine.load(interactionUrl.toExternalForm()));
+    interactingWithRideButton.setOnAction(e -> webEngine.load(Objects.requireNonNull(interactionUrl).toExternalForm()));
 
     Button examplesButton = new Button("Tips and tricks");
-    examplesButton.setOnAction(e -> webEngine.load(examplesUrl.toExternalForm()));
+    examplesButton.setOnAction(e -> webEngine.load(Objects.requireNonNull(examplesUrl).toExternalForm()));
 
     Button packagesButton = new Button("Packages");
-    packagesButton.setOnAction(e -> webEngine.load(packagesUrl.toExternalForm()));
+    packagesButton.setOnAction(e -> webEngine.load(Objects.requireNonNull(packagesUrl).toExternalForm()));
 
     linkPane.getChildren().addAll(featuresButton, rideShortCuts, interactingWithRideButton, packagesButton, examplesButton);
 
@@ -234,7 +234,7 @@ public class MainMenu extends MenuBar {
     stage.setTitle("User Manual");
     stage.setScene(dialog);
     stage.show();
-    webEngine.load(featuresUrl.toExternalForm());
+    webEngine.load(Objects.requireNonNull(featuresUrl).toExternalForm());
     stage.toFront();
     stage.requestFocus();
     stage.setAlwaysOnTop(false);
@@ -247,12 +247,12 @@ public class MainMenu extends MenuBar {
     Properties props = new Properties();
     String version = "unknown";
     String releaseTag = "unknown";
-    try (InputStream is = FileUtils.getResourceUrl("version.properties").openStream()) {
+    try (InputStream is = Objects.requireNonNull(FileUtils.getResourceUrl("version.properties")).openStream()) {
       props.load(is);
       version = props.getProperty("version");
       releaseTag = props.getProperty("release.tag");
     } catch (IOException e) {
-
+      ExceptionAlert.showAlert("Failed to load properties file", e);
     }
     StringBuilder content = new StringBuilder();
     content.append("Version: ");
@@ -469,7 +469,7 @@ public class MainMenu extends MenuBar {
     }
   }
 
-  public void saveContentAs(TextAreaTab codeArea) {
+  private void saveContentAs(TextAreaTab codeArea) {
     File file = promptForFile();
     if (file == null) {
       return;

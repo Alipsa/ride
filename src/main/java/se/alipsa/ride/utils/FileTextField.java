@@ -12,15 +12,15 @@ import java.io.File;
 
 public class FileTextField extends HBox {
 
-  TextField field = new TextField();
-  Button chooseFileButton = new Button("...");
-  Ride gui;
-  File file;
+  private TextField field = new TextField();
+  private Button chooseFileButton = new Button("...");
+  private Ride gui;
+  private File file;
 
   public FileTextField(Ride gui, File file) {
     this.gui = gui;
     setFile(file);
-    this.setHgrow(field, Priority.ALWAYS);
+    HBox.setHgrow(field, Priority.ALWAYS);
     getChildren().addAll(field, chooseFileButton);
     chooseFileButton.setOnAction(this::selectFile);
   }

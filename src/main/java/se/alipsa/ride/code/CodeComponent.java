@@ -84,7 +84,7 @@ public class CodeComponent extends BorderPane {
 
 
   public TextAreaTab getActiveTab() {
-    SingleSelectionModel selectionModel = pane.getSelectionModel();
+    SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
     return (TextAreaTab) selectionModel.getSelectedItem();
   }
 

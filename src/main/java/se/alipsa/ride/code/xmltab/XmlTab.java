@@ -16,7 +16,7 @@ public class XmlTab extends TextAreaTab {
     super(gui, CodeType.XML);
     setTitle(title);
     xmlTextArea = new XmlTextArea(this);
-    VirtualizedScrollPane xmlPane = new VirtualizedScrollPane<>(xmlTextArea);
+    VirtualizedScrollPane<CodeTextArea> xmlPane = new VirtualizedScrollPane<>(xmlTextArea);
     pane.setCenter(xmlPane);
   }
 

@@ -1,5 +1,7 @@
 package se.alipsa.ride.inout.viewer;
 
+import static se.alipsa.ride.Constants.KEY_CODE_COPY;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -15,11 +17,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static se.alipsa.ride.Constants.KEY_CODE_COPY;
-
 public class ViewTab extends Tab {
 
-  TabPane viewPane;
+  private TabPane viewPane;
 
   public ViewTab() {
     setText("Viewer");
@@ -46,9 +46,7 @@ public class ViewTab extends Tab {
       final TableRow<List<String>> row = new TableRow<>();
       final ContextMenu contextMenu = new ContextMenu();
       final MenuItem copyMenuItem = new MenuItem("copy");
-      copyMenuItem.setOnAction(event -> {
-        copySelectionToClipboard(tv);
-      });
+      copyMenuItem.setOnAction(event -> copySelectionToClipboard(tv));
       contextMenu.getItems().addAll(copyMenuItem);
       row.contextMenuProperty().bind(
           Bindings.when(row.emptyProperty())
@@ -66,7 +64,7 @@ public class ViewTab extends Tab {
       col.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
     }
     ObservableList<List<String>> data = FXCollections.observableArrayList();
-    for (List row : rowList) {
+    for (List<Object> row : rowList) {
       List<String> obsRow = new ArrayList<>();
       for (Object obj : row) {
         if (obj instanceof Number) {

@@ -22,22 +22,22 @@ import java.io.Serializable;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
 
 public class FileTree extends TreeView<File> {
 
-  final String folderUrl = FileUtils.getResourceUrl("image/folder.png").toExternalForm();
-  final String fileUrl = FileUtils.getResourceUrl("image/file.png").toExternalForm();
+  private final String folderUrl = Objects.requireNonNull(FileUtils.getResourceUrl("image/folder.png")).toExternalForm();
+  private final String fileUrl = Objects.requireNonNull(FileUtils.getResourceUrl("image/file.png")).toExternalForm();
   private final String WORKING_DIR_PREF = "FileTree.WorkingDir";
-  CodeComponent codeComponent;
-  TreeItemComparator treeItemComparator = new TreeItemComparator();
-  Ride gui;
-  Logger log = LoggerFactory.getLogger(FileTree.class);
-  FileOpener fileOpener;
+  private TreeItemComparator treeItemComparator = new TreeItemComparator();
+  private Ride gui;
+  private Logger log = LoggerFactory.getLogger(FileTree.class);
+  private FileOpener fileOpener;
 
-  public FileTree(Ride gui) {
+  FileTree(Ride gui) {
     this.gui = gui;
-    this.codeComponent = gui.getCodeComponent();
+    CodeComponent codeComponent = gui.getCodeComponent();
     fileOpener = new FileOpener(codeComponent);
     this.getStyleClass().add("fileTree");
 
@@ -154,7 +154,7 @@ public class FileTree extends TreeView<File> {
   }
 
 
-  public File getRootDir() {
+  File getRootDir() {
     return getRoot().getValue();
   }
 
@@ -200,7 +200,7 @@ public class FileTree extends TreeView<File> {
     }
   }
 
-  public void addTreeNode(File file) {
+  void addTreeNode(File file) {
     TreeItem<File> item = findTreeViewItem(this.getRoot(), file.getParentFile());
     if (item == null) {
       log.info("File saved outside of current working dir");
@@ -210,7 +210,7 @@ public class FileTree extends TreeView<File> {
     addTreeNode(item, fileItem);
   }
 
-  public void addTreeNode(TreeItem<File> dirItem, TreeItem<File> fileItem) {
+  private void addTreeNode(TreeItem<File> dirItem, TreeItem<File> fileItem) {
     if (fileItem.getValue().isDirectory()) {
       fileItem.setGraphic(new ImageView(folderUrl));
     } else {
@@ -221,7 +221,7 @@ public class FileTree extends TreeView<File> {
     dirItem.setExpanded(true);
   }
 
-  public void refresh(File dir) {
+  void refresh(File dir) {
     if (dir == null) {
       Alerts.warn("Dir is missing (null)", "Cannot refresh file tree when dir specified is missing");
       return;
@@ -267,6 +267,8 @@ public class FileTree extends TreeView<File> {
   }
 
   private static class TreeItemComparator implements Comparator<TreeItem<File>>, Serializable {
+
+    private static final long serialVersionUID = -7749561517249799967L;
 
     @Override
     public int compare(TreeItem<File> fileTreeItem, TreeItem<File> t1) {

@@ -45,8 +45,8 @@ public class ExceptionAlert extends Alert {
 
     Label label = new Label("The exception stacktrace was:");
     GridPane expContent = new GridPane();
-    expContent.setVgrow(textArea, Priority.ALWAYS);
-    expContent.setHgrow(textArea, Priority.ALWAYS);
+    GridPane.setVgrow(textArea, Priority.ALWAYS);
+    GridPane.setHgrow(textArea, Priority.ALWAYS);
 
     expContent.setMaxWidth(Double.MAX_VALUE);
     expContent.add(label, 0, 0);

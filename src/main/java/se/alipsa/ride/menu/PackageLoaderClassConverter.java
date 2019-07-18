@@ -4,15 +4,15 @@ import javafx.util.StringConverter;
 import org.renjin.aether.AetherPackageLoader;
 import org.renjin.primitives.packaging.ClasspathPackageLoader;
 
-public class PackageLoaderClassConverter extends StringConverter<Class> {
+public class PackageLoaderClassConverter extends StringConverter<Class<?>> {
 
   @Override
-  public String toString(Class object) {
+  public String toString(Class<?> object) {
     return object.getSimpleName();
   }
 
   @Override
-  public Class fromString(String className) {
+  public Class<?> fromString(String className) {
     if (AetherPackageLoader.class.getSimpleName().equals(className)) {
       return AetherPackageLoader.class;
     }

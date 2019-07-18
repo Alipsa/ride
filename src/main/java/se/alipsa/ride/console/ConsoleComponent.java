@@ -25,6 +25,8 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.RenjinVersion;
 import org.renjin.aether.AetherFactory;
 import org.renjin.aether.AetherPackageLoader;
+import org.renjin.aether.ConsoleRepositoryListener;
+import org.renjin.aether.ConsoleTransferListener;
 import org.renjin.eval.Context;
 import org.renjin.eval.EvalException;
 import org.renjin.eval.Session;
@@ -44,7 +46,6 @@ import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.script.ScriptException;
@@ -55,10 +56,10 @@ public class ConsoleComponent extends BorderPane {
   public static final Repo MVN_CENTRAL_REPO = asRepo(AetherFactory.mavenCentral());
   public static final String REMOTE_REPOSITORIES_PREF = "ConsoleComponent.RemoteRepositories";
   public static final String PACKAGE_LOADER_PREF = "ConsoleComponent.PackageLoader";
-  private static final Image IMG_RUNNING = new Image(FileUtils
-      .getResourceUrl("image/running.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
-  private static final Image IMG_WAITING = new Image(FileUtils
-      .getResourceUrl("image/waiting.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
+  private static final Image IMG_RUNNING = new Image(Objects.requireNonNull(FileUtils
+      .getResourceUrl("image/running.png")).toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
+  private static final Image IMG_WAITING = new Image(Objects.requireNonNull(FileUtils
+      .getResourceUrl("image/waiting.png")).toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
   private static final String DOUBLE_INDENT = INDENT + INDENT;
   private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
   private RenjinScriptEngine engine;
@@ -179,8 +180,10 @@ public class ConsoleComponent extends BorderPane {
     }
     //log.info("parentClassLoader = {}, remoteRepositories = {}", parentClassLoader, remoteRepositories);
     AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
-    //loader.setRepositoryListener(new ConsoleRepositoryListener(System.out));
-    //loader.setTransferListener(new ConsoleTransferListener(System.out));
+    if (log.isDebugEnabled()) {
+      loader.setRepositoryListener(new ConsoleRepositoryListener(System.out));
+      loader.setTransferListener(new ConsoleTransferListener(System.out));
+    }
     return loader;
   }
 
@@ -253,6 +256,7 @@ public class ConsoleComponent extends BorderPane {
   /**
    * TODO: while we can stop the timeline with this we cannot interrupt the scriptengines eval.
    */
+  @SuppressWarnings("deprecation")
   public void interruptR() {
     log.info("Interrupting runnning script");
     // This is a nasty piece of code but a brutal stop() is the only thing that will break out of the script engine
@@ -276,12 +280,14 @@ public class ConsoleComponent extends BorderPane {
     try (PrintWriter out = new PrintWriter(System.out);
          PrintWriter err = new PrintWriter(System.err)) {
       running();
+      log.debug("Running script: {}", script);
       session.setStdOut(out);
       session.setStdErr(err);
       SEXP sexp = (SEXP) engine.eval(script);
       waiting();
       return sexp;
     } catch (Exception e) {
+      log.warn("Failed to run script: {}", script, e);
       waiting();
       throw e;
     }
@@ -492,7 +498,7 @@ public class ConsoleComponent extends BorderPane {
   }
 
   private String prefixLines(StringWriter out, String prefix) {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     String lines = out == null ? "" : out.toString();
     for(String line : lines.trim().split("\n")) {
       buf.append(prefix).append(line).append("\n");
@@ -611,6 +617,12 @@ public class ConsoleComponent extends BorderPane {
     }
   }
 
+  public void addOutput(String title, String content) {
+    console.appendText(title + "\n");
+    console.appendText(content + "\n");
+    promptAndScrollToEnd();
+  }
+
   public List<Repo> getRemoteRepositories() {
     return asRepos(remoteRepositories);
   }
@@ -651,7 +663,7 @@ public class ConsoleComponent extends BorderPane {
     });
   }
 
-  public void showTooltip(Control control) {
+  private void showTooltip(Control control) {
     Tooltip customTooltip = control.getTooltip();
     Stage owner = gui.getStage();
     Point2D p = control.localToScene(10.0, 20.0);

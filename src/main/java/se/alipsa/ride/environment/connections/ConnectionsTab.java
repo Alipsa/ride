@@ -23,7 +23,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Callback;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
@@ -78,51 +77,42 @@ public class ConnectionsTab extends Tab {
     topInputPane.setSpacing(2);
     bottomInputPane.setPadding(FLOWPANE_INSETS);
     bottomInputPane.setSpacing(2);
-    //inputPane.setVgap(VGAP);
-    //inputPane.setHgap(HGAP);
     contentPane.setTop(inputBox);
 
     VBox nameBox = new VBox();
     Label nameLabel = new Label("Name:");
-    //topInputPane.getChildren().add(nameLabel);
     nameText = new TextField();
     nameText.setPrefWidth(80);
     nameBox.getChildren().addAll(nameLabel, nameText);
     topInputPane.getChildren().add(nameBox);
-    topInputPane.setHgrow(nameBox, Priority.SOMETIMES);
+    HBox.setHgrow(nameBox, Priority.SOMETIMES);
 
     VBox userBox = new VBox();
     Label userLabel = new Label("User:");
-    //topInputPane.getChildren().add(userLabel);
     userText = new TextField(getPrefOrBlank(USER_PREF));
-    //topInputPane.getChildren().add(userText);
-    topInputPane.setHgrow(userBox, Priority.SOMETIMES);
+    HBox.setHgrow(userBox, Priority.SOMETIMES);
     userBox.getChildren().addAll(userLabel, userText);
     topInputPane.getChildren().add(userBox);
 
     VBox passwordBox = new VBox();
     Label passwordLabel = new Label("Password:");
-    //topInputPane.getChildren().add(passwordLabel);
     passwordField = new PasswordField();
-    //topInputPane.getChildren().add(passwordField);
-    topInputPane.setHgrow(passwordBox, Priority.SOMETIMES);
+    HBox.setHgrow(passwordBox, Priority.SOMETIMES);
     passwordBox.getChildren().addAll(passwordLabel, passwordField);
     topInputPane.getChildren().add(passwordBox);
 
     VBox driverBox = new VBox();
     Label driverLabel = new Label("Driver:");
-    //bottomInputPane.getChildren().add(driverLabel);
     driverText = new TextField(getPrefOrBlank(DRIVER_PREF));
-    bottomInputPane.setHgrow(driverBox, Priority.SOMETIMES);
+    HBox.setHgrow(driverBox, Priority.SOMETIMES);
     driverBox.getChildren().addAll(driverLabel, driverText);
     bottomInputPane.getChildren().add(driverBox);
 
     VBox urlBox = new VBox();
     Label urlLabel = new Label("Url:");
-    //bottomInputPane.getChildren().add(urlLabel);
     urlText = new TextField(getPrefOrBlank(URL_PREF));
     urlBox.getChildren().addAll(urlLabel, urlText);
-    bottomInputPane.setHgrow(urlBox, Priority.ALWAYS);
+    HBox.setHgrow(urlBox, Priority.ALWAYS);
     bottomInputPane.getChildren().add(urlBox);
 
     Button addButton = new Button("Add");
@@ -131,7 +121,6 @@ public class ConnectionsTab extends Tab {
 
     addButton.setOnAction(e -> {
       ConnectionInfo con = new ConnectionInfo(nameText.getText(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
-      //connections.add(con);
       setPref(DRIVER_PREF, driverText.getText());
       setPref(URL_PREF, urlText.getText());
       setPref(USER_PREF, userText.getText());
@@ -148,7 +137,7 @@ public class ConnectionsTab extends Tab {
     topInputPane.getChildren().add(buttonBox);
   }
 
-  private TableView<ConnectionInfo> createConnectionTableView() {
+  private void createConnectionTableView() {
     TableColumn<ConnectionInfo, String> nameCol = new TableColumn<>("Name");
     nameCol.setCellValueFactory(
         new PropertyValueFactory<>("name")
@@ -172,22 +161,14 @@ public class ConnectionsTab extends Tab {
       final TableRow<ConnectionInfo> row = new TableRow<>();
       final ContextMenu contextMenu = new ContextMenu();
       final MenuItem removeMenuItem = new MenuItem("delete connection");
-      removeMenuItem.setOnAction(event -> {
-        tableView.getItems().remove(row.getItem());
-      });
+      removeMenuItem.setOnAction(event -> tableView.getItems().remove(row.getItem()));
       final MenuItem viewMenuItem = new MenuItem("view tables");
-      viewMenuItem.setOnAction(event -> {
-        showConnectionMetaData(row.getItem());
-      });
+      viewMenuItem.setOnAction(event -> showConnectionMetaData(row.getItem()));
       final MenuItem viewDatabasesMenuItem = new MenuItem("view databases");
-      viewDatabasesMenuItem.setOnAction(event -> {
-        showDatabases(row.getItem());
-      });
+      viewDatabasesMenuItem.setOnAction(event -> showDatabases(row.getItem()));
 
       final MenuItem viewRcodeMenuItem = new MenuItem("show R connection code");
-      viewRcodeMenuItem.setOnAction(event -> {
-        showRConnectionCode();
-      });
+      viewRcodeMenuItem.setOnAction(event -> showRConnectionCode());
 
       contextMenu.getItems().addAll(viewMenuItem, viewDatabasesMenuItem, removeMenuItem, viewRcodeMenuItem);
       row.contextMenuProperty().bind(
@@ -206,7 +187,6 @@ public class ConnectionsTab extends Tab {
       });
       return row;
     });
-    return connectionsTable;
   }
 
   private void showRConnectionCode() {
@@ -371,7 +351,7 @@ public class ConnectionsTab extends Tab {
         rows.forEach(r -> metaDataList.add(new TableMetaData(r)));
         gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("rm(connectionsTabDf)").toString());
         setNormalCursor();
-        TreeView treeView = createMetaDataTree(metaDataList, con);
+        TreeView<String> treeView = createMetaDataTree(metaDataList, con);
         createAndShowWindow(connectionName + " connection view", treeView);
       } catch (Exception ex) {
         setNormalCursor();
@@ -421,7 +401,7 @@ public class ConnectionsTab extends Tab {
     connectionsTable.setCursor(Cursor.WAIT);
   }
 
-  private TreeView createMetaDataTree(List<TableMetaData> table, ConnectionInfo con) {
+  private TreeView<String> createMetaDataTree(List<TableMetaData> table, ConnectionInfo con) {
     String connectionName = con.getName();
     TreeView<String> tree = new TreeView<>();
     TreeItem<String> root = new TreeItem<>(connectionName);
@@ -444,12 +424,7 @@ public class ConnectionsTab extends Tab {
         copySelectionToClipboard(tree);
       }
     });
-    tree.setCellFactory(new Callback<TreeView<String>,TreeCell<String>>(){
-      @Override
-      public TreeCell<String> call(TreeView<String> p) {
-        return new TableNameTreeCell(con);
-      }
-    });
+    tree.setCellFactory(p -> new TableNameTreeCell(con));
     return tree;
   }
 
@@ -470,6 +445,8 @@ public class ConnectionsTab extends Tab {
   }
 
   private static class TreeItemComparator implements Comparator<TreeItem<String>>, Serializable {
+
+    private static final long serialVersionUID = -7997376258097396238L;
 
     @Override
     public int compare(TreeItem<String> fileTreeItem, TreeItem<String> t1) {

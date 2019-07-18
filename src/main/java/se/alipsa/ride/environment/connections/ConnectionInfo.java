@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ConnectionInfo implements Comparable {
+public class ConnectionInfo implements Comparable<ConnectionInfo> {
 
   private Logger log = LoggerFactory.getLogger(ConnectionInfo.class);
 
@@ -58,6 +58,7 @@ public class ConnectionInfo implements Comparable {
     this.url.setValue(url);
   }
 
+  @Override
   public String toString() {
     return name.getValue();
   }
@@ -79,8 +80,8 @@ public class ConnectionInfo implements Comparable {
   }
 
   @Override
-  public int compareTo(Object obj) {
-    return this.toString().compareTo(obj.toString());
+  public int compareTo(ConnectionInfo obj) {
+      return this.toString().compareTo(obj.toString());
   }
 
   @Override
@@ -113,4 +114,6 @@ public class ConnectionInfo implements Comparable {
     String safeLcUrl = url.getValueSafe().toLowerCase();
     return ( safeLcUrl.contains("user") && safeLcUrl.contains("pass") ) || safeLcUrl.contains("@");
   }
+
+
 }

@@ -1,5 +1,10 @@
 package se.alipsa.ride.menu;
 
+import static se.alipsa.ride.Constants.*;
+import static se.alipsa.ride.console.ConsoleComponent.PACKAGE_LOADER_PREF;
+import static se.alipsa.ride.console.ConsoleTextArea.CONSOLE_MAX_LENGTH_DEFAULT;
+import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
+
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,19 +25,14 @@ import se.alipsa.ride.utils.TableViewWithVisibleRowCount;
 
 import java.util.List;
 
-import static se.alipsa.ride.Constants.*;
-import static se.alipsa.ride.console.ConsoleComponent.PACKAGE_LOADER_PREF;
-import static se.alipsa.ride.console.ConsoleTextArea.CONSOLE_MAX_LENGTH_DEFAULT;
-import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
-
-public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
+class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
   private TableViewWithVisibleRowCount<Repo> reposTable;
-  private ComboBox<Class> pkgLoaderCb;
+  private ComboBox<Class<?>> pkgLoaderCb;
   private IntField intField;
   private ComboBox<String> themes;
 
-  public GlobalOptionsDialog(Ride gui) {
+  GlobalOptionsDialog(Ride gui) {
     setTitle("Global options");
 
     getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -63,7 +63,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     List<Repo> repos = gui.getConsoleComponent().getRemoteRepositories();
 
     TableColumn<Repo, String> idCol = new TableColumn<>("id");
-    idCol.setCellValueFactory(new PropertyValueFactory<Repo, String>("id"));
+    idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
     idCol.setCellFactory(TextFieldTableCell.forTableColumn());
     idCol.setOnEditCommit(t ->
         (t.getTableView().getItems().get(t.getTablePosition().getRow()))
@@ -71,7 +71,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     );
 
     TableColumn<Repo, String> typeCol = new TableColumn<>("type");
-    typeCol.setCellValueFactory(new PropertyValueFactory<Repo, String>("type"));
+    typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
     typeCol.setCellFactory(TextFieldTableCell.forTableColumn());
     typeCol.setOnEditCommit(t ->
         (t.getTableView().getItems().get(t.getTablePosition().getRow()))
@@ -79,7 +79,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     );
 
     TableColumn<Repo, String> urlCol = new TableColumn<>("url");
-    urlCol.setCellValueFactory(new PropertyValueFactory<Repo, String>("url"));
+    urlCol.setCellValueFactory(new PropertyValueFactory<>("url"));
     urlCol.setCellFactory(TextFieldTableCell.forTableColumn());
     urlCol.setOnEditCommit(t ->
         (t.getTableView().getItems().get(t.getTablePosition().getRow()))
@@ -90,9 +90,7 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
       final TableRow<Repo> row = new TableRow<>();
       final ContextMenu contextMenu = new ContextMenu();
       final MenuItem addMenuItem = new MenuItem("add row");
-      addMenuItem.setOnAction(event -> {
-        addRow(new Repo());
-      });
+      addMenuItem.setOnAction(event -> addRow(new Repo()));
 
       final Menu addDefault = new Menu("add default");
       final MenuItem addBedataDriven = new MenuItem("Renjin repo");
@@ -169,15 +167,14 @@ public class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     addRow(ConsoleComponent.MVN_CENTRAL_REPO);
   }
 
-  ObservableList<Repo> createObservable(List<Repo> repos) {
+  private ObservableList<Repo> createObservable(List<Repo> repos) {
     if (repos == null) {
       return FXCollections.emptyObservableList();
     }
-    ObservableList<Repo> list = FXCollections.observableArrayList(repos);
-    return list;
+    return FXCollections.observableArrayList(repos);
   }
 
-  GlobalOptions createResult() {
+  private GlobalOptions createResult() {
     GlobalOptions result = new GlobalOptions();
     result.put(GlobalOptions.REMOTE_REPOSITORIES, reposTable.getItems());
     result.put(GlobalOptions.PKG_LOADER, pkgLoaderCb.getSelectionModel().getSelectedItem());

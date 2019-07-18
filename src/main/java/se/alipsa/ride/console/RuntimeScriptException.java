@@ -2,6 +2,8 @@ package se.alipsa.ride.console;
 
 public class RuntimeScriptException extends Exception {
 
+  private static final long serialVersionUID = -6302617181406809025L;
+
   public RuntimeScriptException() {
     super();
   }

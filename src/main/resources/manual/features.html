@@ -31,6 +31,20 @@
         drop-down. You need to choose the execution type. Executing "Run select" will display the result in the Viewer tab
         whereas Run update will just execute an update (anything other than a select query e.g. insert, create, drop, update etc)
     </p>
+    <p>
+        If you want to execute multiple update statements you should separate them with ; even though it is possible to
+        run it anyway. However the result coming back from such a query depends on the database and river implementation.
+        E.g. for SQL server the following code
+        <div class="codeblock">
+            <span class="keyword">select</span> * <span class="keyword">from</span> table1<br/>
+            <span class="keyword">select</span> * <span class="keyword">from</span> table2<br/>
+        </div>
+        Will return results from the 1:st query only! Where as the follwing will return results from both queries:
+        <div class="codeblock">
+            <span class="keyword">select</span> * <span class="keyword">from</span> table1;<br/>
+            <span class="keyword">select</span> * <span class="keyword">from</span> table2<br/>
+        </div>
+    </p>
 </div>
 
 <h3>Menu options</h3>
