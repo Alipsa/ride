@@ -366,6 +366,10 @@ public class ConsoleComponent extends BorderPane {
 
   private void promptAndScrollToEnd() {
     console.appendText(">");
+    scrollToEnd();
+  }
+
+  private void scrollToEnd() {
     console.moveTo(console.getLength());
     console.requestFollowCaret();
   }
@@ -617,10 +621,24 @@ public class ConsoleComponent extends BorderPane {
     }
   }
 
-  public void addOutput(String title, String content) {
-    console.appendText(title + "\n");
-    console.appendText(content + "\n");
-    promptAndScrollToEnd();
+  public void addOutput(String title, String content, boolean addPrompt, boolean skipNewLine) {
+    console.append(title);
+    console.append(content, skipNewLine);
+    if (addPrompt) {
+      promptAndScrollToEnd();
+    } else {
+      scrollToEnd();
+    }
+  }
+
+  public void addWarning(String title, String content, boolean addPrompt) {
+    console.appendWarning(title);
+    console.appendWarning(content);
+    if (addPrompt) {
+      promptAndScrollToEnd();
+    } else {
+      scrollToEnd();
+    }
   }
 
   public List<Repo> getRemoteRepositories() {

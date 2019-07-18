@@ -3,6 +3,7 @@ package se.alipsa.ride.code.sqltab;
 import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
 import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -18,15 +19,15 @@ import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.SqlParser;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class SqlTab extends TextAreaTab {
@@ -112,34 +113,20 @@ public class SqlTab extends TextAreaTab {
   }
 
   private void runUpdateQuery(ActionEvent actionEvent) {
+    setWaitCursor();
+    final ConsoleComponent consoleComponent = getGui().getConsoleComponent();
+    StringBuilder parseMessage = new StringBuilder();
+    String[] batchedQry = SqlParser.split(getTextContent(), parseMessage);
+    if (parseMessage.length() > 0) {
+      consoleComponent.addWarning(getTitle(), parseMessage.toString(), false);
+    } else {
+      consoleComponent.addOutput(getTitle(), "Query contains " + batchedQry.length + " statements", false, true);
+    }
 
-    /*
-    setWaitCursor();
-    //System.out.println("Runing update:\n" + sql);
-    String rCode = baseRQueryString(connectionCombo.getValue(), "dbSendUpdate", getTextContent()).toString();
-    try {
-      //System.out.println("  calling scriptengine");
-      gui.getConsoleComponent().runScriptSilent(rCode);
-      //System.out.println("  cleanup");
-      setNormalCursor();
-    } catch (Exception e) {
-      setNormalCursor();
-      ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
-    }
-    try {
-      gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().toString());
-    } catch (Exception e) {
-      ExceptionAlert.showAlert("Cleanup failed: " + e.getMessage(), e);
-    }
-    //System.out.println("update query done!");
-     */
-    setWaitCursor();
-    String[] batchedQry = getTextContent().split(";");
-    Task<int[]> updateTask = new Task<int[]>() {
+    Task<Void> updateTask = new Task<Void>() {
       @Override
-      protected int[] call() throws Exception {
+      protected Void call() throws Exception {
         Connection con = null;
-        List<Integer> numRows = new ArrayList<>();
         try {
           ConnectionInfo ci = connectionCombo.getValue();
           Class.forName(ci.getDriver());
@@ -149,10 +136,18 @@ public class SqlTab extends TextAreaTab {
             con = DriverManager.getConnection(ci.getUrl(), ci.getUser(), ci.getPassword());
           }
           try (Statement stm = con.createStatement()) {
-            for (String qry : batchedQry) {
+            for (int count = 0; count < batchedQry.length; count++) {
+              String qry = batchedQry[count];
               int result = stm.executeUpdate(qry);
               log.info("{} : {}", qry, result);
-              numRows.add(result);
+              final int rowNum = count +1;
+              Platform.runLater(() ->
+                consoleComponent.addOutput("", new StringBuilder()
+                  .append(rowNum)
+                  .append(". Number of rows affected: ")
+                  .append(result).toString()
+                  , false, true)
+              );
             }
           }
         } finally {
@@ -160,23 +155,18 @@ public class SqlTab extends TextAreaTab {
             con.close();
           }
         }
-        return numRows.stream().mapToInt(i->i).toArray();
+        return null;
       }
     };
     updateTask.setOnSucceeded(e -> {
       setNormalCursor();
-      int[] numRows = updateTask.getValue();
-      StringBuilder buf = new StringBuilder();
-      int count = 1;
-      for (int num : numRows) {
-        buf.append(count++).append(". Number of rows affected: ").append(num).append("\n");
-      }
-      getGui().getConsoleComponent().addOutput(getTitle(), buf.toString());
+      consoleComponent.addOutput("", "Success", true, false);
     });
 
     updateTask.setOnFailed(e -> {
       setNormalCursor();
       Throwable exc = updateTask.getException();
+      consoleComponent.addWarning("","Failed to run update query", true);
       ExceptionAlert.showAlert("Failed to run update query", exc );
     });
 
