@@ -98,12 +98,12 @@
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.26</version>
+            <version>1.7.27</version>
          </dependency>
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.26</version>
+            <version>1.7.27</version>
          </dependency>
 
          <dependency>
@@ -169,18 +169,18 @@
          <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.16</version>
+            <version>8.0.17</version>
          </dependency>
          <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>7.2.2.jre8</version>
+            <version>7.4.1.jre8</version>
          </dependency>
 
          <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.5.0</version>
+            <version>5.5.1</version>
             <scope>test</scope>
          </dependency>
          <dependency>

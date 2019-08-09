@@ -32,7 +32,6 @@ java -cp ${JAR_NAME} se.alipsa.ride.splash.SplashScreen &
 mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG} --no-snapshot-updates
 
 mvn exec:java \
---no-snapshot-updates \
 -Duser.home=$HOME \
 -Djava.library.path=${LIB_DIR} \
 -Dride.jar=${TARGET} \
