@@ -735,9 +735,10 @@ public class ConsoleComponent extends BorderPane {
 
     @Override
     public void write(int b) {
-      console.appendChar((char) b);
+      char[] chars = Character.toChars(b);
+      console.appendChar(chars);
       if (str != null) {
-        str.append((char) b);
+        str.append(chars);
       }
     }
   }
@@ -753,7 +754,8 @@ public class ConsoleComponent extends BorderPane {
 
     @Override
     public void write(int b) {
-      console.appendWarnChar((char) b);
+      char[] chars = Character.toChars(b);
+      console.appendWarnChar(chars);
       if(str != null) {
         str.append((char) b);
       }

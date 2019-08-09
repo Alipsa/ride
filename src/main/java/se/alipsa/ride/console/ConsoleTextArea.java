@@ -111,6 +111,15 @@ public class ConsoleTextArea extends UnStyledCodeArea {
     }
   }
 
+  public void appendChar(char[] b) {
+    buffer.append(b);
+    if ("\n".equals(String.valueOf(b))) {
+      String text = buffer.toString();
+      appendFx(text);
+      buffer.setLength(0);
+    }
+  }
+
 
   public void appendWarningFx(String text) {
     Platform.runLater(() -> {
@@ -119,8 +128,17 @@ public class ConsoleTextArea extends UnStyledCodeArea {
   }
 
   public void appendWarnChar(char b) {
-    warnBuffer.append(b);
+    warnBuffer.append(Character.toChars(b));
     if (b == '\n') {
+      String text = warnBuffer.toString();
+      appendWarningFx(text);
+      warnBuffer.setLength(0);
+    }
+  }
+
+  public void appendWarnChar(char[] b) {
+    warnBuffer.append(b);
+    if ("\n".equals(String.valueOf(b))) {
       String text = warnBuffer.toString();
       appendWarningFx(text);
       warnBuffer.setLength(0);
