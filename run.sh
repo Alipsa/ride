@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# just run Ride based on latest compilation
+# run Ride in target dir
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ${DIR}
@@ -18,9 +18,19 @@ VERSION=$(getProperty "version")
 JAR_NAME=$(getProperty "jar.name")
 RELEASE_TAG=$(getProperty "release.tag")
 
-#TARGET=${PWD}/target/${JAR_NAME}
-cd ${DIR}/src/bin
-TARGET=~/.m2/repository/se/alipsa/ride/${VERSION}/${JAR_NAME}
+TARGET=${PWD}/target
+ZIPFILE="${TARGET}"/ride-"${RELEASE_TAG}-dist.zip"
 
-java -cp ${TARGET} se.alipsa.ride.splash.SplashScreen &
-mvn exec:java -Dride.jar=${TARGET} -Drelease.tag=${VERSION}
+if [[ ! -f "${ZIPFILE}" ]]; then
+  echo "${ZIPFILE} does not exist, creating it..."
+  mvn clean install -P online -P createProps
+fi
+
+ZIPDIR=${ZIPFILE%.*}
+if [[ ! -e "${ZIPDIR}" ]]; then
+  echo "Unpacking ${ZIPFILE} to ${ZIPDIR}"
+  unzip -d "$ZIPDIR" "$ZIPFILE"
+fi
+
+cd ${ZIPDIR}
+./ride.sh

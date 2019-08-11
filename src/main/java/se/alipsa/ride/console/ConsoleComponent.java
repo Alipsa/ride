@@ -581,9 +581,8 @@ public class ConsoleComponent extends BorderPane {
 
   private void executeScriptAndReport(String script, String title) throws Exception {
 
-    StringBuffer outSb = new StringBuffer();
     EnvironmentComponent env = gui.getEnvironmentComponent();
-    try (OutputStream out = new AppenderOutputStream(outSb);
+    try (OutputStream out = new AppenderOutputStream();
          WarningAppenderOutputStream err = new WarningAppenderOutputStream();
          PrintWriter outputWriter = new PrintWriter(out);
          PrintWriter errWriter = new PrintWriter(err)
@@ -601,7 +600,7 @@ public class ConsoleComponent extends BorderPane {
       session.setStdErr(errWriter);
 
       engine.eval(script);
-      Platform.runLater(() -> env.addOutputHistory(outSb.toString()));
+      Platform.runLater(() -> env.addOutputHistory(out.toString()));
       postEvalOutput();
 
     } catch (ScriptException | RuntimeException e) {
@@ -725,39 +724,42 @@ public class ConsoleComponent extends BorderPane {
   }
 
   class AppenderOutputStream extends OutputStream {
-    StringBuffer str = null;
 
-    AppenderOutputStream() {}
+    protected StringBuilder sb;
 
-    AppenderOutputStream(StringBuffer stringBuf) {
-      str = stringBuf;
+    AppenderOutputStream() {
+      sb = new StringBuilder();
     }
 
     @Override
-    public void write(int b) {
-      char[] chars = Character.toChars(b);
-      console.appendChar(chars);
-      if (str != null) {
-        str.append(chars);
+    public void write(int codePoint) {
+      if (Character.isValidCodePoint(codePoint)) {
+        console.appendChar(Character.toChars(codePoint));
+        sb.append(Character.toChars(codePoint));
+      } else {
+        console.appendChar((char) codePoint);
+        sb.append((char) codePoint);
       }
+    }
+
+    @Override
+    public String toString() {
+      return sb.toString();
     }
   }
 
-  class WarningAppenderOutputStream extends OutputStream {
-    StringBuffer str = null;
+  class WarningAppenderOutputStream extends AppenderOutputStream {
 
     WarningAppenderOutputStream() {}
 
-    WarningAppenderOutputStream(StringBuffer stringBuf) {
-      str = stringBuf;
-    }
-
     @Override
-    public void write(int b) {
-      char[] chars = Character.toChars(b);
-      console.appendWarnChar(chars);
-      if(str != null) {
-        str.append((char) b);
+    public void write(int codePoint) {
+      if (Character.isValidCodePoint(codePoint)) {
+        console.appendWarnChar(Character.toChars(codePoint));
+        sb.append(Character.toChars(codePoint));
+      } else {
+        console.appendWarnChar((char) codePoint);
+        sb.append((char) codePoint);
       }
     }
   }
