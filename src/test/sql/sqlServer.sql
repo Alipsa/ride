@@ -1,6 +1,5 @@
---com.microsoft.sqlserver.jdbc.SQLServerDriver
 
-DROP TABLE IF EXISTS #creditInformation;
+DROP TABLE IF EXISTS ##creditInformation;
 create table #creditInformation (
   id int primary key,
   dateExtracted date,
@@ -14,11 +13,9 @@ declare @ciTable table (ciId numeric(19,0));
 
 insert into @ciTable 
 select id as ciId 
-from creditInformation 
+from #creditInformation 
 where dateExtracted = @extractDate;
 
 select * into testTable from @ciTable;
 
 select * from testTable
-
---create database mydb;

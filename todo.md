@@ -39,7 +39,7 @@ Comment/Uncomment lines + the Ctrl+Shift+C combo (done)
  
 ## version 1.2
 
-### Implement History tab
+### Implement History tab (done)
 
 ### Code menu improvements
 Format code, use Hadley Wickham style guide http://adv-r.had.co.nz/Style.html#Assignment
@@ -86,3 +86,6 @@ use jGit see
 - To allow explicit setting Aether to offline
 - The maven Settings class created by AetherFactory must be publicly exposed,
 ideally by AetherPackageLoader  
+
+### Further out (post 1.4)
+- Support fastR in addition to Renjin, maybe also GNU R.
