@@ -6,6 +6,9 @@ import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.ListVector;
 import org.renjin.sexp.Vector;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +59,23 @@ public class Table {
     values.add(vec);
 
     rowList = transpose(values);
+  }
+
+  public Table(ResultSet rs) throws SQLException {
+    ResultSetMetaData rsmd = rs.getMetaData();
+    colList = new ArrayList<>();
+    int ncols = rsmd.getColumnCount();
+    for (int i = 1; i <= ncols; i++) {
+      colList.add(rsmd.getColumnName(i));
+    }
+    rowList = new ArrayList<>();
+    while (rs.next()) {
+      List<Object> row = new ArrayList<>();
+      for (int i = 1; i <= ncols; i++) {
+        row.add(rs.getObject(i));
+      }
+      rowList.add(row);
+    }
   }
 
   public List<String> getColList() {

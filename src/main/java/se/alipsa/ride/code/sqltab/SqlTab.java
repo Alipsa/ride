@@ -1,8 +1,5 @@
 package se.alipsa.ride.code.sqltab;
 
-import static se.alipsa.ride.utils.RQueryBuilder.baseRQueryString;
-import static se.alipsa.ride.utils.RQueryBuilder.cleanupRQueryString;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -12,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.renjin.sexp.ListVector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
@@ -21,37 +17,37 @@ import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
+import se.alipsa.ride.model.Table;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.SqlParser;
+import se.alipsa.ride.utils.StringUtils;
 
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SqlTab extends TextAreaTab {
 
   private SqlTextArea sqlTextArea;
-  private Button runButton;
-  private Button runUpdateButton;
+  private Button executeButton;
   private ComboBox<ConnectionInfo> connectionCombo;
 
   private Logger log = LoggerFactory.getLogger(SqlTab.class);
+
+  private static final int PRINT_QUERY_LENGTH = 30;
 
   public SqlTab(String title, Ride gui) {
     super(gui, CodeType.SQL);
     setTitle(title);
 
-    runButton = new Button("Run select");
-    runButton.setDisable(true);
-    runButton.setOnAction(this::runSelectQuery);
-    buttonPane.getChildren().add(runButton);
-
-    runUpdateButton = new Button("Run update");
-    runUpdateButton.setDisable(true);
-    runUpdateButton.setOnAction(this::runUpdateQuery);
-    buttonPane.getChildren().add(runUpdateButton);
+    executeButton = new Button("Execute");
+    executeButton.setDisable(true);
+    executeButton.setOnAction(this::executeQuery);
+    buttonPane.getChildren().add(executeButton);
 
     connectionCombo = new ComboBox<>();
     connectionCombo.setTooltip(new Tooltip("Create connections in the Connections tab \nand select the name here"));
@@ -65,8 +61,7 @@ public class SqlTab extends TextAreaTab {
     });
     connectionCombo.getSelectionModel().selectedItemProperty().addListener(
         (options, oldValue, newValue) -> {
-          runButton.setDisable(false);
-          runUpdateButton.setDisable(false);
+          executeButton.setDisable(false);
         }
     );
     buttonPane.getChildren().add(connectionCombo);
@@ -74,32 +69,6 @@ public class SqlTab extends TextAreaTab {
     sqlTextArea = new SqlTextArea(this);
     VirtualizedScrollPane<SqlTextArea> scrollPane = new VirtualizedScrollPane<>(sqlTextArea);
     pane.setCenter(scrollPane);
-  }
-
-  private void runSelectQuery(ActionEvent actionEvent) {
-
-    setWaitCursor();
-    String[] batchedQry = getTextContent().split(";");
-    ConnectionInfo connection = connectionCombo.getValue();
-    for (String qry : batchedQry) {
-      try {
-        String rCode = baseRQueryString(connection, "sqlTabDf <- dbGetQuery", qry).toString();
-        gui.getConsoleComponent().runScriptSilent(rCode);
-        ListVector df = (ListVector) gui.getConsoleComponent().fetchVar("sqlTabDf");
-        gui.getInoutComponent().view(df, getTitle());
-      } catch(Exception e){
-        setNormalCursor();
-        ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
-      }
-      // cleanup
-      try {
-        gui.getConsoleComponent().runScriptSilent(cleanupRQueryString().append("if(exists(\"sqlTabDf\")) rm(sqlTabDf)").toString());
-      } catch (Exception e) {
-        setNormalCursor();
-        ExceptionAlert.showAlert("Failed: " + e.getMessage(), e);
-      }
-      setNormalCursor();
-    }
   }
 
   private void setNormalCursor() {
@@ -112,10 +81,12 @@ public class SqlTab extends TextAreaTab {
     sqlTextArea.setCursor(Cursor.WAIT);
   }
 
-  private void runUpdateQuery(ActionEvent actionEvent) {
+  private void executeQuery(ActionEvent actionEvent) {
     setWaitCursor();
     final ConsoleComponent consoleComponent = getGui().getConsoleComponent();
     StringBuilder parseMessage = new StringBuilder();
+    // The parser will not be able to understand more complex queries in which case
+    // the whole sql code will be in batchedQry[0]
     String[] batchedQry = SqlParser.split(getTextContent(), parseMessage);
     if (parseMessage.length() > 0) {
       consoleComponent.addWarning(getTitle(), parseMessage.toString(), false);
@@ -135,19 +106,43 @@ public class SqlTab extends TextAreaTab {
           } else {
             con = DriverManager.getConnection(ci.getUrl(), ci.getUser(), ci.getPassword());
           }
+          AtomicInteger queryCount = new AtomicInteger(1);
+
           try (Statement stm = con.createStatement()) {
             for (int count = 0; count < batchedQry.length; count++) {
               String qry = batchedQry[count];
-              int result = stm.executeUpdate(qry);
-              log.info("{} : {}", qry, result);
-              final int rowNum = count +1;
-              Platform.runLater(() ->
-                consoleComponent.addOutput("", new StringBuilder()
-                  .append(rowNum)
-                  .append(". Number of rows affected: ")
-                  .append(result).toString()
-                  , false, true)
-              );
+              boolean hasMoreResultSets = stm.execute(qry);
+
+              int capLen = Math.min(qry.length(), PRINT_QUERY_LENGTH);
+              String queryCapture = StringUtils.fixedLengthString(qry.substring(0, capLen).trim(), PRINT_QUERY_LENGTH);
+
+              while ( hasMoreResultSets || stm.getUpdateCount() != -1 ) {
+                if ( hasMoreResultSets ) {
+                  try (ResultSet rs = stm.getResultSet()) {
+                    Table table = new Table(rs);
+                    Platform.runLater(() ->
+                      gui.getInoutComponent().showInViewer(table, SqlTab.this.getTitle() + " " + queryCount.getAndIncrement() + ".")
+                    );
+                  }
+                }
+                else { // if ddl/dml/...
+                  int queryResult = stm.getUpdateCount();
+                  if ( queryResult == -1 ) { // no more queries processed
+                    break;
+                  }
+
+                  Platform.runLater(() ->
+                      consoleComponent.addOutput("", new StringBuilder()
+                              .append(queryCount.getAndIncrement())
+                              .append(". [")
+                              .append(queryCapture)
+                              .append("...], Rows affected: ")
+                              .append(queryResult).toString()
+                          , false, true)
+                  );
+                }
+                hasMoreResultSets = stm.getMoreResults();
+              }
             }
           }
         } finally {
@@ -166,8 +161,8 @@ public class SqlTab extends TextAreaTab {
     updateTask.setOnFailed(e -> {
       setNormalCursor();
       Throwable exc = updateTask.getException();
-      consoleComponent.addWarning("","Failed to run update query", true);
-      ExceptionAlert.showAlert("Failed to run update query", exc );
+      consoleComponent.addWarning("","Failed to execute query", true);
+      ExceptionAlert.showAlert("Failed to execute query", exc );
     });
 
     Thread scriptThread = new Thread(updateTask);

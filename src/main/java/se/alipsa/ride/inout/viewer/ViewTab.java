@@ -77,7 +77,7 @@ public class ViewTab extends Tab {
     }
     tableView.setItems(data);
     Tab tab = new Tab();
-    String tabTitle = " (" + rowList.size() + ")";
+    String tabTitle = " (" + rowList.size() + " rows)";
     if (title.length > 0) {
       tabTitle = title[0] + tabTitle;
     }

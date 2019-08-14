@@ -119,6 +119,7 @@ public class TableViewWithVisibleRowCount<T> extends TableView<T> {
     /**
      * Overridden to return custom flow.
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected VirtualFlow createVirtualFlow() {
       return new MyFlow();
@@ -127,6 +128,7 @@ public class TableViewWithVisibleRowCount<T> extends TableView<T> {
     /**
      * Extended to expose length calculation per a given # of rows.
      */
+    @SuppressWarnings("unchecked")
     public static class MyFlow extends VirtualFlow {
 
       protected double getPrefLength(int rowsPerPage) {

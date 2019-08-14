@@ -16,6 +16,9 @@ select id as ciId
 from #creditInformation 
 where dateExtracted = @extractDate;
 
+select * from @ciTable;
+
+DROP TABLE IF EXISTS testTable;
 select * into testTable from @ciTable;
 
 select * from testTable

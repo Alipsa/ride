@@ -47,11 +47,23 @@
             <groupId>org.renjin</groupId>
             <artifactId>tools</artifactId>
             <version>${renjin.version}</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-jdk14</artifactId>
+               </exclusion>
+            </exclusions>
          </dependency>
          <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>renjin-aether-package-loader</artifactId>
             <version>${renjin.version}</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>jcl-over-slf4j</artifactId>
+               </exclusion>
+            </exclusions>
          </dependency>
          <!--dependency>
            <groupId>org.renjin</groupId>
@@ -72,6 +84,28 @@
             <groupId>org.renjin.cran</groupId>
             <artifactId>DBI</artifactId>
             <version>1.0.0-b9</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>org.renjin</groupId>
+                  <artifactId>tcltk</artifactId>
+               </exclusion>
+               <exclusion>
+                  <groupId>org.renjin</groupId>
+                  <artifactId>splines</artifactId>
+               </exclusion>
+               <exclusion>
+                  <groupId>org.renjin</groupId>
+                  <artifactId>parallel</artifactId>
+               </exclusion>
+               <exclusion>
+                  <groupId>org.renjin</groupId>
+                  <artifactId>grid</artifactId>
+               </exclusion>
+               <exclusion>
+                  <groupId>org.renjin</groupId>
+                  <artifactId>stats4</artifactId>
+               </exclusion>
+            </exclusions>
          </dependency>
          <dependency>
             <groupId>se.alipsa</groupId>
@@ -381,6 +415,12 @@
                <groupId>de.codecentric.centerdevice</groupId>
                <artifactId>javafxsvg</artifactId>
                <scope>provided</scope>
+               <exclusions>
+                  <exclusion>
+                     <groupId>commons-logging</groupId>
+                     <artifactId>commons-logging</artifactId>
+                  </exclusion>
+               </exclusions>
             </dependency>
             <dependency>
                <groupId>org.renjin</groupId>
