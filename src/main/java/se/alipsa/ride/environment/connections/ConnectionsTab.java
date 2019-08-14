@@ -35,6 +35,7 @@ import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.rtab.RTextArea;
 import se.alipsa.ride.model.Table;
 import se.alipsa.ride.model.TableMetaData;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.RDataTransformer;
 import se.alipsa.ride.utils.RQueryBuilder;
@@ -120,6 +121,12 @@ public class ConnectionsTab extends Tab {
     contentPane.setCenter(connectionsTable);
 
     addButton.setOnAction(e -> {
+      String urlString = urlText.getText().toLowerCase();
+      if (urlString.contains("mysql") && !urlString.contains("allowmultiqueries=true")) {
+        String msg = "In MySQL you should set allowMultiQueries=true in the connection string to be able to execute multiple queries";
+        log.warn(msg);
+        Alerts.info("MySQL and multiple query statements", msg);
+      }
       ConnectionInfo con = new ConnectionInfo(nameText.getText(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
       setPref(DRIVER_PREF, driverText.getText());
       setPref(URL_PREF, urlText.getText());

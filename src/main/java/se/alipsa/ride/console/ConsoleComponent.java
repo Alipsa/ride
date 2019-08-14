@@ -46,6 +46,7 @@ import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.script.ScriptException;
@@ -743,6 +744,12 @@ public class ConsoleComponent extends BorderPane {
     }
 
     @Override
+    public void write(byte[] bytes, int offset, int length) {
+      // Should it perhaps be Charset.defaultCharset() instead?
+      console.appendFx(new String(bytes, offset, length, StandardCharsets.UTF_8));
+    }
+
+    @Override
     public String toString() {
       return sb.toString();
     }
@@ -761,6 +768,12 @@ public class ConsoleComponent extends BorderPane {
         console.appendWarnChar((char) codePoint);
         sb.append((char) codePoint);
       }
+    }
+
+    @Override
+    public void write(byte[] bytes, int offset, int length) {
+      // Should it perhaps be Charset.defaultCharset() instead?
+      console.appendWarningFx(new String(bytes, offset, length, StandardCharsets.UTF_8));
     }
   }
 }

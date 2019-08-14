@@ -28,3 +28,5 @@ print(mean(cars[,2]))
 # Exercise #8
 print("# What row of cars has a a distance of 85?")
 print(which(cars[,2] == 85))
+
+print("Nu är det klart!")
