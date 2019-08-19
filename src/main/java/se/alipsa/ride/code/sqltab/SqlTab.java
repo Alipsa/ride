@@ -44,7 +44,7 @@ public class SqlTab extends TextAreaTab {
     super(gui, CodeType.SQL);
     setTitle(title);
 
-    executeButton = new Button("Execute");
+    executeButton = new Button("Run");
     executeButton.setDisable(true);
     executeButton.setOnAction(this::executeQuery);
     buttonPane.getChildren().add(executeButton);

@@ -121,10 +121,26 @@ public class MainMenu extends MenuBar {
 
   private Menu createEditMenu() {
     Menu menu = new Menu("Edit");
+    MenuItem undo = new MenuItem("Undo  ctrl+Z");
+    undo.setOnAction(this::undo);
+    MenuItem redo = new MenuItem("Redo ctrl+Y");
+    redo.setOnAction(this::redo);
     MenuItem find = new MenuItem("Find  ctrl+F");
     find.setOnAction(this::displayFind);
-    menu.getItems().add(find);
+    menu.getItems().addAll(undo, redo, find);
     return menu;
+  }
+
+  private void redo(ActionEvent actionEvent) {
+    TextAreaTab codeTab = gui.getCodeComponent().getActiveTab();
+    CodeTextArea codeArea = codeTab.getCodeArea();
+    codeArea.redo();
+  }
+
+  private void undo(ActionEvent actionEvent) {
+    TextAreaTab codeTab = gui.getCodeComponent().getActiveTab();
+    CodeTextArea codeArea = codeTab.getCodeArea();
+    codeArea.undo();
   }
 
   private void displayFind(ActionEvent actionEvent) {

@@ -46,7 +46,6 @@ import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.script.ScriptException;
@@ -583,8 +582,9 @@ public class ConsoleComponent extends BorderPane {
   private void executeScriptAndReport(String script, String title) throws Exception {
 
     EnvironmentComponent env = gui.getEnvironmentComponent();
-    try (OutputStream out = new AppenderOutputStream();
-         WarningAppenderOutputStream err = new WarningAppenderOutputStream();
+    try (
+         AppenderPrintWriter out = new AppenderPrintWriter();
+         WarningAppenderWriter err = new WarningAppenderWriter();
          PrintWriter outputWriter = new PrintWriter(out);
          PrintWriter errWriter = new PrintWriter(err)
     ) {
@@ -724,56 +724,36 @@ public class ConsoleComponent extends BorderPane {
     return console.getConsoleMaxSize();
   }
 
-  class AppenderOutputStream extends OutputStream {
+  class AppenderPrintWriter extends Writer {
 
-    protected StringBuilder sb;
-
-    AppenderOutputStream() {
-      sb = new StringBuilder();
+    @Override
+    public void write(char[] cbuf, int off, int len) {
+      console.appendFx(new String(cbuf, off, len));
     }
 
     @Override
-    public void write(int codePoint) {
-      if (Character.isValidCodePoint(codePoint)) {
-        console.appendChar(Character.toChars(codePoint));
-        sb.append(Character.toChars(codePoint));
-      } else {
-        console.appendChar((char) codePoint);
-        sb.append((char) codePoint);
-      }
+    public void flush() {
     }
 
     @Override
-    public void write(byte[] bytes, int offset, int length) {
-      // Should it perhaps be Charset.defaultCharset() instead?
-      console.appendFx(new String(bytes, offset, length, StandardCharsets.UTF_8));
-    }
-
-    @Override
-    public String toString() {
-      return sb.toString();
+    public void close() {
     }
   }
 
-  class WarningAppenderOutputStream extends AppenderOutputStream {
-
-    WarningAppenderOutputStream() {}
+  class WarningAppenderWriter extends Writer {
 
     @Override
-    public void write(int codePoint) {
-      if (Character.isValidCodePoint(codePoint)) {
-        console.appendWarnChar(Character.toChars(codePoint));
-        sb.append(Character.toChars(codePoint));
-      } else {
-        console.appendWarnChar((char) codePoint);
-        sb.append((char) codePoint);
-      }
+    public void write(char[] cbuf, int off, int len) {
+      console.appendWarningFx(new String(cbuf, off, len));
     }
 
     @Override
-    public void write(byte[] bytes, int offset, int length) {
-      // Should it perhaps be Charset.defaultCharset() instead?
-      console.appendWarningFx(new String(bytes, offset, length, StandardCharsets.UTF_8));
+    public void flush() {
+    }
+
+    @Override
+    public void close() {
     }
   }
+
 }
