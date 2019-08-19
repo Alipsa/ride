@@ -14,7 +14,7 @@
 ### create a database browser (done)
 - Tree structure based on INFORMATION_SCHEMA
     
-### implement edit menu (partially done)
+### implement edit menu (done)
 undo, find and find/replace seems most pertinent
 
 ### Code menu improvements (done)
@@ -42,7 +42,8 @@ Comment/Uncomment lines + the Ctrl+Shift+C combo (done)
 ### Implement History tab (done)
 
 ### Code menu improvements
-Format code, use Hadley Wickham style guide http://adv-r.had.co.nz/Style.html#Assignment
+Format code, support https://bioconductor.org/developers/how-to/coding-style/
+ and Hadley Wickham style guide http://adv-r.had.co.nz/Style.html#Assignment
 
 ### Tools -> Options menu
 Make it possible to customize tab as \t or number of spaces
