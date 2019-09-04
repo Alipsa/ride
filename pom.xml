@@ -212,6 +212,17 @@
          </dependency>
 
          <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
+            <version>3.0.1</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-shared-utils</artifactId>
+            <version>3.2.1</version>
+         </dependency>
+
+         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>5.5.1</version>
@@ -524,12 +535,16 @@
                <scope>provided</scope>
             </dependency>
 
-            <!-- Git integration Core Library -->
-            <!--dependency>
-                <groupId>org.eclipse.jgit</groupId>
-                <artifactId>org.eclipse.jgit</artifactId>
-                <version>5.2.0.201812061821-r</version>
-            </dependency-->
+            <dependency>
+               <groupId>org.apache.maven.shared</groupId>
+               <artifactId>maven-invoker</artifactId>
+               <scope>provided</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.apache.maven.shared</groupId>
+               <artifactId>maven-shared-utils</artifactId>
+               <scope>provided</scope>
+            </dependency>
          </dependencies>
 
          <build>
@@ -695,12 +710,14 @@
                <artifactId>jsqlparser</artifactId>
             </dependency>
 
-            <!-- Git integration Core Library -->
-            <!--dependency>
-                <groupId>org.eclipse.jgit</groupId>
-                <artifactId>org.eclipse.jgit</artifactId>
-                <version>5.2.0.201812061821-r</version>
-            </dependency-->
+            <dependency>
+               <groupId>org.apache.maven.shared</groupId>
+               <artifactId>maven-invoker</artifactId>
+            </dependency>
+            <dependency>
+               <groupId>org.apache.maven.shared</groupId>
+               <artifactId>maven-shared-utils</artifactId>
+            </dependency>
          </dependencies>
 
          <build>

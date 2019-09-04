@@ -34,10 +34,10 @@ public class FileOpener {
       String fileNameLower = file.getName().toLowerCase();
       if (strEndsWith(fileNameLower, ".r", ".s") || strEquals(type, "text/x-rsrc")) {
         codeComponent.addTab(file, CodeType.R);
-      } else if (strEquals(type, "application/xml", "text/xml")
+      } else if ( strEquals(type, "application/xml", "text/xml")
                  || strEndsWith(type, "+xml")
-        // in case an xml declaration was omitted:
-        /*|| strEndsWith(fileNameLower,".xml")*/) {
+                  // in case an xml declaration was omitted or empty file:
+                 || strEndsWith(fileNameLower,".xml")) {
         codeComponent.addTab(file, CodeType.XML);
       } else if (strEndsWith(fileNameLower, ".java")) {
         codeComponent.addTab(file, CodeType.JAVA);
@@ -46,7 +46,8 @@ public class FileOpener {
       } else if (strStartsWith(type, "text")
                  || strEquals(type, "application/x-bat",
           "application/x-sh", "application/json", "application/x-sas")
-        /*|| strEndsWith(fileNameLower, ".txt", ".md", ".csv")*/) {
+                 || "namespace".equals(fileNameLower)
+                 || strEndsWith(fileNameLower, ".txt", ".md", ".csv")) {
         codeComponent.addTab(file, CodeType.TXT);
       } else {
         if (allowOpenExternal && isDesktopSupported()) {
@@ -70,6 +71,9 @@ public class FileOpener {
 
   private String guessContentType(File file) {
     final String unknown = "unknown";
+    if (!file.exists() || file.length() == 0) {
+      return unknown;
+    }
     String type;
     try {
       //type = Files.probeContentType(file.toPath());

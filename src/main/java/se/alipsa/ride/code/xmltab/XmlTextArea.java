@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
 
 public class XmlTextArea extends CodeTextArea {
 
-  private static final Pattern XML_TAG = Pattern.compile("(?<ELEMENT>(</?\\h*)(\\w+)([^<>]*)(\\h*/?>))"
-      + "|(?<COMMENT><!--[^<>]+-->)");
+  private static final Pattern XML_TAG = Pattern.compile("(?<ELEMENT>(</?\\h*)(\\w+|\\.)+([^<>]*)(\\h*/?>))"
+      + "|(?<COMMENT>(?s)<!--.*?-->)");
 
   private static final Pattern ATTRIBUTES = Pattern.compile("(\\w+\\h*)(=)(\\h*\"[^\"]+\")");
 

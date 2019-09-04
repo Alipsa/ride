@@ -364,12 +364,12 @@ public class ConsoleComponent extends BorderPane {
     return msg;
   }
 
-  private void promptAndScrollToEnd() {
+  public void promptAndScrollToEnd() {
     console.appendText(">");
     scrollToEnd();
   }
 
-  private void scrollToEnd() {
+  public void scrollToEnd() {
     console.moveTo(console.getLength());
     console.requestFollowCaret();
   }
@@ -663,7 +663,7 @@ public class ConsoleComponent extends BorderPane {
     initRenjin(repos, cl);
   }
 
-  private void running() {
+  public void running() {
     Platform.runLater(() -> {
       runningView.setImage(IMG_RUNNING);
       statusButton.setTooltip(new Tooltip("Script is running, click to abort"));
@@ -673,7 +673,7 @@ public class ConsoleComponent extends BorderPane {
     sleep(10);
   }
 
-  private void waiting() {
+  public void waiting() {
     Platform.runLater(() -> {
       runningView.setImage(IMG_WAITING);
       statusButton.setTooltip(new Tooltip("Engine is idle"));
@@ -754,6 +754,10 @@ public class ConsoleComponent extends BorderPane {
     @Override
     public void close() {
     }
+  }
+
+  public ConsoleTextArea getConsole() {
+    return console;
   }
 
 }
