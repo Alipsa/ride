@@ -2,6 +2,7 @@ package se.alipsa.ride.code;
 
 import static se.alipsa.ride.Constants.INDENT;
 
+import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
@@ -19,6 +20,8 @@ import se.alipsa.ride.UnStyledCodeArea;
 import java.io.File;
 import java.time.Duration;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -31,6 +34,8 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
   protected boolean blockChange = false;
 
   private TextAreaTab parentTab;
+
+  private final Pattern whiteSpace = Pattern.compile( "^\\s+" );
 
   public CodeTextArea() {
 
@@ -107,6 +112,12 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
             selectRange(start, start + s.length());
           }
           e.consume();
+        }
+      } else if (KeyCode.ENTER.equals(e.getCode())) {
+        // Maintain indentation on the next line
+        Matcher m = whiteSpace.matcher( getParagraph( getCurrentParagraph() ).getSegments().get( 0 ) );
+        if ( m.find() ) {
+          Platform.runLater( () -> insertText( getCaretPosition(), m.group() ) );
         }
       }
     });

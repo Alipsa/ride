@@ -112,11 +112,14 @@ public class CodeComponent extends BorderPane {
     }
     try {
       byte[] textBytes = FileUtils.readFileToByteArray(file);
-      CharsetToolkit toolkit = new CharsetToolkit(textBytes);
-      toolkit.setEnforce8Bit(true);
-      Charset charset = toolkit.guessEncoding();
-      log.debug("Charset for {} detected as {}", file.getName(), charset);
-      String content = new String(textBytes, charset);
+      String content = "";
+      if (textBytes.length != 0) {
+        CharsetToolkit toolkit = new CharsetToolkit(textBytes);
+        toolkit.setEnforce8Bit(true);
+        Charset charset = toolkit.guessEncoding();
+        log.debug("Charset for {} detected as {}", file.getName(), charset);
+        content = new String(textBytes, charset);
+      }
 
       tab.setFile(file);
       tab.replaceContentText(0, 0, content);

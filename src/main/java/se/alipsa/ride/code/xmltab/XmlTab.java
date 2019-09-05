@@ -74,12 +74,16 @@ public class XmlTab extends TextAreaTab {
           invoker.setErrorHandler(new ConsoleWarningOutputHandler());
           InvocationResult result = invoker.execute( request );
           if ( result.getExitCode() != 0 ) {
-            throw result.getExecutionException();
+            if (result.getExecutionException() != null) {
+              throw result.getExecutionException();
+            } else {
+              throw new MavenInvocationException("Maven build failed with exit code " + result.getExitCode());
+            }
           }
         } catch (RuntimeException e) {
           // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
           // this way we can get to the original one by extracting the cause from the thrown exception
-          System.out.println("Exception caught, rethrowing as wrapped Exception");
+          log.warn("Exception caught, rethrowing as wrapped Exception", e);
           throw new Exception(e);
         }
         return null;
@@ -114,7 +118,11 @@ public class XmlTab extends TextAreaTab {
     public void consumeLine(String line) {
       System.out.println(line);
       Platform.runLater(() -> {
-        console.append(line);
+        if (line.startsWith("[ERROR]") || line.startsWith("[WARN")) {
+          console.appendWarning(line);
+        } else {
+          console.append(line);
+        }
         consoleComponent.scrollToEnd();
       });
     }

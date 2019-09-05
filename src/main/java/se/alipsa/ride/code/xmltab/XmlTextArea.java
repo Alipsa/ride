@@ -1,8 +1,5 @@
 package se.alipsa.ride.code.xmltab;
 
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.CodeTextArea;
@@ -28,6 +25,11 @@ public class XmlTextArea extends CodeTextArea {
   private static final int GROUP_ATTRIBUTE_VALUE = 3;
 
   public XmlTextArea(XmlTab parent) {
+
+    super(parent);
+    /* Comment this out, we need full functionality e.g. for maven building. Leave it in here until all other use cases
+    have been tried
+
     super.setParentTab(parent);
     setParagraphGraphicFactory(LineNumberFactory.get(this));
 
@@ -46,6 +48,8 @@ public class XmlTextArea extends CodeTextArea {
         parent.getGui().getMainMenu().displayFind();
       }
     });
+
+     */
   }
 
   protected final StyleSpans<Collection<String>> computeHighlighting(String text) {
