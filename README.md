@@ -139,6 +139,8 @@ Used to detect file encoding (Charset). Copyright 2002-2007 Guillaume Laforge un
 ###  com.github.jsqlparser:jsqlparser
 Used to validate and analyse SQL code. Apache Software License, Version 2.0.
 
+### org.apache.maven.shared:maven-invoker,maven-shared-utils
+Used to run maven (run pom.xml files). Apache Software License, Version 2.0.
 
 ### Various jdbc drivers
 These are included for convenience only. Licenced under various open source licenses. There is no direct dependency on any jdbc driver in Ride.

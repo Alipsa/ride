@@ -1,4 +1,4 @@
-This is version 1.1 of Ride.
+This is version 1.2 of Ride.
 
 At this point Ride is usable and provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine.
 It also support SQL querying and updating.
@@ -20,7 +20,7 @@ Pre requisites:
 - Java 8 with java fx
 - Maven 
 
-Unzip ride-1.1-final-dist.zip to a directory of choice
+Unzip ride-1.2-final-dist.zip to a directory of choice
 
 ## How to run:
 
@@ -32,7 +32,7 @@ or on windows
 
 ## If you need to run ride offline 
 
-Unzip ride-fat-1.1-final-dist.zip to a directory of choice
+Unzip ride-fat-1.2-final-dist.zip to a directory of choice
 
 The `ride-offline.sh` / `ride-offline.cmd` starts ride with the Classpath package loader and includes all jars
 in the lib folder. You need to manually add jars to the liv folder if you need a package or jdbc driver that is 
@@ -47,6 +47,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2 Beta
+- Add maven build support
+- Preserve indentation on next line
 ### 1.1 final
 - Removed empty menus (View, plots, Build, Profile) 
 - Add drag and drop support

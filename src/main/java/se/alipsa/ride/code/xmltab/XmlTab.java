@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.shared.invoker.*;
@@ -40,7 +41,9 @@ public class XmlTab extends TextAreaTab {
     buttonPane.getChildren().add(executeButton);
 
     targetsField = new TextField();
-    buttonPane.getChildren().add(targetsField);
+    targetsField.setPrefColumnCount(30);
+    Label goalLabel = new Label("Goals:");
+    buttonPane.getChildren().addAll(goalLabel, targetsField);
 
     xmlTextArea = new XmlTextArea(this);
     VirtualizedScrollPane<CodeTextArea> xmlPane = new VirtualizedScrollPane<>(xmlTextArea);
