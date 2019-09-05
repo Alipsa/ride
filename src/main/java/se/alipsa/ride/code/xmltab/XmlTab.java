@@ -58,7 +58,7 @@ public class XmlTab extends TextAreaTab {
     request.setPomFile( pomFile );
     String args = targetsField.getText();
     if (args == null || StringUtils.isBlank(args)) {
-      Alerts.warn("Maven arguments", "No arguments (e.g. clean install) was supplied to maven");
+      Alerts.warn("Maven arguments", "No goals (e.g. clean install) was supplied to maven");
       return;
     }
     final String[] mvnArgs = args.split(" ");
