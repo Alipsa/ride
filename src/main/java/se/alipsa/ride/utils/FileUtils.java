@@ -125,6 +125,10 @@ public class FileUtils {
     return destFile;
   }
 
+  public static File copy(String resourcePath, File toDir) throws IOException {
+    return copy(getResource(resourcePath), toDir);
+  }
+
   /**
    * Copy a file to a dir.
    *

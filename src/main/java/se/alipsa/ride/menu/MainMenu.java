@@ -35,6 +35,7 @@ import se.alipsa.ride.utils.FileUtils;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 
 public class MainMenu extends MenuBar {
@@ -64,8 +65,36 @@ public class MainMenu extends MenuBar {
     Menu menu = new Menu("Code");
     MenuItem commentItem = new MenuItem("Toggle line comments  ctrl+shift+C");
     commentItem.setOnAction(this::commentLines);
-    menu.getItems().addAll(commentItem);
+    menu.getItems().add(commentItem);
+    SeparatorMenuItem separator = new SeparatorMenuItem();
+    menu.getItems().add(separator);
+
+    MenuItem packageWizard = new MenuItem("Create package project");
+    packageWizard.setOnAction(this::showPackageWizard);
+    menu.getItems().add(packageWizard);
+
     return menu;
+  }
+
+  private void showPackageWizard(ActionEvent actionEvent) {
+    CreatePackageWizardDialog dialog = new CreatePackageWizardDialog(gui);
+    Optional<CreatePackageWizardResult> result = dialog.showAndWait();
+    if (!result.isPresent()) {
+      return;
+    }
+    CreatePackageWizardResult res = result.get();
+    try {
+      Files.createDirectories(res.dir.toPath());
+       //TODO: change packageName in pom.xml to res.packageName
+      FileUtils.copy("templates/pom.xml", res.dir);
+      FileUtils.copy("templates/NAMESPACE", res.dir);
+      Files.createDirectories(new File(res.dir, "src/main/R").toPath());
+      Files.createDirectories(new File(res.dir, "src/test/R").toPath());
+
+      gui.getInoutComponent().changeRootDir(res.dir);
+    } catch (IOException e) {
+      ExceptionAlert.showAlert("Failed to create package project", e);
+    }
   }
 
   private void commentLines(ActionEvent actionEvent) {

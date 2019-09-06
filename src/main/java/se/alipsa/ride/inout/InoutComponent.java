@@ -95,8 +95,12 @@ public class InoutComponent extends TabPane implements InOut {
     if (selectedDirectory == null) {
       log.info("No Directory selected");
     } else {
-      fileTree.refresh(selectedDirectory);
+      changeRootDir(selectedDirectory);
     }
+  }
+
+  public void changeRootDir(File dir) {
+    fileTree.refresh(dir);
   }
 
   private void handleRefresh(ActionEvent actionEvent) {
