@@ -181,6 +181,11 @@
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
          </dependency>
+         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.8</version>
+         </dependency>
          <!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
          <dependency>
             <groupId>com.github.jsqlparser</groupId>
@@ -499,6 +504,11 @@
                <artifactId>commons-io</artifactId>
                <scope>provided</scope>
             </dependency>
+            <dependency>
+               <groupId>org.apache.commons</groupId>
+               <artifactId>commons-text</artifactId>
+               <scope>provided</scope>
+            </dependency>
 
             <dependency>
                <groupId>org.fxmisc.richtext</groupId>
@@ -626,6 +636,10 @@
             <dependency>
                <groupId>commons-io</groupId>
                <artifactId>commons-io</artifactId>
+            </dependency>
+            <dependency>
+               <groupId>org.apache.commons</groupId>
+               <artifactId>commons-text</artifactId>
             </dependency>
             <dependency>
                <groupId>org.renjin</groupId>

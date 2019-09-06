@@ -96,6 +96,7 @@ public class XmlTab extends TextAreaTab {
     task.setOnSucceeded(e -> {
       getGui().getConsoleComponent().waiting();
       getGui().getConsoleComponent().promptAndScrollToEnd();
+      getGui().getInoutComponent().refreshFileTree();
     });
 
     task.setOnFailed(e -> {
@@ -105,8 +106,9 @@ public class XmlTab extends TextAreaTab {
       if (ex == null) {
         ex = throwable;
       }
-      ExceptionAlert.showAlert("Maven Build Failed: " + ex.getMessage(), ex);
+      getGui().getInoutComponent().refreshFileTree();
       getGui().getConsoleComponent().promptAndScrollToEnd();
+      ExceptionAlert.showAlert("Maven Build Failed: " + ex.getMessage(), ex);
     });
 
     Thread mvnThread = new Thread(task);

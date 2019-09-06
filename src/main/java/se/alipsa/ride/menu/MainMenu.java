@@ -16,6 +16,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.text.CaseUtils;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
 import org.renjin.primitives.packaging.PackageLoader;
@@ -36,6 +37,7 @@ import se.alipsa.ride.utils.FileUtils;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class MainMenu extends MenuBar {
@@ -85,13 +87,26 @@ public class MainMenu extends MenuBar {
     CreatePackageWizardResult res = result.get();
     try {
       Files.createDirectories(res.dir.toPath());
-       //TODO: change packageName in pom.xml to res.packageName
-      FileUtils.copy("templates/pom.xml", res.dir);
-      FileUtils.copy("templates/NAMESPACE", res.dir);
-      Files.createDirectories(new File(res.dir, "src/main/R").toPath());
-      Files.createDirectories(new File(res.dir, "src/test/R").toPath());
 
-      gui.getInoutComponent().changeRootDir(res.dir);
+      String pomContent = FileUtils.readContent("templates/pom.xml");
+      pomContent = pomContent.replace("${packageName}", res.packageName);
+      FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
+
+      FileUtils.copy("templates/NAMESPACE", res.dir);
+      Path mainPath = new File(res.dir, "src/main/R").toPath();
+      Files.createDirectories(mainPath);
+      String camelCasedPackageName = CaseUtils.toCamelCase(res.packageName, true,
+         ' ', '_', '-', ',', '.', '/', '\\');
+      Files.createFile(mainPath.resolve(camelCasedPackageName + ".R"));
+      Path testPath = new File(res.dir, "src/test/R").toPath();
+      Files.createDirectories(testPath);
+      Path testFile = Files.createFile(testPath.resolve(camelCasedPackageName + "Test.R"));
+      FileUtils.writeToFile(testFile.toFile(), "library('hamcrest')\n");
+      if (res.changeToDir) {
+        gui.getInoutComponent().changeRootDir(res.dir);
+      } else {
+        gui.getInoutComponent().refreshFileTree();
+      }
     } catch (IOException e) {
       ExceptionAlert.showAlert("Failed to create package project", e);
     }

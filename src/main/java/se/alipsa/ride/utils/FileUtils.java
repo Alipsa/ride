@@ -1,18 +1,21 @@
 package se.alipsa.ride.utils;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileUtils {
 
@@ -125,8 +128,14 @@ public class FileUtils {
     return destFile;
   }
 
-  public static File copy(String resourcePath, File toDir) throws IOException {
-    return copy(getResource(resourcePath), toDir);
+  public static long copy(String resourcePath, File toDir) throws IOException {
+    URL url = getResourceUrl(resourcePath);
+    if (url == null) {
+      throw new FileNotFoundException("Failed to find file " + resourcePath);
+    }
+
+    String fileName = FilenameUtils.getName(url.getPath());
+    return Files.copy(url.openStream(), toDir.toPath().resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
   }
 
   /**
@@ -211,4 +220,22 @@ public class FileUtils {
       out.print(content);
     }
   }
+
+  public static String readContent(File file, Charset... charsetOpt) throws IOException {
+    Charset charset = charsetOpt.length > 0 ? charsetOpt[0] : StandardCharsets.UTF_8;
+    StringBuilder str = new StringBuilder();
+    Stream<String> stream = Files.lines( file.toPath(), charset);
+    stream.forEach(s -> str.append(s).append("\n"));
+    return str.toString();
+  }
+
+  public static String readContent(String resource, Charset... charsetOpt) throws IOException {
+    URL url = getResourceUrl(resource);
+    if (url == null) {
+      throw new FileNotFoundException("Failed to read resource " + resource);
+    }
+    Charset charset = charsetOpt.length > 0 ? charsetOpt[0] : StandardCharsets.UTF_8;
+    return IOUtils.toString(url, charset);
+  }
+
 }

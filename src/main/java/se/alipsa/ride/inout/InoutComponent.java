@@ -104,7 +104,25 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   private void handleRefresh(ActionEvent actionEvent) {
+    refreshFileTree();
+  }
+
+  public void refreshFileTree() {
     fileTree.refresh();
+    fileTree.getRoot().setExpanded(true);
+  }
+
+  public void expandTree() {
+    expandTreeNodes(fileTree.getRoot());
+  }
+
+  public void expandTreeNodes(TreeItem<?> item){
+    if(item != null && !item.isLeaf()){
+      item.setExpanded(true);
+      for(TreeItem<?> child:item.getChildren()){
+        expandTreeNodes(child);
+      }
+    }
   }
 
   public void fileAdded(File file) {

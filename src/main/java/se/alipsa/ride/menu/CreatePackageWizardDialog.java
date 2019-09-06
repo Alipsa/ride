@@ -20,6 +20,7 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
   private File selectedDirectory;
   private Ride gui;
   private TextField dirField;
+  private CheckBox changeToDir;
 
   CreatePackageWizardDialog(Ride gui) {
     this.gui = gui;
@@ -50,6 +51,12 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     dirField.setDisable(true);
     grid.add(dirField, 2,1);
 
+    selectedDirectory = gui.getInoutComponent().getRootDir();
+    dirField.setText(selectedDirectory.getAbsolutePath());
+
+    changeToDir = new CheckBox("Change to new project dir");
+    changeToDir.setSelected(true);
+    grid.add(changeToDir, 0, 2);
 
     getDialogPane().setPrefSize(600, 300);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -64,10 +71,12 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     if (rootDir != null && rootDir.exists()) {
       dirChooser.setInitialDirectory(rootDir);
     }
+    File orgSelectedDir = selectedDirectory;
     selectedDirectory = dirChooser.showDialog(gui.getStage());
 
     if (selectedDirectory == null) {
-      log.info("No Directory selected");
+      log.info("No Directory selected, revert to previous dir ({})", orgSelectedDir);
+      selectedDirectory = orgSelectedDir;
     } else {
       dirField.setText(new File(selectedDirectory, packageNameField.getText().trim()).getAbsolutePath());
       getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
@@ -78,6 +87,7 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     CreatePackageWizardResult res = new CreatePackageWizardResult();
     res.packageName = packageNameField.getText();
     res.dir = new File(selectedDirectory, packageNameField.getText().trim());
+    res.changeToDir = changeToDir.isSelected();
     return res;
   }
 }
