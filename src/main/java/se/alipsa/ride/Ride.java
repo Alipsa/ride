@@ -21,8 +21,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.EnvironmentComponent;
@@ -39,7 +39,7 @@ import java.util.prefs.Preferences;
 
 public class Ride extends Application {
 
-  Logger log = LoggerFactory.getLogger(Ride.class);
+  Logger log = LogManager.getLogger(Ride.class);
   private ConsoleComponent consoleComponent;
   private CodeComponent codeComponent;
   private EnvironmentComponent environmentComponent;
@@ -56,6 +56,16 @@ public class Ride extends Application {
 
   @Override
   public void start(Stage primaryStage) {
+    log.info("Starting Ride...");
+    /*
+    System.out.println(
+        log.getName()
+        + "\ntraceEnabled = " + log.isTraceEnabled()
+        + "\ndebugEnabled = " + log.isDebugEnabled()
+        + "\ninfoEnabled  = " + log.isInfoEnabled()
+        + "\nwarnEnabled  = " + log.isWarnEnabled()
+        + "\nerrorEnabled = " + log.isErrorEnabled()
+    );*/
 
     this.primaryStage = primaryStage;
 

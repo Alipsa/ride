@@ -9,8 +9,8 @@ import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.shared.invoker.*;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
@@ -30,7 +30,7 @@ public class XmlTab extends TextAreaTab {
   private Button executeButton;
   private TextField targetsField;
 
-  private static final Logger log = LoggerFactory.getLogger(XmlTab.class);
+  private static final Logger log = LogManager.getLogger(XmlTab.class);
 
   public XmlTab(String title, Ride gui) {
     super(gui, CodeType.XML);

@@ -4,15 +4,15 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.Statements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SqlParser {
 
-  private static Logger log = LoggerFactory.getLogger(SqlParser.class);
+  private static Logger log = LogManager.getLogger(SqlParser.class);
 
   public static String[] split(String sql, StringBuilder warnings) {
     try {

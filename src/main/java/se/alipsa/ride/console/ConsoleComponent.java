@@ -20,6 +20,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.vfs2.FileSystemException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.RenjinVersion;
@@ -36,8 +38,6 @@ import org.renjin.primitives.packaging.PackageLoader;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.environment.EnvironmentComponent;
@@ -61,7 +61,7 @@ public class ConsoleComponent extends BorderPane {
   private static final Image IMG_WAITING = new Image(Objects.requireNonNull(FileUtils
       .getResourceUrl("image/waiting.png")).toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
   private static final String DOUBLE_INDENT = INDENT + INDENT;
-  private static final Logger log = LoggerFactory.getLogger(ConsoleComponent.class);
+  private static final Logger log = LogManager.getLogger(ConsoleComponent.class);
   private RenjinScriptEngine engine;
   private Session session;
   private ImageView runningView;
@@ -150,18 +150,22 @@ public class ConsoleComponent extends BorderPane {
   }
 
   private PackageLoader getPackageLoader(ClassLoader parentClassLoader) {
+    /*
+    We always want to reinitialize the package loader in case a remote repo was added
+    not sure why i cached this in the first place, so will keep it here for a while in case something unwanted happens...
     if (packageLoader != null) {
       return packageLoader;
     }
+    */
     String pkgLoaderName;
-    String overrridePackageLoader = System.getProperty(PACKAGE_LOADER_PREF);
-    if (overrridePackageLoader != null) {
-      pkgLoaderName = overrridePackageLoader;
+    String overridePackageLoader = System.getProperty(PACKAGE_LOADER_PREF);
+    if (overridePackageLoader != null) {
+      pkgLoaderName = overridePackageLoader;
     } else {
       pkgLoaderName = gui.getPrefs().get(PACKAGE_LOADER_PREF, AetherPackageLoader.class.getSimpleName());
     }
     PackageLoader loader = packageLoaderForName(parentClassLoader, pkgLoaderName);
-    setPackageLoader(loader.getClass());
+    setPackageLoader(loader);
     return loader;
   }
 
@@ -169,18 +173,27 @@ public class ConsoleComponent extends BorderPane {
     return packageLoader;
   }
 
-  public void setPackageLoader(Class<?> loader) {
-    packageLoader = packageLoaderForName(Thread.currentThread().getContextClassLoader(), loader.getSimpleName());
-    gui.getPrefs().put(PACKAGE_LOADER_PREF, loader.getSimpleName());
+  public void setPackageLoader(PackageLoader loader) {
+    //packageLoader = packageLoaderForName(Thread.currentThread().getContextClassLoader(), loader.getSimpleName());
+    gui.getPrefs().put(PACKAGE_LOADER_PREF, loader.getClass().getSimpleName());
   }
 
-  private PackageLoader packageLoaderForName(ClassLoader parentClassLoader, String pkgLoaderName) {
+  public PackageLoader packageLoaderForName(ClassLoader parentClassLoader, String pkgLoaderName) {
     if (ClasspathPackageLoader.class.getSimpleName().equals(pkgLoaderName)) {
       return new ClasspathPackageLoader(parentClassLoader);
     }
     //log.info("parentClassLoader = {}, remoteRepositories = {}", parentClassLoader, remoteRepositories);
     AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
+    System.out.println(
+        log.getName()
+        + "\ntraceEnabled = " + log.isTraceEnabled()
+        + "\ndebugEnabled = " + log.isDebugEnabled()
+        + "\ninfoEnabled  = " + log.isInfoEnabled()
+        + "\nwarnEnabled  = " + log.isWarnEnabled()
+        + "\nerrorEnabled = " + log.isErrorEnabled()
+    );
     if (log.isDebugEnabled()) {
+      log.debug("DEBUG enabled, package loading activities will be echoed to console");
       loader.setRepositoryListener(new ConsoleRepositoryListener(System.out));
       loader.setTransferListener(new ConsoleTransferListener(System.out));
     }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <!--PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" /-->
+      <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c:%L - %msg%n" />
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="info" additivity="false">
+      <AppenderRef ref="console" />
+    </Root>
+    <logger name="org.renjin" level="info" additivity="false">
+      <AppenderRef ref="console"/>
+    </logger>
+    <logger name="org.apache" level="info" additivity="false">
+      <AppenderRef ref="console"/>
+    </logger>
+    <logger name="org.apache.commons" level="warn" additivity="false">
+      <AppenderRef ref="console"/>
+    </logger>
+    <logger name="org.apache.commons" level="warn" additivity="false">
+      <AppenderRef ref="console"/>
+    </logger>
+    <logger name="se.alipsa" level="info" additivity="false">
+      <AppenderRef ref="console"/>
+    </logger>
+    <logger name="se.alipsa.ride.console" level="info" additivity="false">
+      <AppenderRef ref="console"/>
+    </logger>
+  </Loggers>
+</Configuration>

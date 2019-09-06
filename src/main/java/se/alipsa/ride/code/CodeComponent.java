@@ -5,8 +5,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.javatab.JavaTab;
 import se.alipsa.ride.code.rtab.RTab;
@@ -25,7 +25,7 @@ public class CodeComponent extends BorderPane {
   private TabPane pane;
   private Ride gui;
 
-  private Logger log = LoggerFactory.getLogger(CodeComponent.class);
+  private Logger log = LogManager.getLogger(CodeComponent.class);
 
   public CodeComponent(Ride gui) {
     this.gui = gui;

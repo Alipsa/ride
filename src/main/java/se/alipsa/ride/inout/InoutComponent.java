@@ -11,8 +11,8 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.DirectoryChooser;
 import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.inout.plot.PlotsTab;
@@ -33,7 +33,7 @@ public class InoutComponent extends TabPane implements InOut {
   ViewTab viewer;
   Ride gui;
 
-  Logger log = LoggerFactory.getLogger(InoutComponent.class);
+  Logger log = LogManager.getLogger(InoutComponent.class);
 
   public InoutComponent(Ride gui) {
 

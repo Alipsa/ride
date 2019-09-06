@@ -1,8 +1,8 @@
 package se.alipsa.ride.environment.connections;
 
 import javafx.beans.property.SimpleStringProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,7 +10,7 @@ import java.sql.SQLException;
 
 public class ConnectionInfo implements Comparable<ConnectionInfo> {
 
-  private Logger log = LoggerFactory.getLogger(ConnectionInfo.class);
+  private static Logger log = LogManager.getLogger(ConnectionInfo.class);
 
   private final SimpleStringProperty name;
   private final SimpleStringProperty driver;

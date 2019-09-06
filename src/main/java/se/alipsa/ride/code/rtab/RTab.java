@@ -2,8 +2,8 @@ package se.alipsa.ride.code.rtab;
 
 import javafx.scene.control.Button;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.CodeTextArea;
@@ -23,7 +23,7 @@ public class RTab extends TextAreaTab implements TaskListener {
   private Button runTestsButton;
   private boolean isRunTestButtonDisabled = false;
 
-  private Logger log = LoggerFactory.getLogger(RTab.class);
+  private static Logger log = LogManager.getLogger(RTab.class);
 
   public RTab(String title, Ride gui) {
     super(gui, CodeType.R);

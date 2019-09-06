@@ -18,9 +18,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
+import org.renjin.primitives.packaging.PackageLoader;
 import org.renjin.repl.JlineRepl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
@@ -40,7 +41,7 @@ public class MainMenu extends MenuBar {
 
   private Ride gui;
   private MenuItem interruptMI;
-  private Logger log = LoggerFactory.getLogger(MainMenu.class);
+  private static Logger log = LogManager.getLogger(MainMenu.class);
 
   public MainMenu(Ride gui) {
     this.gui = gui;
@@ -346,7 +347,8 @@ public class MainMenu extends MenuBar {
 
     Class selectedPkgLoader = (Class) result.get(GlobalOptions.PKG_LOADER);
     if (!selectedPkgLoader.isInstance(gui.getConsoleComponent().getPackageLoader())) {
-      gui.getConsoleComponent().setPackageLoader(selectedPkgLoader);
+      PackageLoader loader = gui.getConsoleComponent().packageLoaderForName(this.getClass().getClassLoader(), selectedPkgLoader.getSimpleName());
+      gui.getConsoleComponent().setPackageLoader(loader);
       log.info("Package loader changed, restarting R session");
       restartR();
     }

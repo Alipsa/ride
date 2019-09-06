@@ -129,7 +129,7 @@
             <version>1.8</version>
          </dependency>
 
-         <dependency>
+         <!--dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.27</version>
@@ -138,6 +138,16 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.27</version>
+         </dependency-->
+         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.12.1</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.12.1</version>
          </dependency>
 
          <dependency>
@@ -501,7 +511,7 @@
                <scope>provided</scope>
             </dependency>
 
-            <dependency>
+            <!--dependency>
                <groupId>org.slf4j</groupId>
                <artifactId>slf4j-api</artifactId>
                <scope>provided</scope>
@@ -510,7 +520,18 @@
                <groupId>org.slf4j</groupId>
                <artifactId>slf4j-log4j12</artifactId>
                <scope>provided</scope>
+            </dependency-->
+            <dependency>
+               <groupId>org.apache.logging.log4j</groupId>
+               <artifactId>log4j-api</artifactId>
+               <scope>provided</scope>
             </dependency>
+            <dependency>
+               <groupId>org.apache.logging.log4j</groupId>
+               <artifactId>log4j-core</artifactId>
+               <scope>provided</scope>
+            </dependency>
+
 
             <dependency>
                <groupId>com.fasterxml.jackson.core</groupId>
@@ -652,13 +673,21 @@
                <artifactId>fxgraphics2d</artifactId>
             </dependency>
 
-            <dependency>
+            <!--dependency>
                <groupId>org.slf4j</groupId>
                <artifactId>slf4j-api</artifactId>
             </dependency>
             <dependency>
                <groupId>org.slf4j</groupId>
                <artifactId>slf4j-log4j12</artifactId>
+            </dependency-->
+            <dependency>
+               <groupId>org.apache.logging.log4j</groupId>
+               <artifactId>log4j-api</artifactId>
+            </dependency>
+            <dependency>
+               <groupId>org.apache.logging.log4j</groupId>
+               <artifactId>log4j-core</artifactId>
             </dependency>
 
             <dependency>

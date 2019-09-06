@@ -3,8 +3,8 @@ package se.alipsa.ride.console;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 
 import javafx.application.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 
@@ -14,7 +14,7 @@ public class ConsoleTextArea extends UnStyledCodeArea {
 
   public static final int CONSOLE_MAX_LENGTH_DEFAULT = 1_500_000;
   private int consoleMaxLength = CONSOLE_MAX_LENGTH_DEFAULT;
-  Logger log = LoggerFactory.getLogger(ConsoleTextArea.class);
+  static Logger log = LogManager.getLogger(ConsoleTextArea.class);
   private StringBuilder buffer = new StringBuilder();
   private StringBuilder warnBuffer = new StringBuilder();
 

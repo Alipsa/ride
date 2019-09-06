@@ -2,8 +2,8 @@ package se.alipsa.ride.inout;
 
 import javafx.concurrent.Task;
 import org.apache.tika.Tika;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.utils.Alerts;
@@ -18,7 +18,7 @@ public class FileOpener {
   private Tika contentProber = new Tika();
   private CodeComponent codeComponent;
 
-  private Logger log = LoggerFactory.getLogger(FileOpener.class);
+  private static Logger log = LogManager.getLogger(FileOpener.class);
 
   public FileOpener(CodeComponent codeComponent) {
     this.codeComponent = codeComponent;

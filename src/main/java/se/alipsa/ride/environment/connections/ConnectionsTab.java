@@ -27,8 +27,8 @@ import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.ListVector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.code.CodeType;
@@ -61,7 +61,7 @@ public class ConnectionsTab extends Tab {
 
   private TreeItemComparator treeItemComparator = new TreeItemComparator();
 
-  private Logger log = LoggerFactory.getLogger(ConnectionsTab.class);
+  private static Logger log = LogManager.getLogger(ConnectionsTab.class);
 
   public ConnectionsTab(Ride gui) {
     setText("Connections");

@@ -9,8 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
@@ -36,7 +36,7 @@ public class SqlTab extends TextAreaTab {
   private Button executeButton;
   private ComboBox<ConnectionInfo> connectionCombo;
 
-  private Logger log = LoggerFactory.getLogger(SqlTab.class);
+  private Logger log = LogManager.getLogger(SqlTab.class);
 
   private static final int PRINT_QUERY_LENGTH = 30;
 

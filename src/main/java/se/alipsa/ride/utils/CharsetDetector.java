@@ -1,7 +1,7 @@
 package se.alipsa.ride.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class CharsetDetector {
 
-  private static Logger log = LoggerFactory.getLogger(CharsetDetector.class);
+  private static Logger log = LogManager.getLogger(CharsetDetector.class);
 
   public static Charset detect(byte[] value) {
     return charset(value, StandardCharsets.ISO_8859_1, StandardCharsets.US_ASCII,

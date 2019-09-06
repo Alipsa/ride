@@ -1,8 +1,8 @@
 package se.alipsa.ride.code.javatab;
 
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
@@ -14,7 +14,7 @@ public class JavaTab extends TextAreaTab {
 
   private JavaTextArea javaTextArea;
 
-  private Logger log = LoggerFactory.getLogger(JavaTab.class);
+  private static Logger log = LogManager.getLogger(JavaTab.class);
 
   public JavaTab(String title, Ride gui) {
     super(gui, CodeType.JAVA);

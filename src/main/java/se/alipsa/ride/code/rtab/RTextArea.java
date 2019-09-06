@@ -5,8 +5,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.CodeTextArea;
@@ -80,7 +80,7 @@ public class RTextArea extends CodeTextArea {
       "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
-  private static Logger log = LoggerFactory.getLogger(RTextArea.class);
+  private static Logger log = LogManager.getLogger(RTextArea.class);
   ContextMenu suggestionsPopup = new ContextMenu();
 
   public RTextArea() {

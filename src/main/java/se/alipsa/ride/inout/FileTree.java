@@ -8,8 +8,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.utils.Alerts;
@@ -32,7 +32,7 @@ public class FileTree extends TreeView<File> {
   private final String WORKING_DIR_PREF = "FileTree.WorkingDir";
   private TreeItemComparator treeItemComparator = new TreeItemComparator();
   private Ride gui;
-  private Logger log = LoggerFactory.getLogger(FileTree.class);
+  private static Logger log = LogManager.getLogger(FileTree.class);
   private FileOpener fileOpener;
 
   FileTree(Ride gui) {
