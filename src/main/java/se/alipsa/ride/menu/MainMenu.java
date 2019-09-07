@@ -17,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.text.CaseUtils;
+import org.renjin.RenjinVersion;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
 import org.renjin.primitives.packaging.PackageLoader;
@@ -88,20 +89,27 @@ public class MainMenu extends MenuBar {
     try {
       Files.createDirectories(res.dir.toPath());
 
-      String pomContent = FileUtils.readContent("templates/pom.xml");
-      pomContent = pomContent.replace("${packageName}", res.packageName);
+      String camelCasedPackageName = CaseUtils.toCamelCase(res.packageName, true,
+         ' ', '_', '-', ',', '.', '/', '\\');
+
+      String pomContent = FileUtils.readContent("templates/pom.xml")
+         .replace("[groupId]", res.groupName)
+         .replace("[artifactId]", res.packageName)
+         .replace("[name]", res.packageName)
+         .replace("[renjinVersion]", RenjinVersion.getVersionName());
       FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
 
       FileUtils.copy("templates/NAMESPACE", res.dir);
       Path mainPath = new File(res.dir, "src/main/R").toPath();
       Files.createDirectories(mainPath);
-      String camelCasedPackageName = CaseUtils.toCamelCase(res.packageName, true,
-         ' ', '_', '-', ',', '.', '/', '\\');
-      Files.createFile(mainPath.resolve(camelCasedPackageName + ".R"));
+      Path rFile = mainPath.resolve(camelCasedPackageName + ".R");
+      Files.createFile(rFile);
+      FileUtils.writeToFile(rFile.toFile(), "# remember to add export(function name) to NAMESPACE to make them available");
       Path testPath = new File(res.dir, "src/test/R").toPath();
       Files.createDirectories(testPath);
       Path testFile = Files.createFile(testPath.resolve(camelCasedPackageName + "Test.R"));
-      FileUtils.writeToFile(testFile.toFile(), "library('hamcrest')\n");
+      FileUtils.writeToFile(testFile.toFile(), "library('hamcrest')\nlibrary('"
+         + res.groupName + ":" + res.packageName + "')\n");
       if (res.changeToDir) {
         gui.getInoutComponent().changeRootDir(res.dir);
       } else {

@@ -5,17 +5,17 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>se.nordnet.lending</groupId>
-  <artifactId>${packageName}</artifactId>
+  <groupId>[groupId]</groupId>
+  <artifactId>[artifactId]</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <!-- general information about your package -->
-  <name>${packageName}</name>
+  <name>[name]</name>
   <description>TODO: write a short description here</description>
 
   <properties>
-    <renjin.version>3.5-beta65</renjin.version>
+    <renjin.version>[renjinVersion]</renjin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -92,17 +92,17 @@
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>1.7.27</version>
           </dependency>
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.25</version>
+            <version>1.7.27</version>
           </dependency>
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.25</version>
+            <version>1.7.27</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -137,6 +137,16 @@
             <groupId>org.renjin</groupId>
             <artifactId>hamcrest</artifactId>
             <version>${renjin.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.27</version>
+          </dependency>
+          <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.27</version>
           </dependency>
         </dependencies>
       </plugin>
