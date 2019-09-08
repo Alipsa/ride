@@ -362,6 +362,7 @@ public class MainMenu extends MenuBar {
     MenuItem replMI = new MenuItem("Run REPL in console");
     replMI.setOnAction(this::runRepl);
     toolsMenu.getItems().add(replMI);
+
     return toolsMenu;
   }
 

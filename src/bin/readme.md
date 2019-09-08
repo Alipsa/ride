@@ -50,6 +50,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 ### 1.2 Beta
 - Add maven build support
 - Preserve indentation on next line
+- Create package wizard to give a good starting point for creating packages
 ### 1.1 final
 - Removed empty menus (View, plots, Build, Profile) 
 - Add drag and drop support

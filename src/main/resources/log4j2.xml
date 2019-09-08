@@ -5,10 +5,14 @@
       <!--PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" /-->
       <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c:%L - %msg%n" />
     </Console>
+    <File name="RideLog" fileName="ride.log">
+      <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c:%L - %msg%n"/>
+    </File>
   </Appenders>
   <Loggers>
     <Root level="info" additivity="false">
       <AppenderRef ref="console" />
+      <AppenderRef ref="RideLog" level="debug"/>
     </Root>
     <logger name="org.renjin" level="info" additivity="false">
       <AppenderRef ref="console"/>

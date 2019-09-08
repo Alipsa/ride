@@ -1,49 +1,19 @@
 # Todo / Roadmap
 
-## version 1.1
-
-### Disable run buttons when code is running
-
-### Run hamcrest tests (done)
-- Create a new runbutton when hamcrest tests are detected
-- Output to console also when running hamcrest tests
- 
-### enable execution of SQL queries  (done)
-- A run query button in the SQL code tab
-
-### create a database browser (done)
-- Tree structure based on INFORMATION_SCHEMA
-    
-### implement edit menu (done)
-undo, find and find/replace seems most pertinent
-
-### Code menu improvements (done)
-Comment/Uncomment lines + the Ctrl+Shift+C combo (done)
-
-### Enable offline mode (done)
-- build fat zip with all dependencies in the lib folder
-- use ant to lauch instead of maven
-- start with ClasspathPackageLoader instead of AetherPackageLoader regardless of user pref
-
-### Add suggestions when pressing ctrl+space  (done)
-- For R: Use R keywords + all base R methods
-- For SQL: use SQL keywords
-
-### indentation (Tabbing) support (done)
-- use 2 spaces for tabs
-- tab anywhere on the line indents the line
-- handle selected text
-- shift tab reverses indentation
-
-### Theme support (done)
- 
 ## version 1.2
 
 ### Implement History tab (done)
 
 ### Code menu improvements
-Format code, support https://bioconductor.org/developers/how-to/coding-style/
+- Format code, support https://bioconductor.org/developers/how-to/coding-style/
  and Hadley Wickham style guide http://adv-r.had.co.nz/Style.html#Assignment
+ 
+- Create package wizard to give a good starting point for creating packages (DONE)
+### Add support for creating extensions (packages)
+- create dir layout
+- create pom
+- run using maven-embedder: http://maven.apache.org/ref/3-LATEST/maven-embedder/summary.html
+
 
 ### Tools -> Options menu
 Make it possible to customize tab as \t or number of spaces
@@ -58,11 +28,6 @@ use metadata to determine suggestion
 ### Tools -> Generate menu
 Create Maven pom (not in Rstudio). Create a Maven pom stub with dependencies for 
 Renjin + whatever is needed for all library() commands to work.
-
-### Add support for creating extensions (packages)
-- create dir layout
-- create pom
-- run using maven-embedder: http://maven.apache.org/ref/3-LATEST/maven-embedder/summary.html
 
 ### Add import dataSet in File meny
 Should generate code at current cursor

@@ -3,13 +3,22 @@ package se.alipsa.ride.inout;
 import static se.alipsa.ride.Constants.KEY_CODE_COPY;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.dircache.DirCache;
+import org.eclipse.jgit.transport.URIish;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.utils.Alerts;
@@ -19,9 +28,12 @@ import se.alipsa.ride.utils.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,6 +46,7 @@ public class FileTree extends TreeView<File> {
   private Ride gui;
   private static Logger log = LogManager.getLogger(FileTree.class);
   private FileOpener fileOpener;
+  private Git git;
 
   FileTree(Ride gui) {
     this.gui = gui;
@@ -131,9 +144,160 @@ public class FileTree extends TreeView<File> {
       }
     });
 
-    menu.getItems().addAll(copyMI, createDirMI, createFileMI, deleteMI);
+    Menu gitMenu = new Menu("Git");
+
+    if (new File(getRootDir(), ".git").exists()) {
+      try {
+        git = Git.open(getRootDir());
+      } catch (IOException e) {
+        log.error("Failed to open git repository at {}", getRootDir(), e);
+      }
+    } else {
+      MenuItem gitInitMI = new MenuItem("Initialize root as git repo");
+      gitInitMI.setOnAction(this::gitInit);
+      gitMenu.getItems().add(gitInitMI);
+    }
+
+    MenuItem gitAddMI = new MenuItem("Add");
+    gitAddMI.setOnAction(this::gitAdd);
+    gitMenu.getItems().add(gitAddMI);
+
+    MenuItem gitDeleteMI = new MenuItem("Delete");
+    gitDeleteMI.setOnAction(this::gitRm);
+    gitMenu.getItems().add(gitDeleteMI);
+
+    MenuItem gitCommitMI = new MenuItem("Commit");
+    gitCommitMI.setOnAction(this::gitCommit);
+    gitMenu.getItems().add(gitCommitMI);
+
+    Menu gitRemoteMenu = new Menu("remote");
+    gitMenu.getItems().add(gitRemoteMenu);
+
+    MenuItem gitAddRemoteMI = new MenuItem("Add remote");
+    gitAddRemoteMI.setOnAction(this::gitAddRemote);
+    gitRemoteMenu.getItems().add(gitAddRemoteMI);
+
+    MenuItem gitPushMI = new MenuItem("Push");
+    gitPushMI.setOnAction(this::gitPush);
+    gitRemoteMenu.getItems().add(gitPushMI);
+
+    MenuItem gitPullMI = new MenuItem("Pull");
+    gitPullMI.setOnAction(this::gitPull);
+    gitRemoteMenu.getItems().add(gitPullMI);
+
+    menu.getItems().addAll(copyMI, createDirMI, createFileMI, deleteMI, gitMenu);
     return menu;
   }
+
+  private void gitPull(ActionEvent actionEvent) {
+    try {
+      PullResult pullResult = git.pull().call();
+      log.info(pullResult.toString());
+    } catch (GitAPIException e) {
+      log.warn("Failed to pull", e);
+      ExceptionAlert.showAlert("Failed to pull", e);
+    }
+  }
+
+  private void gitAddRemote(ActionEvent actionEvent) {
+    AddRemoteDialog ard = new AddRemoteDialog();
+    Optional<Map<AddRemoteDialog.KEY, String>> result = ard.showAndWait();
+    if (result.isPresent()) {
+      String name = result.get().get(AddRemoteDialog.KEY.NAME);
+      URIish uri;
+      try {
+        uri = new URIish(result.get().get(AddRemoteDialog.KEY.URI));
+      } catch (URISyntaxException e) {
+        ExceptionAlert.showAlert("Invalid uri", e);
+        return;
+      }
+      try {
+        git.remoteAdd()
+           .setName(name)
+           .setUri(uri).call();
+      } catch (GitAPIException e) {
+        log.warn("Failed to add remote", e);
+        ExceptionAlert.showAlert("Failed to add remote", e);
+      }
+    }
+  }
+
+  private void gitPush(ActionEvent actionEvent) {
+    try {
+      git.push().call();
+    } catch (GitAPIException e) {
+      log.warn("Failed to push", e);
+      ExceptionAlert.showAlert("Failed to push", e);
+    }
+  }
+
+  private void gitRm(ActionEvent actionEvent) {
+    TreeItem<File> currentNode = getSelectionModel().getSelectedItem();
+    File currentFile = currentNode.getValue();
+    String currentPath = asRelativePath(currentFile);
+    log.info("Deleting {}", currentPath);
+    try {
+      DirCache dc = git.rm().addFilepattern(currentPath).call();
+      log.info("Removed {} from git dir cache", currentPath);
+    } catch (GitAPIException e) {
+      log.warn("Failed to delete " + currentPath, e);
+      ExceptionAlert.showAlert("Failed to delete " + currentPath, e);
+    }
+  }
+
+  private void gitCommit(ActionEvent actionEvent) {
+    TextInputDialog td = new TextInputDialog();
+    td.setHeaderText("Enter commit message");
+    final Optional<String> result = td.showAndWait();
+    if (result.isPresent()) {
+      try {
+        String msg = td.getEditor().getText();
+        if (StringUtils.isBlank(msg)) {
+          Alerts.info("Empty message", "Commit message cannot be empty");
+          return;
+        }
+        CommitCommand commit = git.commit();
+        commit.setMessage(msg).call();
+      } catch (GitAPIException e) {
+        log.warn("Failed to commit ", e);
+        ExceptionAlert.showAlert("Failed to commit ", e);
+      }
+    }
+  }
+
+  private void gitAdd(ActionEvent actionEvent) {
+    TreeItem<File> currentNode = getSelectionModel().getSelectedItem();
+    File currentFile = currentNode.getValue();
+    String currentPath = asRelativePath(currentFile);
+    log.info("Adding {}", currentPath);
+    try {
+      DirCache dc = git.add().addFilepattern(currentPath).call();
+      log.info("Added {} to git dir cache", currentPath);
+    } catch (GitAPIException e) {
+      log.warn("Failed to add " + currentPath, e);
+      ExceptionAlert.showAlert("Failed to add " + currentPath, e);
+    }
+  }
+
+  private String asRelativePath(File currentFile) {
+    String root = getRootDir().getAbsolutePath();
+    String nodePath = currentFile.getAbsolutePath();
+    String path = nodePath.replace(root, "");
+    if (path.startsWith("/")) {
+      return path.substring(1);
+    }
+    return path;
+  }
+
+  private void gitInit(ActionEvent actionEvent) {
+    try {
+      git = Git.init().setDirectory(getRootDir()).call();
+    } catch (GitAPIException e) {
+      log.warn("Failed to initialize git in " + getRootDir().getAbsolutePath(), e);
+      ExceptionAlert.showAlert("Failed to initialize git in " + getRootDir().getAbsolutePath(), e);
+    }
+  }
+
 
   private File promptForFile(File currentFile, String title, String content) {
     TextInputDialog dialog = new TextInputDialog();

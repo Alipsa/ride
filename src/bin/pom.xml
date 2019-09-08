@@ -77,11 +77,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--dependency>
-            <groupId>org.renjin</groupId>
-            <artifactId>gcc-runtime</artifactId>
-            <version>${renjin.version}</version>
-        </dependency-->
         <dependency>
             <groupId>org.renjin</groupId>
             <artifactId>renjin-repl</artifactId>
@@ -92,16 +87,6 @@
             <artifactId>hamcrest</artifactId>
             <version>${renjin.version}</version>
         </dependency>
-        <!--dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.27</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.27</version>
-        </dependency-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -155,8 +140,14 @@
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
-            <version>2.1</version>
+            <version>3.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>5.4.3.201909031940-r</version>
+        </dependency>
+
         <dependency>
             <groupId>org.renjin.cran</groupId>
             <artifactId>DBI</artifactId>
