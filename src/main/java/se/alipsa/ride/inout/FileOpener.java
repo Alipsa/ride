@@ -47,7 +47,7 @@ public class FileOpener {
                  || strEquals(type, "application/x-bat",
           "application/x-sh", "application/json", "application/x-sas")
                  || "namespace".equals(fileNameLower)
-                 || strEndsWith(fileNameLower, ".txt", ".md", ".csv")) {
+                 || strEndsWith(fileNameLower, ".txt", ".md", ".csv", ".gitignore")) {
         codeComponent.addTab(file, CodeType.TXT);
       } else {
         if (allowOpenExternal && isDesktopSupported()) {
