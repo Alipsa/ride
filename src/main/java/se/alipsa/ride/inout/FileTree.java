@@ -2,15 +2,19 @@ package se.alipsa.ride.inout;
 
 import static se.alipsa.ride.Constants.KEY_CODE_COPY;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeItem.TreeModificationEvent;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Paint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
@@ -53,15 +57,15 @@ public class FileTree extends TreeView<FileItem> {
 
       @Override
       protected void updateItem(FileItem item, boolean empty) {
-        super.updateItem(item, empty);
         if (item != null) {
           setText(item.getText());
-          setTextFill(item.getTextColor());
+          setStyle(item.getStyle());
           setGraphic(getTreeItem().getGraphic());
         } else {
           setText("");
           setGraphic(null);
         }
+        super.updateItem(item, empty);
       }
     });
 
@@ -90,9 +94,7 @@ public class FileTree extends TreeView<FileItem> {
   }
 
   private void openContextMenu(TreeItem<FileItem> item, double x, double y) {
-    //custom method that update menu items
     menu.setContext(item);
-    //show menu
     menu.show(this, x, y);
   }
 
@@ -117,16 +119,27 @@ public class FileTree extends TreeView<FileItem> {
 
   private TreeItem<FileItem> createTree(File file) {
     TreeItem<FileItem> item = new TreeItem<>(new FileItem(file));
-    File[] childs = file.listFiles();
-    if (childs != null) {
-      for (File child : childs) {
+    File[] children = file.listFiles();
+    if (children != null) {
+      for (File child : children) {
         item.getChildren().add(createTree(child));
       }
       item.setGraphic(new ImageView(folderUrl));
     } else {
-      item.setGraphic(new ImageView(fileUrl));
+      setLeafProperties(item);
     }
     return item;
+  }
+
+  private void setLeafProperties(TreeItem<FileItem> item) {
+    item.setGraphic(new ImageView(fileUrl));
+    ChangeListener<String> fillListener = (obs, oldName, newName) -> {
+      TreeModificationEvent<FileItem> event = new TreeModificationEvent<>(TreeItem.valueChangedEvent(), item);
+      log.info("item {} changed color", item.getValue());
+      Event.fireEvent(item, event);
+    };
+    FileItem fileItem = item.getValue();
+    fileItem.addListener(fillListener);
   }
 
   private void handleClick(MouseEvent event) {
@@ -157,7 +170,7 @@ public class FileTree extends TreeView<FileItem> {
     if (fileItem.getValue().getFile().isDirectory()) {
       fileItem.setGraphic(new ImageView(folderUrl));
     } else {
-      fileItem.setGraphic(new ImageView(fileUrl));
+      setLeafProperties(fileItem);
     }
     dirItem.getChildren().add(fileItem);
     dirItem.getChildren().sort(treeItemComparator);

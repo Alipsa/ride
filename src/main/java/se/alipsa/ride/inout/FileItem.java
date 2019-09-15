@@ -1,14 +1,14 @@
 package se.alipsa.ride.inout;
 
-import javafx.scene.paint.Paint;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.text.Text;
 
 import java.io.File;
 
 public class FileItem {
 
-  private File file;
-  private Text caption = new Text();
+  protected File file;
+  protected Text caption = new Text();
 
   public FileItem(File file) {
     this.file = file;
@@ -27,18 +27,20 @@ public class FileItem {
     return caption.getText();
   }
 
-  public Paint getTextColor() {
-    return caption.getFill();
+  public void addListener(ChangeListener<String> changeListener) {
+    caption.styleProperty().addListener(changeListener);
   }
 
-  public Text getCaption() {
-    return caption;
+  public void removeListener(ChangeListener<String> changeListener) {
+    caption.styleProperty().removeListener(changeListener);
   }
 
-  public void setTextColor(Paint color) {
-    caption.setFill(color);
-    //TreeItem.TreeModificationEvent<File> event = new TreeItem.TreeModificationEvent<File>(TreeItem.valueChangedEvent(), this);
-    //Event.fireEvent(this, event);
+  public void setStyle(String style) {
+    caption.setStyle(style);
+  }
+
+  public String getStyle() {
+    return caption.getStyle();
   }
 
   public String toString() {

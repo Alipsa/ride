@@ -6,9 +6,7 @@ import javafx.scene.paint.Color;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jgit.api.CommitCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.transport.URIish;
@@ -24,6 +22,11 @@ import java.util.Map;
 import java.util.Optional;
 
 public class DynamicContextMenu extends ContextMenu {
+
+  static final String GIT_ADDED = "-fx-text-fill: rgba(115, 155, 105, 255);";
+  static final String GIT_UNTRACKED = "-fx-text-fill: sienna";
+  static final String GIT_CHANGED= "-fx-text-fill: royalblue";
+  static final String GIT_NONE= "";
 
   private Git git;
   private FileTree fileTree;
@@ -116,6 +119,10 @@ public class DynamicContextMenu extends ContextMenu {
       gitCommitMI.setOnAction(this::gitCommit);
       gitMenu.getItems().add(gitCommitMI);
 
+      MenuItem gitStatusMI = new MenuItem("Status");
+      gitStatusMI.setOnAction(this::gitStatus);
+      gitMenu.getItems().add(gitStatusMI);
+
       Menu gitRemoteMenu = new Menu("remote");
       gitMenu.getItems().add(gitRemoteMenu);
 
@@ -132,6 +139,30 @@ public class DynamicContextMenu extends ContextMenu {
       gitRemoteMenu.getItems().add(gitPullMI);
     }
     getItems().addAll(copyMI, createDirMI, createFileMI, deleteMI, gitMenu);
+  }
+
+  private void gitStatus(ActionEvent actionEvent) {
+    try {
+      StatusCommand statusCommand = git.status();
+      statusCommand.addPath(asRelativePath(currentFile));
+      System.out.println("---------------- Status ------------------------");
+      System.out.println("Paths = " +  statusCommand.getPaths());
+      Status status = statusCommand.call();
+      System.out.println("Added: " + status.getAdded());
+      System.out.println("Changed" + status.getChanged());
+      System.out.println("Conflicting: " + status.getConflicting());
+      System.out.println("Missing: " + status.getMissing());
+      System.out.println("Modified: " + status.getModified());
+      System.out.println("Removed: " + status.getRemoved());
+      System.out.println("Uncommited changes" + status.getUncommittedChanges());
+      System.out.println("Untracked: " + status.getUntracked());
+      System.out.println("hasUncommittedChanges: " + status.hasUncommittedChanges());
+      System.out.println("isClean: " + status.isClean());
+      System.out.println("---------------- /Status -----------------------");
+    } catch (GitAPIException e) {
+      log.warn("Failed to get status", e);
+      ExceptionAlert.showAlert("Failed to get status", e);
+    }
   }
 
   private void gitPull(ActionEvent actionEvent) {
@@ -201,6 +232,7 @@ public class DynamicContextMenu extends ContextMenu {
         }
         CommitCommand commit = git.commit();
         commit.setMessage(msg).call();
+        fileTree.refresh();
       } catch (GitAPIException e) {
         log.warn("Failed to commit ", e);
         ExceptionAlert.showAlert("Failed to commit ", e);
@@ -212,8 +244,8 @@ public class DynamicContextMenu extends ContextMenu {
     String currentPath = asRelativePath(currentFile);
     try {
       DirCache dc = git.add().addFilepattern(currentPath).call();
-      log.info("Added {} to git dir cache", currentPath);
-      currentNode.getValue().setTextColor(Color.GREEN);
+      log.info("Added {} to git dir cache, node is {}", currentPath, currentNode.getValue().getText());
+      currentNode.getValue().setStyle(GIT_ADDED);
     } catch (GitAPIException e) {
       log.warn("Failed to add " + currentPath, e);
       ExceptionAlert.showAlert("Failed to add " + currentPath, e);
@@ -224,6 +256,9 @@ public class DynamicContextMenu extends ContextMenu {
     String root = fileTree.getRootDir().getAbsolutePath();
     String nodePath = currentFile.getAbsolutePath();
     String path = nodePath.replace(root, "").replace('\\', '/');
+    if (path.length() <= 1) {
+      return ".";
+    }
     if (path.startsWith("/")) {
       return path.substring(1);
     }

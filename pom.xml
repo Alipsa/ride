@@ -302,7 +302,7 @@
          <artifactId>hamcrest-library</artifactId>
          <scope>test</scope>
       </dependency>
-      <dependency>
+      <!--dependency>
          <groupId>org.testfx</groupId>
          <artifactId>testfx-core</artifactId>
          <scope>test</scope>
@@ -311,7 +311,7 @@
          <groupId>org.testfx</groupId>
          <artifactId>testfx-junit5</artifactId>
          <scope>test</scope>
-      </dependency>
+      </dependency-->
    </dependencies>
    <build>
       <plugins>
