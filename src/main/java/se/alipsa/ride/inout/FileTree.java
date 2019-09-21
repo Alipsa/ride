@@ -1,6 +1,7 @@
 package se.alipsa.ride.inout;
 
 import static se.alipsa.ride.Constants.KEY_CODE_COPY;
+import static se.alipsa.ride.utils.GitUtils.asRelativePath;
 
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
@@ -17,13 +18,20 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Paint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -118,11 +126,42 @@ public class FileTree extends TreeView<FileItem> {
   }
 
   private TreeItem<FileItem> createTree(File file) {
+    TreeItem<FileItem> root = buildTree(file);
+    if (Objects.requireNonNull(root.getValue().file.list((dir, name) -> name.equalsIgnoreCase(".git"))).length > 0) {
+      gitColorTree(root);
+    }
+    return root;
+  }
+
+  private void gitColorTree(TreeItem<FileItem> root) {
+    try {
+      File rootDir = root.getValue().getFile();
+      Git git = Git.open(rootDir);
+      Files.walk(rootDir.toPath())
+         .filter(p -> !p.toFile().getName().equalsIgnoreCase(".git"))
+         .forEach( p -> {
+           File file = p.toFile();
+           if (file.isDirectory()) {
+             try {
+               Status status = git.status().addPath(asRelativePath(file, rootDir)).call();
+               status.getUntracked();
+             } catch (GitAPIException e) {
+               throw new RuntimeException(e);
+             }
+           }
+         });
+    } catch (Exception e) {
+      log.error("Failed to set git colors", e);
+      ExceptionAlert.showAlert("Failed to set git colors", e);
+    }
+  }
+
+  private TreeItem<FileItem> buildTree(File file) {
     TreeItem<FileItem> item = new TreeItem<>(new FileItem(file));
     File[] children = file.listFiles();
     if (children != null) {
       for (File child : children) {
-        item.getChildren().add(createTree(child));
+        item.getChildren().add(buildTree(child));
       }
       item.setGraphic(new ImageView(folderUrl));
     } else {

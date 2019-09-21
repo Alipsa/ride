@@ -21,6 +21,8 @@ import java.nio.file.Files;
 import java.util.Map;
 import java.util.Optional;
 
+import static se.alipsa.ride.utils.GitUtils.asRelativePath;
+
 public class DynamicContextMenu extends ContextMenu {
 
   static final String GIT_ADDED = "-fx-text-fill: rgba(115, 155, 105, 255);";
@@ -144,7 +146,7 @@ public class DynamicContextMenu extends ContextMenu {
   private void gitStatus(ActionEvent actionEvent) {
     try {
       StatusCommand statusCommand = git.status();
-      statusCommand.addPath(asRelativePath(currentFile));
+      statusCommand.addPath(asRelativePath(currentFile, fileTree.getRootDir()));
       System.out.println("---------------- Status ------------------------");
       System.out.println("Paths = " +  statusCommand.getPaths());
       Status status = statusCommand.call();
@@ -208,7 +210,7 @@ public class DynamicContextMenu extends ContextMenu {
   }
 
   private void gitRm(ActionEvent actionEvent) {
-    String currentPath = asRelativePath(currentFile);
+    String currentPath = asRelativePath(currentFile, fileTree.getRootDir());
     log.info("Deleting {}", currentPath);
     try {
       DirCache dc = git.rm().addFilepattern(currentPath).call();
@@ -241,7 +243,7 @@ public class DynamicContextMenu extends ContextMenu {
   }
 
   private void gitAdd(ActionEvent actionEvent) {
-    String currentPath = asRelativePath(currentFile);
+    String currentPath = asRelativePath(currentFile, fileTree.getRootDir());
     try {
       DirCache dc = git.add().addFilepattern(currentPath).call();
       log.info("Added {} to git dir cache, node is {}", currentPath, currentNode.getValue().getText());
@@ -250,19 +252,6 @@ public class DynamicContextMenu extends ContextMenu {
       log.warn("Failed to add " + currentPath, e);
       ExceptionAlert.showAlert("Failed to add " + currentPath, e);
     }
-  }
-
-  private String asRelativePath(File currentFile) {
-    String root = fileTree.getRootDir().getAbsolutePath();
-    String nodePath = currentFile.getAbsolutePath();
-    String path = nodePath.replace(root, "").replace('\\', '/');
-    if (path.length() <= 1) {
-      return ".";
-    }
-    if (path.startsWith("/")) {
-      return path.substring(1);
-    }
-    return path;
   }
 
   private void gitInit(ActionEvent actionEvent) {
