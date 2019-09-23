@@ -22,4 +22,9 @@ public class Constants {
   public static final String DARK_THEME = "darkTheme.css";
   public static final String BRIGHT_THEME = "brightTheme.css";
   public static final String BLUE_THEME = "blueTheme.css";
+
+  public static final String GIT_ADDED = "-fx-text-fill: rgba(115, 155, 105, 255);";
+  public static final String GIT_UNTRACKED = "-fx-text-fill: sienna";
+  public static final String GIT_CHANGED= "-fx-text-fill: royalblue";
+  public static final String GIT_NONE= "";
 }

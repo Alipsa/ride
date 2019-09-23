@@ -1,12 +1,22 @@
 package se.alipsa.ride.inout;
 
+import static se.alipsa.ride.Constants.GIT_ADDED;
+import static se.alipsa.ride.utils.GitUtils.asRelativePath;
+
 import javafx.event.ActionEvent;
-import javafx.scene.control.*;
-import javafx.scene.paint.Color;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TreeItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.transport.URIish;
@@ -21,14 +31,7 @@ import java.nio.file.Files;
 import java.util.Map;
 import java.util.Optional;
 
-import static se.alipsa.ride.utils.GitUtils.asRelativePath;
-
 public class DynamicContextMenu extends ContextMenu {
-
-  static final String GIT_ADDED = "-fx-text-fill: rgba(115, 155, 105, 255);";
-  static final String GIT_UNTRACKED = "-fx-text-fill: sienna";
-  static final String GIT_CHANGED= "-fx-text-fill: royalblue";
-  static final String GIT_NONE= "";
 
   private Git git;
   private FileTree fileTree;

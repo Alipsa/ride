@@ -626,6 +626,7 @@
                <groupId>org.renjin</groupId>
                <artifactId>renjin-repl</artifactId>
             </dependency>
+
             <dependency>
                <groupId>org.fxmisc.richtext</groupId>
                <artifactId>richtextfx</artifactId>
