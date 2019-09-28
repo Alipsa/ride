@@ -36,6 +36,8 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -154,6 +156,10 @@ public class DynamicContextMenu extends ContextMenu {
       gitResetMI.setOnAction(this::gitReset);
       gitMenu.getItems().add(gitResetMI);
 
+      MenuItem gitLogMI = new MenuItem("Show Log");
+      gitLogMI.setOnAction(this::gitLog);
+      gitMenu.getItems().add(gitLogMI);
+
       Menu gitRemoteMenu = new Menu("remote");
       gitMenu.getItems().add(gitRemoteMenu);
 
@@ -172,6 +178,24 @@ public class DynamicContextMenu extends ContextMenu {
     getItems().addAll(copyMI, createDirMI, createFileMI, deleteMI, gitMenu);
   }
 
+  private void gitLog(ActionEvent actionEvent) {
+    try {
+      Iterable<RevCommit> log = git.log().call();
+      StringBuilder str = new StringBuilder();
+      for(RevCommit rc : log) {
+        str.append(LocalDateTime.ofEpochSecond(rc.getCommitTime(), 0, ZoneOffset.UTC))
+            .append(", ")
+            .append(rc.toString())
+            .append(": ").append(rc.getFullMessage())
+            .append("\n");
+      }
+      Alerts.info("Git log", str.toString());
+    } catch (GitAPIException e) {
+      log.warn("Failed to get log", e);
+      ExceptionAlert.showAlert("Failed to get log", e);
+    }
+  }
+
   private void gitReset(ActionEvent actionEvent) {
     try {
       git.reset().addPath(getRelativePath()).call();
@@ -188,9 +212,11 @@ public class DynamicContextMenu extends ContextMenu {
       Status status = statusCommand.call();
       for (String path : status.getUncommittedChanges()) {
         git.add().addFilepattern(path).call();
+        log.info("Adding changed file " + path);
       }
       for (String path : status.getUntracked()) {
         git.add().addFilepattern(path).call();
+        log.info("Adding untracked file " + path);
       }
       fileTree.refresh();
     } catch (GitAPIException e) {

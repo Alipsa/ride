@@ -27,23 +27,18 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.GitUtils;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public class FileTree extends TreeView<FileItem> {
 
@@ -163,21 +158,12 @@ public class FileTree extends TreeView<FileItem> {
       try {
         File rootDir = root.getValue().getFile();
         git = Git.open(rootDir);
-        Map<Constants.GitStatus, Set<File>> statusMap = new HashMap<>();
-        for (Constants.GitStatus status : Constants.GitStatus.values()) {
-          statusMap.put(status, new HashSet<>());
-        }
+        Status status;
         try {
-          Status status = git.status().call();
-          statusMap.get(GIT_ADDED).addAll(gitPathToFile(status.getAdded()));
-          statusMap.get(GIT_CHANGED).addAll(gitPathToFile(status.getChanged()));
-          statusMap.get(GIT_CONFLICT).addAll(gitPathToFile(status.getConflicting()));
-          statusMap.get(GIT_IGNORED).addAll(gitPathToFile(status.getIgnoredNotInIndex()));
-          statusMap.get(GIT_MODIFIED).addAll(gitPathToFile(status.getModified()));
-          statusMap.get(GIT_UNCOMITTED_CHANGE).addAll(gitPathToFile(status.getUncommittedChanges()));
-          statusMap.get(GIT_UNTRACKED).addAll(gitPathToFile(status.getUntracked()));
+          status = git.status().call();
         } catch (GitAPIException e) {
           ExceptionAlert.showAlert("Failed to get git staus", e);
+          return;
         }
         /*
         log.info("Git changes:\n {} added: {}\n {} changed: {}\n {} conflicting: {}\n {} ignored: {}\n {} modified: {}\n {} uncomitted: {}\n {} untracked: {}",
@@ -189,7 +175,7 @@ public class FileTree extends TreeView<FileItem> {
             statusMap.get(GIT_UNCOMITTED_CHANGE).size(), statusMap.get(GIT_UNCOMITTED_CHANGE),
             statusMap.get(GIT_UNTRACKED).size(), statusMap.get(GIT_UNTRACKED));
          */
-        walkAndColor(getRoot(), statusMap);
+        walkAndColor(getRoot(), status);
       } catch (Exception e) {
         log.error("Failed to set git colors", e);
         ExceptionAlert.showAlert("Failed to set git colors", e);
@@ -197,54 +183,43 @@ public class FileTree extends TreeView<FileItem> {
     });
   }
 
-  private void walkAndColor(TreeItem<FileItem> root,  Map<Constants.GitStatus, Set<File>> statusMap) {
+  private void walkAndColor(TreeItem<FileItem> root,  Status status) {
       for(TreeItem<FileItem> child: root.getChildren()){
 
         FileItem item = child.getValue();
         File file = item.getFile();
+        String path = GitUtils.asRelativePath(file, getRootDir());
 
-        if(statusMap.get(GIT_CONFLICT).contains(file)) {
+        if(status.getConflicting().contains(path)) {
           item.setStyle(GIT_CONFLICT.getStyle());
           continue;
         }
-        if(statusMap.get(GIT_ADDED).contains(file)) {
+        if(status.getAdded().contains(path)) {
           item.setStyle(GIT_ADDED.getStyle());
           continue;
         }
-        if(statusMap.get(GIT_CHANGED).contains(file)) {
+        if(status.getChanged().contains(path)) {
           item.setStyle(GIT_CHANGED.getStyle());
           continue;
         }
-        if(statusMap.get(GIT_MODIFIED).contains(file)) {
+        if(status.getModified().contains(path)) {
           item.setStyle(GIT_MODIFIED.getStyle());
           continue;
         }
-        if(statusMap.get(GIT_UNCOMITTED_CHANGE).contains(file)) {
+        if(status.getUncommittedChanges().contains(path)) {
           item.setStyle(GIT_UNCOMITTED_CHANGE.getStyle());
           break;
         }
-        if(statusMap.get(GIT_UNTRACKED).contains(file)) {
+        if(status.getUntracked().contains(path)) {
           item.setStyle(GIT_UNTRACKED.getStyle());
           continue;
         }
-        if(statusMap.get(GIT_IGNORED).contains(file)) {
+        if(status.getIgnoredNotInIndex().contains(path)) {
           item.setStyle(GIT_IGNORED.getStyle());
           continue;
         }
-        walkAndColor(child, statusMap);
+        walkAndColor(child, status);
       }
-  }
-
-  private Collection<File> gitPathToFile(Set<String> gitPaths) {
-    Set<File> fileSet = new HashSet<>();
-    if (gitPaths == null) {
-      return fileSet;
-    }
-    File root = getRootDir();
-    for (String path : gitPaths) {
-      fileSet.add(new File(root, path));
-    }
-    return fileSet;
   }
 
   private void setLeafProperties(TreeItem<FileItem> item) {
