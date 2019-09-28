@@ -8,6 +8,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.inout.FileItem;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.util.Optional;
@@ -23,6 +24,7 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
   private CodeType codeType;
   protected BorderPane pane;
   protected FlowPane buttonPane;
+  protected TreeItem<FileItem> treeItem;
 
   public TextAreaTab(Ride gui, CodeType codeType) {
     this.gui = gui;
@@ -98,4 +100,11 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
     return codeType;
   }
 
+  public TreeItem<FileItem> getTreeItem() {
+    return treeItem;
+  }
+
+  public void setTreeItem(TreeItem<FileItem> treeItem) {
+    this.treeItem = treeItem;
+  }
 }

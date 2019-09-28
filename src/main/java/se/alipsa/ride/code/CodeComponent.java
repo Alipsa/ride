@@ -65,7 +65,7 @@ public class CodeComponent extends BorderPane {
     return rTab;
   }
 
-  private TabTextArea addTabAndActivate(TextAreaTab codeTab) {
+  private TextAreaTab addTabAndActivate(TextAreaTab codeTab) {
     pane.getTabs().add(codeTab);
     SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
     selectionModel.select(codeTab);
@@ -88,7 +88,7 @@ public class CodeComponent extends BorderPane {
     return (TextAreaTab) selectionModel.getSelectedItem();
   }
 
-  public void addTab(File file, CodeType type) {
+  public TextAreaTab addTab(File file, CodeType type) {
     TextAreaTab tab;
     String title = file.getName();
     switch (type) {
@@ -126,7 +126,7 @@ public class CodeComponent extends BorderPane {
     } catch (IOException e) {
       ExceptionAlert.showAlert("Failed to read content of file " + file, e);
     }
-    addTabAndActivate(tab);
+    return addTabAndActivate(tab);
   }
 
   public void fileSaved(File file) {

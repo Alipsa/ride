@@ -6,7 +6,14 @@ import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.IndexRange;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
@@ -17,13 +24,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.text.CaseUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.eclipse.jgit.api.Git;
 import org.renjin.RenjinVersion;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
 import org.renjin.primitives.packaging.PackageLoader;
 import org.renjin.repl.JlineRepl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
@@ -34,12 +42,21 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.GitUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
 
 public class MainMenu extends MenuBar {
 
@@ -501,6 +518,10 @@ public class MainMenu extends MenuBar {
     nSql.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.SQL));
     fileMenu.getItems().add(nSql);
 
+    MenuItem nJava = new MenuItem("Java file");
+    nJava.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.JAVA));
+    fileMenu.getItems().add(nJava);
+
     MenuItem save = new MenuItem("Save  ctrl+S");
     save.setOnAction(this::saveContent);
 
@@ -535,6 +556,11 @@ public class MainMenu extends MenuBar {
     }
     try {
       saveFile(codeArea, file);
+      Git git = gui.getInoutComponent().getGit();
+      if(codeArea.getTreeItem() != null && git != null) {
+        String path = GitUtils.asRelativePath(codeArea.getFile(), gui.getInoutComponent().getRootDir());
+        GitUtils.colorNode(git, path, codeArea.getTreeItem());
+      }
     } catch (FileNotFoundException e) {
       ExceptionAlert.showAlert("Failed to save file " + file, e);
     }

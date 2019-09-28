@@ -3,16 +3,25 @@ package se.alipsa.ride.inout;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.DirectoryChooser;
-import org.renjin.primitives.matrix.Matrix;
-import org.renjin.sexp.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jgit.api.Git;
+import org.renjin.primitives.matrix.Matrix;
+import org.renjin.sexp.AttributeMap;
+import org.renjin.sexp.ListVector;
+import org.renjin.sexp.SEXP;
+import org.renjin.sexp.StringVector;
+import org.renjin.sexp.Vector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.inout.plot.PlotsTab;
@@ -247,5 +256,13 @@ public class InoutComponent extends TabPane implements InOut {
   @Override
   public String toString() {
     return "The Ride InOutComponent";
+  }
+
+  public TreeItem<FileItem> getRoot() {
+    return fileTree.getRoot();
+  }
+
+  public Git getGit() {
+    return fileTree.getGit();
   }
 }

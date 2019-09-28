@@ -30,6 +30,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
+import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
@@ -54,6 +55,7 @@ public class FileTree extends TreeView<FileItem> {
   private static Logger log = LogManager.getLogger(FileTree.class);
   private FileOpener fileOpener;
   private DynamicContextMenu menu;
+  private Git git;
 
   FileTree(Ride gui) {
     this.gui = gui;
@@ -160,7 +162,7 @@ public class FileTree extends TreeView<FileItem> {
     Platform.runLater(() -> {
       try {
         File rootDir = root.getValue().getFile();
-        Git git = Git.open(rootDir);
+        git = Git.open(rootDir);
         Map<Constants.GitStatus, Set<File>> statusMap = new HashMap<>();
         for (Constants.GitStatus status : Constants.GitStatus.values()) {
           statusMap.put(status, new HashSet<>());
@@ -266,7 +268,8 @@ public class FileTree extends TreeView<FileItem> {
       if (file.isDirectory()) {
         return;
       }
-      fileOpener.openFile(file);
+      TextAreaTab tab = fileOpener.openFile(file);
+      tab.setTreeItem(item);
     }
   }
 
@@ -355,5 +358,9 @@ public class FileTree extends TreeView<FileItem> {
     String value = treeItem.getValue().getFile().getName();
     clipboardContent.putString(value);
     Clipboard.getSystemClipboard().setContent(clipboardContent);
+  }
+
+  public Git getGit() {
+    return git;
   }
 }
