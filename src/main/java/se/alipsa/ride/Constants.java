@@ -23,8 +23,30 @@ public class Constants {
   public static final String BRIGHT_THEME = "brightTheme.css";
   public static final String BLUE_THEME = "blueTheme.css";
 
-  public static final String GIT_ADDED = "-fx-text-fill: rgba(115, 155, 105, 255);";
-  public static final String GIT_UNTRACKED = "-fx-text-fill: sienna";
-  public static final String GIT_CHANGED= "-fx-text-fill: royalblue";
-  public static final String GIT_NONE= "";
+  public enum GitStatus {
+    GIT_ADDED("-fx-text-fill: #629755;"),
+    GIT_UNTRACKED("-fx-text-fill: sienna"),
+    GIT_CHANGED("-fx-text-fill: #6897BB"),
+    GIT_CONFLICT("-fx-text-fill: red"),
+    GIT_IGNORED("-fx-text-fill: grey"),
+    GIT_MODIFIED("-fx-text-fill: blue"),
+    GIT_UNCOMITTED_CHANGE("-fx-text-fill:  #8AA4C8"),
+    GIT_NONE("");
+
+    private String style;
+    GitStatus(String style) {
+      this.style = style;
+    }
+    public String getStyle() {
+      return style;
+    }
+  }
+  //public static final String GIT_ADDED = "-fx-text-fill: #629755;";
+  //public static final String GIT_UNTRACKED = "-fx-text-fill: sienna";
+  //public static final String GIT_CHANGED = "-fx-text-fill: #6897BB";
+  //public static final String GIT_CONFLICT = "-fx-text-fill: red";
+  //public static final String GIT_IGNORED = "-fx-text-fill: grey";
+  //public static final String GIT_MODIFIED= "-fx-text-fill: blue";
+  //public static final String GIT_UNCOMITTED_CHANGE= "-fx-text-fill:  #8AA4C8";
+  //public static final String GIT_NONE= "";
 }

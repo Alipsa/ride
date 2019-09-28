@@ -1,6 +1,6 @@
 package se.alipsa.ride.inout;
 
-import static se.alipsa.ride.Constants.GIT_ADDED;
+import static se.alipsa.ride.Constants.GitStatus.GIT_ADDED;
 import static se.alipsa.ride.utils.GitUtils.asRelativePath;
 
 import javafx.event.ActionEvent;
@@ -9,27 +9,37 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TreeItem;
+import org.apache.commons.io.output.WriterOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class DynamicContextMenu extends ContextMenu {
 
@@ -116,6 +126,10 @@ public class DynamicContextMenu extends ContextMenu {
       gitAddMI.setOnAction(this::gitAdd);
       gitMenu.getItems().add(gitAddMI);
 
+      MenuItem gitAddAllMI = new MenuItem("Add all");
+      gitAddAllMI.setOnAction(this::gitAddAll);
+      gitMenu.getItems().add(gitAddAllMI);
+
       MenuItem gitDeleteMI = new MenuItem("Delete");
       gitDeleteMI.setOnAction(this::gitRm);
       gitMenu.getItems().add(gitDeleteMI);
@@ -127,6 +141,18 @@ public class DynamicContextMenu extends ContextMenu {
       MenuItem gitStatusMI = new MenuItem("Status");
       gitStatusMI.setOnAction(this::gitStatus);
       gitMenu.getItems().add(gitStatusMI);
+
+      MenuItem gitStatusAllMI = new MenuItem("Status all");
+      gitStatusAllMI.setOnAction(this::gitStatusAll);
+      gitMenu.getItems().add(gitStatusAllMI);
+
+      MenuItem gitDiffMI = new MenuItem("Diff");
+      gitDiffMI.setOnAction(this::gitDiff);
+      gitMenu.getItems().add(gitDiffMI);
+
+      MenuItem gitResetMI = new MenuItem("Reset");
+      gitResetMI.setOnAction(this::gitReset);
+      gitMenu.getItems().add(gitResetMI);
 
       Menu gitRemoteMenu = new Menu("remote");
       gitMenu.getItems().add(gitRemoteMenu);
@@ -146,24 +172,114 @@ public class DynamicContextMenu extends ContextMenu {
     getItems().addAll(copyMI, createDirMI, createFileMI, deleteMI, gitMenu);
   }
 
+  private void gitReset(ActionEvent actionEvent) {
+    try {
+      git.reset().addPath(getRelativePath()).call();
+      fileTree.refresh();
+    } catch (GitAPIException e) {
+      log.warn("Failed to reset", e);
+      ExceptionAlert.showAlert("Failed to reset", e);
+    }
+  }
+
+  private void gitAddAll(ActionEvent actionEvent) {
+    try {
+      StatusCommand statusCommand = git.status();
+      Status status = statusCommand.call();
+      for (String path : status.getUncommittedChanges()) {
+        git.add().addFilepattern(path).call();
+      }
+      for (String path : status.getUntracked()) {
+        git.add().addFilepattern(path).call();
+      }
+      fileTree.refresh();
+    } catch (GitAPIException e) {
+      log.warn("Failed to add all", e);
+      ExceptionAlert.showAlert("Failed to add all", e);
+    }
+  }
+
+  private void gitDiff(ActionEvent actionEvent) {
+    try(StringWriter writer = new StringWriter();
+        OutputStream out = new WriterOutputStream(writer, StandardCharsets.UTF_8)){
+      DiffCommand diffCommand = git.diff();
+      diffCommand.setOutputStream(out);
+      String path = getRelativePath();
+      diffCommand.setPathFilter(PathFilter.create(path));
+      List<DiffEntry> diffs = diffCommand.call();
+      StringBuilder str = new StringBuilder();
+      if (diffs.size() > 0) {
+        diffs.forEach(e -> str.append(e.toString()).append("\n"));
+        str.append(writer.toString());
+      } else {
+        str.append("No differences detected for ").append(path);
+      }
+      Alerts.info("Diff against repo for " + path, str.toString());
+    } catch (GitAPIException | IOException e) {
+      log.warn("Failed to diff", e);
+      ExceptionAlert.showAlert("Failed to execute diff", e);
+    }
+  }
+
+  private String getRelativePath() {
+    return asRelativePath(currentFile, fileTree.getRootDir());
+  }
+
   private void gitStatus(ActionEvent actionEvent) {
     try {
       StatusCommand statusCommand = git.status();
-      statusCommand.addPath(asRelativePath(currentFile, fileTree.getRootDir()));
-      System.out.println("---------------- Status ------------------------");
-      System.out.println("Paths = " +  statusCommand.getPaths());
+      String path = getRelativePath();
+      statusCommand.addPath(path);
       Status status = statusCommand.call();
-      System.out.println("Added: " + status.getAdded());
-      System.out.println("Changed" + status.getChanged());
-      System.out.println("Conflicting: " + status.getConflicting());
-      System.out.println("Missing: " + status.getMissing());
-      System.out.println("Modified: " + status.getModified());
-      System.out.println("Removed: " + status.getRemoved());
-      System.out.println("Uncommited changes" + status.getUncommittedChanges());
-      System.out.println("Untracked: " + status.getUntracked());
-      System.out.println("hasUncommittedChanges: " + status.hasUncommittedChanges());
-      System.out.println("isClean: " + status.isClean());
-      System.out.println("---------------- /Status -----------------------");
+      GitStatusDialog statusDialog = new GitStatusDialog(status, path);
+      statusDialog.show();
+    } catch (GitAPIException e) {
+      log.warn("Failed to get status", e);
+      ExceptionAlert.showAlert("Failed to get status", e);
+    }
+  }
+
+  private void gitStatusAll(ActionEvent actionEvent) {
+    try {
+      StatusCommand statusCommand = git.status();
+      Status status = statusCommand.call();
+      StringBuilder str = new StringBuilder();
+
+      Set<String> added = status.getAdded();
+      if (added.size() > 0) {
+        str.append("Added: ").append(String.join(", ", added)).append("\n");
+      }
+      Set<String> changed = status.getChanged();
+      if (changed.size() > 0) {
+        str.append("Changed: ").append(String.join(", ", changed)).append("\n");
+      }
+      Set<String> conflicting = status.getConflicting();
+      if (conflicting.size() > 0) {
+        str.append("Conflicting: ").append(String.join(", ", conflicting)).append("\n");
+      }
+      Set<String> missing = status.getMissing();
+      if (missing.size() > 0) {
+        str.append("Missing: ").append(String.join(", ", missing)).append("\n");
+      }
+      Set<String> modified = status.getModified();
+      if (modified.size() > 0) {
+        str.append("Modified: ").append(String.join(", ", modified)).append("\n");
+      }
+      Set<String> removed = status.getRemoved();
+      if (removed.size() > 0) {
+        str.append("Removed: ").append(String.join(", ", removed)).append("\n");
+      }
+      Set<String> uncomittedChanges = status.getUncommittedChanges();
+      if (uncomittedChanges.size() > 0) {
+        str.append("Uncommited changes: ").append(String.join(", ", uncomittedChanges)).append("\n");
+      }
+      Set<String> untracked = status.getUntracked();
+      if (untracked.size() > 0) {
+        str.append("Untracked: ").append(String.join(", ", untracked)).append("\n");
+      }
+      str.append("hasUncommittedChanges: ").append(status.hasUncommittedChanges()).append("\n");
+      str.append("isClean: ").append(status.isClean()).append("\n");
+      Alerts.info("Status", str.toString());
     } catch (GitAPIException e) {
       log.warn("Failed to get status", e);
       ExceptionAlert.showAlert("Failed to get status", e);
@@ -213,7 +329,7 @@ public class DynamicContextMenu extends ContextMenu {
   }
 
   private void gitRm(ActionEvent actionEvent) {
-    String currentPath = asRelativePath(currentFile, fileTree.getRootDir());
+    String currentPath = getRelativePath();
     log.info("Deleting {}", currentPath);
     try {
       DirCache dc = git.rm().addFilepattern(currentPath).call();
@@ -236,7 +352,8 @@ public class DynamicContextMenu extends ContextMenu {
           return;
         }
         CommitCommand commit = git.commit();
-        commit.setMessage(msg).call();
+        RevCommit revCommit = commit.setMessage(msg).call();
+        log.info("Commited result: {}", revCommit);
         fileTree.refresh();
       } catch (GitAPIException e) {
         log.warn("Failed to commit ", e);
@@ -246,11 +363,11 @@ public class DynamicContextMenu extends ContextMenu {
   }
 
   private void gitAdd(ActionEvent actionEvent) {
-    String currentPath = asRelativePath(currentFile, fileTree.getRootDir());
+    String currentPath = getRelativePath();
     try {
       DirCache dc = git.add().addFilepattern(currentPath).call();
       log.info("Added {} to git dir cache, node is {}", currentPath, currentNode.getValue().getText());
-      currentNode.getValue().setStyle(GIT_ADDED);
+      currentNode.getValue().setStyle(GIT_ADDED.getStyle());
     } catch (GitAPIException e) {
       log.warn("Failed to add " + currentPath, e);
       ExceptionAlert.showAlert("Failed to add " + currentPath, e);

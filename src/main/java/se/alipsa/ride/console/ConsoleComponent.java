@@ -184,6 +184,7 @@ public class ConsoleComponent extends BorderPane {
     }
     //log.info("parentClassLoader = {}, remoteRepositories = {}", parentClassLoader, remoteRepositories);
     AetherPackageLoader loader = new AetherPackageLoader(parentClassLoader, remoteRepositories);
+    /*
     System.out.println(
         log.getName()
         + "\ntraceEnabled = " + log.isTraceEnabled()
@@ -192,6 +193,7 @@ public class ConsoleComponent extends BorderPane {
         + "\nwarnEnabled  = " + log.isWarnEnabled()
         + "\nerrorEnabled = " + log.isErrorEnabled()
     );
+     */
     if (log.isDebugEnabled()) {
       log.debug("DEBUG enabled, package loading activities will be echoed to console");
       loader.setRepositoryListener(new ConsoleRepositoryListener(System.out));

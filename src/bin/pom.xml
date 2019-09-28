@@ -100,17 +100,22 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.9.9</version>
+            <version>2.10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.10.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.9.3</version>
+            <version>2.10.0</version>
         </dependency>
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.10.1</version>
+            <version>0.10.2</version>
         </dependency>
         <dependency>
             <groupId>org.jfree</groupId>
@@ -145,7 +150,7 @@
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>5.4.3.201909031940-r</version>
+            <version>5.5.0.201909110433-r</version>
         </dependency>
 
         <dependency>
@@ -183,7 +188,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.10.3</version>
+            <version>2.10.4</version>
         </dependency>
 
         <!-- Add some common OS database drivers, add or remove as appropriate -->
@@ -195,7 +200,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.2.6</version>
+            <version>42.2.8</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
