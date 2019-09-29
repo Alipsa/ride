@@ -174,6 +174,10 @@ public class DynamicContextMenu extends ContextMenu {
       gitBranchListMI.setOnAction(this::gitBranchList);
       gitBranchMenu.getItems().add(gitBranchListMI);
 
+      MenuItem gitBranchCheckoutMI = new MenuItem("checkout");
+      gitBranchCheckoutMI.setOnAction(this::gitBranchCheckout);
+      gitBranchMenu.getItems().add(gitBranchCheckoutMI);
+
       // Remote sub menu
       Menu gitRemoteMenu = new Menu("Remote");
       gitMenu.getItems().add(gitRemoteMenu);
@@ -191,6 +195,44 @@ public class DynamicContextMenu extends ContextMenu {
       gitRemoteMenu.getItems().add(gitPullMI);
     }
     getItems().addAll(copyMI, createDirMI, createFileMI, deleteMI, gitMenu);
+  }
+
+  private void gitBranchCheckout(ActionEvent actionEvent) {
+    try {
+      if (!git.status().call().isClean()) {
+        Alerts.info("Repository is not clean",
+            "You have uncommitted files that must be committed before you can checkout");
+        return;
+      }
+    } catch (GitAPIException e) {
+      log.warn("Failed to check status before checkout branch", e);
+      ExceptionAlert.showAlert("Failed to check status before checkout branch", e);
+    }
+    TextInputDialog dialog = new TextInputDialog("");
+    dialog.setTitle("Checkout branch");
+    dialog.setHeaderText("Checkout branch");
+    dialog.setContentText("Branch name:");
+
+// Traditional way to get the response value.
+    Optional<String> result = dialog.showAndWait();
+    if (result.isPresent()){
+      String branchName = result.get();
+      try {
+        List<Ref> branchList = git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
+        Ref branchExists = branchList.stream().filter(p -> p.getName().replace("refs/heads/", "").equals(branchName))
+            .findAny().orElse(null);
+        boolean createBranch = branchExists == null;
+        git.checkout()
+            .setCreateBranch(createBranch)
+            .setName(branchName).call();
+        fileTree.refresh();
+      } catch (GitAPIException e) {
+        log.warn("Failed to checkout branch", e);
+        ExceptionAlert.showAlert("Failed to checkout branch", e);
+      }
+    }
+
+
   }
 
   private void gitBranchList(ActionEvent actionEvent) {

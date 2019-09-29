@@ -2,8 +2,10 @@ package se.alipsa.ride.inout;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -36,13 +38,14 @@ import java.util.concurrent.FutureTask;
 
 public class InoutComponent extends TabPane implements InOut {
 
-  FileTree fileTree;
-  PlotsTab plotsTab;
-  Tab packages;
-  ViewTab viewer;
-  Ride gui;
+  private FileTree fileTree;
+  private PlotsTab plotsTab;
+  private Tab packages;
+  private ViewTab viewer;
+  private Ride gui;
+  private Label branchLabel;
 
-  Logger log = LogManager.getLogger(InoutComponent.class);
+  private static final Logger log = LogManager.getLogger(InoutComponent.class);
 
   public InoutComponent(Ride gui) {
 
@@ -63,6 +66,10 @@ public class InoutComponent extends TabPane implements InOut {
     Button changeDirButton = new Button("Change dir");
     changeDirButton.setOnAction(this::handleChangeDir);
     filesButtonPane.getChildren().add(changeDirButton);
+
+    branchLabel = new Label("");
+    branchLabel.setPadding(new Insets(0,0,0,10));
+    filesButtonPane.getChildren().add(branchLabel);
 
     filesPane.setTop(filesButtonPane);
     filesPane.setCenter(fileTree);
@@ -264,5 +271,9 @@ public class InoutComponent extends TabPane implements InOut {
 
   public Git getGit() {
     return fileTree.getGit();
+  }
+
+  public Label getBranchLabel() {
+    return branchLabel;
   }
 }

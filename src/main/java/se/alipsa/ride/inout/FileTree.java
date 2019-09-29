@@ -158,11 +158,13 @@ public class FileTree extends TreeView<FileItem> {
       try {
         File rootDir = root.getValue().getFile();
         git = Git.open(rootDir);
+        String branch = git.getRepository().getBranch();
+        gui.getInoutComponent().getBranchLabel().setText("Branch: " + branch);
         Status status;
         try {
           status = git.status().call();
         } catch (GitAPIException e) {
-          ExceptionAlert.showAlert("Failed to get git staus", e);
+          ExceptionAlert.showAlert("Failed to get git status", e);
           return;
         }
         /*
@@ -183,8 +185,8 @@ public class FileTree extends TreeView<FileItem> {
     });
   }
 
-  private void walkAndColor(TreeItem<FileItem> root,  Status status) {
-      for(TreeItem<FileItem> child: root.getChildren()){
+  private void walkAndColor(TreeItem<FileItem> node,  Status status) {
+      for(TreeItem<FileItem> child: node.getChildren()){
 
         FileItem item = child.getValue();
         File file = item.getFile();
