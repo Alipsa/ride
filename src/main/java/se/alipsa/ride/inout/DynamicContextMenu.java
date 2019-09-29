@@ -1,6 +1,5 @@
 package se.alipsa.ride.inout;
 
-import static se.alipsa.ride.Constants.GitStatus.GIT_ADDED;
 import static se.alipsa.ride.utils.GitUtils.asRelativePath;
 
 import javafx.event.ActionEvent;
@@ -16,17 +15,20 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.GitUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,10 +58,10 @@ public class DynamicContextMenu extends ContextMenu {
 
   public DynamicContextMenu(FileTree fileTree) {
     this.fileTree = fileTree;
-    MenuItem copyMI = new MenuItem("Copy name");
+    MenuItem copyMI = new MenuItem("copy name");
     copyMI.setOnAction(e -> fileTree.copySelectionToClipboard());
 
-    MenuItem createDirMI = new MenuItem("Create dir");
+    MenuItem createDirMI = new MenuItem("create dir");
     createDirMI.setOnAction(e -> {
       File currentFile = currentNode.getValue().getFile();
       File newDir = promptForFile(currentFile, "Create and add dir", "Enter the dir name:");
@@ -74,7 +76,7 @@ public class DynamicContextMenu extends ContextMenu {
       }
     });
 
-    MenuItem createFileMI = new MenuItem("Create file");
+    MenuItem createFileMI = new MenuItem("create file");
     createFileMI.setOnAction(e -> {
       File newFile = promptForFile(currentFile, "Create and add file", "Enter the file name:");
       if (newFile == null) {
@@ -88,7 +90,7 @@ public class DynamicContextMenu extends ContextMenu {
       }
     });
 
-    MenuItem deleteMI = new MenuItem("Delete");
+    MenuItem deleteMI = new MenuItem("delete");
     deleteMI.setOnAction(e -> {
       String fileType = "file";
       try {
@@ -124,58 +126,85 @@ public class DynamicContextMenu extends ContextMenu {
     }
 
     if (gitInitialized) {
-      MenuItem gitAddMI = new MenuItem("Add");
+      MenuItem gitAddMI = new MenuItem("add");
       gitAddMI.setOnAction(this::gitAdd);
       gitMenu.getItems().add(gitAddMI);
 
-      MenuItem gitAddAllMI = new MenuItem("Add all");
-      gitAddAllMI.setOnAction(this::gitAddAll);
-      gitMenu.getItems().add(gitAddAllMI);
-
-      MenuItem gitDeleteMI = new MenuItem("Delete");
+      MenuItem gitDeleteMI = new MenuItem("delete");
       gitDeleteMI.setOnAction(this::gitRm);
       gitMenu.getItems().add(gitDeleteMI);
 
-      MenuItem gitCommitMI = new MenuItem("Commit");
-      gitCommitMI.setOnAction(this::gitCommit);
-      gitMenu.getItems().add(gitCommitMI);
-
-      MenuItem gitStatusMI = new MenuItem("Status");
+      MenuItem gitStatusMI = new MenuItem("status");
       gitStatusMI.setOnAction(this::gitStatus);
       gitMenu.getItems().add(gitStatusMI);
 
-      MenuItem gitStatusAllMI = new MenuItem("Status all");
-      gitStatusAllMI.setOnAction(this::gitStatusAll);
-      gitMenu.getItems().add(gitStatusAllMI);
-
-      MenuItem gitDiffMI = new MenuItem("Diff");
+      MenuItem gitDiffMI = new MenuItem("diff");
       gitDiffMI.setOnAction(this::gitDiff);
       gitMenu.getItems().add(gitDiffMI);
 
-      MenuItem gitResetMI = new MenuItem("Reset");
+      MenuItem gitResetMI = new MenuItem("reset");
       gitResetMI.setOnAction(this::gitReset);
       gitMenu.getItems().add(gitResetMI);
 
-      MenuItem gitLogMI = new MenuItem("Show Log");
-      gitLogMI.setOnAction(this::gitLog);
-      gitMenu.getItems().add(gitLogMI);
+      // All sub menu
+      Menu gitAllMenu = new Menu("All");
+      gitMenu.getItems().add(gitAllMenu);
 
-      Menu gitRemoteMenu = new Menu("remote");
+      MenuItem gitAddAllMI = new MenuItem("add all");
+      gitAddAllMI.setOnAction(this::gitAddAll);
+      gitAllMenu.getItems().add(gitAddAllMI);
+
+      MenuItem gitCommitMI = new MenuItem("commit");
+      gitCommitMI.setOnAction(this::gitCommit);
+      gitAllMenu.getItems().add(gitCommitMI);
+
+      MenuItem gitStatusAllMI = new MenuItem("status all");
+      gitStatusAllMI.setOnAction(this::gitStatusAll);
+      gitAllMenu.getItems().add(gitStatusAllMI);
+
+      MenuItem gitLogMI = new MenuItem("show Log");
+      gitLogMI.setOnAction(this::gitLog);
+      gitAllMenu.getItems().add(gitLogMI);
+
+      // Branches sub menu
+      Menu gitBranchMenu = new Menu("Branches");
+      gitMenu.getItems().add(gitBranchMenu);
+
+      MenuItem gitBranchListMI = new MenuItem("list branches");
+      gitBranchListMI.setOnAction(this::gitBranchList);
+      gitBranchMenu.getItems().add(gitBranchListMI);
+
+      // Remote sub menu
+      Menu gitRemoteMenu = new Menu("Remote");
       gitMenu.getItems().add(gitRemoteMenu);
 
-      MenuItem gitAddRemoteMI = new MenuItem("Add remote");
+      MenuItem gitAddRemoteMI = new MenuItem("add remote");
       gitAddRemoteMI.setOnAction(this::gitAddRemote);
       gitRemoteMenu.getItems().add(gitAddRemoteMI);
 
-      MenuItem gitPushMI = new MenuItem("Push");
+      MenuItem gitPushMI = new MenuItem("push");
       gitPushMI.setOnAction(this::gitPush);
       gitRemoteMenu.getItems().add(gitPushMI);
 
-      MenuItem gitPullMI = new MenuItem("Pull");
+      MenuItem gitPullMI = new MenuItem("pull");
       gitPullMI.setOnAction(this::gitPull);
       gitRemoteMenu.getItems().add(gitPullMI);
     }
     getItems().addAll(copyMI, createDirMI, createFileMI, deleteMI, gitMenu);
+  }
+
+  private void gitBranchList(ActionEvent actionEvent) {
+    try {
+      List<Ref> branchRefs = git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
+      StringBuilder str = new StringBuilder();
+      for (Ref ref : branchRefs) {
+        str.append(ref.getName().replace("refs/heads/", "")).append(": ").append(ref.getObjectId().name()).append("\n");
+      }
+      Alerts.info("Branches", str.toString());
+    } catch (GitAPIException e) {
+      log.warn("Failed to get branches", e);
+      ExceptionAlert.showAlert("Failed to get branches", e);
+    }
   }
 
   private void gitLog(ActionEvent actionEvent) {
@@ -393,7 +422,8 @@ public class DynamicContextMenu extends ContextMenu {
     try {
       DirCache dc = git.add().addFilepattern(currentPath).call();
       log.info("Added {} to git dir cache, node is {}", currentPath, currentNode.getValue().getText());
-      currentNode.getValue().setStyle(GIT_ADDED.getStyle());
+      GitUtils.colorNode(git, currentPath, currentNode);
+      //currentNode.getValue().setStyle(GIT_ADDED.getStyle());
     } catch (GitAPIException e) {
       log.warn("Failed to add " + currentPath, e);
       ExceptionAlert.showAlert("Failed to add " + currentPath, e);

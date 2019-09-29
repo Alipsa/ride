@@ -29,6 +29,7 @@ public class XmlTab extends TextAreaTab {
 
   private Button executeButton;
   private TextField targetsField;
+  private Label goalLabel;
 
   private static final Logger log = LogManager.getLogger(XmlTab.class);
 
@@ -41,8 +42,9 @@ public class XmlTab extends TextAreaTab {
     buttonPane.getChildren().add(executeButton);
 
     targetsField = new TextField();
+    targetsField.setText("clean install");
     targetsField.setPrefColumnCount(30);
-    Label goalLabel = new Label("Goals:");
+    goalLabel = new Label("Goals:");
     buttonPane.getChildren().addAll(goalLabel, targetsField);
 
     xmlTextArea = new XmlTextArea(this);
@@ -156,9 +158,11 @@ public class XmlTab extends TextAreaTab {
     xmlTextArea.setFile(file);
     if ("pom.xml".equalsIgnoreCase(file.getName())) {
       executeButton.setVisible(true);
+      goalLabel.setVisible(true);
       targetsField.setVisible(true);
     } else {
       executeButton.setVisible(false);
+      goalLabel.setVisible(false);
       targetsField.setVisible(false);
     }
   }
