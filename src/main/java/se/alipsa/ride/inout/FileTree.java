@@ -58,17 +58,22 @@ public class FileTree extends TreeView<FileItem> {
     fileOpener = new FileOpener(codeComponent);
     this.getStyleClass().add("fileTree");
 
-    String currentPath = new File(getWorkingDirPref()).getAbsolutePath();
-    File current = new File(currentPath);
+    File current = new File(getWorkingDirPref());
+    String prefPath = current.getAbsolutePath();
+    if (!current.exists()) {
+      if (current.getParentFile().exists()) {
+        current = current.getParentFile();
+      } else {
+        current = new File(".");
+      }
+      log.warn("{} does not exist, setting working dir to {}", prefPath, current.getAbsolutePath());
+    }
     setWorkingDir(current);
-
     setRoot(createTree(current));
-
     gitColorTree(getRoot());
-
     sortTree(getRoot());
-
     getRoot().setExpanded(true);
+
     setCellFactory(treeView -> new TreeCell<FileItem>() {
 
       @Override
@@ -148,7 +153,8 @@ public class FileTree extends TreeView<FileItem> {
   }
 
   private void gitColorTree(TreeItem<FileItem> root) {
-    if (Objects.requireNonNull(getRoot().getValue().file.list((dir, name) -> name.equalsIgnoreCase(".git"))).length > 0) {
+    File rootDir = getRoot().getValue().getFile();
+    if (rootDir != null && rootDir.exists() && Objects.requireNonNull(rootDir.list((dir, name) -> name.equalsIgnoreCase(".git"))).length > 0) {
       log.info("adding git coloring...");
     } else {
       log.info("not a git repository, skipping git coloring");
@@ -156,7 +162,6 @@ public class FileTree extends TreeView<FileItem> {
     }
     Platform.runLater(() -> {
       try {
-        File rootDir = root.getValue().getFile();
         git = Git.open(rootDir);
         String branch = git.getRepository().getBranch();
         gui.getInoutComponent().getBranchLabel().setText("Branch: " + branch);

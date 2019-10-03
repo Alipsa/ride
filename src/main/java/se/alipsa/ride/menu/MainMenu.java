@@ -89,11 +89,77 @@ public class MainMenu extends MenuBar {
     SeparatorMenuItem separator = new SeparatorMenuItem();
     menu.getItems().add(separator);
 
+    MenuItem projectWizard = new MenuItem("Create maven project");
+    projectWizard.setOnAction(this::showProjectWizard);
+    menu.getItems().add(projectWizard);
+
     MenuItem packageWizard = new MenuItem("Create package project");
     packageWizard.setOnAction(this::showPackageWizard);
     menu.getItems().add(packageWizard);
 
     return menu;
+  }
+
+  private void showProjectWizard(ActionEvent actionEvent) {
+    CreateProjectWizardDialog dialog = new CreateProjectWizardDialog(gui);
+    Optional<CreateProjectWizardResult> result = dialog.showAndWait();
+    if (!result.isPresent()) {
+      return;
+    }
+    CreateProjectWizardResult res = result.get();
+    try {
+      Files.createDirectories(res.dir.toPath());
+
+      String camelCasedPackageName = CaseUtils.toCamelCase(res.projectName, true,
+          ' ', '_', '-', ',', '.', '/', '\\');
+
+      String pomContent = FileUtils.readContent("templates/project-pom.xml")
+          .replace("[groupId]", res.groupName)
+          .replace("[artifactId]", res.projectName)
+          .replace("[name]", res.projectName)
+          .replace("[renjinVersion]", RenjinVersion.getVersionName());
+      FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
+
+      Path mainPath = new File(res.dir, "src/main/R").toPath();
+      Files.createDirectories(mainPath);
+      Path rFile = mainPath.resolve(camelCasedPackageName + ".R");
+      Files.createFile(rFile);
+      Path testPath = new File(res.dir, "src/test/R").toPath();
+      Files.createDirectories(testPath);
+      Path testFile = Files.createFile(testPath.resolve(camelCasedPackageName + "Test.R"));
+      FileUtils.writeToFile(testFile.toFile(), "library('hamcrest')\n");
+
+      String lowercaseProjectName = camelCasedPackageName.toLowerCase();
+
+      String groupPath = res.groupName.replace('.', '/');
+      Path loaderPath = new File(res.dir, "src/main/java/" + groupPath + "/" + lowercaseProjectName).toPath();
+      Files.createDirectories(loaderPath);
+      String loaderContent = FileUtils.readContent("templates/ScriptLoader.java")
+          .replace("[groupId]", res.groupName)
+          .replace("[lowercaseProjectName]", lowercaseProjectName)
+          .replace("[fileName]", rFile.getFileName().toString());
+      FileUtils.writeToFile(new File(loaderPath.toFile(), "ScriptLoader.java"), loaderContent);
+
+      Path javaTestPath = new File(res.dir, "src/test/java/" + groupPath + "/" + lowercaseProjectName).toPath();
+      Files.createDirectories(javaTestPath);
+      String javaTestContent = FileUtils.readContent("templates/Test.java")
+          .replace("[groupId]", res.groupName)
+          .replace("[lowercaseProjectName]", lowercaseProjectName)
+          .replace("[className]", camelCasedPackageName);
+      FileUtils.writeToFile(new File(javaTestPath.toFile(), camelCasedPackageName + "Test.java"), javaTestContent);
+
+      Path testResourcePath = new File(res.dir, "src/test/resources/").toPath();
+      Files.createDirectories(testResourcePath);
+      FileUtils.copy("templates/log4j.properties", testResourcePath.toFile());
+
+      if (res.changeToDir) {
+        gui.getInoutComponent().changeRootDir(res.dir);
+      } else {
+        gui.getInoutComponent().refreshFileTree();
+      }
+    } catch (IOException e) {
+      ExceptionAlert.showAlert("Failed to create package project", e);
+    }
   }
 
   private void showPackageWizard(ActionEvent actionEvent) {
@@ -109,7 +175,7 @@ public class MainMenu extends MenuBar {
       String camelCasedPackageName = CaseUtils.toCamelCase(res.packageName, true,
          ' ', '_', '-', ',', '.', '/', '\\');
 
-      String pomContent = FileUtils.readContent("templates/pom.xml")
+      String pomContent = FileUtils.readContent("templates/package-pom.xml")
          .replace("[groupId]", res.groupName)
          .replace("[artifactId]", res.packageName)
          .replace("[name]", res.packageName)

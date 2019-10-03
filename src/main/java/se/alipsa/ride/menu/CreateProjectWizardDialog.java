@@ -2,7 +2,13 @@ package se.alipsa.ride.menu;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
@@ -12,7 +18,7 @@ import se.alipsa.ride.Ride;
 
 import java.io.File;
 
-public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult> {
+public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult> {
 
   private static final Logger log = LogManager.getLogger();
 
@@ -23,7 +29,7 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
   private TextField dirField;
   private CheckBox changeToDir;
 
-  CreatePackageWizardDialog(Ride gui) {
+  CreateProjectWizardDialog(Ride gui) {
     this.gui = gui;
     setTitle("Create Package Wizard");
 
@@ -37,20 +43,23 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     getDialogPane().setContent(grid);
 
     Label groupNameLabel = new Label("Group Name");
+    groupNameLabel.setWrapText(false);
     grid.add(groupNameLabel,0,0);
     groupNameField = new TextField();
-    groupNameField.setPrefColumnCount(10);
+    groupNameField.setPrefColumnCount(12);
     groupNameField.setTooltip(new Tooltip("Should be reverse domain name of your org e.g. com.acme"));
     grid.add(groupNameField, 1,0);
 
-    Label packageNameLabel = new Label("Package Name");
+    Label packageNameLabel = new Label("Project Name");
+    packageNameLabel.setWrapText(false);
     grid.add(packageNameLabel,0,1);
     packageNameField = new TextField();
     packageNameField.setPrefColumnCount(10);
-    packageNameField.setTooltip(new Tooltip("The name of your package; do not use spaces or slashes, only a-z, 0-9, _, -"));
+    packageNameField.setTooltip(new Tooltip("The name of your project; do not use spaces or slashes, only a-z, 0-9, _, -"));
     grid.add(packageNameField, 1,1);
 
     Label chooseDirLabel = new Label("Project dir");
+    chooseDirLabel.setWrapText(false);
     grid.add(chooseDirLabel, 0,2);
     Button chooseDirButton = new Button("Browse...");
     grid.add(chooseDirButton, 1, 2);
@@ -67,7 +76,7 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     changeToDir.setSelected(true);
     grid.add(changeToDir, 0, 3, 2, 1);
 
-    getDialogPane().setPrefSize(650, 300);
+    getDialogPane().setPrefSize(700, 300);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     setResizable(true);
 
@@ -92,10 +101,10 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     }
   }
 
-  private CreatePackageWizardResult createResult() {
-    CreatePackageWizardResult res = new CreatePackageWizardResult();
+  private CreateProjectWizardResult createResult() {
+    CreateProjectWizardResult res = new CreateProjectWizardResult();
     res.groupName = groupNameField.getText();
-    res.packageName = packageNameField.getText();
+    res.projectName = packageNameField.getText();
     res.dir = new File(selectedDirectory, packageNameField.getText().trim());
     res.changeToDir = changeToDir.isSelected();
     return res;

@@ -16,12 +16,14 @@ import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
+import org.eclipse.jgit.api.MergeResult;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.URIish;
@@ -40,6 +42,7 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -178,6 +181,10 @@ public class DynamicContextMenu extends ContextMenu {
       gitBranchCheckoutMI.setOnAction(this::gitBranchCheckout);
       gitBranchMenu.getItems().add(gitBranchCheckoutMI);
 
+      MenuItem gitBranchMergeMI = new MenuItem("merge");
+      gitBranchMergeMI.setOnAction(this::gitBranchMerge);
+      gitBranchMenu.getItems().add(gitBranchMergeMI);
+
       // Remote sub menu
       Menu gitRemoteMenu = new Menu("Remote");
       gitMenu.getItems().add(gitRemoteMenu);
@@ -197,6 +204,62 @@ public class DynamicContextMenu extends ContextMenu {
     getItems().addAll(copyMI, createDirMI, createFileMI, deleteMI, gitMenu);
   }
 
+  private void gitBranchMerge(ActionEvent actionEvent) {
+    try {
+      if (!git.status().call().isClean()) {
+        Alerts.info("Repository is not clean",
+            "You have uncommitted files that must be committed before you can merge");
+        return;
+      }
+    } catch (GitAPIException e) {
+      log.warn("Failed to check status before merging with another branch", e);
+      ExceptionAlert.showAlert("Failed to check status before merging with another branch", e);
+      return;
+    }
+    String currentBranch;
+    try {
+      currentBranch = git.getRepository().getBranch();
+    } catch (IOException e) {
+      log.warn("Failed to get current branch", e);
+      ExceptionAlert.showAlert("Failed to get current branch", e);
+      return;
+    }
+
+    TextInputDialog dialog = new TextInputDialog("");
+    dialog.setTitle("Merge branch");
+    dialog.setHeaderText("Merge another branch into current branch (" + currentBranch + ")");
+    dialog.setContentText("Branch to merge from:");
+
+    Optional<String> result = dialog.showAndWait();
+    if (result.isPresent()){
+      String branchName = result.get();
+      try {
+        // retrieve the objectId of the latest commit on branch
+        ObjectId latestCommit = git.getRepository().resolve(branchName);
+        MergeResult mergeResult = git.merge().include(latestCommit).call();
+        if (mergeResult.getMergeStatus().equals(MergeResult.MergeStatus.CONFLICTING)) {
+          StringBuilder str = new StringBuilder();
+          mergeResult.getConflicts().forEach((k,v) -> str.append(k).append(": ").append(Arrays.deepToString(v)).append("\n"));
+          Alerts.warn("Merge Conflicts detected", str.toString());
+        } else if (mergeResult.getMergeStatus().isSuccessful()) {
+          StringBuilder mergeContent = new StringBuilder("The following commits was merged:\n");
+          for (ObjectId objectId : mergeResult.getMergedCommits()) {
+              mergeContent.append(objectId).append("\n");
+          }
+          Alerts.info("Merge success", mergeContent.toString());
+        } else {
+          StringBuilder str = new StringBuilder();
+          mergeResult.getFailingPaths().forEach((k,v) -> str.append(k).append(": ").append(v.toString()).append("\n"));
+          Alerts.warn("Merge failed", str.toString());
+        }
+        fileTree.refresh();
+      } catch (Exception e) {
+        log.warn("Failed to merge branch", e);
+        ExceptionAlert.showAlert("Failed to merge branch", e);
+      }
+    }
+  }
+
   private void gitBranchCheckout(ActionEvent actionEvent) {
     try {
       if (!git.status().call().isClean()) {
@@ -213,7 +276,6 @@ public class DynamicContextMenu extends ContextMenu {
     dialog.setHeaderText("Checkout branch");
     dialog.setContentText("Branch name:");
 
-// Traditional way to get the response value.
     Optional<String> result = dialog.showAndWait();
     if (result.isPresent()){
       String branchName = result.get();
@@ -231,8 +293,6 @@ public class DynamicContextMenu extends ContextMenu {
         ExceptionAlert.showAlert("Failed to checkout branch", e);
       }
     }
-
-
   }
 
   private void gitBranchList(ActionEvent actionEvent) {
