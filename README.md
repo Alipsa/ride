@@ -142,6 +142,9 @@ Used to validate and analyse SQL code. Apache Software License, Version 2.0.
 ### org.apache.maven.shared:maven-invoker,maven-shared-utils
 Used to run maven (run pom.xml files). Apache Software License, Version 2.0.
 
+### org.eclipse.jgit:org.eclipse.jgit
+Used to provide git support. Eclipse Distribution License v1.0
+
 ### Various jdbc drivers
 These are included for convenience only. Licenced under various open source licenses. There is no direct dependency on any jdbc driver in Ride.
 

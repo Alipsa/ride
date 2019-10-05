@@ -95,7 +95,7 @@
       <plugin>
         <groupId>se.alipsa</groupId>
         <artifactId>renjin-hamcrest-maven-plugin</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2</version>
         <configuration>
           <testFailureIgnore>false</testFailureIgnore>
           <runSourceScriptsBeforeTests>true</runSourceScriptsBeforeTests>
