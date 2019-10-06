@@ -2,8 +2,15 @@ package se.alipsa.ride.inout;
 
 
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,25 +30,38 @@ public class AddRemoteDialog extends Dialog<Map<AddRemoteDialog.KEY, String>> {
 
       getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-      GridPane grid = new GridPane();
-      grid.setHgap(10);
-      grid.setVgap(10);
-      grid.setPadding(new Insets(10, 15, 10, 10));
-      getDialogPane().setContent(grid);
+      BorderPane pane = new BorderPane();
 
+      VBox vBox = new VBox();
+      vBox.setPadding(new Insets(10, 15, 10, 10));
+      pane.setCenter(vBox);
+      getDialogPane().setContent(pane);
+
+
+      HBox nameHbox = new HBox();
+      nameHbox.setSpacing(10);
+      nameHbox.setPadding(new Insets(10, 10, 10, 10));
       Label nameLabel = new Label("Name");
-      grid.add(nameLabel,0,0);
+      nameHbox.getChildren().add(nameLabel);
       nameField = new TextField();
-      nameField.setPrefColumnCount(10);
+      nameField.setText("origin");
       nameField.setTooltip(new Tooltip("The name of the remote to add."));
-      grid.add(nameField, 1,0);
 
+      nameHbox.getChildren().add(nameField);
+      HBox.setHgrow(nameField, Priority.ALWAYS);
+      vBox.getChildren().add(nameHbox);
+
+      HBox urlHbox = new HBox();
+      urlHbox.setSpacing(10);
+      urlHbox.setPadding(new Insets(10, 10, 10, 10));
       Label urlLabel = new Label("URI");
-      grid.add(urlLabel,0,1);
+      urlHbox.getChildren().add(urlLabel);
       urlField = new TextField();
-      urlField.setPrefColumnCount(15);
       urlField.setTooltip(new Tooltip("The URL of the repository for the new remote."));
-      grid.add(urlField, 1,1);
+
+      urlHbox.getChildren().add(urlField);
+      HBox.setHgrow(urlField, Priority.ALWAYS);
+      vBox.getChildren().add(urlHbox);
 
       setResizable(true);
 

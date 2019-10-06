@@ -67,7 +67,7 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     changeToDir.setSelected(true);
     grid.add(changeToDir, 0, 3, 2, 1);
 
-    getDialogPane().setPrefSize(650, 300);
+    getDialogPane().setPrefSize(700, 300);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     setResizable(true);
 

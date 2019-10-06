@@ -3,6 +3,8 @@ package se.alipsa.ride.inout;
 import static se.alipsa.ride.utils.GitUtils.asRelativePath;
 
 import javafx.event.ActionEvent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -21,10 +23,12 @@ import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
@@ -231,7 +235,7 @@ public class DynamicContextMenu extends ContextMenu {
     dialog.setContentText("Branch to merge from:");
 
     Optional<String> result = dialog.showAndWait();
-    if (result.isPresent()){
+    if (result.isPresent()) {
       String branchName = result.get();
       try {
         // retrieve the objectId of the latest commit on branch
@@ -239,17 +243,17 @@ public class DynamicContextMenu extends ContextMenu {
         MergeResult mergeResult = git.merge().include(latestCommit).call();
         if (mergeResult.getMergeStatus().equals(MergeResult.MergeStatus.CONFLICTING)) {
           StringBuilder str = new StringBuilder();
-          mergeResult.getConflicts().forEach((k,v) -> str.append(k).append(": ").append(Arrays.deepToString(v)).append("\n"));
+          mergeResult.getConflicts().forEach((k, v) -> str.append(k).append(": ").append(Arrays.deepToString(v)).append("\n"));
           Alerts.warn("Merge Conflicts detected", str.toString());
         } else if (mergeResult.getMergeStatus().isSuccessful()) {
           StringBuilder mergeContent = new StringBuilder("The following commits was merged:\n");
           for (ObjectId objectId : mergeResult.getMergedCommits()) {
-              mergeContent.append(objectId).append("\n");
+            mergeContent.append(objectId).append("\n");
           }
           Alerts.info("Merge success", mergeContent.toString());
         } else {
           StringBuilder str = new StringBuilder();
-          mergeResult.getFailingPaths().forEach((k,v) -> str.append(k).append(": ").append(v.toString()).append("\n"));
+          mergeResult.getFailingPaths().forEach((k, v) -> str.append(k).append(": ").append(v.toString()).append("\n"));
           Alerts.warn("Merge failed", str.toString());
         }
         fileTree.refresh();
@@ -277,7 +281,7 @@ public class DynamicContextMenu extends ContextMenu {
     dialog.setContentText("Branch name:");
 
     Optional<String> result = dialog.showAndWait();
-    if (result.isPresent()){
+    if (result.isPresent()) {
       String branchName = result.get();
       try {
         List<Ref> branchList = git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call();
@@ -313,7 +317,7 @@ public class DynamicContextMenu extends ContextMenu {
     try {
       Iterable<RevCommit> log = git.log().call();
       StringBuilder str = new StringBuilder();
-      for(RevCommit rc : log) {
+      for (RevCommit rc : log) {
         str.append(LocalDateTime.ofEpochSecond(rc.getCommitTime(), 0, ZoneOffset.UTC))
             .append(", ")
             .append(rc.toString())
@@ -357,8 +361,8 @@ public class DynamicContextMenu extends ContextMenu {
   }
 
   private void gitDiff(ActionEvent actionEvent) {
-    try(StringWriter writer = new StringWriter();
-        OutputStream out = new WriterOutputStream(writer, StandardCharsets.UTF_8)){
+    try (StringWriter writer = new StringWriter();
+         OutputStream out = new WriterOutputStream(writer, StandardCharsets.UTF_8)) {
       DiffCommand diffCommand = git.diff();
       diffCommand.setOutputStream(out);
       String path = getRelativePath();
@@ -447,6 +451,10 @@ public class DynamicContextMenu extends ContextMenu {
     try {
       PullResult pullResult = git.pull().call();
       log.info(pullResult.toString());
+    } catch (TransportException e) {
+      // TODO: check if it is an ssl problem
+      promptForDisablingSslValidation(e, "pull");
+      // TODO else check if it is a credentials problem
     } catch (GitAPIException e) {
       log.warn("Failed to pull", e);
       ExceptionAlert.showAlert("Failed to pull", e);
@@ -479,10 +487,46 @@ public class DynamicContextMenu extends ContextMenu {
   private void gitPush(ActionEvent actionEvent) {
     try {
       git.push().call();
+      log.info("Git push was successful");
+      Alerts.info("Git push", "Git push was successful");
+    } catch (TransportException e) {
+      promptForDisablingSslValidation(e, "push");
     } catch (GitAPIException e) {
       log.warn("Failed to push", e);
       ExceptionAlert.showAlert("Failed to push", e);
     }
+  }
+
+  private void promptForDisablingSslValidation(TransportException e, String operation) {
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    alert.setTitle("Failed to " + operation);
+    alert.setContentText(e.toString() + "\n\nDo you want to disable ssl verification?");
+    alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+    Optional<ButtonType> result = alert.showAndWait();
+    result.ifPresent(type -> {
+      log.info("promptForDisablingSslValidation, choice was {}", result.get());
+      if (ButtonType.YES == type) {
+        String url = git.getRepository().getConfig().getString("remote", "origin", "url");
+        log.info("disabling sslVerify for {}...", url);
+
+        try {
+          StoredConfig config = git.getRepository().getConfig();
+          config.setBoolean( "http", url, "sslVerify", false );
+          /*
+          FileBasedConfig config = SystemReader.getInstance().openUserConfig(null, FS.DETECTED);
+          config.load();
+          config.setBoolean(
+              "http",
+              url,
+              "sslVerify", false);
+          config.save();
+          */
+          Alerts.info("sslVerify set to false", "OK, try again!");
+        } catch (Exception ex) {
+          ExceptionAlert.showAlert("Failed to save config", ex);
+        }
+      }
+    });
   }
 
   private void gitRm(ActionEvent actionEvent) {
