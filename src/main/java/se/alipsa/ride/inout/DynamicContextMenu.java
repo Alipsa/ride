@@ -30,7 +30,10 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
@@ -47,6 +50,7 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +63,7 @@ public class DynamicContextMenu extends ContextMenu {
   private FileTree fileTree;
   private TreeItem<FileItem> currentNode;
   private File currentFile;
+  private CredentialsProvider credentialsProvider;
 
   MenuItem gitInitMI = new MenuItem("Initialize root as git repo");
 
@@ -66,6 +71,7 @@ public class DynamicContextMenu extends ContextMenu {
 
   public DynamicContextMenu(FileTree fileTree) {
     this.fileTree = fileTree;
+    credentialsProvider = null;
     MenuItem copyMI = new MenuItem("copy name");
     copyMI.setOnAction(e -> fileTree.copySelectionToClipboard());
 
@@ -450,12 +456,11 @@ public class DynamicContextMenu extends ContextMenu {
 
   private void gitPull(ActionEvent actionEvent) {
     try {
-      PullResult pullResult = git.pull().call();
+      PullResult pullResult = git.pull().setCredentialsProvider(credentialsProvider).call();
       log.info(pullResult.toString());
+      Alerts.info("Git pull", pullResult.toString());
     } catch (TransportException e) {
-      // TODO: check if it is an ssl problem
-      promptForDisablingSslValidation(e, "pull");
-      // TODO else check if it is a credentials problem
+      handleTransportException(e, "pull");
     } catch (GitAPIException e) {
       log.warn("Failed to pull", e);
       ExceptionAlert.showAlert("Failed to pull", e);
@@ -487,18 +492,48 @@ public class DynamicContextMenu extends ContextMenu {
 
   private void gitPush(ActionEvent actionEvent) {
     try {
-      git.push().call();
-      log.info("Git push was successful");
-      Alerts.info("Git push", "Git push was successful");
+      Iterable<PushResult> result = git.push().setCredentialsProvider(credentialsProvider).call();
+      log.info("Git push was successful: {}", result);
+      StringBuilder str = new StringBuilder();
+      for (PushResult pushResult : result) {
+        pushResult.getRemoteUpdates().forEach(u ->
+            str.append(u.toString()).append("\n"));
+      }
+      Alerts.info("Git push", "Git push was successful!\n" + str.toString());
     } catch (TransportException e) {
-      promptForDisablingSslValidation(e, "push");
+      handleTransportException(e, "push");
     } catch (GitAPIException e) {
       log.warn("Failed to push", e);
       ExceptionAlert.showAlert("Failed to push", e);
     }
   }
 
-  private void promptForDisablingSslValidation(TransportException e, String operation) {
+  private void handleTransportException(TransportException e, String operation) {
+    log.info("Error pulling from remote");
+    // TODO: check if it is an ssl problem
+    List<Class> causes = new ArrayList<>();
+    Throwable cause = e.getCause();
+    while (cause != null) {
+      log.info("Cause is {}", cause.toString());
+      causes.add(cause.getClass());
+      cause = cause.getCause();
+    }
+    if (causes.contains(javax.net.ssl.SSLHandshakeException.class)) {
+        handleSslValiationProblem(e, operation);
+    } else if (e.getMessage().contains("Authentication is required but no CredentialsProvider has been registered")) {
+      CredentialsDialog credentialsDialog = new CredentialsDialog();
+      Optional<Map<CredentialsDialog.KEY, String>> res = credentialsDialog.showAndWait();
+      if (res.isPresent()) {
+        Map<CredentialsDialog.KEY, String> creds = res.get();
+        credentialsProvider = new UsernamePasswordCredentialsProvider(
+            creds.get(CredentialsDialog.KEY.NAME),
+            creds.get(CredentialsDialog.KEY.PASSWORD));
+        Alerts.info("Credentials set", "Credentials set, please try again!");
+      }
+    }
+  }
+
+  private void handleSslValiationProblem(TransportException e, String operation) {
     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
     alert.setTitle("Failed to " + operation);
     alert.setContentText(e.toString() + "\n\nDo you want to disable ssl verification?");
@@ -513,6 +548,7 @@ public class DynamicContextMenu extends ContextMenu {
         try {
           StoredConfig config = git.getRepository().getConfig();
           config.setBoolean( "http", url, "sslVerify", false );
+          config.save();
           /*
           FileBasedConfig config = SystemReader.getInstance().openUserConfig(null, FS.DETECTED);
           config.load();
@@ -580,7 +616,16 @@ public class DynamicContextMenu extends ContextMenu {
   private void gitInit(ActionEvent actionEvent) {
     try {
       git = Git.init().setDirectory(fileTree.getRootDir()).call();
-      FileUtils.copy("templates/.gitignore", fileTree.getRootDir());
+      String gitIgnoreTemplate = "templates/.gitignore";
+      File gitIgnore = new File(fileTree.getRootDir(), ".gitignore");
+      if (gitIgnore.exists()) {
+        String content = FileUtils.readContent(gitIgnore);
+        if (!content.contains("/target")) {
+          FileUtils.writeToFile(gitIgnore, content + "\n" + FileUtils.readContent(gitIgnoreTemplate));
+        }
+      } else {
+        FileUtils.copy(gitIgnoreTemplate, fileTree.getRootDir());
+      }
       fileTree.refresh();
     } catch (GitAPIException | IOException e) {
       log.warn("Failed to initialize git in " + fileTree.getRootDir().getAbsolutePath(), e);
