@@ -34,6 +34,7 @@ import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.GitUtils;
 
 import java.io.File;
@@ -579,8 +580,9 @@ public class DynamicContextMenu extends ContextMenu {
   private void gitInit(ActionEvent actionEvent) {
     try {
       git = Git.init().setDirectory(fileTree.getRootDir()).call();
+      FileUtils.copy("templates/.gitignore", fileTree.getRootDir());
       fileTree.refresh();
-    } catch (GitAPIException e) {
+    } catch (GitAPIException | IOException e) {
       log.warn("Failed to initialize git in " + fileTree.getRootDir().getAbsolutePath(), e);
       ExceptionAlert.showAlert("Failed to initialize git in " + fileTree.getRootDir().getAbsolutePath(), e);
     }
