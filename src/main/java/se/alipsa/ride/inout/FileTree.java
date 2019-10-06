@@ -155,9 +155,9 @@ public class FileTree extends TreeView<FileItem> {
   private void gitColorTree(TreeItem<FileItem> root) {
     File rootDir = getRoot().getValue().getFile();
     if (rootDir != null && rootDir.exists() && Objects.requireNonNull(rootDir.list((dir, name) -> name.equalsIgnoreCase(".git"))).length > 0) {
-      log.info("adding git coloring...");
+      log.debug("adding git coloring...");
     } else {
-      log.info("not a git repository, skipping git coloring");
+      log.debug("not a git repository, skipping git coloring");
       return;
     }
     Platform.runLater(() -> {
@@ -172,16 +172,6 @@ public class FileTree extends TreeView<FileItem> {
           ExceptionAlert.showAlert("Failed to get git status", e);
           return;
         }
-        /*
-        log.info("Git changes:\n {} added: {}\n {} changed: {}\n {} conflicting: {}\n {} ignored: {}\n {} modified: {}\n {} uncomitted: {}\n {} untracked: {}",
-            statusMap.get(GIT_ADDED).size(), statusMap.get(GIT_ADDED),
-            statusMap.get(GIT_CHANGED).size(), statusMap.get(GIT_CHANGED),
-            statusMap.get(GIT_CONFLICT).size(), statusMap.get(GIT_CONFLICT),
-            statusMap.get(GIT_IGNORED).size(), statusMap.get(GIT_IGNORED),
-            statusMap.get(GIT_MODIFIED).size(), statusMap.get(GIT_MODIFIED),
-            statusMap.get(GIT_UNCOMITTED_CHANGE).size(), statusMap.get(GIT_UNCOMITTED_CHANGE),
-            statusMap.get(GIT_UNTRACKED).size(), statusMap.get(GIT_UNTRACKED));
-         */
         walkAndColor(getRoot(), status);
       } catch (Exception e) {
         log.error("Failed to set git colors", e);

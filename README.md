@@ -76,11 +76,7 @@ a connection and choose "view connection".
 
 # Building and compiling
 
-Ride depends on one other repo (snapshot artifact) that must be built first:
-
-Download rideutils from https://github.com/perNyfelt/rideutils and build it with `mvn install`
-
-To build Ride then simply do ` mvn clean install`
+To build Ride, simply do ` mvn -Ponline clean install`
 
 There are some wrapper scripts that you might find useful.  
 To create a runnable jar and run it do 

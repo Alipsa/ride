@@ -26,7 +26,7 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>rideutils</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>de.codecentric.centerdevice</groupId>
@@ -279,7 +279,7 @@
                             <file>${ride.jar}</file>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--execution>
                         <id>installRideutils</id>
                         <phase>initialize</phase>
                         <goals>
@@ -288,11 +288,11 @@
                         <configuration>
                             <groupId>se.alipsa</groupId>
                             <artifactId>rideutils</artifactId>
-                            <version>1.0-SNAPSHOT</version>
+                            <version>1.0</version>
                             <packaging>jar</packaging>
-                            <file>lib/rideutils-1.0-SNAPSHOT.jar</file>
+                            <file>lib/rideutils-1.0.jar</file>
                         </configuration>
-                    </execution>
+                    </execution-->
                 </executions>
             </plugin>
             <plugin>
