@@ -48,23 +48,6 @@
     -fx-background-color: -fx-selected-bgcolor;
 }
 
-/* does not work in the color themes so will set the style directly instead
-.tree-cell:git-added {
-    -fx-text-fill: rgba(115, 155, 105, 255);
-    -fx-font-style: italic;
-}
-
-.tree-cell:git-untracked {
-    -fx-text-fill: sienna;
-    -fx-font-style: italic;
-}
-
-.tree-cell:git-changed {
-    -fx-text-fill: royalblue;
-    -fx-font-style: italic;
-}
-*/
-
 .table-view {
     /*-fx-background-color: rgba(40, 40, 40, 255); */
     -fx-background-color: transparent;
@@ -217,6 +200,7 @@
 
 .function {
     -fx-font-style: italic;
+    /*-fx-fill: lightblue;*/
 }
 
 .keyword {

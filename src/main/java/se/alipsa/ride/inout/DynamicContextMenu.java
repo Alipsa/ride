@@ -1,7 +1,9 @@
 package se.alipsa.ride.inout;
 
+import static se.alipsa.ride.Constants.REPORT_BUG;
 import static se.alipsa.ride.utils.GitUtils.asRelativePath;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -455,16 +457,18 @@ public class DynamicContextMenu extends ContextMenu {
   }
 
   private void gitPull(ActionEvent actionEvent) {
-    try {
-      PullResult pullResult = git.pull().setCredentialsProvider(credentialsProvider).call();
-      log.info(pullResult.toString());
-      Alerts.info("Git pull", pullResult.toString());
-    } catch (TransportException e) {
-      handleTransportException(e, "pull");
-    } catch (GitAPIException e) {
-      log.warn("Failed to pull", e);
-      ExceptionAlert.showAlert("Failed to pull", e);
-    }
+    Platform.runLater(() -> {
+      try {
+        PullResult pullResult = git.pull().setCredentialsProvider(credentialsProvider).call();
+        log.info(pullResult.toString());
+        Alerts.info("Git pull", pullResult.toString());
+      } catch (TransportException e) {
+        handleTransportException(e, "pull");
+      } catch (GitAPIException e) {
+        log.warn("Failed to pull", e);
+        ExceptionAlert.showAlert("Failed to pull", e);
+      }
+    });
   }
 
   private void gitAddRemote(ActionEvent actionEvent) {
@@ -491,21 +495,23 @@ public class DynamicContextMenu extends ContextMenu {
   }
 
   private void gitPush(ActionEvent actionEvent) {
-    try {
-      Iterable<PushResult> result = git.push().setCredentialsProvider(credentialsProvider).call();
-      log.info("Git push was successful: {}", result);
-      StringBuilder str = new StringBuilder();
-      for (PushResult pushResult : result) {
-        pushResult.getRemoteUpdates().forEach(u ->
-            str.append(u.toString()).append("\n"));
+    Platform.runLater(() -> {
+      try {
+        Iterable<PushResult> result = git.push().setCredentialsProvider(credentialsProvider).call();
+        log.info("Git push was successful: {}", result);
+        StringBuilder str = new StringBuilder();
+        for (PushResult pushResult : result) {
+          pushResult.getRemoteUpdates().forEach(u ->
+              str.append(u.toString()).append("\n"));
+        }
+        Alerts.info("Git push", "Git push was successful!\n" + str.toString());
+      } catch (TransportException e) {
+        handleTransportException(e, "push");
+      } catch (GitAPIException e) {
+        log.warn("Failed to push", e);
+        ExceptionAlert.showAlert("Failed to push", e);
       }
-      Alerts.info("Git push", "Git push was successful!\n" + str.toString());
-    } catch (TransportException e) {
-      handleTransportException(e, "push");
-    } catch (GitAPIException e) {
-      log.warn("Failed to push", e);
-      ExceptionAlert.showAlert("Failed to push", e);
-    }
+    });
   }
 
   private void handleTransportException(TransportException e, String operation) {
@@ -514,12 +520,12 @@ public class DynamicContextMenu extends ContextMenu {
     List<Class> causes = new ArrayList<>();
     Throwable cause = e.getCause();
     while (cause != null) {
-      log.info("Cause is {}", cause.toString());
+      log.debug("Cause is {}", cause.toString());
       causes.add(cause.getClass());
       cause = cause.getCause();
     }
     if (causes.contains(javax.net.ssl.SSLHandshakeException.class)) {
-        handleSslValiationProblem(e, operation);
+      handleSslValiationProblem(e, operation);
     } else if (e.getMessage().contains("Authentication is required but no CredentialsProvider has been registered")) {
       CredentialsDialog credentialsDialog = new CredentialsDialog();
       Optional<Map<CredentialsDialog.KEY, String>> res = credentialsDialog.showAndWait();
@@ -528,9 +534,23 @@ public class DynamicContextMenu extends ContextMenu {
         credentialsProvider = new UsernamePasswordCredentialsProvider(
             creds.get(CredentialsDialog.KEY.NAME),
             creds.get(CredentialsDialog.KEY.PASSWORD));
-        Alerts.info("Credentials set", "Credentials set, please try again!");
+        //Alerts.info("Credentials set", "Credentials set, please try again!");
       }
+    } else {
+      ExceptionAlert.showAlert("An unrecognized remote exception occurred. " + REPORT_BUG, e);
+      return;
     }
+    if ("push".equals(operation)) {
+      gitPush(null);
+    } else if ("pull".equals(operation)) {
+      gitPull(null);
+    } else {
+      Alerts.warn(
+          "Unknown operation when calling handleTransportException",
+          operation + " is an unknown operation. " + REPORT_BUG
+      );
+    }
+
   }
 
   private void handleSslValiationProblem(TransportException e, String operation) {
@@ -547,18 +567,9 @@ public class DynamicContextMenu extends ContextMenu {
 
         try {
           StoredConfig config = git.getRepository().getConfig();
-          config.setBoolean( "http", url, "sslVerify", false );
+          config.setBoolean("http", url, "sslVerify", false);
           config.save();
-          /*
-          FileBasedConfig config = SystemReader.getInstance().openUserConfig(null, FS.DETECTED);
-          config.load();
-          config.setBoolean(
-              "http",
-              url,
-              "sslVerify", false);
-          config.save();
-          */
-          Alerts.info("sslVerify set to false", "OK, try again!");
+          //Alerts.info("sslVerify set to false", "OK, try again!");
         } catch (Exception ex) {
           ExceptionAlert.showAlert("Failed to save config", ex);
         }
@@ -583,20 +594,22 @@ public class DynamicContextMenu extends ContextMenu {
     td.setHeaderText("Enter commit message");
     final Optional<String> result = td.showAndWait();
     if (result.isPresent()) {
-      try {
-        String msg = td.getEditor().getText();
-        if (StringUtils.isBlank(msg)) {
-          Alerts.info("Empty message", "Commit message cannot be empty");
-          return;
-        }
-        CommitCommand commit = git.commit();
-        RevCommit revCommit = commit.setMessage(msg).call();
-        log.info("Commited result: {}", revCommit);
-        fileTree.refresh();
-      } catch (GitAPIException e) {
-        log.warn("Failed to commit ", e);
-        ExceptionAlert.showAlert("Failed to commit ", e);
+      String msg = td.getEditor().getText();
+      if (StringUtils.isBlank(msg)) {
+        Alerts.info("Empty message", "Commit message cannot be empty");
+        return;
       }
+      Platform.runLater(() -> {
+        try {
+          CommitCommand commit = git.commit();
+          RevCommit revCommit = commit.setMessage(msg).call();
+          log.info("Commited result: {}", revCommit);
+          fileTree.refresh();
+        } catch (GitAPIException e) {
+          log.warn("Failed to commit ", e);
+          ExceptionAlert.showAlert("Failed to commit ", e);
+        }
+      });
     }
   }
 
@@ -606,7 +619,6 @@ public class DynamicContextMenu extends ContextMenu {
       DirCache dc = git.add().addFilepattern(currentPath).call();
       log.info("Added {} to git dir cache, node is {}", currentPath, currentNode.getValue().getText());
       GitUtils.colorNode(git, currentPath, currentNode);
-      //currentNode.getValue().setStyle(GIT_ADDED.getStyle());
     } catch (GitAPIException e) {
       log.warn("Failed to add " + currentPath, e);
       ExceptionAlert.showAlert("Failed to add " + currentPath, e);

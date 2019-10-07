@@ -42,7 +42,7 @@ public class RTextArea extends CodeTextArea {
       "emptyenv", "enc2native", "enc2utf8", "Encoding", "encodeString", "env.profile", "environment", "environmentName", "exp", "eval", "evalq", "eval.parent", "exists", "expand.grid", "exp", "expression",
       "factor", "factorial", "fifo", "file", "file.access", "file.append", "file.choose", "file.copy", "file.create", "file.exists", "file.link", "file.remove", "file.show", "file.symlink", "Filter", "Find", "find.package", "findInterval", "floor", "flush", "force", "forceAndCall", "formals", "format", "format.info", "format.pval", "formatC", "formatDL", "forwardsolve",
       "gamma", "gc", "gcinfo", "get0", "gettext", "getwd", "gl", "globalenv", "gregexpr", "grep", "grepl", "grepRaw", "gsub", "gzcon", "gzfile",
-      "iconv", "identical", "identity", "ifelse", "inherits", "integer", "interaction", "interactive", "is.array", "is.atomic", "is.call", "is.character", "is.complex", "is.data.frame", "is.double", "is.environment", "is.expression", "is.factor", "is.function", "is.integer", "is.language", "is.na", "is.null", "is.numeric", "is.matrix", "is.object", "is.ordered", "is.primitive", "is.R", "is.recursive", "is.vector", "isFALSE", "isTRUE", "isIncomplete", "isOpen", "isSymmetric", "I", "ISOdatetime", "ISOdate",
+      "iconv", "identical", "identity", "ifelse", "import", "inherits", "integer", "interaction", "interactive", "is.array", "is.atomic", "is.call", "is.character", "is.complex", "is.data.frame", "is.double", "is.environment", "is.expression", "is.factor", "is.function", "is.integer", "is.language", "is.na", "is.null", "is.numeric", "is.matrix", "is.object", "is.ordered", "is.primitive", "is.R", "is.recursive", "is.vector", "isFALSE", "isTRUE", "isIncomplete", "isOpen", "isSymmetric", "I", "ISOdatetime", "ISOdate",
       "lapply", "lbeta", "lchoose", "lfactorial", "lgamma", "library", "list", "local", "log", "log10",
       "Map", "mapply", "margin.table", "match", "matrix", "max", "mean", "median", "memCompress", "memDecompress", "merge", "min", "mostattributes",
       "names", "Negate", "new.env", "NextMethod", "ngettext", "nrow", "ncol",
@@ -58,7 +58,7 @@ public class RTextArea extends CodeTextArea {
       "xzfile"
   };
   private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
-  //private static final String FUNCTIONS_PATTERN = "\\b(" + String.join("|", FUNCTIONS) + ")\\b";
+  private static final String FUNCTIONS_PATTERN = "\\b(" + String.join("|", FUNCTIONS) + ")\\b";
   private static final String ASSIGNMENT_PATTERN = "->|<-|=(?!=)|~|%>%";
   private static final String OPERATOR_PATTERN = "-|\\+|\\*|/|\\^|\\*{2}|%%|%/%|%in%|<|>|<=|>=|={2}|!=|!|&|:";
   private static final String BRACKET_PATTERN = "[\\[\\]\\{\\}\\(\\)]";
@@ -68,7 +68,7 @@ public class RTextArea extends CodeTextArea {
   private static final String COMMENT_PATTERN = "#[^\n]*";
   private static final Pattern PATTERN = Pattern.compile(
       "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
-          //+ "|(?<FUNCTIONS>" + FUNCTIONS_PATTERN + ")"
+          + "|(?<FUNCTIONS>" + FUNCTIONS_PATTERN + ")"
           + "|(?<ASSIGNMENT>" + ASSIGNMENT_PATTERN + ")"
           + "|(?<OPERATOR>" + OPERATOR_PATTERN + ")"
           + "|(?<BRACKET>" + BRACKET_PATTERN + ")"
@@ -158,14 +158,14 @@ public class RTextArea extends CodeTextArea {
     while (matcher.find()) {
       String styleClass =
           matcher.group("KEYWORD") != null ? "keyword" :
-              // matcher.group("FUNCTIONS") != null ? "function" :
-              matcher.group("ASSIGNMENT") != null ? "assign" :
-                  matcher.group("OPERATOR") != null ? "operator" :
-                      matcher.group("BRACKET") != null ? "bracket" :
-                          matcher.group("DIGIT") != null ? "digit" :
-                              matcher.group("STRING") != null ? "string" :
-                                  matcher.group("COMMENT") != null ? "comment" :
-                                      null; /* never happens */
+              matcher.group("FUNCTIONS") != null ? "function" :
+                matcher.group("ASSIGNMENT") != null ? "assign" :
+                    matcher.group("OPERATOR") != null ? "operator" :
+                        matcher.group("BRACKET") != null ? "bracket" :
+                            matcher.group("DIGIT") != null ? "digit" :
+                                matcher.group("STRING") != null ? "string" :
+                                    matcher.group("COMMENT") != null ? "comment" :
+                                        null; /* never happens */
       spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
       spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
       lastKwEnd = matcher.end();

@@ -41,12 +41,6 @@ public class Constants {
       return style;
     }
   }
-  //public static final String GIT_ADDED = "-fx-text-fill: #629755;";
-  //public static final String GIT_UNTRACKED = "-fx-text-fill: sienna";
-  //public static final String GIT_CHANGED = "-fx-text-fill: #6897BB";
-  //public static final String GIT_CONFLICT = "-fx-text-fill: red";
-  //public static final String GIT_IGNORED = "-fx-text-fill: grey";
-  //public static final String GIT_MODIFIED= "-fx-text-fill: blue";
-  //public static final String GIT_UNCOMITTED_CHANGE= "-fx-text-fill:  #8AA4C8";
-  //public static final String GIT_NONE= "";
+
+  public static final String REPORT_BUG = "Please report this bug to https://github.com/perNyfelt/ride/issues!";
 }
