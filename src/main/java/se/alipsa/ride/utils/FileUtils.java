@@ -221,6 +221,15 @@ public class FileUtils {
     }
   }
 
+  public static void appendToOrCreateFile(File file, String content) throws IOException {
+    if (!file.exists()) {
+      file.createNewFile();
+    }
+    try(FileWriter writer = new FileWriter(file, true)) {
+      writer.write(content);
+    }
+  }
+
   public static String readContent(File file, Charset... charsetOpt) throws IOException {
     Charset charset = charsetOpt.length > 0 ? charsetOpt[0] : StandardCharsets.UTF_8;
     StringBuilder str = new StringBuilder();

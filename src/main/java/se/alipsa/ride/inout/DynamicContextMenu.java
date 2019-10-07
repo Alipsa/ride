@@ -459,12 +459,14 @@ public class DynamicContextMenu extends ContextMenu {
   private void gitPull(ActionEvent actionEvent) {
     Platform.runLater(() -> {
       try {
+        String url = getRemoteGitUrl();
+        credentialsProvider = GitUtils.getStoredCredentials(url);
         PullResult pullResult = git.pull().setCredentialsProvider(credentialsProvider).call();
         log.info(pullResult.toString());
         Alerts.info("Git pull", pullResult.toString());
       } catch (TransportException e) {
         handleTransportException(e, "pull");
-      } catch (GitAPIException e) {
+      } catch (Exception e) {
         log.warn("Failed to pull", e);
         ExceptionAlert.showAlert("Failed to pull", e);
       }
@@ -497,6 +499,7 @@ public class DynamicContextMenu extends ContextMenu {
   private void gitPush(ActionEvent actionEvent) {
     Platform.runLater(() -> {
       try {
+        credentialsProvider = GitUtils.getStoredCredentials(getRemoteGitUrl());
         Iterable<PushResult> result = git.push().setCredentialsProvider(credentialsProvider).call();
         log.info("Git push was successful: {}", result);
         StringBuilder str = new StringBuilder();
@@ -507,7 +510,7 @@ public class DynamicContextMenu extends ContextMenu {
         Alerts.info("Git push", "Git push was successful!\n" + str.toString());
       } catch (TransportException e) {
         handleTransportException(e, "push");
-      } catch (GitAPIException e) {
+      } catch (Exception e) {
         log.warn("Failed to push", e);
         ExceptionAlert.showAlert("Failed to push", e);
       }
@@ -527,13 +530,23 @@ public class DynamicContextMenu extends ContextMenu {
     if (causes.contains(javax.net.ssl.SSLHandshakeException.class)) {
       handleSslValiationProblem(e, operation);
     } else if (e.getMessage().contains("Authentication is required but no CredentialsProvider has been registered")) {
+
       CredentialsDialog credentialsDialog = new CredentialsDialog();
       Optional<Map<CredentialsDialog.KEY, String>> res = credentialsDialog.showAndWait();
       if (res.isPresent()) {
         Map<CredentialsDialog.KEY, String> creds = res.get();
-        credentialsProvider = new UsernamePasswordCredentialsProvider(
-            creds.get(CredentialsDialog.KEY.NAME),
-            creds.get(CredentialsDialog.KEY.PASSWORD));
+        String userName = creds.get(CredentialsDialog.KEY.NAME);
+        String password = creds.get(CredentialsDialog.KEY.PASSWORD);
+        credentialsProvider = new UsernamePasswordCredentialsProvider( userName, password );
+        boolean store = Boolean.parseBoolean(creds.get(CredentialsDialog.KEY.STORE_CREDENTIALS));
+        if (store) {
+          String url = getRemoteGitUrl();
+          try {
+            GitUtils.storeCredentials(url, userName, password);
+          } catch (Exception ex) {
+            ExceptionAlert.showAlert("Failed to store credentials", ex);
+          }
+        }
         //Alerts.info("Credentials set", "Credentials set, please try again!");
       }
     } else {
@@ -562,7 +575,7 @@ public class DynamicContextMenu extends ContextMenu {
     result.ifPresent(type -> {
       log.info("promptForDisablingSslValidation, choice was {}", result.get());
       if (ButtonType.YES == type) {
-        String url = git.getRepository().getConfig().getString("remote", "origin", "url");
+        String url = getRemoteGitUrl();
         log.info("disabling sslVerify for {}...", url);
 
         try {
@@ -575,6 +588,10 @@ public class DynamicContextMenu extends ContextMenu {
         }
       }
     });
+  }
+
+  private String getRemoteGitUrl() {
+    return git.getRepository().getConfig().getString("remote", "origin", "url");
   }
 
   private void gitRm(ActionEvent actionEvent) {
