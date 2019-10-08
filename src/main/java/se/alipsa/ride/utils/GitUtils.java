@@ -86,9 +86,9 @@ public class GitUtils {
 
    public static void storeCredentials(String url, String userName, String password) throws URISyntaxException, IOException {
       File gitCredentials = getCredentialsFile();
-      URIish remoteUri = new URIish(url);
-      remoteUri.setUser(userName);
-      remoteUri.setPass(password);
+      URIish remoteUri = new URIish(url)
+         .setUser(userName)
+         .setPass(password);
       log.info("Storing {} to {}", remoteUri.toString(), gitCredentials.getAbsolutePath());
       FileUtils.appendToOrCreateFile(gitCredentials, " \n" + remoteUri.toPrivateString());
    }
