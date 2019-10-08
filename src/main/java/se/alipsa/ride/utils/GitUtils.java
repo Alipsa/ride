@@ -1,5 +1,14 @@
 package se.alipsa.ride.utils;
 
+import static se.alipsa.ride.Constants.GitStatus.GIT_ADDED;
+import static se.alipsa.ride.Constants.GitStatus.GIT_CHANGED;
+import static se.alipsa.ride.Constants.GitStatus.GIT_CONFLICT;
+import static se.alipsa.ride.Constants.GitStatus.GIT_IGNORED;
+import static se.alipsa.ride.Constants.GitStatus.GIT_MODIFIED;
+import static se.alipsa.ride.Constants.GitStatus.GIT_NONE;
+import static se.alipsa.ride.Constants.GitStatus.GIT_UNCOMITTED_CHANGE;
+import static se.alipsa.ride.Constants.GitStatus.GIT_UNTRACKED;
+
 import javafx.scene.control.TreeItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,17 +16,15 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import se.alipsa.ride.inout.FileItem;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.List;
-
-import static se.alipsa.ride.Constants.GitStatus.*;
 
 public class GitUtils {
 
@@ -79,17 +86,11 @@ public class GitUtils {
 
    public static void storeCredentials(String url, String userName, String password) throws URISyntaxException, IOException {
       File gitCredentials = getCredentialsFile();
-
-      URI remoteUri = new URI(url);
-      URI credUri = new URI(remoteUri.getScheme(),
-         userName + ":" + password,
-         remoteUri.getHost(),
-         remoteUri.getPort(),
-         remoteUri.getPath(),
-         remoteUri.getQuery(),
-         remoteUri.getFragment());
-      log.info("Storing {} to {}", credUri.toString(), gitCredentials.getAbsolutePath());
-      FileUtils.appendToOrCreateFile(gitCredentials, " \n" + credUri.toString());
+      URIish remoteUri = new URIish(url);
+      remoteUri.setUser(userName);
+      remoteUri.setPass(password);
+      log.info("Storing {} to {}", remoteUri.toString(), gitCredentials.getAbsolutePath());
+      FileUtils.appendToOrCreateFile(gitCredentials, " \n" + remoteUri.toPrivateString());
    }
 
    public static CredentialsProvider getStoredCredentials(String url) throws IOException, URISyntaxException {
@@ -97,13 +98,16 @@ public class GitUtils {
       if (!gitCredentials.exists()) {
          return null;
       }
-      URI remoteUri = new URI(url);
+      URIish remoteUri = new URIish(url);
       List<String> lines = Files.readAllLines(gitCredentials.toPath());
       for (String line : lines) {
-         URI uri = new URI(line);
+         if (line == null || line.trim().equals("")) {
+            continue;
+         }
+         URIish uri = new URIish(line);
          String uriPath = uri.getPath();
          String remotePath = remoteUri.getPath();
-        // if uri.getPath() == null it should always match, see https://git-scm.com/docs/gitcredentials
+         // if uri.getPath() == null it should always match, see https://git-scm.com/docs/gitcredentials
          if (uriPath == null) {
            uriPath = "";
            remotePath = "";
@@ -113,11 +117,7 @@ public class GitUtils {
             && uri.getHost().equals(remoteUri.getHost())
             && uriPath.equals(remotePath)) {
 
-            String credentials = uri.getUserInfo();
-            String[] credArr = credentials.split(":");
-            if (credArr.length == 2) {
-               return new UsernamePasswordCredentialsProvider(credArr[0], credArr[1]);
-            }
+            return new UsernamePasswordCredentialsProvider(uri.getUser(), uri.getPass());
          }
       }
       return null;

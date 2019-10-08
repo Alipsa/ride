@@ -97,7 +97,7 @@ public class FileTree extends TreeView<FileItem> {
     });
 
     setOnMouseClicked(this::handleClick);
-    menu = new DynamicContextMenu(this);
+    menu = new DynamicContextMenu(this, gui);
     //setContextMenu(createContextMenu());
     addEventHandler(MouseEvent.MOUSE_RELEASED, e->{
       if (e.getButton() == MouseButton.SECONDARY) {
@@ -279,7 +279,7 @@ public class FileTree extends TreeView<FileItem> {
     getRoot().setExpanded(true);
     gitColorTree(getRoot());
     setWorkingDirPref(dir);
-    menu = new DynamicContextMenu(this);
+    menu = new DynamicContextMenu(this, gui);
   }
 
   public void refresh() {
@@ -288,7 +288,7 @@ public class FileTree extends TreeView<FileItem> {
     sortTree(getRoot());
     getRoot().setExpanded(true);
     gitColorTree(getRoot());
-    menu = new DynamicContextMenu(this);
+    menu = new DynamicContextMenu(this, gui);
   }
 
   private TreeItem<FileItem> findTreeViewItem(TreeItem<FileItem> item, File value) {

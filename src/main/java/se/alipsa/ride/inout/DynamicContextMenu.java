@@ -37,6 +37,7 @@ import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
+import se.alipsa.ride.Ride;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
@@ -62,6 +63,7 @@ import java.util.Set;
 public class DynamicContextMenu extends ContextMenu {
 
   private Git git;
+  private Ride gui;
   private FileTree fileTree;
   private TreeItem<FileItem> currentNode;
   private File currentFile;
@@ -71,8 +73,9 @@ public class DynamicContextMenu extends ContextMenu {
 
   private Logger log = LogManager.getLogger();
 
-  public DynamicContextMenu(FileTree fileTree) {
+  public DynamicContextMenu(FileTree fileTree, Ride gui) {
     this.fileTree = fileTree;
+    this.gui = gui;
     credentialsProvider = null;
     MenuItem copyMI = new MenuItem("copy name");
     copyMI.setOnAction(e -> fileTree.copySelectionToClipboard());
@@ -413,43 +416,43 @@ public class DynamicContextMenu extends ContextMenu {
     try {
       StatusCommand statusCommand = git.status();
       Status status = statusCommand.call();
-      StringBuilder str = new StringBuilder();
+      StringBuilder str = new StringBuilder("<h2>Git Status</h2>");
 
       Set<String> added = status.getAdded();
       if (added.size() > 0) {
-        str.append("Added: ").append(String.join(", ", added)).append("\n");
+        str.append("<b>Added:</b> ").append(String.join(", ", added)).append("<br/>");
       }
       Set<String> changed = status.getChanged();
       if (changed.size() > 0) {
-        str.append("Changed: ").append(String.join(", ", changed)).append("\n");
+        str.append("<br/><b>Changed:</b> ").append(String.join(", ", changed)).append("<br/>");
       }
       Set<String> conflicting = status.getConflicting();
       if (conflicting.size() > 0) {
-        str.append("Conflicting: ").append(String.join(", ", conflicting)).append("\n");
+        str.append("<br/><b>Conflicting:</b> ").append(String.join(", ", conflicting)).append("<br/>");
       }
       Set<String> missing = status.getMissing();
       if (missing.size() > 0) {
-        str.append("Missing: ").append(String.join(", ", missing)).append("\n");
+        str.append("<br/><b>Missing:</b> ").append(String.join(", ", missing)).append("<br/>");
       }
       Set<String> modified = status.getModified();
       if (modified.size() > 0) {
-        str.append("Modified: ").append(String.join(", ", modified)).append("\n");
+        str.append("<br/><b>Modified:</b> ").append(String.join(", ", modified)).append("<br/>");
       }
       Set<String> removed = status.getRemoved();
       if (removed.size() > 0) {
-        str.append("Removed: ").append(String.join(", ", removed)).append("\n");
+        str.append("<br/><b>Removed:</b> ").append(String.join(", ", removed)).append("<br/>");
       }
       Set<String> uncomittedChanges = status.getUncommittedChanges();
       if (uncomittedChanges.size() > 0) {
-        str.append("Uncommited changes: ").append(String.join(", ", uncomittedChanges)).append("\n");
+        str.append("\n<b>Uncommited changes:</b> ").append(String.join(", ", uncomittedChanges)).append("<br/>");
       }
       Set<String> untracked = status.getUntracked();
       if (untracked.size() > 0) {
-        str.append("Untracked: ").append(String.join(", ", untracked)).append("\n");
+        str.append("<br/><b>Untracked:</b> ").append(String.join(", ", untracked)).append("<br/>");
       }
-      str.append("hasUncommittedChanges: ").append(status.hasUncommittedChanges()).append("\n");
-      str.append("isClean: ").append(status.isClean()).append("\n");
-      Alerts.info("Status", str.toString());
+      str.append("<br/><b>hasUncommittedChanges:</b> ").append(status.hasUncommittedChanges()).append("<br/>");
+      str.append("<b>isClean:</b> ").append(status.isClean()).append("<br/>");
+      Alerts.infoStyled("Status", str.toString());
     } catch (GitAPIException e) {
       log.warn("Failed to get status", e);
       ExceptionAlert.showAlert("Failed to get status", e);
@@ -457,17 +460,20 @@ public class DynamicContextMenu extends ContextMenu {
   }
 
   private void gitPull(ActionEvent actionEvent) {
+    gui.setWaitCursor();
     Platform.runLater(() -> {
       try {
         String url = getRemoteGitUrl();
         credentialsProvider = GitUtils.getStoredCredentials(url);
         PullResult pullResult = git.pull().setCredentialsProvider(credentialsProvider).call();
         log.info(pullResult.toString());
+        gui.setNormalCursor();
         Alerts.info("Git pull", pullResult.toString());
       } catch (TransportException e) {
         handleTransportException(e, "pull");
       } catch (Exception e) {
         log.warn("Failed to pull", e);
+        gui.setNormalCursor();
         ExceptionAlert.showAlert("Failed to pull", e);
       }
     });
@@ -497,6 +503,7 @@ public class DynamicContextMenu extends ContextMenu {
   }
 
   private void gitPush(ActionEvent actionEvent) {
+    gui.setWaitCursor();
     Platform.runLater(() -> {
       try {
         credentialsProvider = GitUtils.getStoredCredentials(getRemoteGitUrl());
@@ -507,17 +514,20 @@ public class DynamicContextMenu extends ContextMenu {
           pushResult.getRemoteUpdates().forEach(u ->
               str.append(u.toString()).append("\n"));
         }
+        gui.setNormalCursor();
         Alerts.info("Git push", "Git push was successful!\n" + str.toString());
       } catch (TransportException e) {
         handleTransportException(e, "push");
       } catch (Exception e) {
         log.warn("Failed to push", e);
+        gui.setNormalCursor();
         ExceptionAlert.showAlert("Failed to push", e);
       }
     });
   }
 
   private void handleTransportException(TransportException e, String operation) {
+    gui.setNormalCursor();
     log.info("Error pulling from remote");
     // TODO: check if it is an ssl problem
     List<Class> causes = new ArrayList<>();
@@ -616,14 +626,17 @@ public class DynamicContextMenu extends ContextMenu {
         Alerts.info("Empty message", "Commit message cannot be empty");
         return;
       }
+      gui.setWaitCursor();
       Platform.runLater(() -> {
         try {
           CommitCommand commit = git.commit();
           RevCommit revCommit = commit.setMessage(msg).call();
           log.info("Commited result: {}", revCommit);
           fileTree.refresh();
+          gui.setNormalCursor();
         } catch (GitAPIException e) {
           log.warn("Failed to commit ", e);
+          gui.setNormalCursor();
           ExceptionAlert.showAlert("Failed to commit ", e);
         }
       });
