@@ -101,7 +101,7 @@ public class GitUtils {
       URIish remoteUri = new URIish(url);
       List<String> lines = Files.readAllLines(gitCredentials.toPath());
       for (String line : lines) {
-         if (line == null || line.trim().equals("")) {
+         if (line == null || line.trim().equals("") || line.trim().startsWith("#")) {
             continue;
          }
          URIish uri = new URIish(line);
