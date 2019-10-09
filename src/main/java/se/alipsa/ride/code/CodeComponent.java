@@ -143,4 +143,18 @@ public class CodeComponent extends BorderPane {
     }
     return false;
   }
+
+  public TextAreaTab getTab(File file) {
+    for (Tab tab : pane.getTabs()) {
+      TextAreaTab textAreaTab = (TextAreaTab)tab;
+      if (file.equals(textAreaTab.getFile())) {
+        return textAreaTab;
+      }
+    }
+    return null;
+  }
+
+  public void activateTab(TextAreaTab tab) {
+    pane.getSelectionModel().select(tab);
+  }
 }

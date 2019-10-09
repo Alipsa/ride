@@ -240,8 +240,12 @@ public class FileTree extends TreeView<FileItem> {
       if (file.isDirectory()) {
         return;
       }
-      TextAreaTab tab = fileOpener.openFile(file);
-      tab.setTreeItem(item);
+      TextAreaTab tab = gui.getCodeComponent().getTab(file);
+      if (tab == null) {
+        tab = fileOpener.openFile(file);
+        tab.setTreeItem(item);
+      }
+      gui.getCodeComponent().activateTab(tab);
     }
   }
 
