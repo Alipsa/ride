@@ -88,7 +88,7 @@ public class XmlTab extends TextAreaTab {
         } catch (RuntimeException e) {
           // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
           // this way we can get to the original one by extracting the cause from the thrown exception
-          log.warn("Exception caught, rethrowing as wrapped Exception", e);
+          log.warn(e.getClass().getSimpleName() + " caught, rethrowing as wrapped Exception", e);
           throw new Exception(e);
         }
         return null;
