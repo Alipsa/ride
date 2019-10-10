@@ -106,5 +106,6 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
 
   public void setTreeItem(TreeItem<FileItem> treeItem) {
     this.treeItem = treeItem;
+    setTooltip(new Tooltip(treeItem.getValue().getFile().getAbsolutePath()));
   }
 }
