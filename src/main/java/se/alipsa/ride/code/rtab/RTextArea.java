@@ -196,7 +196,7 @@ public class RTextArea extends CodeTextArea {
     }
     for (String function : FUNCTIONS) {
       if (function.startsWith(lastWord)) {
-        suggestions.add(function + "(");
+        suggestions.add(function + "()");
       }
     }
     suggestCompletion(lastWord, suggestions, suggestionsPopup);

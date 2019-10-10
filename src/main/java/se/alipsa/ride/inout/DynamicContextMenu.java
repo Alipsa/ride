@@ -28,6 +28,8 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
+import org.eclipse.jgit.lib.ConfigConstants;
+import org.eclipse.jgit.lib.CoreConfig;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.StoredConfig;
@@ -38,6 +40,11 @@ import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.inout.git.AddRemoteDialog;
+import se.alipsa.ride.inout.git.ConfigResult;
+import se.alipsa.ride.inout.git.CredentialsDialog;
+import se.alipsa.ride.inout.git.GitConfigureDialog;
+import se.alipsa.ride.inout.git.GitStatusDialog;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
@@ -184,6 +191,10 @@ public class DynamicContextMenu extends ContextMenu {
       MenuItem gitLogMI = new MenuItem("show Log");
       gitLogMI.setOnAction(this::gitLog);
       gitAllMenu.getItems().add(gitLogMI);
+
+      MenuItem gitConfigMI = new MenuItem("configure");
+      gitConfigMI.setOnAction(this::gitConfig);
+      gitAllMenu.getItems().add(gitConfigMI);
 
       // Branches sub menu
       Menu gitBranchMenu = new Menu("Branches");
@@ -658,6 +669,11 @@ public class DynamicContextMenu extends ContextMenu {
   private void gitInit(ActionEvent actionEvent) {
     try {
       git = Git.init().setDirectory(fileTree.getRootDir()).call();
+      StoredConfig config = git.getRepository().getConfig();
+      // Use input as the default
+      config.setEnum(ConfigConstants.CONFIG_CORE_SECTION, null,
+          ConfigConstants.CONFIG_KEY_AUTOCRLF, CoreConfig.AutoCRLF.INPUT);
+      config.save();
       String gitIgnoreTemplate = "templates/.gitignore";
       File gitIgnore = new File(fileTree.getRootDir(), ".gitignore");
       if (gitIgnore.exists()) {
@@ -675,6 +691,24 @@ public class DynamicContextMenu extends ContextMenu {
     }
   }
 
+
+  private void gitConfig(ActionEvent actionEvent) {
+    GitConfigureDialog dialog = new GitConfigureDialog(git);
+    Optional<ConfigResult> result = dialog.showAndWait();
+    if (result.isPresent()) {
+      ConfigResult res = result.get();
+      StoredConfig config = git.getRepository().getConfig();
+      config.setEnum(ConfigConstants.CONFIG_CORE_SECTION, null,
+          ConfigConstants.CONFIG_KEY_AUTOCRLF, res.autoCRLF);
+
+      log.info("Storing config {}", res);
+      try {
+        config.save();
+      } catch (Exception e) {
+        ExceptionAlert.showAlert("Failed to store configuration", e);
+      }
+    }
+  }
 
   private File promptForFile(File currentFile, String title, String content) {
     TextInputDialog dialog = new TextInputDialog();

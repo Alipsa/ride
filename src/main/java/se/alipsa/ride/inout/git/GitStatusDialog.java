@@ -1,4 +1,4 @@
-package se.alipsa.ride.inout;
+package se.alipsa.ride.inout.git;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonType;

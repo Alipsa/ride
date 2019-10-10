@@ -16,10 +16,15 @@ import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
 import se.alipsa.ride.UnStyledCodeArea;
+import se.alipsa.ride.utils.StringUtils;
 
 import java.io.File;
 import java.time.Duration;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -80,16 +85,17 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
     });
 
     addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+      KeyCode keyCode = e.getCode();
       if (e.isControlDown()) {
-        if (KeyCode.F.equals(e.getCode())) {
+        if (KeyCode.F.equals(keyCode)) {
           parentTab.getGui().getMainMenu().displayFind();
-        } else if (KeyCode.S.equals(e.getCode())) {
+        } else if (KeyCode.S.equals(keyCode)) {
           parentTab.getGui().getMainMenu().saveContent(parentTab);
-        } else if (e.isShiftDown() && KeyCode.C.equals(e.getCode())) {
+        } else if (e.isShiftDown() && KeyCode.C.equals(keyCode)) {
           parentTab.getGui().getMainMenu().commentLines();
         }
       } else if (e.isShiftDown()) {
-        if (KeyCode.TAB.equals(e.getCode())) {
+        if (KeyCode.TAB.equals(keyCode)) {
           String selected = selectedTextProperty().getValue();
           if ("".equals(selected)) {
             String line = getText(getCurrentParagraph());
@@ -113,7 +119,7 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
           }
           e.consume();
         }
-      } else if (KeyCode.ENTER.equals(e.getCode())) {
+      } else if (KeyCode.ENTER.equals(keyCode)) {
         // Maintain indentation on the next line
         Matcher m = whiteSpace.matcher( getParagraph( getCurrentParagraph() ).getSegments().get( 0 ) );
         if ( m.find() ) {
@@ -143,6 +149,28 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
         }
     );
     Nodes.addInputMap(this, im);
+
+    addEventHandler(KeyEvent.KEY_TYPED, e -> {
+      String character = e.getCharacter();
+      if ("(".equals(character)) {
+        insertTextAndMoveBack(")");
+      } else if ("{".equals(character)) {
+        String line = getText(getCurrentParagraph());
+        String indent = StringUtils.getLeadingSpaces(line);
+        insertText(getCaretPosition(), "\n" + indent + INDENT);
+        int targetCaretPos = getCaretPosition();
+        insertText(targetCaretPos, "\n" + indent + "}");
+        moveTo(targetCaretPos);
+      } else if ("[".equals(character)) {
+        insertTextAndMoveBack("]");
+      }
+    });
+  }
+
+  private void insertTextAndMoveBack(String s) {
+    int caretPos = getCaretPosition();
+    insertText(caretPos, s);
+    moveTo(caretPos);
   }
 
   protected String backIndentText(String selected) {
@@ -227,7 +255,9 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
         String replacement = result.substring(lastWord.length());
         insertText(getCaretPosition(), replacement);
         int currentParagraph = getCurrentParagraph();
-        moveTo(currentParagraph, getParagraphLength(currentParagraph));
+        int lineEnd = getParagraphLength(currentParagraph);
+        int colIdx = replacement.endsWith(")") ?  lineEnd-1 : lineEnd;
+        moveTo(currentParagraph, colIdx);
         suggestionsPopup.hide();
         requestFocus();
       });

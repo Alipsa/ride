@@ -2,7 +2,11 @@ package se.alipsa.ride.utils;
 
 import org.apache.logging.log4j.message.FormattedMessageFactory;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StringUtils {
+  private static final Pattern LEADING_SPACES = Pattern.compile("^\\s+");
 
   private static FormattedMessageFactory factory = new FormattedMessageFactory();
 
@@ -13,5 +17,13 @@ public class StringUtils {
 
   public static String fixedLengthString(String string, int length) {
     return String.format("%1$"+length+ "s", string);
+  }
+
+  public static String getLeadingSpaces(String str) {
+    Matcher m = LEADING_SPACES.matcher(str);
+    if(m.find()){
+      return m.group(0);
+    }
+    return "";
   }
 }
