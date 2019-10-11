@@ -27,7 +27,7 @@ public class FileOpener {
 
   public TextAreaTab openFile(File file, boolean... openExternalIfUnknownType) {
 
-    final boolean allowOpenExternal = openExternalIfUnknownType.length > 0 ? openExternalIfUnknownType[0] : true;
+    final boolean allowOpenExternal = openExternalIfUnknownType.length <= 0 || openExternalIfUnknownType[0];
 
     String type = guessContentType(file);
     log.debug("File ContentType for {} detected as {}", file.getName(), type);
