@@ -191,6 +191,7 @@ public class ConsoleComponent extends BorderPane {
 
   public void setPackageLoader(PackageLoader loader) {
     //packageLoader = packageLoaderForName(Thread.currentThread().getContextClassLoader(), loader.getSimpleName());
+    packageLoader = loader;
     gui.getPrefs().put(PACKAGE_LOADER_PREF, loader.getClass().getSimpleName());
   }
 
@@ -289,12 +290,16 @@ public class ConsoleComponent extends BorderPane {
    */
   @SuppressWarnings("deprecation")
   public void interruptR() {
-    log.info("Interrupting runnning script");
+    log.info("Interrupting runnning process");
     // This is a nasty piece of code but a brutal stop() is the only thing that will break out of the script engine
     if (runningThread != null && runningThread.isAlive()) {
-      console.append("\nInterrupting Renjin thread...");
+      console.append("\nInterrupting process...");
       runningThread.interrupt();
-      runningThread.stop();
+      sleep(2000);
+      if (runningThread.isAlive()) {
+        console.append("\nProcess is still running, killing it...");
+        runningThread.stop();
+      }
       console.appendText("\n>");
     }
   }
@@ -697,7 +702,7 @@ public class ConsoleComponent extends BorderPane {
   public void running() {
     Platform.runLater(() -> {
       runningView.setImage(IMG_RUNNING);
-      statusButton.setTooltip(new Tooltip("Script is running, click to abort"));
+      statusButton.setTooltip(new Tooltip("Process is running, click to abort"));
       showTooltip(statusButton);
       gui.getMainMenu().enableInterruptMenuItem();
     });

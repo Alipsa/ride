@@ -157,10 +157,16 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
       } else if ("{".equals(character)) {
         String line = getText(getCurrentParagraph());
         String indent = StringUtils.getLeadingSpaces(line);
-        insertText(getCaretPosition(), "\n" + indent + INDENT);
-        int targetCaretPos = getCaretPosition();
-        insertText(targetCaretPos, "\n" + indent + "}");
-        moveTo(targetCaretPos);
+        if (line.endsWith("${")) { // No new lines for variables e.g. ${project.version}
+          int targetCaretPos = getCaretPosition();
+          insertText(targetCaretPos, "}");
+          moveTo(targetCaretPos);
+        } else {
+          insertText(getCaretPosition(), "\n" + indent + INDENT);
+          int targetCaretPos = getCaretPosition();
+          insertText(targetCaretPos, "\n" + indent + "}");
+          moveTo(targetCaretPos);
+        }
       } else if ("[".equals(character)) {
         insertTextAndMoveBack("]");
       }
