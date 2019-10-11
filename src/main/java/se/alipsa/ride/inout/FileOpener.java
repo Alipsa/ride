@@ -36,7 +36,7 @@ public class FileOpener {
       if (strEndsWith(fileNameLower, ".r", ".s") || strEquals(type, "text/x-rsrc")) {
         return codeComponent.addTab(file, CodeType.R);
       }
-      if ( strEquals(type, "application/xml", "text/xml")
+      if ( strEquals(type, "application/xml", "text/xml", "text/html")
                  || strEndsWith(type, "+xml")
                   // in case an xml declaration was omitted or empty file:
                  || strEndsWith(fileNameLower,".xml")
