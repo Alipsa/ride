@@ -243,7 +243,9 @@ public class FileTree extends TreeView<FileItem> {
       TextAreaTab tab = gui.getCodeComponent().getTab(file);
       if (tab == null) {
         tab = fileOpener.openFile(file);
-        tab.setTreeItem(item);
+        if (tab != null) {
+          tab.setTreeItem(item);
+        }
       }
       gui.getCodeComponent().activateTab(tab);
     }
