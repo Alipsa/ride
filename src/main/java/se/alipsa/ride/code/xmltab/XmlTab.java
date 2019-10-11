@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.shared.invoker.*;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -117,6 +116,7 @@ public class XmlTab extends TextAreaTab {
     Thread mvnThread = new Thread(task);
     mvnThread.setDaemon(false);
     mvnThread.start();
+    gui.getConsoleComponent().setRunningThread(mvnThread);
   }
 
   private class ConsoleOutputHandler implements InvocationOutputHandler {

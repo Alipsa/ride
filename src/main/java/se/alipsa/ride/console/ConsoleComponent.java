@@ -1,6 +1,8 @@
 package se.alipsa.ride.console;
 
-import static se.alipsa.ride.Constants.*;
+import static se.alipsa.ride.Constants.ICON_HEIGHT;
+import static se.alipsa.ride.Constants.ICON_WIDTH;
+import static se.alipsa.ride.Constants.INDENT;
 import static se.alipsa.ride.utils.StringUtils.format;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -37,7 +39,12 @@ import org.renjin.primitives.packaging.ClasspathPackageLoader;
 import org.renjin.primitives.packaging.PackageLoader;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
-import org.renjin.sexp.*;
+import org.renjin.sexp.Closure;
+import org.renjin.sexp.Environment;
+import org.renjin.sexp.FunctionCall;
+import org.renjin.sexp.SEXP;
+import org.renjin.sexp.StringVector;
+import org.renjin.sexp.Symbol;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.environment.EnvironmentComponent;
@@ -45,8 +52,17 @@ import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 import javax.script.ScriptException;
 
@@ -70,7 +86,7 @@ public class ConsoleComponent extends BorderPane {
   private Ride gui;
   private List<RemoteRepository> remoteRepositories;
   private PackageLoader packageLoader;
-  private Thread scriptThread;
+  private Thread runningThread;
 
   public ConsoleComponent(Ride gui) {
     this.gui = gui;
@@ -275,10 +291,10 @@ public class ConsoleComponent extends BorderPane {
   public void interruptR() {
     log.info("Interrupting runnning script");
     // This is a nasty piece of code but a brutal stop() is the only thing that will break out of the script engine
-    if (scriptThread != null && scriptThread.isAlive()) {
+    if (runningThread != null && runningThread.isAlive()) {
       console.append("\nInterrupting Renjin thread...");
-      scriptThread.interrupt();
-      scriptThread.stop();
+      runningThread.interrupt();
+      runningThread.stop();
       console.appendText("\n>");
     }
   }
@@ -355,9 +371,9 @@ public class ConsoleComponent extends BorderPane {
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
       promptAndScrollToEnd();
     });
-    scriptThread = new Thread(task);
-    scriptThread.setDaemon(false);
-    scriptThread.start();
+    runningThread = new Thread(task);
+    runningThread.setDaemon(false);
+    runningThread.start();
   }
 
   public String createMessageFromEvalException(Throwable ex) {
@@ -493,9 +509,9 @@ public class ConsoleComponent extends BorderPane {
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
       promptAndScrollToEnd();
     });
-      scriptThread = new Thread(task);
-      scriptThread.setDaemon(false);
-      scriptThread.start();
+      runningThread = new Thread(task);
+      runningThread.setDaemon(false);
+      runningThread.start();
   }
 
   private void printResult(String title, StringWriter out, StringWriter err, TestResult result, String indent) {
@@ -773,6 +789,13 @@ public class ConsoleComponent extends BorderPane {
 
   public ConsoleTextArea getConsole() {
     return console;
+  }
+
+  public void setRunningThread(Thread thread) {
+    if (runningThread != null && thread.isAlive()) {
+      log.warn("There is already a process running, Overriding existing running thread");
+    }
+    runningThread = thread;
   }
 
 }
