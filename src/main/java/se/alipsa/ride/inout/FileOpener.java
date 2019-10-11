@@ -39,7 +39,8 @@ public class FileOpener {
       if ( strEquals(type, "application/xml", "text/xml")
                  || strEndsWith(type, "+xml")
                   // in case an xml declaration was omitted or empty file:
-                 || strEndsWith(fileNameLower,".xml")) {
+                 || strEndsWith(fileNameLower,".xml")
+                 || strEndsWith(fileNameLower,".html")){
         return codeComponent.addTab(file, CodeType.XML);
       }
       if (strEndsWith(fileNameLower, ".java")) {
