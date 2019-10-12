@@ -104,7 +104,7 @@ public class ConsoleComponent extends BorderPane {
 
     runningView = new ImageView();
     statusButton = new Button();
-    statusButton.setOnAction(e -> interruptR());
+    statusButton.setOnAction(e -> interruptProcess());
     statusButton.setGraphic(runningView);
     waiting();
 
@@ -289,17 +289,16 @@ public class ConsoleComponent extends BorderPane {
    * TODO: while we can stop the timeline with this we cannot interrupt the scriptengines eval.
    */
   @SuppressWarnings("deprecation")
-  public void interruptR() {
+  public void interruptProcess() {
     log.info("Interrupting runnning process");
     // This is a nasty piece of code but a brutal stop() is the only thing that will break out of the script engine
     if (runningThread != null && runningThread.isAlive()) {
       console.append("\nInterrupting process...");
       runningThread.interrupt();
-      sleep(2000);
-      if (runningThread.isAlive()) {
-        console.append("\nProcess is still running, killing it...");
-        runningThread.stop();
-      }
+      // allow two seconds for graceful shutdown
+      sleep(9000);
+      console.append("\nStopping process...");
+      runningThread.stop();
       console.appendText("\n>");
     }
   }

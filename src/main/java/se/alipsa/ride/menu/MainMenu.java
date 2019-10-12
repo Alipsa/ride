@@ -554,7 +554,7 @@ public class MainMenu extends MenuBar {
   }
 
   private void interruptR(ActionEvent actionEvent) {
-    gui.getConsoleComponent().interruptR();
+    gui.getConsoleComponent().interruptProcess();
   }
 
   private void restartR(ActionEvent evt) {
