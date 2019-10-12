@@ -47,6 +47,11 @@ public class DynamicContextMenu extends ContextMenu {
    private File currentFile;
    private CredentialsProvider credentialsProvider;
 
+   private MenuItem createDirMI;
+   private MenuItem createFileMI;
+   private MenuItem expandAllMI;
+   private MenuItem deleteMI;
+
    MenuItem gitInitMI = new MenuItem("Initialize root as git repo");
 
    private Logger log = LogManager.getLogger();
@@ -60,7 +65,7 @@ public class DynamicContextMenu extends ContextMenu {
       copyMI.setOnAction(e -> fileTree.copySelectionToClipboard());
       getItems().add(copyMI);
 
-      MenuItem createDirMI = new MenuItem("create dir");
+      createDirMI = new MenuItem("create dir");
       createDirMI.setOnAction(e -> {
          File currentFile = currentNode.getValue().getFile();
          File newDir = promptForFile(currentFile, "Create and add dir", "Enter the dir name:");
@@ -76,7 +81,7 @@ public class DynamicContextMenu extends ContextMenu {
       });
       getItems().add(createDirMI);
 
-      MenuItem createFileMI = new MenuItem("create file");
+      createFileMI = new MenuItem("create file");
       createFileMI.setOnAction(e -> {
          File newFile = promptForFile(currentFile, "Create and add file", "Enter the file name:");
          if (newFile == null) {
@@ -95,12 +100,11 @@ public class DynamicContextMenu extends ContextMenu {
       });
       getItems().add(createFileMI);
 
-
-      MenuItem expandAllMI = new MenuItem("expand all");
+      expandAllMI = new MenuItem("expand all");
       expandAllMI.setOnAction(e -> fileTree.expandAllChildren(currentNode));
       getItems().add(expandAllMI);
 
-      MenuItem deleteMI = new MenuItem("delete");
+      deleteMI = new MenuItem("delete");
       deleteMI.setOnAction(e -> {
          String fileType = "file";
          try {
@@ -629,7 +633,7 @@ public class DynamicContextMenu extends ContextMenu {
       String currentPath = getRelativePath();
       log.info("Deleting {}", currentPath);
       try {
-         DirCache dc = git.rm().addFilepattern(currentPath).call();
+         DirCache dc = git.rm().addFilepattern(currentPath).setCached(true).call();
          log.info("Removed {} from git dir cache", currentPath);
       } catch (GitAPIException e) {
          log.warn("Failed to delete " + currentPath, e);
@@ -741,5 +745,18 @@ public class DynamicContextMenu extends ContextMenu {
    public void setContext(TreeItem<FileItem> item) {
       currentNode = item;
       currentFile = currentNode.getValue().getFile();
+      showHideContent(item);
+   }
+
+   private void showHideContent(TreeItem<FileItem> selected) {
+      if (selected !=  null && selected.getValue().getFile().isFile()) {
+         createDirMI.setDisable(true);
+         createFileMI.setDisable(true);
+         expandAllMI.setDisable(true);
+      } else {
+         createDirMI.setDisable(false);
+         createFileMI.setDisable(false);
+         expandAllMI.setDisable(false);
+      }
    }
 }
