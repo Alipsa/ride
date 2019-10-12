@@ -1,15 +1,12 @@
 import org.junit.jupiter.api.Test;
 import org.renjin.eval.Context;
-import org.renjin.primitives.Types;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.*;
 
 import javax.script.ScriptException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
