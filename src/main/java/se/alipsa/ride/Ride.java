@@ -221,13 +221,17 @@ public class Ride extends Application {
   }
 
   public void setWaitCursor() {
-    scene.setCursor(Cursor.WAIT);
-    consoleComponent.setCursor(Cursor.WAIT);
+    Platform.runLater(() -> {
+      scene.setCursor(Cursor.WAIT);
+      consoleComponent.setCursor(Cursor.WAIT);
+    });
   }
 
   public void setNormalCursor() {
-    scene.setCursor(Cursor.DEFAULT);
-    consoleComponent.setCursor(Cursor.DEFAULT);
+    Platform.runLater(() -> {
+      scene.setCursor(Cursor.DEFAULT);
+      consoleComponent.setCursor(Cursor.DEFAULT);
+    });
   }
 
   public Preferences getPrefs() {

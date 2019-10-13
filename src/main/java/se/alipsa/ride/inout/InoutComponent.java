@@ -4,16 +4,13 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +41,7 @@ public class InoutComponent extends TabPane implements InOut {
   private ViewTab viewer;
   private Ride gui;
   private Label branchLabel;
+  private TextField statusField;
 
   private static final Logger log = LogManager.getLogger(InoutComponent.class);
 
@@ -71,8 +69,21 @@ public class InoutComponent extends TabPane implements InOut {
     branchLabel.setPadding(new Insets(0,0,0,10));
     filesButtonPane.getChildren().add(branchLabel);
 
+
+    HBox hbox = new HBox();
+    //Label statusLabel = new Label("Status");
+    //statusLabel.setPadding(new Insets(0,5,0,10));
+    //hbox.getChildren().add(statusLabel);
+    statusField = new TextField();
+    statusField.setPadding(new Insets(1,10,1,10));
+    statusField.setDisable(true);
+
+    HBox.setHgrow(statusField, Priority.ALWAYS);
+    hbox.getChildren().add(statusField);
+
     filesPane.setTop(filesButtonPane);
     filesPane.setCenter(fileTree);
+    filesPane.setBottom(hbox);
     filesTab.setContent(filesPane);
     getTabs().add(filesTab);
 
@@ -275,5 +286,13 @@ public class InoutComponent extends TabPane implements InOut {
 
   public Label getBranchLabel() {
     return branchLabel;
+  }
+
+  public void setStatus(String status) {
+    Platform.runLater(() -> statusField.setText(status));;
+  }
+
+  public void clearStatus() {
+    setStatus("");
   }
 }

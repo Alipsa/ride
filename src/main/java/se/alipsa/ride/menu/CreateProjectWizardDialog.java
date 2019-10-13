@@ -31,7 +31,7 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
 
   CreateProjectWizardDialog(Ride gui) {
     this.gui = gui;
-    setTitle("Create Package Wizard");
+    setTitle("Create Maven Project Wizard");
 
     getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
     getDialogPane().lookupButton(ButtonType.OK).setDisable(true);

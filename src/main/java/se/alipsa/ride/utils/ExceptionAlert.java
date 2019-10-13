@@ -1,6 +1,7 @@
 package se.alipsa.ride.utils;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -9,6 +10,7 @@ import se.alipsa.ride.UnStyledCodeArea;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Optional;
 
 public class ExceptionAlert extends Alert {
 
@@ -19,7 +21,7 @@ public class ExceptionAlert extends Alert {
   /**
    * display the exception.
    */
-  public static void showAlert(String message, Throwable throwable) {
+  public static Optional<ButtonType> showAlert(String message, Throwable throwable) {
     throwable.printStackTrace();
     Alert alert = new ExceptionAlert();
     alert.setTitle("Exception Dialog");
@@ -58,7 +60,7 @@ public class ExceptionAlert extends Alert {
 
     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
-    alert.showAndWait();
+    return alert.showAndWait();
   }
 
 }

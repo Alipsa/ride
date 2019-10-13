@@ -2,24 +2,35 @@ package se.alipsa.ride.utils;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebView;
 import se.alipsa.ride.Constants;
 
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class Alerts {
 
 
-  public static void info(String title, String content) {
-    showAlert(title, content, Alert.AlertType.INFORMATION);
+  public static  Optional<ButtonType> info(String title, String content) {
+    return showAlert(title, content, Alert.AlertType.INFORMATION);
   }
 
-  public static void warn(String title, String content) {
-    showAlert(title, content, Alert.AlertType.WARNING);
+  public static void infoFx(String title, String content) {
+    showAlertFx(title, content, Alert.AlertType.INFORMATION);
   }
 
-  public static void showAlert(String title, String content, Alert.AlertType information) {
-    Platform.runLater(() -> {
+  public static  Optional<ButtonType> warn(String title, String content) {
+    return showAlert(title, content, Alert.AlertType.WARNING);
+  }
+
+  public static void warnFx(String title, String content) {
+    showAlertFx(title, content, Alert.AlertType.WARNING);
+  }
+
+  public static Optional<ButtonType> showAlert(String title, String content, Alert.AlertType information) {
 
       TextArea textArea = new TextArea(content);
       textArea.setEditable(false);
@@ -33,8 +44,11 @@ public class Alerts {
       alert.setHeaderText(null);
       alert.getDialogPane().setContent(pane);
       alert.setResizable(true);
-      alert.showAndWait();
-    });
+      return alert.showAndWait();
+  }
+
+  public static void showAlertFx(String title, String content, Alert.AlertType information) {
+    Platform.runLater(() -> showAlert(title, content, information));
   }
 
   public static void infoStyled(String title, String content) {

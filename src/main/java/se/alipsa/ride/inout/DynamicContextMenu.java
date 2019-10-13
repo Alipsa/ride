@@ -93,6 +93,7 @@ public class DynamicContextMenu extends ContextMenu {
                addJavaContent(newFile);
             }
             TreeItem<FileItem> node = fileTree.addTreeNode(newFile);
+            fileTree.openFileTab(newFile);
             GitUtils.colorNode(git, GitUtils.asRelativePath(newFile, fileTree.getRootDir()), node);
          } catch (IOException e1) {
             ExceptionAlert.showAlert("Failed to create file", e1);
@@ -486,20 +487,24 @@ public class DynamicContextMenu extends ContextMenu {
 
    private void gitPull(ActionEvent actionEvent) {
       gui.setWaitCursor();
+      String url = getRemoteGitUrl();
+      gui.getInoutComponent().setStatus("Pulling from " + url);
       Platform.runLater(() -> {
          try {
-            String url = getRemoteGitUrl();
             credentialsProvider = GitUtils.getStoredCredentials(url);
             PullResult pullResult = git.pull().setCredentialsProvider(credentialsProvider).call();
             log.info(pullResult.toString());
             gui.setNormalCursor();
             Alerts.info("Git pull", pullResult.toString());
+            gui.getInoutComponent().clearStatus();
          } catch (TransportException e) {
             handleTransportException(e, "pull");
+            gui.getInoutComponent().clearStatus();
          } catch (Exception e) {
             log.warn("Failed to pull", e);
             gui.setNormalCursor();
             ExceptionAlert.showAlert("Failed to pull", e);
+            gui.getInoutComponent().clearStatus();
          }
       });
    }
@@ -529,9 +534,11 @@ public class DynamicContextMenu extends ContextMenu {
 
    private void gitPush(ActionEvent actionEvent) {
       gui.setWaitCursor();
+      String url = getRemoteGitUrl();
+      gui.getInoutComponent().setStatus("Pushing to " + url);
       Platform.runLater(() -> {
          try {
-            credentialsProvider = GitUtils.getStoredCredentials(getRemoteGitUrl());
+            credentialsProvider = GitUtils.getStoredCredentials(url);
             Iterable<PushResult> result = git.push().setCredentialsProvider(credentialsProvider).call();
             log.info("Git push was successful: {}", result);
             StringBuilder str = new StringBuilder();
@@ -541,12 +548,15 @@ public class DynamicContextMenu extends ContextMenu {
             }
             gui.setNormalCursor();
             Alerts.info("Git push", "Git push was successful!\n" + str.toString());
+            gui.getInoutComponent().clearStatus();
          } catch (TransportException e) {
             handleTransportException(e, "push");
+            gui.getInoutComponent().clearStatus();
          } catch (Exception e) {
             log.warn("Failed to push", e);
             gui.setNormalCursor();
             ExceptionAlert.showAlert("Failed to push", e);
+            gui.getInoutComponent().clearStatus();
          }
       });
    }
