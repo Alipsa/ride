@@ -82,7 +82,7 @@
 }
 
 .console {
-    -fx-font-family: consolas;
+    -fx-font-family: Monospaced;
     -fx-font-size: 10pt;
 }
 
