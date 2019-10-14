@@ -247,7 +247,6 @@
             <version>4.0.16-alpha</version>
             <scope>test</scope>
          </dependency-->
-
       </dependencies>
    </dependencyManagement>
 
@@ -262,10 +261,6 @@
          <name>Maven Central</name>
          <url>http://repo1.maven.org/maven2/</url>
       </repository>
-      <!--repository>
-          <id>jgit-repository</id>
-          <url>https://repo.eclipse.org/content/groups/releases/</url>
-      </repository-->
    </repositories>
    <pluginRepositories>
       <pluginRepository>

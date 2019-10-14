@@ -1,18 +1,39 @@
 package se.alipsa.ride.inout;
 
+import static se.alipsa.ride.Constants.REPORT_BUG;
+import static se.alipsa.ride.utils.GitUtils.asRelativePath;
+
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TreeItem;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.eclipse.jgit.api.*;
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.DiffCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand;
+import org.eclipse.jgit.api.MergeResult;
+import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.dircache.DirCache;
-import org.eclipse.jgit.lib.*;
+import org.eclipse.jgit.lib.ConfigConstants;
+import org.eclipse.jgit.lib.CoreConfig;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.PushResult;
@@ -20,23 +41,33 @@ import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.inout.git.*;
+import se.alipsa.ride.inout.git.AddRemoteDialog;
+import se.alipsa.ride.inout.git.ConfigResult;
+import se.alipsa.ride.inout.git.CredentialsDialog;
+import se.alipsa.ride.inout.git.GitConfigureDialog;
+import se.alipsa.ride.inout.git.GitStatusDialog;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.GitUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
-
-import static se.alipsa.ride.Constants.REPORT_BUG;
-import static se.alipsa.ride.utils.GitUtils.asRelativePath;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class DynamicContextMenu extends ContextMenu {
 
@@ -489,6 +520,51 @@ public class DynamicContextMenu extends ContextMenu {
       gui.setWaitCursor();
       String url = getRemoteGitUrl();
       gui.getInoutComponent().setStatus("Pulling from " + url);
+
+      Task<PullResult> task = new Task<PullResult>() {
+         @Override
+         public PullResult call() throws Exception {
+            try {
+               credentialsProvider = GitUtils.getStoredCredentials(url);
+               PullResult pullResult = git.pull().setCredentialsProvider(credentialsProvider).call();
+               log.info(pullResult.toString());
+               return pullResult;
+            } catch (RuntimeException e) {
+               // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
+               // this way we can get to the original one by extracting the cause from the thrown exception
+               System.out.println("Exception caught, rethrowing as wrapped Exception");
+               throw new Exception(e);
+            }
+         }
+      };
+
+      task.setOnSucceeded(e -> {
+         gui.setNormalCursor();
+         PullResult pullResult = task.getValue();
+         Alerts.info("Git pull", pullResult.toString());
+         gui.getInoutComponent().clearStatus();
+      });
+      task.setOnFailed(e -> {
+         gui.setNormalCursor();
+
+         Throwable throwable = task.getException();
+         Throwable ex = throwable.getCause();
+         if (ex == null) {
+            ex = throwable;
+         }
+         if (ex instanceof TransportException) {
+            handleTransportException((TransportException)ex, "pull");
+         } else {
+            log.warn("Failed to pull", ex);
+            ExceptionAlert.showAlert("Failed to pull", ex);
+         }
+         gui.getInoutComponent().clearStatus();
+      });
+      Thread runningThread = new Thread(task);
+      runningThread.setDaemon(false);
+      runningThread.start();
+
+      /*
       Platform.runLater(() -> {
          try {
             credentialsProvider = GitUtils.getStoredCredentials(url);
@@ -507,6 +583,7 @@ public class DynamicContextMenu extends ContextMenu {
             gui.getInoutComponent().clearStatus();
          }
       });
+       */
    }
 
    private void gitAddRemote(ActionEvent actionEvent) {
@@ -536,6 +613,56 @@ public class DynamicContextMenu extends ContextMenu {
       gui.setWaitCursor();
       String url = getRemoteGitUrl();
       gui.getInoutComponent().setStatus("Pushing to " + url);
+      Task<StringBuilder> task = new Task<StringBuilder>() {
+         @Override
+         public StringBuilder call() throws Exception {
+            try {
+               credentialsProvider = GitUtils.getStoredCredentials(url);
+               Iterable<PushResult> result = git.push().setCredentialsProvider(credentialsProvider).call();
+               log.info("Git push was successful: {}", result);
+               StringBuilder str = new StringBuilder();
+               for (PushResult pushResult : result) {
+                  pushResult.getRemoteUpdates().forEach(u ->
+                      str.append(u.toString()).append("\n"));
+               }
+               return str;
+            } catch (RuntimeException e) {
+               // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
+               // this way we can get to the original one by extracting the cause from the thrown exception
+               System.out.println("Exception caught, rethrowing as wrapped Exception");
+               throw new Exception(e);
+            }
+         }
+      };
+
+      task.setOnSucceeded(e -> {
+         gui.setNormalCursor();
+         StringBuilder pushResult = task.getValue();
+         gui.setNormalCursor();
+         Alerts.info("Git push", "Git push was successful!\n" + pushResult.toString());
+         gui.getInoutComponent().clearStatus();
+      });
+
+      task.setOnFailed(e -> {
+         gui.setNormalCursor();
+
+         Throwable throwable = task.getException();
+         Throwable ex = throwable.getCause();
+         if (ex == null) {
+            ex = throwable;
+         }
+         if (ex instanceof TransportException) {
+            handleTransportException((TransportException)ex, "push");
+         } else {
+            log.warn("Failed to push", ex);
+            ExceptionAlert.showAlert("Failed to push", ex);
+         }
+         gui.getInoutComponent().clearStatus();
+      });
+      Thread runningThread = new Thread(task);
+      runningThread.setDaemon(false);
+      runningThread.start();
+      /*
       Platform.runLater(() -> {
          try {
             credentialsProvider = GitUtils.getStoredCredentials(url);
@@ -559,6 +686,8 @@ public class DynamicContextMenu extends ContextMenu {
             gui.getInoutComponent().clearStatus();
          }
       });
+
+       */
    }
 
    private void handleTransportException(TransportException e, String operation) {
