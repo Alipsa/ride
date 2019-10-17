@@ -9,7 +9,7 @@
  and Hadley Wickham style guide http://adv-r.had.co.nz/Style.html#Assignment
  
 - Create package wizard to give a good starting point for creating packages (DONE)
-### Add support for creating extensions (packages)
+### Add support for creating extensions (packages) (Done)
 - create dir layout
 - create pom
 - run using maven-embedder: http://maven.apache.org/ref/3-LATEST/maven-embedder/summary.html
@@ -39,8 +39,22 @@ NAMESPACE, SAS, SPSS
 
 ### add Roxygen support
 
+### enable users to use a pom file for defining the classpath to run
+Currently to be able to run R code depending on other projects AetherpackageLoader often fails
+and classpath package loader requires you to alter the ride pom.xml 
+
+since we have maven support for building, it would make sense to provide an
+option to use the classpath which is the result of the dependencies described in the pom
+See se.alipsa.ride.utils.MavenUtils for a start
+
+See here https://www.hascode.com/2017/09/downloading-maven-artifacts-from-a-pom-file-programmatically-with-eclipse-aether/ for some ideas...
+Also https://mitre.github.io/mvndeps/ is doing basically this
+https://github.com/nanosai/modrun classloading magic with maven
+https://github.com/mguymon/naether dependency resolver
+https://github.com/diet4j/ reads maven and exposes classloaders 
+
 ## Version 1.4
-### Enable git integration
+### Enable git integration (Done)
 use jGit see 
 - https://wiki.eclipse.org/JGit/User_Guide
 - https://download.eclipse.org/jgit/site/5.2.0.201812061821-r/apidocs/index.html

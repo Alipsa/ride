@@ -221,6 +221,23 @@
             <version>3.2.1</version>
          </dependency>
 
+         <!-- to get a classloader from a pom -->
+         <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>3.6.2</version>
+         </dependency>
+         <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>3.3.0</version>
+         </dependency>
+         <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.6.2</version>
+         </dependency>
+
          <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -546,6 +563,22 @@
                <artifactId>maven-shared-utils</artifactId>
                <scope>provided</scope>
             </dependency>
+
+            <dependency>
+               <groupId>org.apache.maven</groupId>
+               <artifactId>maven-model</artifactId>
+               <scope>provided</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.codehaus.plexus</groupId>
+               <artifactId>plexus-utils</artifactId>
+               <scope>provided</scope>
+            </dependency>
+            <dependency>
+               <groupId>org.apache.maven</groupId>
+               <artifactId>maven-core</artifactId>
+               <scope>provided</scope>
+            </dependency>
          </dependencies>
 
          <build>
@@ -699,6 +732,19 @@
             <dependency>
                <groupId>org.apache.maven.shared</groupId>
                <artifactId>maven-shared-utils</artifactId>
+            </dependency>
+
+            <dependency>
+               <groupId>org.apache.maven</groupId>
+               <artifactId>maven-model</artifactId>
+            </dependency>
+            <dependency>
+               <groupId>org.codehaus.plexus</groupId>
+               <artifactId>plexus-utils</artifactId>
+            </dependency>
+            <dependency>
+               <groupId>org.apache.maven</groupId>
+               <artifactId>maven-core</artifactId>
             </dependency>
          </dependencies>
 
