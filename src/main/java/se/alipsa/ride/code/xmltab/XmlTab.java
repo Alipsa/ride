@@ -7,10 +7,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.shared.invoker.*;
-import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.maven.shared.invoker.InvocationOutputHandler;
+import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
@@ -19,9 +21,9 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.console.ConsoleTextArea;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.MavenUtils;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class XmlTab extends TextAreaTab {
 
@@ -30,6 +32,9 @@ public class XmlTab extends TextAreaTab {
   private Button executeButton;
   private TextField targetsField;
   private Label goalLabel;
+
+  private InvocationOutputHandler consoleOutputHandler;
+  private InvocationOutputHandler warningOutputHandler;
 
   private static final Logger log = LogManager.getLogger(XmlTab.class);
 
@@ -50,14 +55,13 @@ public class XmlTab extends TextAreaTab {
     xmlTextArea = new XmlTextArea(this);
     VirtualizedScrollPane<CodeTextArea> xmlPane = new VirtualizedScrollPane<>(xmlTextArea);
     pane.setCenter(xmlPane);
+    consoleOutputHandler = new ConsoleOutputHandler();
+    warningOutputHandler = new ConsoleWarningOutputHandler();
   }
 
   private void runMaven(ActionEvent actionEvent) {
     getGui().getConsoleComponent().running();
-    InvocationRequest request = new DefaultInvocationRequest();
-    request.setBatchMode(true);
-    final File pomFile = getFile();
-    request.setPomFile( pomFile );
+
     String args = targetsField.getText();
     if (args == null || StringUtils.isBlank(args)) {
       Alerts.warn("Maven arguments", "No goals (e.g. clean install) was supplied to maven");
@@ -70,14 +74,7 @@ public class XmlTab extends TextAreaTab {
       @Override
       public Void call() throws Exception {
         try {
-          request.setGoals(Arrays.asList(mvnArgs) );
-          File dir = pomFile.getParentFile();
-          request.setBaseDirectory(dir);
-          log.info("Running maven from dir {} with args {}", dir, String.join(" ", mvnArgs));
-          Invoker invoker = new DefaultInvoker();
-          invoker.setOutputHandler(new ConsoleOutputHandler());
-          invoker.setErrorHandler(new ConsoleWarningOutputHandler());
-          InvocationResult result = invoker.execute( request );
+          InvocationResult result = MavenUtils.runMaven(getFile(), mvnArgs, consoleOutputHandler, warningOutputHandler);
           if ( result.getExitCode() != 0 ) {
             if (result.getExecutionException() != null) {
               throw result.getExecutionException();
@@ -124,7 +121,7 @@ public class XmlTab extends TextAreaTab {
     private ConsoleTextArea console = consoleComponent.getConsole();
     @Override
     public void consumeLine(String line) {
-      System.out.println(line);
+      //System.out.println(line);
       Platform.runLater(() -> {
         if (line.startsWith("[ERROR]") || line.startsWith("[WARN")) {
           console.appendWarning(line);
@@ -141,7 +138,7 @@ public class XmlTab extends TextAreaTab {
     private ConsoleTextArea console = consoleComponent.getConsole();
     @Override
     public void consumeLine(String line) {
-      System.err.println(line);
+      //System.err.println(line);
       Platform.runLater(() -> {
         console.appendWarning(line);
         consoleComponent.scrollToEnd();
