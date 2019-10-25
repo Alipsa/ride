@@ -150,7 +150,7 @@
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>5.5.0.201909110433-r</version>
+            <version>5.5.1.201910021850-r</version>
         </dependency>
 
         <dependency>
@@ -188,14 +188,14 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.10.4</version>
+            <version>2.10.5</version>
         </dependency>
 
         <!-- Add some common OS database drivers, add or remove as appropriate -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.199</version>
+            <version>1.4.200</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -211,7 +211,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.17</version>
+            <version>8.0.18</version>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>

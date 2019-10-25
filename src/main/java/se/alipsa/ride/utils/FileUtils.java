@@ -21,8 +21,6 @@ import java.util.stream.Stream;
 
 public class FileUtils {
 
-  private static final Logger log = LogManager.getLogger();
-
   /**
    * Gets a reference to a file or folder in the classpath. Useful for getting test resources and
    * other similar artifacts.
@@ -263,11 +261,13 @@ public class FileUtils {
     }
 
     if (userHome == null) {
-      log.warn("Failed to find user home property");
+      System.out.println("Failed to find user home property");
+      throw new RuntimeException("Failed to find user home property");
     }
     File homeDir = new File(userHome);
     if(!homeDir.exists()) {
-      log.error("User home dir {} does not exist, something is not right", homeDir);
+      System.err.printf("User home dir %s does not exist, something is not right%n", homeDir);
+      throw new RuntimeException("User home dir " + homeDir + " does not exist, something is not right");
     }
     return homeDir;
   }

@@ -127,7 +127,10 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void changeRootDir(File dir) {
-    fileTree.refresh(dir);
+    if(!getRootDir().equals(dir)) {
+      fileTree.refresh(dir);
+      gui.getConsoleComponent().initRenjin(gui.getClass().getClassLoader());
+    }
   }
 
   private void handleRefresh(ActionEvent actionEvent) {

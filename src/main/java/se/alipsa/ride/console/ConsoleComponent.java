@@ -126,7 +126,7 @@ public class ConsoleComponent extends BorderPane {
   }
 
   public void initRenjin(ClassLoader parentClassLoader) {
-    initRenjin(getStoredRemoteRepositories(), parentClassLoader);
+    Platform.runLater(() -> initRenjin(getStoredRemoteRepositories(), parentClassLoader));
   }
 
   private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader) {

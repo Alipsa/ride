@@ -110,7 +110,7 @@
          <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>2.10.4</version>
+            <version>2.10.5</version>
          </dependency>
 
          <dependency>
@@ -180,13 +180,13 @@
          <dependency>
              <groupId>org.eclipse.jgit</groupId>
              <artifactId>org.eclipse.jgit</artifactId>
-             <version>5.5.0.201909110433-r</version>
+             <version>5.5.1.201910021850-r</version>
          </dependency>
 
          <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.199</version>
+            <version>1.4.200</version>
          </dependency>
          <dependency>
             <groupId>org.postgresql</groupId>
@@ -202,7 +202,7 @@
          <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.17</version>
+            <version>8.0.18</version>
          </dependency>
          <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
@@ -286,13 +286,13 @@
       <dependency>
          <groupId>org.hamcrest</groupId>
          <artifactId>hamcrest-library</artifactId>
-         <version>2.1</version>
+         <version>2.2</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.hamcrest</groupId>
          <artifactId>hamcrest-core</artifactId>
-         <version>2.1</version>
+         <version>2.2</version>
          <scope>test</scope>
       </dependency>
 
@@ -350,7 +350,7 @@
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
-            <version>3.7.1</version>
+            <version>3.8.2</version>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -373,7 +373,7 @@
          <plugin>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-maven-plugin</artifactId>
-            <version>3.1.12</version>
+            <version>3.1.12.2</version>
          </plugin>
       </plugins>
    </reporting>
