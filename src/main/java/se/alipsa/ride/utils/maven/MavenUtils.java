@@ -41,6 +41,7 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import se.alipsa.ride.utils.ConsoleRepositoryEventListener;
+import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
 import java.net.URL;
@@ -182,8 +183,10 @@ public class MavenUtils {
     Settings settings = getSettings();
     String localRepoPath = settings.getLocalRepository();
 
-    if (localRepoPath == null) {
-      localRepoPath = new File(System.getProperty("user.home"), ".m2/repository").getAbsolutePath();
+    if (localRepoPath != null) {
+      localRepoPath = localRepoPath.replace("${user.home}", FileUtils.getUserHome().getAbsolutePath());
+    } else {
+      localRepoPath = new File(FileUtils.getUserHome(), ".m2/repository").getAbsolutePath();
     }
     return new LocalRepository(localRepoPath);
   }
@@ -191,7 +194,7 @@ public class MavenUtils {
   public static Settings getSettings() throws SettingsBuildingException {
     DefaultSettingsBuilder defaultSettingsBuilder = new DefaultSettingsBuilder();
     DefaultSettingsBuildingRequest request = new DefaultSettingsBuildingRequest();
-    File userSettingsFile = new File(System.getProperty("user.home"), ".m2/settings.xml");
+    File userSettingsFile = new File(FileUtils.getUserHome(), ".m2/settings.xml");
     if (userSettingsFile.exists()) {
       request.setUserSettingsFile(userSettingsFile);
     } else {

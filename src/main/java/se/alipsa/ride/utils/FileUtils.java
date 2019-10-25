@@ -2,6 +2,8 @@ package se.alipsa.ride.utils;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -19,6 +21,7 @@ import java.util.stream.Stream;
 
 public class FileUtils {
 
+  private static final Logger log = LogManager.getLogger();
 
   /**
    * Gets a reference to a file or folder in the classpath. Useful for getting test resources and
@@ -245,6 +248,28 @@ public class FileUtils {
     }
     Charset charset = charsetOpt.length > 0 ? charsetOpt[0] : StandardCharsets.UTF_8;
     return IOUtils.toString(url, charset);
+  }
+
+  public static File getUserHome() {
+    String userHome = System.getProperty("user.home");
+    if (userHome == null) {
+      userHome = System.getenv("user.home");
+      if (userHome == null) {
+        userHome = System.getenv("USERPROFILE");
+        if (userHome == null) {
+          userHome = System.getenv("HOME");
+        }
+      }
+    }
+
+    if (userHome == null) {
+      log.warn("Failed to find user home property");
+    }
+    File homeDir = new File(userHome);
+    if(!homeDir.exists()) {
+      log.error("User home dir {} does not exist, something is not right", homeDir);
+    }
+    return homeDir;
   }
 
 }

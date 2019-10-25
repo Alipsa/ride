@@ -124,6 +124,6 @@ public class GitUtils {
    }
 
    private static File getCredentialsFile() {
-      return new File(System.getProperty("user.home"), ".git-credentials");
+      return new File(FileUtils.getUserHome(), ".git-credentials");
    }
 }
