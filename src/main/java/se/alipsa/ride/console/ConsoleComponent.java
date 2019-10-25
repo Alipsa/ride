@@ -150,7 +150,7 @@ public class ConsoleComponent extends BorderPane {
         File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
         if (pomFile.exists()) {
           log.info("Parsing pom to use maven classloader");
-          cl = MavenUtils.getMavenDependenciesClassloader(pomFile);
+          cl = MavenUtils.getMavenDependenciesClassloader(pomFile, parentClassLoader);
         } else {
           log.info("Use maven class loader is set but pomfile {} does not exist", pomFile);
         }

@@ -52,8 +52,9 @@ public class MavenUtils {
 
   private static final Logger log = LogManager.getLogger();
 
-  public static ClassLoader getMavenClassLoader(Model project, Collection<File> dependencies) throws Exception {
+  public static ClassLoader getMavenClassLoader(Model project, Collection<File> dependencies, ClassLoader possibleParent) throws Exception {
     List<String> classpathElements = getClassPathElements(project);
+    boolean hasRenjinScriptEngine = false;
     List<URL> urls = new ArrayList<>();
     for (int i = 0; i < classpathElements.size(); ++i) {
       String elem = classpathElements.get(i);
@@ -67,11 +68,19 @@ public class MavenUtils {
     for (File dep : dependencies) {
       if (dep != null && dep.exists()) {
         URL url = dep.toURI().toURL();
+        if (url.toString().contains("renjin-script-engine")) {
+          hasRenjinScriptEngine = true;
+        }
         urls.add(url);
         log.debug("Adding {} to classloader", url);
       }
     }
-    return new URLClassLoader(urls.toArray(new URL[0]));
+    if (hasRenjinScriptEngine) {
+      return new URLClassLoader(urls.toArray(new URL[0]));
+    } else {
+      log.debug("renjin-script-engine artifact not found in dependencies, creating classloader with ride cl as parent");
+      return new URLClassLoader(urls.toArray(new URL[0]), possibleParent);
+    }
   }
 
   public static List<String> getClassPathElements(Model project) throws DependencyResolutionRequiredException {
@@ -81,8 +90,8 @@ public class MavenUtils {
     return classpathElements;
   }
 
-  public static ClassLoader getMavenDependenciesClassloader(File pomFile) throws Exception {
-    return getMavenClassLoader(parsePom(pomFile), resolveDependencies(pomFile));
+  public static ClassLoader getMavenDependenciesClassloader(File pomFile, ClassLoader possibleParent) throws Exception {
+    return getMavenClassLoader(parsePom(pomFile), resolveDependencies(pomFile), possibleParent);
   }
 
   public static InvocationResult runMaven(final File pomFile, String[] mvnArgs, InvocationOutputHandler consoleOutputHandler, InvocationOutputHandler warningOutputHandler) throws MavenInvocationException {

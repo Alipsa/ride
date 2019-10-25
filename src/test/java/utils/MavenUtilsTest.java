@@ -1,21 +1,20 @@
 package utils;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.maven.model.Model;
 import org.eclipse.aether.repository.LocalRepository;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import se.alipsa.ride.utils.maven.MavenUtils;
 
 import java.io.File;
-import org.apache.maven.model.Model;
-
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MavenUtilsTest {
 
@@ -47,7 +46,7 @@ public class MavenUtilsTest {
       } catch (Exception e) {
          assertThat(e, instanceOf(ClassNotFoundException.class));
       }
-      ClassLoader cl = MavenUtils.getMavenDependenciesClassloader(projectPomFile);
+      ClassLoader cl = MavenUtils.getMavenDependenciesClassloader(projectPomFile, getClass().getClassLoader());
       Class clazz = cl.loadClass(className);
       log.info("Class resolved to {}", clazz);
    }
