@@ -4,6 +4,7 @@ import static se.alipsa.ride.Constants.*;
 import static se.alipsa.ride.console.ConsoleComponent.PACKAGE_LOADER_PREF;
 import static se.alipsa.ride.console.ConsoleTextArea.CONSOLE_MAX_LENGTH_DEFAULT;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
+import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -31,6 +32,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
   private ComboBox<Class<?>> pkgLoaderCb;
   private IntField intField;
   private ComboBox<String> themes;
+  private CheckBox useMavenFileClasspath;
 
   GlobalOptionsDialog(Ride gui) {
     setTitle("Global options");
@@ -114,7 +116,10 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
 
     urlCol.setMinWidth(450);
-    reposTable.getColumns().addAll(idCol, typeCol, urlCol);
+    reposTable.getColumns().add(idCol);
+    reposTable.getColumns().add(typeCol);
+    reposTable.getColumns().add(urlCol);
+
 
     reposTable.setItems(createObservable(repos));
     reposTable.setNumberOfRows(reposTable.getItems().size());
@@ -145,6 +150,13 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     themes.getItems().addAll(DARK_THEME, BRIGHT_THEME, BLUE_THEME);
     themes.getSelectionModel().select(gui.getPrefs().get(THEME, BRIGHT_THEME));
     grid.add(themes, 1, 3);
+
+    Label useMavenFileClasspathLabel = new Label("Use pom classpath");
+    useMavenFileClasspathLabel.setTooltip(new Tooltip("Use classpath from pom.xml (if available) when running R code"));
+    grid.add(useMavenFileClasspathLabel, 0, 4);
+    useMavenFileClasspath = new CheckBox();
+    useMavenFileClasspath.setSelected(gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false));
+    grid.add(useMavenFileClasspath, 1, 4);
 
     getDialogPane().setPrefSize(800, 400);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -180,6 +192,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     result.put(GlobalOptions.PKG_LOADER, pkgLoaderCb.getSelectionModel().getSelectedItem());
     result.put(CONSOLE_MAX_LENGTH_PREF, intField.getValue());
     result.put(THEME, themes.getValue());
+    result.put(USE_MAVEN_CLASSLOADER, useMavenFileClasspath.isSelected());
     return result;
   }
 

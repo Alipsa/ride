@@ -137,6 +137,7 @@ public class Ride extends Application {
     primaryStage.setScene(scene);
     enableDragDrop(scene);
     primaryStage.show();
+    consoleComponent.initRenjin(Thread.currentThread().getContextClassLoader());
   }
 
   private void enableDragDrop(Scene scene) {

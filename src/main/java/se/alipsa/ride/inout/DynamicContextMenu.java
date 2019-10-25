@@ -82,6 +82,7 @@ public class DynamicContextMenu extends ContextMenu {
    private MenuItem createFileMI;
    private MenuItem expandAllMI;
    private MenuItem deleteMI;
+   private MenuItem gitAddMI;
 
    MenuItem gitInitMI = new MenuItem("Initialize root as git repo");
 
@@ -173,7 +174,7 @@ public class DynamicContextMenu extends ContextMenu {
       }
 
       if (gitInitialized) {
-         MenuItem gitAddMI = new MenuItem("add");
+         gitAddMI = new MenuItem("add");
          gitAddMI.setOnAction(this::gitAdd);
          gitMenu.getItems().add(gitAddMI);
 
@@ -563,27 +564,6 @@ public class DynamicContextMenu extends ContextMenu {
       Thread runningThread = new Thread(task);
       runningThread.setDaemon(false);
       runningThread.start();
-
-      /*
-      Platform.runLater(() -> {
-         try {
-            credentialsProvider = GitUtils.getStoredCredentials(url);
-            PullResult pullResult = git.pull().setCredentialsProvider(credentialsProvider).call();
-            log.info(pullResult.toString());
-            gui.setNormalCursor();
-            Alerts.info("Git pull", pullResult.toString());
-            gui.getInoutComponent().clearStatus();
-         } catch (TransportException e) {
-            handleTransportException(e, "pull");
-            gui.getInoutComponent().clearStatus();
-         } catch (Exception e) {
-            log.warn("Failed to pull", e);
-            gui.setNormalCursor();
-            ExceptionAlert.showAlert("Failed to pull", e);
-            gui.getInoutComponent().clearStatus();
-         }
-      });
-       */
    }
 
    private void gitAddRemote(ActionEvent actionEvent) {
@@ -662,39 +642,13 @@ public class DynamicContextMenu extends ContextMenu {
       Thread runningThread = new Thread(task);
       runningThread.setDaemon(false);
       runningThread.start();
-      /*
-      Platform.runLater(() -> {
-         try {
-            credentialsProvider = GitUtils.getStoredCredentials(url);
-            Iterable<PushResult> result = git.push().setCredentialsProvider(credentialsProvider).call();
-            log.info("Git push was successful: {}", result);
-            StringBuilder str = new StringBuilder();
-            for (PushResult pushResult : result) {
-               pushResult.getRemoteUpdates().forEach(u ->
-                  str.append(u.toString()).append("\n"));
-            }
-            gui.setNormalCursor();
-            Alerts.info("Git push", "Git push was successful!\n" + str.toString());
-            gui.getInoutComponent().clearStatus();
-         } catch (TransportException e) {
-            handleTransportException(e, "push");
-            gui.getInoutComponent().clearStatus();
-         } catch (Exception e) {
-            log.warn("Failed to push", e);
-            gui.setNormalCursor();
-            ExceptionAlert.showAlert("Failed to push", e);
-            gui.getInoutComponent().clearStatus();
-         }
-      });
-
-       */
    }
 
    private void handleTransportException(TransportException e, String operation) {
       gui.setNormalCursor();
       log.info("Error pulling from remote");
       // TODO: check if it is an ssl problem
-      List<Class> causes = new ArrayList<>();
+      List<Class<? extends Throwable>> causes = new ArrayList<>();
       Throwable cause = e.getCause();
       while (cause != null) {
          log.debug("Cause is {}", cause.toString());
@@ -897,5 +851,19 @@ public class DynamicContextMenu extends ContextMenu {
          createFileMI.setDisable(false);
          expandAllMI.setDisable(false);
       }
+   }
+
+   public void hideFileItems() {
+      createDirMI.setVisible(true);
+      createFileMI.setVisible(true);
+      expandAllMI.setVisible(true);
+      gitInitMI.setVisible(true);
+   }
+
+   public void hideDirItems() {
+      createDirMI.setVisible(false);
+      createFileMI.setVisible(false);
+      expandAllMI.setVisible(false);
+      gitInitMI.setVisible(false);
    }
 }

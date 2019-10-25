@@ -2,6 +2,7 @@ package se.alipsa.ride.menu;
 
 import static se.alipsa.ride.Constants.THEME;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
+import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -474,7 +475,7 @@ public class MainMenu extends MenuBar {
     }
     GlobalOptions result = res.get();
 
-    Class selectedPkgLoader = (Class) result.get(GlobalOptions.PKG_LOADER);
+    Class<?> selectedPkgLoader = (Class) result.get(GlobalOptions.PKG_LOADER);
     if (!selectedPkgLoader.isInstance(gui.getConsoleComponent().getPackageLoader())) {
       PackageLoader loader = gui.getConsoleComponent().packageLoaderForName(this.getClass().getClassLoader(), selectedPkgLoader.getSimpleName());
       gui.getConsoleComponent().setPackageLoader(loader);
@@ -482,7 +483,7 @@ public class MainMenu extends MenuBar {
       restartR();
     }
 
-    List<Repo> selectedRepos = (List<Repo>)result.get(GlobalOptions.REMOTE_REPOSITORIES);
+    List<Repo> selectedRepos = result.getRepoList(GlobalOptions.REMOTE_REPOSITORIES);
     Collections.sort(selectedRepos);
     List<Repo> currentRepos = gui.getConsoleComponent().getRemoteRepositories();
     Collections.sort(currentRepos);
@@ -491,7 +492,7 @@ public class MainMenu extends MenuBar {
       log.info("Remote repositories changed, restarting R session");
       log.info("selectedRepos = {}\n currentRepos = {}", selectedRepos, currentRepos);
       gui.getConsoleComponent().setRemoterepositories(selectedRepos,
-          Thread.currentThread().getContextClassLoader()
+         Thread.currentThread().getContextClassLoader()
       );
     }
 
@@ -506,6 +507,13 @@ public class MainMenu extends MenuBar {
       gui.getScene().getStylesheets().clear();
       gui.addStyleSheet(theme);
       gui.getPrefs().put(THEME, theme);
+    }
+
+    boolean useMavenClassLoader = result.getBoolean(USE_MAVEN_CLASSLOADER);
+    if (useMavenClassLoader != gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, !useMavenClassLoader)) {
+      log.info("useMavenClassLoader changed, restarting R session");
+      gui.getPrefs().putBoolean(USE_MAVEN_CLASSLOADER, useMavenClassLoader);
+      gui.getConsoleComponent().restartR();
     }
   }
 

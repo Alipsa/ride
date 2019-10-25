@@ -150,20 +150,22 @@ public class ConnectionsTab extends Tab {
         new PropertyValueFactory<>("name")
     );
     nameCol.prefWidthProperty().bind(connectionsTable.widthProperty().multiply(0.2));
+    connectionsTable.getColumns().add(nameCol);
 
     TableColumn<ConnectionInfo, String> driverCol = new TableColumn<>("Driver");
     driverCol.setCellValueFactory(
         new PropertyValueFactory<>("driver")
     );
     driverCol.prefWidthProperty().bind(connectionsTable.widthProperty().multiply(0.3));
+    connectionsTable.getColumns().add(driverCol);
 
     TableColumn<ConnectionInfo, String> urlCol = new TableColumn<>("URL");
     urlCol.setCellValueFactory(
         new PropertyValueFactory<>("url")
     );
     urlCol.prefWidthProperty().bind(connectionsTable.widthProperty().multiply(0.5));
+    connectionsTable.getColumns().add(urlCol);
 
-    connectionsTable.getColumns().addAll(nameCol, driverCol, urlCol);
     connectionsTable.setRowFactory(tableView -> {
       final TableRow<ConnectionInfo> row = new TableRow<>();
       final ContextMenu contextMenu = new ContextMenu();

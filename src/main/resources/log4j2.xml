@@ -36,5 +36,8 @@
     <!--logger name="se.alipsa.ride.console.ConsoleComponent" level="debug" additivity="false">
       <AppenderRef ref="console"/>
     </logger-->
+    <logger name="se.alipsa.ride.utils.maven.MavenUtils" level="debug" additivity="false">
+      <AppenderRef ref="console"/>
+    </logger>
   </Loggers>
 </Configuration>

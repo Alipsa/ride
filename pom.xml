@@ -16,7 +16,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
       <release.tag>1.2-beta</release.tag>
-      <renjin.version>3.5-beta65</renjin.version>
+      <renjin.version>3.5-beta75</renjin.version>
    </properties>
 
    <dependencyManagement>
@@ -225,45 +225,18 @@
          <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
-            <version>3.6.2</version>
+            <version>3.1.0</version>
          </dependency>
-         <dependency>
+         <!--dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
             <version>3.3.0</version>
-         </dependency>
+         </dependency-->
          <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>3.6.2</version>
+            <version>3.1.0</version>
          </dependency>
-
-         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.5.2</version>
-            <scope>test</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
-            <version>2.1</version>
-            <scope>test</scope>
-         </dependency>
-
-         <!-- testfx looks like an interesting way to create automated tests -->
-         <!--dependency>
-            <groupId>org.testfx</groupId>
-            <artifactId>testfx-core</artifactId>
-            <version>4.0.16-alpha</version>
-            <scope>test</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.testfx</groupId>
-            <artifactId>testfx-junit5</artifactId>
-            <version>4.0.16-alpha</version>
-            <scope>test</scope>
-         </dependency-->
       </dependencies>
    </dependencyManagement>
 
@@ -307,13 +280,23 @@
       <dependency>
          <groupId>org.junit.jupiter</groupId>
          <artifactId>junit-jupiter-api</artifactId>
+         <version>5.5.2</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.hamcrest</groupId>
          <artifactId>hamcrest-library</artifactId>
+         <version>2.1</version>
          <scope>test</scope>
       </dependency>
+      <dependency>
+         <groupId>org.hamcrest</groupId>
+         <artifactId>hamcrest-core</artifactId>
+         <version>2.1</version>
+         <scope>test</scope>
+      </dependency>
+
+      <!-- testfx looks like an interesting way to create automated tests -->
       <!--dependency>
          <groupId>org.testfx</groupId>
          <artifactId>testfx-core</artifactId>
@@ -569,11 +552,11 @@
                <artifactId>maven-model</artifactId>
                <scope>provided</scope>
             </dependency>
-            <dependency>
+            <!--dependency>
                <groupId>org.codehaus.plexus</groupId>
                <artifactId>plexus-utils</artifactId>
                <scope>provided</scope>
-            </dependency>
+            </dependency-->
             <dependency>
                <groupId>org.apache.maven</groupId>
                <artifactId>maven-core</artifactId>
@@ -738,10 +721,10 @@
                <groupId>org.apache.maven</groupId>
                <artifactId>maven-model</artifactId>
             </dependency>
-            <dependency>
+            <!--dependency>
                <groupId>org.codehaus.plexus</groupId>
                <artifactId>plexus-utils</artifactId>
-            </dependency>
+            </dependency-->
             <dependency>
                <groupId>org.apache.maven</groupId>
                <artifactId>maven-core</artifactId>

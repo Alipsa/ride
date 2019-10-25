@@ -3,6 +3,7 @@ package se.alipsa.ride.console;
 import static se.alipsa.ride.Constants.ICON_HEIGHT;
 import static se.alipsa.ride.Constants.ICON_WIDTH;
 import static se.alipsa.ride.Constants.INDENT;
+import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 import static se.alipsa.ride.utils.StringUtils.format;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -51,6 +52,7 @@ import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.maven.MavenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -87,6 +89,7 @@ public class ConsoleComponent extends BorderPane {
   private List<RemoteRepository> remoteRepositories;
   private PackageLoader packageLoader;
   private Thread runningThread;
+  private File workingDir;
 
   public ConsoleComponent(Ride gui) {
     this.gui = gui;
@@ -115,25 +118,50 @@ public class ConsoleComponent extends BorderPane {
     vPane.setMaxWidth(Double.MAX_VALUE);
     vPane.setMaxHeight(Double.MAX_VALUE);
     setCenter(vPane);
-    initRenjin(getStoredRemoteRepositories(), Thread.currentThread().getContextClassLoader());
+    //initRenjin(getStoredRemoteRepositories(), Thread.currentThread().getContextClassLoader());
   }
 
   private static Repo asRepo(RemoteRepository repo) {
     return new Repo(repo.getId(), repo.getContentType(), repo.getUrl());
   }
 
+  public void initRenjin(ClassLoader parentClassLoader) {
+    initRenjin(getStoredRemoteRepositories(), parentClassLoader);
+  }
+
   private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader) {
     String version = "unknown";
 
     try {
-      RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
 
       remoteRepositories = new ArrayList<>();
       remoteRepositories.addAll(asRemoteRepositories(repos));
 
-      PackageLoader loader = getPackageLoader(parentClassLoader);
+      if (gui.getInoutComponent() == null) {
+        log.warn("InoutComponent is null, timing is off");
+        throw new RuntimeException("intiRenjin called too soon, InoutComponent is null, timing is off");
+      }
 
-      ClassLoader cl = classloader(loader, parentClassLoader);
+      log.info("USE_MAVEN_CLASSLOADER pref is set to {}", gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false));
+
+      ClassLoader cl = parentClassLoader;
+
+      if (gui.getInoutComponent() != null && gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false)) {
+        File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
+        if (pomFile.exists()) {
+          log.info("Parsing pom to use maven classloader");
+          cl = MavenUtils.getMavenDependenciesClassloader(pomFile);
+        } else {
+          log.info("Use maven class loader is set but pomfile {} does not exist", pomFile);
+        }
+      }
+
+      PackageLoader loader = getPackageLoader(cl);
+
+      if (loader instanceof AetherPackageLoader) {
+        cl = ((AetherPackageLoader) loader).getClassLoader();
+      }
+
 
       SessionBuilder builder = new SessionBuilder();
       session = builder
@@ -142,8 +170,12 @@ public class ConsoleComponent extends BorderPane {
           .setClassLoader(cl) //allows imports in r code to work
           .build();
 
+      if (workingDir != null && workingDir.exists()) {
+        session.setWorkingDirectory(workingDir);
+      }
       // TODO: after implementing a javafx grafics device do session.getOptions().set("device", theGraphicsDevice);
 
+      RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
       engine = factory.getScriptEngine(session);
 
       version = RenjinVersion.getVersionName();
@@ -156,13 +188,6 @@ public class ConsoleComponent extends BorderPane {
     console.append(surround);
     console.append(greeting);
     console.append(surround + "\n>", true);
-  }
-
-  private ClassLoader classloader(PackageLoader loader, ClassLoader parentClassLoader) {
-    if (loader instanceof AetherPackageLoader) {
-      return ((AetherPackageLoader) loader).getClassLoader();
-    }
-    return parentClassLoader;
   }
 
   private PackageLoader getPackageLoader(ClassLoader parentClassLoader) {
@@ -741,7 +766,10 @@ public class ConsoleComponent extends BorderPane {
       return;
     }
     try {
-      session.setWorkingDirectory(dir);
+      if (session != null) {
+        session.setWorkingDirectory(dir);
+      }
+      workingDir = dir;
     } catch (FileSystemException e) {
       log.warn("Error setting working dir to {} for session", dir, e);
     }

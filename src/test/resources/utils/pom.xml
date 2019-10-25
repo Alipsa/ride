@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>se.alipsa</groupId>
+   <artifactId>phone-number</artifactId>
+   <version>1.0-SNAPSHOT</version>
+   <packaging>jar</packaging>
+
+   <!-- general information about your package -->
+   <name>phoneNumber</name>
+   <description>Renjin wrapper around googles liphonenumber</description>
+
+   <properties>
+      <renjin.version>3.5-beta65</renjin.version>
+      <maven.compiler.source>1.8</maven.compiler.source>
+      <maven.compiler.target>1.8</maven.compiler.target>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.renjin</groupId>
+         <artifactId>renjin-script-engine</artifactId>
+         <version>${renjin.version}</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-api</artifactId>
+         <version>1.7.27</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-log4j12</artifactId>
+         <version>1.7.27</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>com.googlecode.libphonenumber</groupId>
+         <artifactId>libphonenumber</artifactId>
+         <version>8.10.19</version>
+      </dependency>
+      <!-- the hamcrest package is only required if you use it for unit tests -->
+      <dependency>
+         <groupId>org.renjin</groupId>
+         <artifactId>hamcrest</artifactId>
+         <version>${renjin.version}</version>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+   <repositories>
+      <repository>
+         <id>bedatadriven</id>
+         <name>bedatadriven public repo</name>
+         <url>https://nexus.bedatadriven.com/content/groups/public/</url>
+      </repository>
+      <repository>
+         <id>mavencentral</id>
+         <name>central</name>
+         <url>https://repo1.maven.org/maven2/</url>
+      </repository>
+   </repositories>
+
+   <pluginRepositories>
+      <pluginRepository>
+         <id>bedatadriven</id>
+         <name>bedatadriven public repo</name>
+         <url>https://nexus.bedatadriven.com/content/groups/public/</url>
+      </pluginRepository>
+   </pluginRepositories>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.renjin</groupId>
+            <artifactId>renjin-maven-plugin</artifactId>
+            <version>${renjin.version}</version>
+            <executions>
+               <execution>
+                  <id>build</id>
+                  <goals>
+                     <goal>namespace-compile</goal>
+                  </goals>
+                  <phase>process-classes</phase>
+               </execution>
+            </executions>
+            <dependencies>
+               <dependency>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-api</artifactId>
+                  <version>1.7.27</version>
+               </dependency>
+               <dependency>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-log4j12</artifactId>
+                  <version>1.7.27</version>
+               </dependency>
+               <dependency>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>jcl-over-slf4j</artifactId>
+                  <version>1.7.27</version>
+               </dependency>
+            </dependencies>
+         </plugin>
+         <plugin>
+            <groupId>se.alipsa</groupId>
+            <artifactId>renjin-hamcrest-maven-plugin</artifactId>
+            <version>1.2</version>
+            <configuration>
+               <testFailureIgnore>false</testFailureIgnore>
+            </configuration>
+            <executions>
+               <execution>
+                  <phase>test</phase>
+                  <goals>
+                     <goal>testR</goal>
+                  </goals>
+               </execution>
+            </executions>
+            <dependencies>
+               <dependency>
+                  <groupId>org.renjin</groupId>
+                  <artifactId>renjin-script-engine</artifactId>
+                  <version>${renjin.version}</version>
+                  <exclusions>
+                     <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                     </exclusion>
+                  </exclusions>
+               </dependency>
+               <dependency>
+                  <groupId>org.renjin</groupId>
+                  <artifactId>hamcrest</artifactId>
+                  <version>${renjin.version}</version>
+               </dependency>
+               <dependency>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>slf4j-log4j12</artifactId>
+                  <version>1.7.27</version>
+               </dependency>
+               <dependency>
+                  <groupId>org.slf4j</groupId>
+                  <artifactId>jcl-over-slf4j</artifactId>
+                  <version>1.7.27</version>
+               </dependency>
+            </dependencies>
+         </plugin>
+      </plugins>
+   </build>
+   <!-- TODO: uncomment this and add the real url if you have a repository to deploy to -->
+   <!--distributionManagement>
+     <snapshotRepository>
+       <id>nexus-snapshots</id>
+       <url>http://some.server:8081/nexus/content/repositories/snapshots/</url>
+     </snapshotRepository>
+   </distributionManagement-->
+</project>

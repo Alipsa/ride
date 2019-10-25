@@ -116,6 +116,11 @@ public class FileTree extends TreeView<FileItem> {
 
   private void openContextMenu(TreeItem<FileItem> item, double x, double y) {
     menu.setContext(item);
+    if (item.getValue().getFile().isFile()) {
+      menu.hideDirItems();
+    } else {
+      menu.hideFileItems();
+    }
     menu.show(this, x, y);
   }
 

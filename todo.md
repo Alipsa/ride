@@ -45,7 +45,7 @@ and classpath package loader requires you to alter the ride pom.xml
 
 since we have maven support for building, it would make sense to provide an
 option to use the classpath which is the result of the dependencies described in the pom
-See se.alipsa.ride.utils.MavenUtils for a start
+See se.alipsa.ride.utils.maven.MavenUtils for a start
 
 See here https://www.hascode.com/2017/09/downloading-maven-artifacts-from-a-pom-file-programmatically-with-eclipse-aether/ for some ideas...
 Also https://mitre.github.io/mvndeps/ is doing basically this
