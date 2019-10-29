@@ -1,5 +1,7 @@
 package se.alipsa.ride.code.xmltab;
 
+import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
+
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -57,6 +59,15 @@ public class XmlTab extends TextAreaTab {
     pane.setCenter(xmlPane);
     consoleOutputHandler = new ConsoleOutputHandler();
     warningOutputHandler = new ConsoleWarningOutputHandler();
+
+    saveButton.setOnAction(a -> {
+      gui.getMainMenu().saveContent(this);
+      if (getFile() != null && getFile().getName().equals("pom.xml") && gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false)) {
+        // TODO check if the dependecies have changed so we do not restart the seesion for nothing
+        log.info("Maven build file saved, reloading classloader and restarting session");
+        gui.getConsoleComponent().initRenjin(gui.getClass().getClassLoader());
+      }
+    });
   }
 
   private void runMaven(ActionEvent actionEvent) {

@@ -12,6 +12,12 @@ import org.apache.maven.model.Model;
 import org.eclipse.aether.repository.LocalRepository;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
+import org.renjin.eval.Session;
+import org.renjin.eval.SessionBuilder;
+import org.renjin.primitives.packaging.ClasspathPackageLoader;
+import org.renjin.script.RenjinScriptEngine;
+import org.renjin.script.RenjinScriptEngineFactory;
+import org.renjin.sexp.SEXP;
 import se.alipsa.ride.utils.maven.MavenUtils;
 
 import java.io.File;
@@ -49,6 +55,29 @@ public class MavenUtilsTest {
       ClassLoader cl = MavenUtils.getMavenDependenciesClassloader(projectPomFile, getClass().getClassLoader());
       Class clazz = cl.loadClass(className);
       log.info("Class resolved to {}", clazz);
+   }
+
+   @Test
+   public void testSessionWithMavenClassLoader() throws Exception {
+      ClassLoader cl = MavenUtils.getMavenDependenciesClassloader(projectPomFile, getClass().getClassLoader());
+      ClasspathPackageLoader loader = new ClasspathPackageLoader(cl);
+      SessionBuilder builder = new SessionBuilder();
+      Session session = builder
+          .withDefaultPackages()
+          .setPackageLoader(loader)
+          .setClassLoader(cl)
+          .build();
+      RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
+      RenjinScriptEngine engine = factory.getScriptEngine(session);
+      assertThat(engine.eval("print('Hello World')") + "", equalTo("Hello World"));
+
+      StringBuilder str = new StringBuilder("import(com.google.i18n.phonenumbers.PhoneNumberUtil)\n")
+          .append("numUtil <- PhoneNumberUtil$getInstance()\n")
+          .append("number <- numUtil$parseAndKeepRawInput('+46701234567', 'SE')\n")
+          .append("numUtil$isValidNumber(number)");
+
+      SEXP result = (SEXP)engine.eval(str.toString());
+      assertThat(result.asLogical().toBooleanStrict(), equalTo(true));
    }
 
 }
