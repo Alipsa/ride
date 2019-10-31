@@ -16,7 +16,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
       <release.tag>1.2-beta</release.tag>
-      <renjin.version>3.5-beta75</renjin.version>
+      <renjin.version>3.5-beta76</renjin.version>
    </properties>
 
    <dependencyManagement>
