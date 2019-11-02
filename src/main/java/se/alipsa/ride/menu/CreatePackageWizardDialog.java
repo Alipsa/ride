@@ -3,8 +3,7 @@ package se.alipsa.ride.menu;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,45 +26,69 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     this.gui = gui;
     setTitle("Create Package Wizard");
 
+    Insets insets = new Insets(10, 15, 10, 10);
+
     getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
     getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
 
-    GridPane grid = new GridPane();
-    grid.setHgap(10);
-    grid.setVgap(10);
-    grid.setPadding(new Insets(10, 15, 10, 10));
-    getDialogPane().setContent(grid);
+    BorderPane pane = new BorderPane();
+    pane.setPadding(insets);
+    getDialogPane().setContent(pane);
+    VBox vBox = new VBox();
+    vBox.setPadding(insets);
+    pane.setCenter(vBox);
 
+    HBox groupBox = new HBox();
+    groupBox.setPadding(insets);
+    groupBox.setSpacing(10);
+    vBox.getChildren().add(groupBox);
     Label groupNameLabel = new Label("Group Name");
-    grid.add(groupNameLabel,0,0);
+    groupBox.getChildren().add(groupNameLabel);
     groupNameField = new TextField();
     groupNameField.setPrefColumnCount(10);
     groupNameField.setTooltip(new Tooltip("Should be reverse domain name of your org e.g. com.acme"));
-    grid.add(groupNameField, 1,0);
+    groupBox.getChildren().add(groupNameField);
 
+    HBox packageBox = new HBox();
+    packageBox.setPadding(insets);
+    packageBox.setSpacing(10);
+    vBox.getChildren().add(packageBox);
     Label packageNameLabel = new Label("Package Name");
-    grid.add(packageNameLabel,0,1);
+    packageBox.getChildren().add(packageNameLabel);
     packageNameField = new TextField();
     packageNameField.setPrefColumnCount(10);
     packageNameField.setTooltip(new Tooltip("The name of your package; do not use spaces or slashes, only a-z, 0-9, _, -"));
-    grid.add(packageNameField, 1,1);
+    packageBox.getChildren().add(packageNameField);
 
+    HBox dirBox = new HBox();
+    dirBox.setPadding(insets);
+    dirBox.setSpacing(10);
+    vBox.getChildren().add(dirBox);
     Label chooseDirLabel = new Label("Project dir");
-    grid.add(chooseDirLabel, 0,2);
+    dirBox.getChildren().add(chooseDirLabel);
     Button chooseDirButton = new Button("Browse...");
-    grid.add(chooseDirButton, 1, 2);
+    dirBox.getChildren().add(chooseDirButton);
     chooseDirButton.setOnAction(this::chooseProjectDir);
     dirField = new TextField();
-    dirField.setPrefColumnCount(25);
+    // Need to warp it as disabled nodes cannot show tooltips.
+    Label dirWrapper = new Label("", dirField);
     dirField.setDisable(true);
-    grid.add(dirField, 2,2);
-
+    HBox.setHgrow(dirField, Priority.ALWAYS);
+    HBox.setHgrow(dirWrapper, Priority.ALWAYS);
+    dirWrapper.setMaxWidth(Double.MAX_VALUE);
+    dirField.setMaxWidth(Double.MAX_VALUE);
     selectedDirectory = gui.getInoutComponent().getRootDir();
     dirField.setText(selectedDirectory.getAbsolutePath());
+    dirWrapper.setTooltip(new Tooltip(selectedDirectory.getAbsolutePath()));
+    dirBox.getChildren().add(dirWrapper);
 
+    HBox changeToDirBox = new HBox();
+    changeToDirBox.setPadding(insets);
+    changeToDirBox.setSpacing(10);
+    vBox.getChildren().add(changeToDirBox);
     changeToDir = new CheckBox("Change to new project dir");
     changeToDir.setSelected(true);
-    grid.add(changeToDir, 0, 3, 2, 1);
+    changeToDirBox.getChildren().add(changeToDir);
 
     getDialogPane().setPrefSize(700, 300);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);

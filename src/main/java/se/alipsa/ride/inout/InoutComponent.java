@@ -33,6 +33,8 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
+import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
+
 public class InoutComponent extends TabPane implements InOut {
 
   private FileTree fileTree;
@@ -129,7 +131,9 @@ public class InoutComponent extends TabPane implements InOut {
   public void changeRootDir(File dir) {
     if(!getRootDir().equals(dir)) {
       fileTree.refresh(dir);
-      gui.getConsoleComponent().initRenjin(gui.getClass().getClassLoader());
+      if (gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false)) {
+        gui.getConsoleComponent().initRenjin(gui.getClass().getClassLoader());
+      }
     }
   }
 

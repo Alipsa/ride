@@ -47,6 +47,7 @@ public class Ride extends Application {
   private Stage primaryStage;
   private Scene scene;
   private MainMenu mainMenu;
+  private Preferences preferences;
 
   private FileOpener fileOpener;
 
@@ -67,6 +68,7 @@ public class Ride extends Application {
         + "\nerrorEnabled = " + log.isErrorEnabled()
     );*/
 
+    preferences = Preferences.userRoot().node(Ride.class.getName());
     this.primaryStage = primaryStage;
 
     BorderPane root = new BorderPane();
@@ -236,7 +238,7 @@ public class Ride extends Application {
   }
 
   public Preferences getPrefs() {
-    return Preferences.userRoot().node(Ride.class.getName());
+    return preferences;
   }
 
   public Scene getScene() {
