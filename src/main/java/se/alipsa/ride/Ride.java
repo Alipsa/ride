@@ -6,6 +6,7 @@ import static se.alipsa.ride.Constants.THEME;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -138,8 +139,17 @@ public class Ride extends Application {
     primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
     primaryStage.setScene(scene);
     enableDragDrop(scene);
+
+    Task<Void> task = new Task<Void>() {
+      @Override
+      protected Void call() {
+        consoleComponent.initRenjin(Ride.this.getClass().getClassLoader());
+        return null;
+      }
+    };
+    new Thread(task).start();
+
     primaryStage.show();
-    consoleComponent.initRenjin(Thread.currentThread().getContextClassLoader());
   }
 
   private void enableDragDrop(Scene scene) {
