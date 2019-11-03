@@ -52,9 +52,15 @@ public class MavenUtils {
 
   private static final Logger log = LogManager.getLogger();
 
-  public static ClassLoader getMavenClassLoader(Model project, Collection<File> dependencies, ClassLoader possibleParent) throws Exception {
+   /**
+    * Note:
+    * The maven classloader must have Ride as parent otherwise executing R scripts will result in classes mixed from
+    * different classloaders and will not work as executing the scripts depend on Renjin script engine loaded by Ride.
+    * This has the unfortunate consequence that Ride dependencies will influence the result and not be as "pure" as
+    * when just executing the pom.xml.
+    */
+  public static ClassLoader getMavenClassLoader(Model project, Collection<File> dependencies, ClassLoader parent) throws Exception {
     List<String> classpathElements = getClassPathElements(project);
-    boolean hasRenjinScriptEngine = false;
     List<URL> urls = new ArrayList<>();
     for (int i = 0; i < classpathElements.size(); ++i) {
       String elem = classpathElements.get(i);
@@ -65,22 +71,15 @@ public class MavenUtils {
       urls.add(url);
       log.debug("Adding {} to classloader", url);
     }
+
     for (File dep : dependencies) {
       if (dep != null && dep.exists()) {
         URL url = dep.toURI().toURL();
-        if (url.toString().contains("renjin-script-engine")) {
-          hasRenjinScriptEngine = true;
-        }
         urls.add(url);
         log.debug("Adding {} to classloader", url);
       }
     }
-    if (hasRenjinScriptEngine) {
-      return new URLClassLoader(urls.toArray(new URL[0]));
-    } else {
-      log.debug("renjin-script-engine artifact not found in dependencies, creating classloader with ride cl as parent");
-      return new URLClassLoader(urls.toArray(new URL[0]), possibleParent);
-    }
+    return new URLClassLoader(urls.toArray(new URL[0]), parent);
   }
 
   public static List<String> getClassPathElements(Model project) throws DependencyResolutionRequiredException {
