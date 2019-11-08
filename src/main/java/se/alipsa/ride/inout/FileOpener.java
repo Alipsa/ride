@@ -49,11 +49,14 @@ public class FileOpener {
       if (strEquals(type, "text/x-sql", "application/sql") || strEndsWith(fileNameLower, "sql")) {
         return codeComponent.addTab(file, CodeType.SQL);
       }
+      if (strEndsWith(fileNameLower, ".md")) {
+        return codeComponent.addTab(file, CodeType.MD);
+      }
       if (strStartsWith(type, "text")
                  || strEquals(type, "application/x-bat",
           "application/x-sh", "application/json", "application/x-sas")
                  || "namespace".equals(fileNameLower)
-                 || strEndsWith(fileNameLower, ".txt", ".md", ".csv", ".gitignore")) {
+                 || strEndsWith(fileNameLower, ".txt", ".csv", ".gitignore")) {
         return codeComponent.addTab(file, CodeType.TXT);
       }
       if (allowOpenExternal && isDesktopSupported()) {

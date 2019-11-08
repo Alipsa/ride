@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeItem.TreeModificationEvent;
@@ -82,6 +83,9 @@ public class FileTree extends TreeView<FileItem> {
           setText(item.getText());
           setStyle(item.getStyle());
           setGraphic(getTreeItem().getGraphic());
+          if (item.getFile().equals(getRoot().getValue().getFile())) {
+            setTooltip(new Tooltip(item.getFile().getAbsolutePath()));
+          }
         } else {
           setText("");
           setGraphic(null);

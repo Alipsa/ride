@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.javatab.JavaTab;
+import se.alipsa.ride.code.mdtab.MdTab;
 import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
@@ -97,6 +98,9 @@ public class CodeComponent extends BorderPane {
         break;
       case TXT:
         tab = new TxtTab(title, gui);
+        break;
+      case MD:
+        tab = new MdTab(title, gui);
         break;
       case XML:
         tab = new XmlTab(title, gui);

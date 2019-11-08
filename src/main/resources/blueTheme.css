@@ -257,6 +257,72 @@
     -fx-fill: darkseagreen;
 }
 
+.title1 {
+    -fx-fill: #81cfe0;
+    -fx-font-size: 24px;
+}
+
+.title2 {
+    -fx-fill: #81cfe0;
+    -fx-font-size: 22px;
+}
+
+.title3 {
+    -fx-fill: #81cfe0;
+    -fx-font-size: 18px;
+}
+
+.title4 {
+    -fx-fill: #81cfe0;
+    -fx-font-size: 15px;
+}
+
+.title5 {
+    -fx-fill: #81cfe0;
+    -fx-font-size: 12px;
+}
+
+.title6 {
+    -fx-fill: #81cfe0;
+    -fx-font-size: 10px;
+}
+
+.bold {
+    -fx-font-weight: bold;
+}
+
+.italic {
+    -fx-font-style: italic;
+}
+
+.italicbold {
+    -fx-font-weight: bold;
+    -fx-font-style: italic;
+}
+
+.boldstrikethrough {
+    -fx-font-weight: bold;
+    -fx-strikethrough: true;
+}
+
+.strikethrough {
+    -fx-strikethrough: true;
+}
+
+.tag {
+    -fx-fill: green;
+}
+
+.code {
+    /* -fx-fill: #aaffaa; */
+    -fx-background-color: gainsboro;
+}
+
+.blockcode {
+    /* -fx-fill: #aaffaa; */
+    -fx-background-color: gainsboro;
+}
+
 /** WebView styles */
 body {
     background-color: rgb(0, 35, 55);
