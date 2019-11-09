@@ -125,32 +125,32 @@
 }
 
 .title1 {
-    -fx-fill: #81cfe0;
+    -fx-font-weight: bold;
     -fx-font-size: 24px;
 }
 
 .title2 {
-    -fx-fill: #81cfe0;
+    -fx-font-weight: bold;
     -fx-font-size: 22px;
 }
 
 .title3 {
-    -fx-fill: #81cfe0;
+    -fx-font-weight: bold;
     -fx-font-size: 18px;
 }
 
 .title4 {
-    -fx-fill: #81cfe0;
+    -fx-font-weight: bold;
     -fx-font-size: 15px;
 }
 
 .title5 {
-    -fx-fill: #81cfe0;
+    -fx-font-weight: bold;
     -fx-font-size: 12px;
 }
 
 .title6 {
-    -fx-fill: #81cfe0;
+    -fx-font-weight: bold;
     -fx-font-size: 10px;
 }
 
@@ -176,18 +176,22 @@
     -fx-strikethrough: true;
 }
 
-.tag {
+.link,
+.underline {
     -fx-fill: green;
+    -fx-underline: true;
 }
 
 .code {
-    /* -fx-fill: #aaffaa; */
-    -fx-background-color: gainsboro;
+    -fx-fill: dimgray;
 }
 
 .blockcode {
-    /* -fx-fill: #aaffaa; */
-    -fx-background-color: gainsboro;
+    -fx-fill: dimgray;
+}
+
+.blockquote {
+    -fx-fill: blue;
 }
 
 /** WebView styles */

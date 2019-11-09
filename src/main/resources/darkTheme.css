@@ -309,18 +309,22 @@
     -fx-strikethrough: true;
 }
 
-.tag {
-    -fx-fill: green;
+.link,
+.underline {
+    -fx-fill: SlateBlue;
+    -fx-underline: true;
 }
 
 .code {
-    /* -fx-fill: #aaffaa; */
-    -fx-background-color: gainsboro;
+    -fx-fill: DarkOliveGreen;
 }
 
 .blockcode {
-    /* -fx-fill: #aaffaa; */
-    -fx-background-color: gainsboro;
+    -fx-fill: DarkOliveGreen;
+}
+
+.blockquote {
+    -fx-fill: DarkGreen;
 }
 
 /** WebView styles */
