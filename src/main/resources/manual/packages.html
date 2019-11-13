@@ -3,6 +3,56 @@
     <title>Packages</title>
 </head>
 <body>
+<h2>Loading packages</h2>
+<p>
+Since Renjin is a JVM implementation of R, Java classloading mechanisms apply to loading packages. This means that R packages
+(libraries) need to be repackaged into jar files and made available to the classloader (i.e. made part of the classpath) when
+running Renjin. There are some tools in Renjin that makes that feasible. The gnur-compile goal of the renjin-maven-plugin
+can compile c and fortran code into jvm bytecode making it possible to convert GNU R packages into Renjin packages. Bedatadriven
+who are the creators and maintainers of Renjin have set up a job that automatically converts all packages available on CRAN and
+Bioconductor into Renjin packages and make them available on the
+<a href="https://nexus.bedatadriven.com/content/groups/public/">Bedatadriven Nexus</a>.</p>
+<p>
+    When using Ride you have three options to make a Renjin package available to the ScriptEngine so that you can load packages
+    with <span class="code"><span class="keyword">library</span>(<span class="string">"yourpackage"</span>)</span>
+    <ol>
+        <li>Add the dependency to the pom.xml used to start Ride</li>
+        <li>Use the AetherPackageLoader</li>
+        <li>Create a maven project with your own pom.xml</li>
+    </ol>
+
+<h3>Add the dependency to the pom.xml used to start Ride</h3>
+This is a simple thing to do. Lets say you need to read a json file. You go to the <a href="http://packages.renjin.org/">Renjin packages list</a>
+and look up rjson. You will see that the dependency information for rjson is
+<div class="codeblock">
+    &lt;dependency&gt;<br/>
+    &nbsp;&nbsp;&lt;groupId&gt;org.renjin.cran&lt;/groupId&gt;<br/>
+    &nbsp;&nbsp;&lt;artifactId&gt;rjson&lt;/artifactId&gt;<br/>
+    &nbsp;&nbsp;&lt;version&gt;0.2.15-renjin-21&lt;/version&gt;<br/>
+    &lt;/dependency&gt;
+</div>
+You just need to go the the dependencies section in the Ride pom.xml and add the dependency and restart Ride and you are good to go.
+</p>
+
+<h3>Use the AetherPackageLoader</h3>
+Another way is to use the AetherPackageLoader. This is basically a maven aware classloader that will dynamically look for,
+download and add packages to the classpath. It is very convenient to use when prototyping and truing out various packages since you
+do not need to restart sessions or Ride to make a new package available. There are some downsides with it however. AetherPackageLoader
+is similar to package loading in GNU R in the sense that it will download the latest version available which may or may not work with your code
+so this is likely not something you want to use in production. You enable the AetherPackageLoader by going to "Tools" -&gt; "Global Options"
+and changing the package loader from ClasspathPackageLoader to AetherPackageLoader.
+
+<h3>Create a maven project with your own pom.xml</h3>
+Starting Ride 1.2 you have support for maven projects in Ride. There is a project wizard that help you create a maven project
+but you can easily create your ow maven project from scratch if you are familiar with maven. If you have enabled the Global Option
+"Use pom classpath" Ride will parse the pom.xml and use that classpath when running your R code. You need to be aware that the way
+this is done is by creating a new classloader with the Ride classloader as the parent. This means that if a dependency is already defined in Ride
+this is the version that will be used regardless of what you specify in your pom. E.g. it is not possible to define another version of Renjin
+in your pom and expect Ride to hinor that version when you run your R code. However Ride also support running maven directly and when you do that
+only the dependencies of your pom.xml are honored so it is still possible to execute tests etc to verify that your project works without surprises
+before integrating it with your application server of choice to run your code. Take a look at the <a href="https://github.com/Alipsa/collaborative-analytics-example">
+collaborative-analytics-example</a> for an example of a custom renjin package, a maven project using the package and a spring boot application using this project.
+
 <h2 id="using_packages">Using Packages</h2>
 Since the renjin gcc compiler bridge is not 100% complete there are many packages that does not work in Renjin yet.
 You can get some idea of support from <a href="http://packages.renjin.org/">Renjin packages list</a> but this will
