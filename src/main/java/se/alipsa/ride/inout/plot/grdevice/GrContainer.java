@@ -1,31 +1,45 @@
 package se.alipsa.ride.inout.plot.grdevice;
 
+import org.jfree.fx.FXGraphics2D;
 import org.renjin.grDevices.GDContainer;
 import org.renjin.grDevices.GDObject;
 import org.renjin.grDevices.GDState;
 
 import java.awt.*;
 
-public class GrContainer implements GDContainer {
+public class GrContainer  implements GDContainer {
+
+   GrPane grPane;
+   private GDState state;
+   private Dimension size;
+
+   private int deviceNumber = -1;
+
+
+   public GrContainer(double w, double h) {
+      size = new Dimension((int)w, (int)h);
+      grPane = new GrPane(size);
+      state = new GDState();
+   }
 
    @Override
    public void add(GDObject gdObject) {
+      grPane.paint(gdObject, state);
 
    }
 
    @Override
    public void reset() {
-
    }
 
    @Override
    public GDState getGState() {
-      return null;
+      return state;
    }
 
    @Override
    public Graphics getGraphics() {
-      return null;
+      return grPane.getGraphics();
    }
 
    @Override
@@ -34,8 +48,8 @@ public class GrContainer implements GDContainer {
    }
 
    @Override
-   public void setDeviceNumber(int i) {
-
+   public void setDeviceNumber(int deviceNumber) {
+      this.deviceNumber = deviceNumber;
    }
 
    @Override
@@ -45,11 +59,11 @@ public class GrContainer implements GDContainer {
 
    @Override
    public int getDeviceNumber() {
-      return 0;
+      return deviceNumber;
    }
 
    @Override
    public Dimension getSize() {
-      return null;
+      return size;
    }
 }

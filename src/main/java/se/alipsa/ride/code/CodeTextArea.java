@@ -93,6 +93,12 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
           parentTab.getGui().getMainMenu().saveContent(parentTab);
         } else if (e.isShiftDown() && KeyCode.C.equals(keyCode)) {
           parentTab.getGui().getMainMenu().commentLines();
+        } else if (e.isShiftDown() && (KeyCode.QUOTE.equals(e.getCode()) || KeyCode.ASTERISK.equals(e.getCode()))) {
+          insertText(getCaretPosition(), "`");
+        } else if (e.isAltDown() && KeyCode.QUOTE.equals(e.getCode())) {
+          insertText(getCaretPosition(), "´");
+        } else if (KeyCode.QUOTE.equals(e.getCode())) {
+          insertText(getCaretPosition(), "^");
         }
       } else if (e.isShiftDown()) {
         if (KeyCode.TAB.equals(keyCode)) {

@@ -114,8 +114,6 @@ public class RTextArea extends CodeTextArea {
           if (getCaretPosition() > totalLength) {
             moveTo(totalLength);
           }
-        } else if (KeyCode.QUOTE.equals(e.getCode())) {
-          insertText(getCaretPosition(), "^");
         } else if (KeyCode.SPACE.equals(e.getCode())) {
           autoComplete();
         }

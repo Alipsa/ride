@@ -49,6 +49,7 @@ import org.renjin.sexp.Symbol;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.environment.EnvironmentComponent;
+import se.alipsa.ride.inout.plot.grdevice.GrDevice;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
@@ -174,6 +175,8 @@ public class ConsoleComponent extends BorderPane {
         session.setWorkingDirectory(workingDir);
       }
       // TODO: after implementing a javafx grafics device do session.getOptions().set("device", theGraphicsDevice);
+      //GrDevice grDevice = new GrDevice();
+      //session.getOptions().set("device", grDevice);
 
       RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
       engine = factory.getScriptEngine(session);

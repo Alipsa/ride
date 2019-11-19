@@ -64,17 +64,7 @@ public class MdTextArea extends CodeTextArea implements TabTextArea {
    );
 
    public MdTextArea(MdTab parent) {
-      plainTextChanges().subscribe(ptc -> {
-         if (parent.isChanged() == false && !blockChange) {
-            parent.contentChanged();
-         }
-      });
-
-      addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-         if (e.isControlDown() && KeyCode.F.equals(e.getCode())) {
-            parent.getGui().getMainMenu().displayFind();
-         }
-      });
+      super(parent);
    }
 
    @Override

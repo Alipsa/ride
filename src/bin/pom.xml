@@ -123,6 +123,11 @@
             <version>1.8</version>
         </dependency>
         <dependency>
+            <groupId>se.alipsa.jfxplot</groupId>
+            <artifactId>plot</artifactId>
+            <version>0.3.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
             <version>[1.22,)</version>
