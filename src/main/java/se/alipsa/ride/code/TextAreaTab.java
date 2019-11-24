@@ -29,6 +29,8 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
   public TextAreaTab(Ride gui, CodeType codeType) {
     this.gui = gui;
     this.codeType = codeType;
+
+    super.setTooltip(new Tooltip(codeType.getDisplayValue()));
     saveButton.setGraphic(new ImageView(IMG_SAVE));
     saveButton.setDisable(true);
     saveButton.setOnAction(a -> gui.getMainMenu().saveContent(this));
