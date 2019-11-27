@@ -105,7 +105,7 @@
          <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>R2JDBC</artifactId>
-            <version>10.0.19</version>
+            <version>10.0.20</version>
          </dependency>
          <dependency>
             <groupId>joda-time</groupId>
