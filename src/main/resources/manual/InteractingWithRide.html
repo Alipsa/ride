@@ -78,6 +78,21 @@ Here is an example:<br/>
     write.csv(mtcars, file)<br/>
 </div>
 
-
+<h4>Use the connections defined in the connections tab</h4>
+<div class="codeblock">
+    <div class="comment">
+        /** Return a connections for the name defined in Ride */
+    </div>
+    ConnectionInfo connection(String name);<br/>
+</div>
+Here is an example:<br/>
+<div class="codeblock">
+    testCon <- inout$connection(<span class="string">"test"</span>)<br/>
+    &nbsp;&nbsp;con <- dbConnect(JDBC(testCon$getDriver()),<br/>
+    &nbsp;&nbsp;url = testCon$getUrl(),<br/>
+    &nbsp;&nbsp;user = testCon$getUser(),<br/>
+    &nbsp;&nbsp;password = testCon$getPassword()<br/>
+    )<br/>
+</div>
 </body>
 </html>

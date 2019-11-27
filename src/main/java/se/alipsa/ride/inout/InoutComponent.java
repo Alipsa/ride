@@ -1,10 +1,18 @@
 package se.alipsa.ride.inout;
 
+import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -23,6 +31,7 @@ import org.renjin.sexp.StringVector;
 import org.renjin.sexp.Vector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
+import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.inout.plot.PlotsTab;
 import se.alipsa.ride.inout.viewer.ViewTab;
 import se.alipsa.ride.model.Table;
@@ -32,8 +41,6 @@ import se.alipsa.ride.utils.ExceptionAlert;
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-
-import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 
 public class InoutComponent extends TabPane implements InOut {
 
@@ -241,6 +248,12 @@ public class InoutComponent extends TabPane implements InOut {
         return null;
       }
     }
+  }
+
+  @Override
+  public ConnectionInfo connection(String name) {
+    return  gui.getEnvironmentComponent().getConnections().stream()
+        .filter(ci -> ci.getName().equals(name)).findAny().orElse(null);
   }
 
   private void view(Matrix mat, String... title) {
