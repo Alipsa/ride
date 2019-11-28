@@ -85,10 +85,11 @@ Here is an example:<br/>
     </div>
     ConnectionInfo connection(String name);<br/>
 </div>
+The ConnectionInfo object contains the information you see in the connections tab i.e. name, url, username, password.
 Here is an example:<br/>
 <div class="codeblock">
     testCon <- inout$connection(<span class="string">"test"</span>)<br/>
-    &nbsp;&nbsp;con <- dbConnect(JDBC(testCon$getDriver()),<br/>
+    con <- dbConnect(JDBC(testCon$getDriver()),<br/>
     &nbsp;&nbsp;url = testCon$getUrl(),<br/>
     &nbsp;&nbsp;user = testCon$getUser(),<br/>
     &nbsp;&nbsp;password = testCon$getPassword()<br/>
