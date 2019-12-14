@@ -1,14 +1,16 @@
 This is version 1.2 of Ride.
 
-At this point Ride is usable and provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine.
-It also support SQL querying and updating.
+At this point Ride is usable for muc more than just simple edititing and running R scripts. 
+It provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine but
+it also support SQL querying and updating as well as simple java development so that complete Renjin projects,
+packages can be developed, built and tested. Ride support maven build files as well as git.
   
 To run Ride you need to have maven and Java 1.8 or later installed. 
 If you use open JDK on Linux then you might need to do something like `sudo apt-get install openjfx` depending on your distro.
 
 Ride is started using maven (see ride.sh/ride.cmd for details). 
-This is because renjin is not included in the fat jar and needs to be wired in to the classpath upon startup. 
-You can specify a different renjin version in the pom if you like but note that it requires renjin version 0.9.2716 or later to work. 
+This is because Renjin is not included in the fat jar and needs to be wired in to the classpath upon startup. 
+You can specify a different Renjin version in the pom if you like but note that it requires renjin version 0.9.2716 or later to work. 
 An offline version with everything needed to run is available that does not require maven or an internet connection.
 
 Since you probably want to run the ScriptEngine with the ClassPathPackageLoader when embedding your R app, 
@@ -50,6 +52,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 ### 1.2 Beta
 - Add maven build support
 - Add a maven classloader that uses the dependencies in the pom
+- Add git support
 - Preserve indentation on next line
 - Create package wizard to give a good starting point for creating packages
 - Create project wizard to give a good starting point for creating projects
