@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-
+if [[ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]]; then
+   source "$HOME/.sdkman/bin/sdkman-init.sh"
+fi
 # run Ride in target dir
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
