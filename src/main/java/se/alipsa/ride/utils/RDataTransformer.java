@@ -33,18 +33,32 @@ public class RDataTransformer {
     return rowList;
   }
 
+  // TODO: this needs some work, col.getElementAsObject(i) returns Integer.MIN_VALUE instead of null for numerics
   public static List<List<Object>> transpose(List<Vector> table) {
     List<List<Object>> ret = new ArrayList<>();
     final int N = table.get(0).length();
+    //System.out.println("Transposing a table with " + N + " columns into " + N + " rows");
     for (int i = 0; i < N; i++) {
       List<Object> row = new ArrayList<>();
       for (Vector col : table) {
         if (Types.isFactor(col)) {
-          AttributeMap attributes = col.getAttributes();
-          Map<Symbol, SEXP> attrMap = attributes.toMap();
-          Symbol s = attrMap.keySet().stream().filter(p -> "levels".equals(p.getPrintName())).findAny().orElse(null);
-          Vector vec = (Vector) attrMap.get(s);
-          row.add(vec.getElementAsObject(col.getElementAsInt(i) - 1));
+          int index = col.getElementAsInt(i) - 1;
+          if (index < 0 || index > col.length() -1) {
+            /*
+            System.err.println("Failed to extract value from factor element, index " + index + " is bigger than vector size " + vec.length());
+            System.err.println("Factor vector is " + vec.toString());
+            System.err.println("Factor vector names are " + vec.getNames());
+            System.err.println("col.getElementAsObject(i) = " + col.getElementAsObject(i));
+            System.err.println("col " + (row.size() + 1) + " row " + (i + 1) + " interpreted as null");
+             */
+            row.add(null);
+          } else {
+            AttributeMap attributes = col.getAttributes();
+            Map<Symbol, SEXP> attrMap = attributes.toMap();
+            Symbol s = attrMap.keySet().stream().filter(p -> "levels".equals(p.getPrintName())).findAny().orElse(null);
+            Vector vec = (Vector) attrMap.get(s);
+            row.add(vec.getElementAsObject(index));
+          }
         } else {
           row.add(col.getElementAsObject(i));
         }
