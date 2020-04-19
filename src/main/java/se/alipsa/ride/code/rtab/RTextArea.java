@@ -89,7 +89,7 @@ public class RTextArea extends CodeTextArea {
   public RTextArea(RTab parent) {
     super(parent);
     textProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue.contains("hamcrest")) {
+      if (newValue.contains("hamcrest") || newValue.contains("testthat")) {
         parent.enableRunTestsButton();
       } else {
         parent.disableRunTestsButton();

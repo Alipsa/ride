@@ -136,7 +136,7 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void changeRootDir(File dir) {
-    if(!getRootDir().equals(dir)) {
+    if(!dir.equals(getRootDir())) {
       fileTree.refresh(dir);
       if (gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false)) {
         gui.getConsoleComponent().initRenjin(gui.getClass().getClassLoader());

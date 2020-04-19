@@ -22,6 +22,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,6 +49,7 @@ import org.renjin.sexp.StringVector;
 import org.renjin.sexp.Symbol;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
+import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.inout.plot.grdevice.GrDevice;
 import se.alipsa.ride.model.Repo;
@@ -147,7 +149,8 @@ public class ConsoleComponent extends BorderPane {
 
       ClassLoader cl = parentClassLoader;
 
-      if (gui.getInoutComponent() != null && gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false)) {
+      if (gui.getInoutComponent() != null && gui.getInoutComponent().getRoot() != null &&
+        gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false)) {
         File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
         if (pomFile.exists()) {
           log.info("Parsing pom to use maven classloader");
@@ -455,8 +458,112 @@ public class ConsoleComponent extends BorderPane {
     // log.info("Working dir is {}", engine.getSession().getWorkingDirectory().getName().getPath());
   }
 
-  public void runTests(String script, String title, TaskListener taskListener) {
+  public void runTests(RTab rTab) {
     running();
+    String script = rTab.getTextContent();
+    String title = rTab.getTitle();
+    TaskListener taskListener = rTab;
+    if (script.contains("testthat")) {
+      runTestthatTests(rTab);
+    } else {
+      runHamcrestTests(script, title, taskListener);
+    }
+  }
+
+  private void runTestthatTests(RTab rTab) {
+    String script = rTab.getTextContent();
+    String title = rTab.getTitle();
+    TaskListener taskListener = rTab;
+    File file = rTab.getFile();
+    console.append("");
+    console.append("Running testthat tests");
+    console.append("----------------------");
+
+    if (file == null || !file.exists()) {
+      console.append("Unable to determine script location, you must save the R script first.");
+      return;
+    }
+
+    Task<Void> task = new Task<Void>() {
+
+      long start;
+      long end;
+
+      @Override
+      public Void call() {
+        taskListener.taskStarted();
+        start = System.currentTimeMillis();
+        engine.put("inout", gui.getInoutComponent());
+        List<TestResult> results = new ArrayList<>();
+        try (StringWriter out = new StringWriter();
+             StringWriter err = new StringWriter();
+             PrintWriter outputWriter = new PrintWriter(out);
+             PrintWriter errWriter = new PrintWriter(err)
+        ) {
+          session.setStdOut(outputWriter);
+          session.setStdErr(errWriter);
+          FileObject orgWd = session.getWorkingDirectory();
+          File scriptDir = file.getParentFile();
+          console.appendFx(DOUBLE_INDENT  + "- Setting working directory to " + scriptDir);
+          session.setWorkingDirectory(scriptDir);
+
+          TestResult result = runTest(script, title);
+          console.appendFx(DOUBLE_INDENT + "- Setting working directory back to " + orgWd);
+          session.setWorkingDirectory(orgWd);
+          results.add(result);
+          Platform.runLater(() -> printResult(title, out, err, result, DOUBLE_INDENT));
+
+          end = System.currentTimeMillis();
+          Map<TestResult.OutCome, List<TestResult>> resultMap = results.stream()
+             .collect(Collectors.groupingBy(TestResult::getResult));
+
+          List<TestResult> successResults = resultMap.get(TestResult.OutCome.SUCCESS);
+          List<TestResult> failureResults = resultMap.get(TestResult.OutCome.FAILURE);
+          List<TestResult> errorResults = resultMap.get(TestResult.OutCome.ERROR);
+          long successCount = successResults == null ? 0 : successResults.size();
+          long failCount = failureResults == null ? 0 : failureResults.size();
+          long errorCount = errorResults == null ? 0 : errorResults.size();
+
+          String duration = DurationFormatUtils.formatDuration(end - start, "mm 'minutes, 'ss' seconds, 'SSS' millis '");
+          console.appendFx("\nR tests summary:");
+          console.appendFx("----------------");
+          console.appendFx(format("Tests run: {}, Successes: {}, Failures: {}, Errors: {}",
+             results.size(), successCount, failCount, errorCount));
+          console.appendFx("Time: " + duration + "\n");
+        } catch (IOException e) {
+          console.appendWarningFx("Failed to run test");
+          ExceptionAlert.showAlert("Failed to run test", e);
+        }
+        return null;
+      }
+    };
+    task.setOnSucceeded(e -> {
+      taskListener.taskEnded();
+      waiting();
+      updateEnvironment();
+      promptAndScrollToEnd();
+    });
+    task.setOnFailed(e -> {
+      taskListener.taskEnded();
+      waiting();
+      updateEnvironment();
+      Throwable throwable = task.getException();
+      Throwable ex = throwable.getCause();
+      if (ex == null) {
+        ex = throwable;
+      }
+
+      String msg = createMessageFromEvalException(ex);
+
+      ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
+      promptAndScrollToEnd();
+    });
+    runningThread = new Thread(task);
+    runningThread.setDaemon(false);
+    runningThread.start();
+  }
+
+  private void runHamcrestTests(String script, String title, TaskListener taskListener) {
     console.append("");
     console.append("Running hamcrest tests");
     console.append("----------------------");
@@ -520,12 +627,12 @@ public class ConsoleComponent extends BorderPane {
         return null;
       }
     };
-     task.setOnSucceeded(e -> {
-       taskListener.taskEnded();
-        waiting();
-        updateEnvironment();
-        promptAndScrollToEnd();
-    });
+    task.setOnSucceeded(e -> {
+      taskListener.taskEnded();
+       waiting();
+       updateEnvironment();
+       promptAndScrollToEnd();
+   });
     task.setOnFailed(e -> {
       taskListener.taskEnded();
       waiting();
@@ -541,9 +648,9 @@ public class ConsoleComponent extends BorderPane {
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
       promptAndScrollToEnd();
     });
-      runningThread = new Thread(task);
-      runningThread.setDaemon(false);
-      runningThread.start();
+    runningThread = new Thread(task);
+    runningThread.setDaemon(false);
+    runningThread.start();
   }
 
   private void printResult(String title, StringWriter out, StringWriter err, TestResult result, String indent) {
@@ -574,12 +681,16 @@ public class ConsoleComponent extends BorderPane {
   }
 
 
-  private TestResult runTest(String script, String title) {
+  private TestResult runTest(String script, String title, String... indentOpt) {
+    String indent = INDENT;
+    if (indentOpt.length > 0) {
+      indent = indentOpt[0];
+    }
     TestResult result = new TestResult(title);
     String issue;
     Exception exception;
     String testName = title;
-    console.appendFx(INDENT + format("# Running test {}", title).trim());
+    console.appendFx(indent + format("# Running test {}", title).trim());
     try {
       engine.eval(script);
       result.setResult(TestResult.OutCome.SUCCESS);

@@ -37,7 +37,7 @@ public class RTab extends TextAreaTab implements TaskListener {
     buttonPane.getChildren().add(runButton);
 
     runTestsButton = new Button("Run tests");
-    runTestsButton.setOnAction(evt -> console.runTests(rTextArea.getTextContent(), getTitle(), this));
+    runTestsButton.setOnAction(evt -> console.runTests(this));
     buttonPane.getChildren().add(runTestsButton);
     disableRunTestsButton();
 

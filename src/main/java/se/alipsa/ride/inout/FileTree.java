@@ -61,20 +61,24 @@ public class FileTree extends TreeView<FileItem> {
 
     File current = new File(getWorkingDirPref());
     String prefPath = current.getAbsolutePath();
-    if (!current.exists()) {
+    boolean workDirExist = current.exists();
+    if (!workDirExist) {
       if (current.getParentFile().exists()) {
         current = current.getParentFile();
       } else {
         current = new File(".");
       }
-      log.warn("{} does not exist, setting working dir to {}", prefPath, current.getAbsolutePath());
+      //log.warn("{} does not exist, setting working dir to {}", prefPath, current.getAbsolutePath());
+      log.warn("{} does not exist, no working dir set", current.getAbsolutePath());
     }
-    setWorkingDir(current);
-    setRoot(createTree(current));
-    gitColorTree(getRoot());
-    sortTree(getRoot());
-    getRoot().setExpanded(true);
-
+    if(workDirExist) {
+      log.info("Setting working dir to {}", current);
+      setWorkingDir(current);
+      setRoot(createTree(current));
+      gitColorTree(getRoot());
+      sortTree(getRoot());
+      getRoot().setExpanded(true);
+    }
     setCellFactory(treeView -> new TreeCell<FileItem>() {
 
       @Override
@@ -130,6 +134,9 @@ public class FileTree extends TreeView<FileItem> {
 
 
   File getRootDir() {
+    if (getRoot() == null) {
+      return null;
+    }
     return getRoot().getValue().getFile();
   }
 
