@@ -62,6 +62,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -157,6 +160,27 @@ public class ConsoleComponent extends BorderPane {
           cl = MavenUtils.getMavenDependenciesClassloader(pomFile, parentClassLoader);
         } else {
           log.info("Use maven class loader is set but pomfile {} does not exist", pomFile);
+        }
+      } else {
+        File wd = gui.getInoutComponent().getRootDir();
+        if (wd != null && wd.exists()) {
+          File classesDir = new File(wd, "target/classes");
+          List<URL> urlList = new ArrayList<>();
+          try {
+            if (classesDir.exists()) {
+              urlList.add(classesDir.toURI().toURL());
+            }
+            File testClasses = new File(wd, "target/test-classes");
+            if (testClasses.exists()) {
+              urlList.add(testClasses.toURI().toURL());
+            }
+          } catch (MalformedURLException e) {
+            e.printStackTrace();
+          }
+          if (urlList.size() > 0) {
+            log.info("Adding compile dirs to classloader: {}", urlList);
+            cl = new URLClassLoader(urlList.toArray(new URL[0]), parentClassLoader);
+          }
         }
       }
 

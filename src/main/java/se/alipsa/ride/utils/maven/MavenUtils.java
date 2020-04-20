@@ -122,6 +122,7 @@ public class MavenUtils {
          d.getVersion());
 
       ///// Resolve main + transient
+      log.debug("resolving {}:{}:{}...", artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion() );
       CollectRequest collectRequest = new CollectRequest(new Dependency(artifact, JavaScopes.COMPILE), repositories);
       DependencyFilter filter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE);
       DependencyRequest request = new DependencyRequest(collectRequest, filter);

@@ -53,7 +53,7 @@ public class MavenUtilsTest {
          assertThat(e, instanceOf(ClassNotFoundException.class));
       }
       ClassLoader cl = MavenUtils.getMavenDependenciesClassloader(projectPomFile, getClass().getClassLoader());
-      Class clazz = cl.loadClass(className);
+      Class<?> clazz = cl.loadClass(className);
       log.info("Class resolved to {}", clazz);
    }
 
