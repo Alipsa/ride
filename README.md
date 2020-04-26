@@ -147,3 +147,10 @@ These are included for convenience only. Licenced under various open source lice
 # Contributing
 If you are interested in helping out, reporting issues, creating tests or implementing new features
 are all warmly welcome. See also [todo](todo.md) for roadmap.
+
+# Known Issues
+There is some problem with using the AetherPackageLoader when developing packages and running tests.
+The issue is that renjin will report "failed to find package" even though you have run `mvn package` or even 
+`mvn install`. The same problem exists for the Renjin CLI as well so this is not due to Ride.
+What DOES work is to use the classpathpackage loader with the option for "include build dirs in classpath" enabled.
+
