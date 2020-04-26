@@ -247,14 +247,14 @@
 
    <repositories>
       <repository>
-         <id>bedatadriven</id>
-         <name>bedatadriven public repo</name>
-         <url>https://nexus.bedatadriven.com/content/groups/public/</url>
-      </repository>
-      <repository>
          <id>central</id>
          <name>Maven Central</name>
          <url>https://repo1.maven.org/maven2/</url>
+      </repository>
+      <repository>
+         <id>bedatadriven</id>
+         <name>bedatadriven public repo</name>
+         <url>https://nexus.bedatadriven.com/content/groups/public/</url>
       </repository>
    </repositories>
    <pluginRepositories>
@@ -315,6 +315,18 @@
    </dependencies>
    <build>
       <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M4</version>
+            <dependencies>
+               <dependency>
+                  <groupId>org.junit.jupiter</groupId>
+                  <artifactId>junit-jupiter-engine</artifactId>
+                  <version>5.6.2</version>
+               </dependency>
+            </dependencies>
+         </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>

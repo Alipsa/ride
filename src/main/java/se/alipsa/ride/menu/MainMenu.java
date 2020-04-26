@@ -1,8 +1,7 @@
 package se.alipsa.ride.menu;
 
 import static se.alipsa.ride.Constants.THEME;
-import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
-import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
+import static se.alipsa.ride.menu.GlobalOptions.*;
 
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -473,6 +472,8 @@ public class MainMenu extends MenuBar {
     if (!res.isPresent()) {
       return;
     }
+
+    gui.setWaitCursor();
     GlobalOptions result = res.get();
 
     Class<?> selectedPkgLoader = (Class) result.get(GlobalOptions.PKG_LOADER);
@@ -515,6 +516,14 @@ public class MainMenu extends MenuBar {
       gui.getPrefs().putBoolean(USE_MAVEN_CLASSLOADER, useMavenClassLoader);
       gui.getConsoleComponent().restartR();
     }
+
+    boolean addBuildDirToClasspath = result.getBoolean(ADD_BUILDDIR_TO_CLASSPATH);
+    if (addBuildDirToClasspath != gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, !addBuildDirToClasspath)) {
+      log.info("addBuildDirToClasspath changed, restarting R session");
+      gui.getPrefs().putBoolean(ADD_BUILDDIR_TO_CLASSPATH, addBuildDirToClasspath);
+      gui.getConsoleComponent().restartR();
+    }
+    gui.setNormalCursor();
   }
 
   public void disableInterruptMenuItem() {

@@ -6,6 +6,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ${DIR}
 
 mvn clean install -P online -P createProps
+status=$?
+if [ $status -ne 0 ]; then
+   echo "Build failed"
+   exit 1
+fi
 
 PROPERTY_FILE=version.properties
 

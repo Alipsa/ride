@@ -49,15 +49,22 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
-### 1.2 Beta
+### 1.2 Beta 2
+- Enhanced connection functionality (auto save, jdbc url wizard)
+- If the previous working dir has been removed we no longer move to parent as 
+that might take for ever to parse, instead we just do not initialize the file tree.
+- Add styling to dialogs
+- Add target/classes and target/test.classes to classpath to classic classloader (adjustable in options)
+
+### 1.2 Beta 1
 - Add maven build support
 - Add a maven classloader that uses the dependencies in the pom
 - Add git support
 - Preserve indentation on next line
 - Create package wizard to give a good starting point for creating packages
 - Create project wizard to give a good starting point for creating projects
-- add support for markdown 
-- add support for java files 
+- Add support for markdown 
+- Add support for java files 
 - many small improvement, both cosmetic and functional
 
 ### 1.1 final

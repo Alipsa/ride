@@ -3,8 +3,7 @@ package se.alipsa.ride.menu;
 import static se.alipsa.ride.Constants.*;
 import static se.alipsa.ride.console.ConsoleComponent.PACKAGE_LOADER_PREF;
 import static se.alipsa.ride.console.ConsoleTextArea.CONSOLE_MAX_LENGTH_DEFAULT;
-import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
-import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
+import static se.alipsa.ride.menu.GlobalOptions.*;
 
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -35,6 +34,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
   private IntField intField;
   private ComboBox<String> themes;
   private CheckBox useMavenFileClasspath;
+  private CheckBox addBuildDirToClasspath;
 
   GlobalOptionsDialog(Ride gui) {
     setTitle("Global options");
@@ -58,6 +58,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     } else {
       pkgLoaderCb.getSelectionModel().select(ClasspathPackageLoader.class);
     }
+
     grid.add(pkgLoaderCb, 1, 0);
 
     Label reposLabel = new Label("Remote Repositories");
@@ -160,6 +161,13 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     useMavenFileClasspath.setSelected(gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false));
     grid.add(useMavenFileClasspath, 1, 4);
 
+    Label addBuildDirToClasspathLabel = new Label("Add build dir to classpath");
+    addBuildDirToClasspathLabel.setTooltip(new Tooltip("Add target/classes and target/test-classes to classpath"));
+    grid.add(addBuildDirToClasspathLabel, 0, 5);
+    addBuildDirToClasspath = new CheckBox();
+    addBuildDirToClasspath.setSelected(gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true));
+    grid.add(addBuildDirToClasspath, 1, 5);
+
     getDialogPane().setPrefSize(800, 400);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     setResizable(true);
@@ -200,6 +208,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     result.put(CONSOLE_MAX_LENGTH_PREF, intField.getValue());
     result.put(THEME, themes.getValue());
     result.put(USE_MAVEN_CLASSLOADER, useMavenFileClasspath.isSelected());
+    result.put(ADD_BUILDDIR_TO_CLASSPATH, addBuildDirToClasspath.isSelected());
     return result;
   }
 

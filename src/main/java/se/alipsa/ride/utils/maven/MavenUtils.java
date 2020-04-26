@@ -40,6 +40,7 @@ import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
+import se.alipsa.ride.Ride;
 import se.alipsa.ride.utils.ConsoleRepositoryEventListener;
 import se.alipsa.ride.utils.FileUtils;
 
@@ -47,6 +48,8 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+
+import static se.alipsa.ride.menu.GlobalOptions.ADD_BUILDDIR_TO_CLASSPATH;
 
 public class MavenUtils {
 
@@ -82,10 +85,12 @@ public class MavenUtils {
     return new URLClassLoader(urls.toArray(new URL[0]), parent);
   }
 
-  public static List<String> getClassPathElements(Model project) throws DependencyResolutionRequiredException {
+  public static List<String> getClassPathElements(Model project) {
     List<String> classpathElements = new ArrayList<>();
-    classpathElements.add(project.getBuild().getOutputDirectory());
-    classpathElements.add(project.getBuild().getTestOutputDirectory());
+    if (Ride.instance() == null || Ride.instance().getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true)) {
+      classpathElements.add(project.getBuild().getOutputDirectory());
+      classpathElements.add(project.getBuild().getTestOutputDirectory());
+    }
     return classpathElements;
   }
 
@@ -178,7 +183,6 @@ public class MavenUtils {
   public static DefaultRepositorySystemSession getRepositorySystemSession(RepositorySystem system) throws SettingsBuildingException {
     DefaultRepositorySystemSession repositorySystemSession = MavenRepositorySystemUtils
        .newSession();
-
     LocalRepository localRepository = getLocalRepository();
     repositorySystemSession.setLocalRepositoryManager(
        system.newLocalRepositoryManager(repositorySystemSession, localRepository));

@@ -3,6 +3,7 @@ package se.alipsa.ride.console;
 import static se.alipsa.ride.Constants.ICON_HEIGHT;
 import static se.alipsa.ride.Constants.ICON_WIDTH;
 import static se.alipsa.ride.Constants.INDENT;
+import static se.alipsa.ride.menu.GlobalOptions.ADD_BUILDDIR_TO_CLASSPATH;
 import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 import static se.alipsa.ride.utils.StringUtils.format;
 
@@ -88,10 +89,10 @@ public class ConsoleComponent extends BorderPane {
   private static final Logger log = LogManager.getLogger(ConsoleComponent.class);
   private RenjinScriptEngine engine;
   private Session session;
-  private ImageView runningView;
-  private Button statusButton;
-  private ConsoleTextArea console;
-  private Ride gui;
+  private final ImageView runningView;
+  private final Button statusButton;
+  private final ConsoleTextArea console;
+  private final Ride gui;
   private List<RemoteRepository> remoteRepositories;
   private PackageLoader packageLoader;
   private Thread runningThread;
@@ -163,7 +164,7 @@ public class ConsoleComponent extends BorderPane {
         }
       } else {
         File wd = gui.getInoutComponent().getRootDir();
-        if (wd != null && wd.exists()) {
+        if (gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true) && wd != null && wd.exists()) {
           File classesDir = new File(wd, "target/classes");
           List<URL> urlList = new ArrayList<>();
           try {
@@ -179,7 +180,7 @@ public class ConsoleComponent extends BorderPane {
           }
           if (urlList.size() > 0) {
             log.info("Adding compile dirs to classloader: {}", urlList);
-            cl = new URLClassLoader(urlList.toArray(new URL[0]), parentClassLoader);
+            cl = new URLClassLoader(urlList.toArray(new URL[0]), cl);
           }
         }
       }
@@ -189,7 +190,6 @@ public class ConsoleComponent extends BorderPane {
       if (loader instanceof AetherPackageLoader) {
         cl = ((AetherPackageLoader) loader).getClassLoader();
       }
-
 
       SessionBuilder builder = new SessionBuilder();
       session = builder

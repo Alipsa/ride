@@ -11,6 +11,8 @@ public class GlobalOptions extends HashMap<String, Object> {
   public static final String REMOTE_REPOSITORIES = "RemoteRepositories";
   public static final String CONSOLE_MAX_LENGTH_PREF = "ConsoleTextArea.MaxLength";
   public static final String USE_MAVEN_CLASSLOADER = "GlobalOptions.UseMavenClassloader";
+  public static final String ADD_BUILDDIR_TO_CLASSPATH = "GlobalOptions.AddBuildDirToClasspath";
+
   private static final long serialVersionUID = -4781261903018339389L;
 
 
