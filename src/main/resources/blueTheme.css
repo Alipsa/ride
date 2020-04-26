@@ -11,6 +11,7 @@
     -fx-accent: -fx-selected-bgcolor;
     -fx-focus-color: silver;
     -fx-highlight-fill: -fx-selected-bgcolor;
+    -fx-default-button: rgba(0, 35, 55, 255);
 }
 
 .text {
@@ -326,6 +327,12 @@
 .blockquote {
     -fx-fill: lightblue;
 }
+
+/*
+.dialogButton {
+    -fx-background-color: rgba(0, 35, 55, 255);
+}
+ */
 
 /** WebView styles */
 body {

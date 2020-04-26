@@ -11,6 +11,7 @@
     -fx-accent: -fx-selected-bgcolor;
     -fx-focus-color: silver;
     -fx-highlight-fill: -fx-selected-bgcolor;
+    -fx-default-button: rgba(35, 35, 35, 255);
 }
 
 .text {

@@ -21,9 +21,11 @@ import org.renjin.primitives.packaging.ClasspathPackageLoader;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
+import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.IntField;
 import se.alipsa.ride.utils.TableViewWithVisibleRowCount;
 
+import java.net.URL;
 import java.util.List;
 
 class GlobalOptionsDialog extends Dialog<GlobalOptions> {
@@ -162,8 +164,13 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     setResizable(true);
 
-    setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
+    String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+    URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+    if (styleSheetUrl != null) {
+      getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+    }
 
+    setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
   }
 
   private void addRow(Repo repo) {

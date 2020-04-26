@@ -5,6 +5,7 @@ import static se.alipsa.ride.utils.RQueryBuilder.*;
 
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -12,6 +13,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
@@ -35,33 +38,34 @@ import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.rtab.RTextArea;
 import se.alipsa.ride.model.Table;
 import se.alipsa.ride.model.TableMetaData;
-import se.alipsa.ride.utils.Alerts;
-import se.alipsa.ride.utils.ExceptionAlert;
-import se.alipsa.ride.utils.RDataTransformer;
-import se.alipsa.ride.utils.RQueryBuilder;
+import se.alipsa.ride.utils.*;
 
 import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 public class ConnectionsTab extends Tab {
 
+  private static final String NAME_PREF = "ConnectionsTab.name";
   private static final String DRIVER_PREF = "ConnectionsTab.driver";
   private static final String URL_PREF = "ConnectionsTab.url";
   private static final String USER_PREF = "ConnectionsTab.user";
-  private BorderPane contentPane;
-  private Ride gui;
-  private TextField nameText;
+  private static final String CONNECTIONS_PREF = "ConnectionsTab.Connections";
+  private final BorderPane contentPane;
+  private final Ride gui;
+  private final ComboBox<String> name = new ComboBox<>();
   private TextField driverText;
   private TextField urlText;
   private TextField userText;
   private PasswordField passwordField;
-  private TableView<ConnectionInfo> connectionsTable = new TableView<>();
+  private final TableView<ConnectionInfo> connectionsTable = new TableView<>();
 
-  private TreeItemComparator treeItemComparator = new TreeItemComparator();
+  private final TreeItemComparator treeItemComparator = new TreeItemComparator();
 
-  private static Logger log = LogManager.getLogger(ConnectionsTab.class);
+  private static final Logger log = LogManager.getLogger(ConnectionsTab.class);
 
   public ConnectionsTab(Ride gui) {
     setText("Connections");
@@ -71,20 +75,44 @@ public class ConnectionsTab extends Tab {
 
     VBox inputBox = new VBox();
     HBox topInputPane = new HBox();
+    HBox middleInputPane = new HBox();
     HBox bottomInputPane = new HBox();
-    inputBox.getChildren().addAll(topInputPane, bottomInputPane);
+    inputBox.getChildren().addAll(topInputPane, middleInputPane, bottomInputPane);
 
     topInputPane.setPadding(FLOWPANE_INSETS);
     topInputPane.setSpacing(2);
-    bottomInputPane.setPadding(FLOWPANE_INSETS);
-    bottomInputPane.setSpacing(2);
+    middleInputPane.setPadding(FLOWPANE_INSETS);
+    middleInputPane.setSpacing(2);
     contentPane.setTop(inputBox);
 
     VBox nameBox = new VBox();
     Label nameLabel = new Label("Name:");
-    nameText = new TextField();
-    nameText.setPrefWidth(80);
-    nameBox.getChildren().addAll(nameLabel, nameText);
+
+    name.getItems().addAll(getSavedConnectionNames());
+    String lastUsedName = getPrefOrBlank(NAME_PREF);
+    name.setEditable(true);
+    if (!"".equals(lastUsedName)) {
+      if (name.getItems().contains(lastUsedName)) {
+        name.getSelectionModel().select(lastUsedName);
+      } else {
+        name.getItems().add(lastUsedName);
+      }
+    }
+    name.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+      if (! isNowFocused) {
+        name.setValue(name.getEditor().getText());
+      }
+    });
+    name.setPrefWidth(300);
+    name.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+      ConnectionInfo ci = getSavedConnection(name.getValue());
+      userText.setText(ci.getUser());
+      driverText.setText(ci.getDriver());
+      urlText.setText(ci.getUrl());
+      passwordField.clear();
+      passwordField.requestFocus();
+    });
+    nameBox.getChildren().addAll(nameLabel, name);
     topInputPane.getChildren().add(nameBox);
     HBox.setHgrow(nameBox, Priority.SOMETIMES);
 
@@ -107,18 +135,21 @@ public class ConnectionsTab extends Tab {
     driverText = new TextField(getPrefOrBlank(DRIVER_PREF));
     HBox.setHgrow(driverBox, Priority.SOMETIMES);
     driverBox.getChildren().addAll(driverLabel, driverText);
-    bottomInputPane.getChildren().add(driverBox);
+    middleInputPane.getChildren().add(driverBox);
 
     VBox urlBox = new VBox();
     Label urlLabel = new Label("Url:");
     urlText = new TextField(getPrefOrBlank(URL_PREF));
     urlBox.getChildren().addAll(urlLabel, urlText);
     HBox.setHgrow(urlBox, Priority.ALWAYS);
-    bottomInputPane.getChildren().add(urlBox);
+    middleInputPane.getChildren().add(urlBox);
 
-    Button addButton = new Button("Add");
+    Button addButton = new Button("Add / Update Connection");
+    addButton.setPadding(new Insets(7, 10, 7, 10));
     createConnectionTableView();
     contentPane.setCenter(connectionsTable);
+
+    connectionsTable.setPlaceholder(new Label("No connections defined"));
 
     addButton.setOnAction(e -> {
       String urlString = urlText.getText().toLowerCase();
@@ -127,21 +158,58 @@ public class ConnectionsTab extends Tab {
         log.warn(msg);
         Alerts.info("MySQL and multiple query statements", msg);
       }
-      ConnectionInfo con = new ConnectionInfo(nameText.getText(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
-      setPref(DRIVER_PREF, driverText.getText());
-      setPref(URL_PREF, urlText.getText());
-      setPref(USER_PREF, userText.getText());
-      if (!connectionsTable.getItems().contains(con)) {
-        connectionsTable.getItems().add(con);
-        connectionsTable.getSelectionModel().select(con);
-      }
+      ConnectionInfo con = new ConnectionInfo(name.getValue(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
+      addConnection(con);
+      saveConnection(con);
     });
-    VBox buttonBox = new VBox();
+    /*VBox buttonBox = new VBox();
     buttonBox.setPadding(new Insets(10, 10, 0, 10));
     buttonBox.setSpacing(VGAP);
     buttonBox.getChildren().add(addButton);
-    buttonBox.alignmentProperty().setValue(Pos.BOTTOM_CENTER);
-    topInputPane.getChildren().add(buttonBox);
+    buttonBox.alignmentProperty().setValue(Pos.BOTTOM_CENTER);*/
+    Image wizIMage = new Image("image/wizard.png", ICON_WIDTH, ICON_HEIGHT, true, true);
+    ImageView wizImg =  new ImageView(wizIMage);
+    Button wizardButton = new Button("Url Wizard", wizImg);
+    wizardButton.setOnAction(this::openUrlWizard);
+    wizardButton.setTooltip(new Tooltip("create/update the url using the wizard"));
+    bottomInputPane.setAlignment(Pos.CENTER);
+    Insets btnInsets = new Insets(5, 10, 5, 10);
+    wizardButton.setPadding(btnInsets);
+    bottomInputPane.setSpacing(10);
+    bottomInputPane.getChildren().addAll(addButton, wizardButton);
+  }
+
+  private void addConnection(ConnectionInfo con) {
+    log.info("Add or update connection for {}", con.asJson());
+    setPref(NAME_PREF, name.getValue());
+    setPref(DRIVER_PREF, driverText.getText());
+    setPref(URL_PREF, urlText.getText());
+    setPref(USER_PREF, userText.getText());
+    ConnectionInfo existing = connectionsTable.getItems().stream()
+       .filter(c -> con.getName().equals(c.getName()))
+       .findAny().orElse(null);
+    if (existing == null) {
+      connectionsTable.getItems().add(con);
+    } else {
+      existing.setUser(con.getUser());
+      existing.setPassword(con.getPassword());
+      existing.setDriver(con.getDriver());
+      existing.setUrl(con.getUrl());
+
+    }
+    connectionsTable.refresh();
+  }
+
+  private void openUrlWizard(ActionEvent actionEvent) {
+
+    JdbcUrlWizardDialog dialog = new JdbcUrlWizardDialog(gui);
+    Optional<ConnectionInfo> result = dialog.showAndWait();
+    if (!result.isPresent()) {
+      return;
+    }
+    ConnectionInfo ci = result.get();
+    driverText.setText(ci.getDriver());
+    urlText.setText(ci.getUrl());
   }
 
   private void createConnectionTableView() {
@@ -169,8 +237,16 @@ public class ConnectionsTab extends Tab {
     connectionsTable.setRowFactory(tableView -> {
       final TableRow<ConnectionInfo> row = new TableRow<>();
       final ContextMenu contextMenu = new ContextMenu();
-      final MenuItem removeMenuItem = new MenuItem("delete connection");
+      final MenuItem removeMenuItem = new MenuItem("remove connection");
       removeMenuItem.setOnAction(event -> tableView.getItems().remove(row.getItem()));
+      final MenuItem deleteMenuItem = new MenuItem("delete connection permanently");
+      deleteMenuItem.setOnAction(event -> {
+        ConnectionInfo item = row.getItem();
+        tableView.getItems().remove(item);
+        deleteSavedConnection(item);
+        name.getItems().remove(item.getName());
+        tableView.refresh();
+      });
       final MenuItem viewMenuItem = new MenuItem("view tables");
       viewMenuItem.setOnAction(event -> showConnectionMetaData(row.getItem()));
       final MenuItem viewDatabasesMenuItem = new MenuItem("view databases");
@@ -179,7 +255,7 @@ public class ConnectionsTab extends Tab {
       final MenuItem viewRcodeMenuItem = new MenuItem("show R connection code");
       viewRcodeMenuItem.setOnAction(event -> showRConnectionCode());
 
-      contextMenu.getItems().addAll(viewMenuItem, viewDatabasesMenuItem, removeMenuItem, viewRcodeMenuItem);
+      contextMenu.getItems().addAll(viewMenuItem, viewDatabasesMenuItem, removeMenuItem, deleteMenuItem, viewRcodeMenuItem);
       row.contextMenuProperty().bind(
           Bindings.when(row.emptyProperty())
               .then((ContextMenu) null)
@@ -188,11 +264,13 @@ public class ConnectionsTab extends Tab {
 
       tableView.getSelectionModel().selectedIndexProperty().addListener(e -> {
         ConnectionInfo info = tableView.getSelectionModel().getSelectedItem();
-        nameText.setText(info.getName());
-        driverText.setText(info.getDriver());
-        urlText.setText(info.getUrl());
-        userText.setText(info.getUser());
-        passwordField.setText(info.getPassword());
+        if (info != null) {
+          name.setValue(info.getName());
+          driverText.setText(info.getDriver());
+          urlText.setText(info.getUrl());
+          userText.setText(info.getUser());
+          passwordField.setText(info.getPassword());
+        }
       });
       return row;
     });
@@ -200,39 +278,59 @@ public class ConnectionsTab extends Tab {
 
   private void showRConnectionCode() {
     ConnectionInfo info = connectionsTable.getSelectionModel().getSelectedItem();
+    String rCode = createConnectionCode(info);
+    displayTextInWindow("R connection code for " + info.getName(), rCode, CodeType.R);
+  }
+
+  private String createConnectionCode(ConnectionInfo info) {
     StringBuilder code = RQueryBuilder.baseRQueryString(info, "sqlDf <- dbGetQuery", "select * from someTable")
         .append("\n# close the connection\n")
         .append("dbDisconnect(").append(CONNECTION_VAR_NAME).append(")\n");
     String rCode = code.toString();
     rCode = rCode.replace(DRIVER_VAR_NAME, "drv");
     rCode = rCode.replace(CONNECTION_VAR_NAME, "con");
-    /*
-    StringBuilder code = new StringBuilder();
-    String con = info.getName() + "_con";
-    code.append("library(\"org.renjin.cran:DBI\")\n")
-        .append("library(\"se.alipsa:R2JDBC\")\n\n")
-        .append(con).append(" <- dbConnect(\n")
-        .append("  JDBC(\"").append(info.getDriver()).append("\")\n")
-        .append("  ,url = \"").append(info.getUrl()).append("\"\n");
-    if (!"".equals(userText.getText().trim())) {
-      code.append("  ,user = \"").append(info.getUser()).append("\"\n");
-    }
-    if (!"".equals(passwordField.getText().trim())) {
-      code.append("  ,password = \"").append(info.getPassword()).append("\"\n");
-    }
-    code.append(")\n\n")
-        .append("# execute some queries...\n")
-        .append("sqlDf <- dbGetQuery(").append(con).append(", \"select * from someTable\")\n")
-        .append("# close the connection\n")
-        .append("dbDisconnect(").append(con).append(")\n");
-
-     */
-
-    displayTextInWindow("R connection code for " + info.getName(), rCode, CodeType.R);
+    return rCode;
   }
 
   private String getPrefOrBlank(String pref) {
     return gui.getPrefs().get(pref, "");
+  }
+
+  private String[] getSavedConnectionNames() {
+    try {
+      return gui.getPrefs().node(CONNECTIONS_PREF).childrenNames();
+    } catch (BackingStoreException e) {
+      ExceptionAlert.showAlert("Failed to get saved connections", e);
+    }
+    return new String[]{};
+  }
+
+  private ConnectionInfo getSavedConnection(String name) {
+    Preferences pref = gui.getPrefs().node(CONNECTIONS_PREF).node(name);
+    ConnectionInfo c = new ConnectionInfo();
+    c.setName(name);
+    c.setDriver(pref.get(DRIVER_PREF, ""));
+    c.setUrl(pref.get(URL_PREF, ""));
+    c.setUser(pref.get(USER_PREF, ""));
+    return c;
+  }
+
+  private void saveConnection(ConnectionInfo c) {
+    Preferences pref = gui.getPrefs().node(CONNECTIONS_PREF).node(c.getName());
+    pref.put(DRIVER_PREF, c.getDriver());
+    pref.put(URL_PREF, c.getUrl());
+    if (c.getUser() != null) {
+      pref.put(USER_PREF, c.getUser());
+    }
+  }
+
+  private void deleteSavedConnection(ConnectionInfo c) {
+    Preferences pref = gui.getPrefs().node(CONNECTIONS_PREF).node(c.getName());
+    try {
+      pref.removeNode();
+    } catch (BackingStoreException e) {
+      ExceptionAlert.showAlert("Failed to remove saved connection", e);
+    }
   }
 
   private void setPref(String pref, String val) {
@@ -244,30 +342,67 @@ public class ConnectionsTab extends Tab {
   }
 
   /**
-   * this is consistent for at least H2 and SQl server
+   * this is consistent for at least postgres, H2, sqlite and SQl server
    */
   private void showConnectionMetaData(ConnectionInfo con) {
     setWaitCursor();
-    String sql = "select col.TABLE_NAME\n" +
-        ", TABLE_TYPE\n" +
-        ", COLUMN_NAME\n" +
-        ", ORDINAL_POSITION\n" +
-        ", IS_NULLABLE\n" +
-        ", DATA_TYPE\n" +
-        ", CHARACTER_MAXIMUM_LENGTH\n" +
-        ", NUMERIC_PRECISION\n" +
-        ", NUMERIC_PRECISION_RADIX\n" +
-        ", NUMERIC_SCALE\n" +
-        ", COLLATION_NAME\n" +
-        "from INFORMATION_SCHEMA.COLUMNS col\n" +
-        "inner join INFORMATION_SCHEMA.TABLES tab " +
-        "      on col.TABLE_NAME = tab.TABLE_NAME and col.TABLE_SCHEMA = tab.TABLE_SCHEMA\n" +
-        "where TABLE_TYPE <> 'SYSTEM TABLE'\n" +
-        "and tab.TABLE_SCHEMA not in ('SYSTEM TABLE', 'PG_CATALOG', 'INFORMATION_SCHEMA', 'pg_catalog', 'information_schema')";
-    String rCode = baseRQueryString(con, "connectionsTabDf <- dbGetQuery", sql).toString();
+    String sql;
+    boolean addNaWhenBlank = true;
+    if (con.getDriver().equals(DRV_SQLLITE)) {
+      boolean hasTables = false;
+      try {
+        Connection jdbcCon = con.connect();
+        ResultSet rs = jdbcCon.createStatement().executeQuery("select * from sqlite_master");
+        if (rs.next()) hasTables = true;
+        jdbcCon.close();
+      } catch (SQLException e) {
+        ExceptionAlert.showAlert("Failed to query sqlite_master", e);
+      }
+      if (hasTables) {
+        sql = "SELECT \n" +
+           "  m.name as TABLE_NAME \n" +
+           ", m.type as TABLE_TYPE \n" +
+           ", p.name as COLUMN_NAME\n" +
+           ", p.cid as ORDINAL_POSITION\n" +
+           ", case when p.[notnull] = 0 then 1 else 0 end as IS_NULLABLE\n" +
+           ", p.type as DATA_TYPE\n" +
+           ", 0 as CHARACTER_MAXIMUM_LENGTH\n" +
+           ", 0 as NUMERIC_PRECISION\n" +
+           ", 0 as NUMERIC_PRECISION_RADIX\n" +
+           ", 0 as NUMERIC_SCALE\n" +
+           ", '' as COLLATION_NAME\n" +
+           "FROM \n" +
+           "  sqlite_master AS m\n" +
+           "JOIN \n" +
+           "  pragma_table_info(m.name) AS p";
+        addNaWhenBlank = false;
+      } else {
+        setNormalCursor();
+        Alerts.info("Empty database", "This sqlite database has no tables yet");
+        return;
+      }
+    } else {
+      sql = "select col.TABLE_NAME\n" +
+         ", TABLE_TYPE\n" +
+         ", COLUMN_NAME\n" +
+         ", ORDINAL_POSITION\n" +
+         ", IS_NULLABLE\n" +
+         ", DATA_TYPE\n" +
+         ", CHARACTER_MAXIMUM_LENGTH\n" +
+         ", NUMERIC_PRECISION\n" +
+         ", NUMERIC_PRECISION_RADIX\n" +
+         ", NUMERIC_SCALE\n" +
+         ", COLLATION_NAME\n" +
+         "from INFORMATION_SCHEMA.COLUMNS col\n" +
+         "inner join INFORMATION_SCHEMA.TABLES tab " +
+         "      on col.TABLE_NAME = tab.TABLE_NAME and col.TABLE_SCHEMA = tab.TABLE_SCHEMA\n" +
+         "where TABLE_TYPE <> 'SYSTEM TABLE'\n" +
+         "and tab.TABLE_SCHEMA not in ('SYSTEM TABLE', 'PG_CATALOG', 'INFORMATION_SCHEMA', 'pg_catalog', 'information_schema')";
+    }
+    String rCode = baseRQueryString(con, "connectionsTabDf <- dbGetQuery", sql, addNaWhenBlank).toString();
 
     // runScriptSilent newer returns so have to run in a thread
-    runScriptInThread(rCode, "connectionsTabDf", con);
+    runScriptInThread(rCode, con);
   }
 
   private void showDatabases(ConnectionInfo connectionInfo) {
@@ -308,10 +443,8 @@ public class ConnectionsTab extends Tab {
     //TODO: get the fontsize from the ta instead of the below!
     double fontSize = 8.5; // ta.getFont().getSize() does not exist
 
-    //log.info("FontSize = {}", fontSize);
-
     double height = text.getLayoutBounds().getHeight() +  fontSize * 2;
-    double prefHeight = height < 100.0 ? 100.0 : height;
+    double prefHeight = Math.max(height, 100.0);
     prefHeight = prefHeight > 640  ? 640 : prefHeight;
     ta.setPrefHeight( prefHeight );
 
@@ -322,12 +455,11 @@ public class ConnectionsTab extends Tab {
         maxWidth = length;
       }
     }
-    //log.info("maxWidth = {}", maxWidth);
+
     double prefWidth = maxWidth < 150 ? 150 : maxWidth;
     prefWidth = prefWidth > 800 ? 800 : prefWidth;
     ta.setPrefWidth(prefWidth);
 
-    //log.info("PrefHeight = {}, PrefWidth = {}", ta.getPrefHeight(), ta.getPrefWidth());
     ta.autosize();
 
     ta.setEditable(false);
@@ -335,7 +467,7 @@ public class ConnectionsTab extends Tab {
     createAndShowWindow(title, scrollPane);
   }
 
-  void runScriptInThread(String rCode, String varname, ConnectionInfo con) {
+  void runScriptInThread(String rCode, ConnectionInfo con) {
     String connectionName = con.getName();
     Task<Void> task = new Task<Void>() {
       @Override
@@ -354,7 +486,7 @@ public class ConnectionsTab extends Tab {
     };
     task.setOnSucceeded(e -> {
       try {
-        ListVector df = (ListVector) gui.getConsoleComponent().fetchVar(varname);
+        ListVector df = (ListVector) gui.getConsoleComponent().fetchVar("connectionsTabDf");
         List<List<Object>> rows = RDataTransformer.toRowlist(df);
         List<TableMetaData> metaDataList = new ArrayList<>();
         rows.forEach(r -> metaDataList.add(new TableMetaData(r)));
@@ -376,6 +508,7 @@ public class ConnectionsTab extends Tab {
         ex = throwable;
       }
       String msg = gui.getConsoleComponent().createMessageFromEvalException(ex);
+      log.warn("Exception when running R code {}", rCode);
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
     });
     Thread scriptThread = new Thread(task);
@@ -464,8 +597,8 @@ public class ConnectionsTab extends Tab {
   }
 
   private final class TableNameTreeCell extends TreeCell<String> {
-    private ContextMenu tableRightClickMenu = new ContextMenu();
-    private ContextMenu columnRightClickMenu = new ContextMenu();
+    private final ContextMenu tableRightClickMenu = new ContextMenu();
+    private final ContextMenu columnRightClickMenu = new ContextMenu();
 
     TableNameTreeCell(ConnectionInfo con) {
       MenuItem copyItem = new MenuItem("copy");

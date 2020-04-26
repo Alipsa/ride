@@ -6,11 +6,16 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.Optional;
+
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
 
 public class ExceptionAlert extends Alert {
 
@@ -59,6 +64,16 @@ public class ExceptionAlert extends Alert {
     alert.getDialogPane().setExpandableContent(expContent);
 
     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
+    Ride gui = Ride.instance();
+    if (gui != null) {
+      String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+
+      URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+      if (styleSheetUrl != null) {
+        alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+      }
+    }
 
     return alert.showAndWait();
   }

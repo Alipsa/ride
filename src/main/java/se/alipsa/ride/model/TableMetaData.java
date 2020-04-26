@@ -24,7 +24,7 @@ public class TableMetaData {
     setTableType((String) row.get(1));
     setColumnName((String) row.get(2));
     setOrdinalPosition((Integer) row.get(3));
-    setIsNullable((String) row.get(4));
+    setIsNullable(row.get(4).toString());
     setDataType(row.get(5).toString()); // On h2 this is an INT, on SQL Server it is VARCHAR, toString works in both cases
     setCharacterMaximumLength((Integer) row.get(6));
     setNumericPrecision((Integer) row.get(7));
@@ -205,7 +205,7 @@ public class TableMetaData {
   public String asColumnString() {
     String precision = "";
     String DATATYPE = dataType == null ? "" : dataType.trim().toUpperCase();
-    if (DATATYPE.contains("VARCHAR") || DATATYPE.equals("CHARACTER VARYING")) {
+    if (!DATATYPE.contains("(") && (DATATYPE.contains("VARCHAR") || DATATYPE.equals("CHARACTER VARYING"))) {
       precision = "(" + characterMaximumLength + ")";
     } else if (DATATYPE.equals("DECIMAL") || DATATYPE.equals("NUMBER") || DATATYPE.equals("NUMERIC")) {
       precision = "(" + numericPrecision + "," + numericScale + ")";
@@ -218,6 +218,7 @@ public class TableMetaData {
     } else {
       nullable = "not null";
     }
+    //System.out.println(columnName + COLUMN_META_START + dataType + precision + ", " + nullable + COLUMN_META_END);
     return columnName + COLUMN_META_START + dataType + precision + ", " + nullable + COLUMN_META_END;
   }
 }

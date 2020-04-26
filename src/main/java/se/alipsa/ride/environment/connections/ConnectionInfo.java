@@ -91,7 +91,7 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof ConnectionInfo) {
+    if (obj != null && obj instanceof ConnectionInfo) {
       return toString().equals(obj.toString());
     } else {
       return false;
@@ -115,5 +115,13 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
     return ( safeLcUrl.contains("user") && safeLcUrl.contains("pass") ) || safeLcUrl.contains("@");
   }
 
-
+  public String asJson() {
+    return "{" +
+       "\"name\"=\"" + name.getValue() +
+       "\", \"driver\"=\"" + driver.getValue() +
+       "\", \"url\"=\"" + url.getValue() +
+       "\", \"user\"=" + user.getValue() +
+       "\", \"password\"=\"" + password.getValue() +
+       "\"}";
+  }
 }

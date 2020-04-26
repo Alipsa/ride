@@ -33,11 +33,11 @@
       <AppenderRef ref="console"/>
     </logger>
     <!-- uncomment to see package loading out put etc. -->
-    <logger name="se.alipsa.ride.console.ConsoleComponent" level="debug" additivity="false">
+    <!--logger name="se.alipsa.ride.console.ConsoleComponent" level="debug" additivity="false">
       <AppenderRef ref="console"/>
     </logger>
     <logger name="se.alipsa.ride.utils.maven.MavenUtils" level="debug" additivity="false">
       <AppenderRef ref="console"/>
-    </logger>
+    </logger-->
   </Loggers>
 </Configuration>

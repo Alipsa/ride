@@ -52,13 +52,20 @@ public class Ride extends Application {
 
   private FileOpener fileOpener;
 
+  private static Ride instance;
+
   public static void main(String[] args) {
     launch(args);
+  }
+
+  public static Ride instance() {
+    return instance;
   }
 
   @Override
   public void start(Stage primaryStage) {
     log.info("Starting Ride...");
+    instance = this;
     /*
     System.out.println(
         log.getName()

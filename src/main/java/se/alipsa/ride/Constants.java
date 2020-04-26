@@ -23,6 +23,14 @@ public class Constants {
   public static final String BRIGHT_THEME = "brightTheme.css";
   public static final String BLUE_THEME = "blueTheme.css";
 
+  public static final String DRV_POSTGRES = "org.postgresql.Driver";
+  public static final String DRV_MYSQL = "com.mysql.jdbc.Driver";
+  public static final String DRV_H2 = "org.h2.Driver";
+  public static final String DRV_SQLSERVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+  public static final String DRV_SQLLITE = "org.sqlite.JDBC";
+  public static final String DRV_FIREBIRD = "org.firebirdsql.jdbc.FBDriver";
+  public static final String DRV_DERBY = "org.apache.derby.jdbc.ClientDriver";
+
   public enum GitStatus {
     GIT_ADDED("-fx-text-fill: #629755;"),
     GIT_UNTRACKED("-fx-text-fill: sienna"),

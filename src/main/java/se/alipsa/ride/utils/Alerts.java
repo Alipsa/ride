@@ -7,9 +7,14 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebView;
 import se.alipsa.ride.Constants;
+import se.alipsa.ride.Ride;
 
+import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
 
 public class Alerts {
 
@@ -44,6 +49,17 @@ public class Alerts {
       alert.setHeaderText(null);
       alert.getDialogPane().setContent(pane);
       alert.setResizable(true);
+
+      Ride gui = Ride.instance();
+      if (gui != null) {
+         String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+
+         URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+         if (styleSheetUrl != null) {
+            alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+         }
+      }
+
       return alert.showAndWait();
   }
 

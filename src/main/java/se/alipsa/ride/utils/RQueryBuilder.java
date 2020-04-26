@@ -12,15 +12,16 @@ public class RQueryBuilder {
   public static final String CONNECTION_VAR_NAME = "RQueryBuilderCon";
 
 
-  public static StringBuilder baseRQueryString(ConnectionInfo con, String command, String sql) {
+  public static StringBuilder baseRQueryString(ConnectionInfo con, String command, String sql, boolean... addNAwhenBlank) {
     StringBuilder str = new StringBuilder();
 
+    boolean useNaWhenBlank = addNAwhenBlank.length > 0 ? addNAwhenBlank[0] : true;
     String url = con.getUrl();
     String user = con.getUser() == null ? "" : con.getUser().trim();
-    String userString;
+    String userString = "";
     if (!StringUtils.isBlank(user) && !con.urlContainsLogin()) {
       userString = ", user = '" + user + "'";
-    } else {
+    } else if(useNaWhenBlank) {
       userString = "";
       if (!con.urlContainsLogin()) {
         url = url + ";user=NA";
@@ -32,7 +33,7 @@ public class RQueryBuilder {
       passwordString = ", password = '" + password + "'";
     } else {
       passwordString = "";
-      if (!con.urlContainsLogin()) {
+      if (!con.urlContainsLogin() && useNaWhenBlank) {
         url = url + ";password=NA";
       }
     }
