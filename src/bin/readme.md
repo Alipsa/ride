@@ -55,6 +55,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 that might take for ever to parse, instead we just do not initialize the file tree.
 - Add styling to dialogs
 - Add target/classes and target/test.classes to classpath to classic classloader (adjustable in options)
+- Only insert right side of brackets if we are on the end of the line (feels more intuitive this way).
 
 ### 1.2 Beta 1
 - Add maven build support

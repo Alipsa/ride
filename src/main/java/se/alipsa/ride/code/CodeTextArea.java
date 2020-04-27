@@ -158,22 +158,26 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
 
     addEventHandler(KeyEvent.KEY_TYPED, e -> {
       String character = e.getCharacter();
+      String line = getText(getCurrentParagraph());
       if ("(".equals(character)) {
-        insertTextAndMoveBack(")");
-      } else if ("{".equals(character)) {
-        String line = getText(getCurrentParagraph());
-        String indent = StringUtils.getLeadingSpaces(line);
-        if (line.endsWith("${")) { // No new lines for variables e.g. ${project.version}
-          int targetCaretPos = getCaretPosition();
-          insertText(targetCaretPos, "}");
-          moveTo(targetCaretPos);
-        } else {
-          insertText(getCaretPosition(), "\n" + indent + INDENT);
-          int targetCaretPos = getCaretPosition();
-          insertText(targetCaretPos, "\n" + indent + "}");
-          moveTo(targetCaretPos);
+        if (line.length() == getCaretColumn()) {
+          insertTextAndMoveBack(")");
         }
-      } else if ("[".equals(character)) {
+      } else if ("{".equals(character)) {
+        String indent = StringUtils.getLeadingSpaces(line);
+        if (line.length() == getCaretColumn()) {
+          if (line.endsWith("${")) { // No new lines for variables e.g. ${project.version}
+            int targetCaretPos = getCaretPosition();
+            insertText(targetCaretPos, "}");
+            moveTo(targetCaretPos);
+          } else {
+            insertText(getCaretPosition(), "\n" + indent + INDENT);
+            int targetCaretPos = getCaretPosition();
+            insertText(targetCaretPos, "\n" + indent + "}");
+            moveTo(targetCaretPos);
+          }
+        }
+      } else if ("[".equals(character) && line.length() == getCaretColumn()) {
         insertTextAndMoveBack("]");
       }
     });
