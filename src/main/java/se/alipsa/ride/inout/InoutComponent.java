@@ -210,15 +210,19 @@ public class InoutComponent extends TabPane implements InOut {
             Matrix mat = new Matrix(vec);
             view(mat, title);
           } else {
+            Platform.runLater(() ->
             Alerts.warn("Array of type, " + sexp.getTypeName() + " cannot be shown",
-                "Result is an array with " + dim.length() + " dimensions. Convert this object to a data.frame to view it!");
+                "Result is an array with " + dim.length() + " dimensions. Convert this object to a data.frame to view it!")
+            );
           }
         }
       } else {
         view(vec, title);
       }
     } else {
-      Alerts.warn("Unknown type, " + sexp.getTypeName(), ", convert this object to a data.frame or vector to view it");
+      Platform.runLater(() ->
+          Alerts.warn("Unknown type, " + sexp.getTypeName(), ", convert this object to a data.frame or vector to view it")
+      );
     }
   }
 

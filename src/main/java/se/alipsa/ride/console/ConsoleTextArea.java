@@ -85,11 +85,15 @@ public class ConsoleTextArea extends UnStyledCodeArea {
   }
 
   public void appendWarning(String text, boolean... skipNewline) {
-    appendWithStyle(text, "warning", skipNewline);
+    if (text != null && text.trim().length() != 0) {
+      appendWithStyle(text, "warning", skipNewline);
+    }
   }
 
   public void appendError(String text, boolean... skipNewline) {
-    appendWithStyle(text, "error", skipNewline);
+    if (text != null && text.trim().length() != 0) {
+      appendWithStyle(text, "error", skipNewline);
+    }
   }
 
   private void appendWithStyle(String text, String styleClass, boolean... skipNewline) {
