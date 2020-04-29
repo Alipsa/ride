@@ -7,8 +7,14 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import org.eclipse.jgit.api.Status;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.utils.FileUtils;
 
+import java.net.URL;
 import java.util.Set;
+
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
 
 public class GitStatusDialog extends Dialog<Status> {
 
@@ -101,6 +107,18 @@ public class GitStatusDialog extends Dialog<Status> {
     cleanCheckBox.setDisable(true);
     cleanCheckBox.setSelected(status.isClean());
     grid.add(cleanCheckBox, 3,3);
+
+    Ride gui = Ride.instance();
+    if (gui != null) {
+      String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+
+      URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+      if (styleSheetUrl != null) {
+        getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+      }
+    } else {
+      System.err.println("Ride instance is null, not sure how this is possible.");
+    }
 
     setResizable(true);
   }

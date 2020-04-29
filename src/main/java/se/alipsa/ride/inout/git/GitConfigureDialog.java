@@ -10,6 +10,13 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.CoreConfig;
 import org.eclipse.jgit.lib.StoredConfig;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.utils.FileUtils;
+
+import java.net.URL;
+
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
 
 public class GitConfigureDialog extends Dialog<ConfigResult> {
 
@@ -37,6 +44,17 @@ public class GitConfigureDialog extends Dialog<ConfigResult> {
     autoCrLfCombo.getSelectionModel().select(config.getEnum(ConfigConstants.CONFIG_CORE_SECTION, null,
         ConfigConstants.CONFIG_KEY_AUTOCRLF, CoreConfig.AutoCRLF.INPUT));
     grid.add(autoCrLfCombo, 1,0);
+
+    Ride gui = Ride.instance();
+    if (gui != null) {
+      String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+
+      URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+      if (styleSheetUrl != null) {
+        getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+      }
+    }
+
     setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
   }
 

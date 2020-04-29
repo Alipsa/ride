@@ -81,6 +81,12 @@ public class Alerts {
       alert.setTitle(title);
       alert.setHeaderText(null);
       alert.getDialogPane().setContent(pane);
+      Ride gui = Ride.instance();
+      String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+      URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+      if (styleSheetUrl != null) {
+         alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+      }
       alert.setResizable(true);
       alert.showAndWait();
     });

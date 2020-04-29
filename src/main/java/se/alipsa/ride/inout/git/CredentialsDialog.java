@@ -7,9 +7,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.utils.FileUtils;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
 
 public class CredentialsDialog extends Dialog<Map<CredentialsDialog.KEY, String>> {
 
@@ -70,6 +76,16 @@ public class CredentialsDialog extends Dialog<Map<CredentialsDialog.KEY, String>
       vBox.getChildren().add(storeHbox);
 
       setResizable(true);
+
+      Ride gui = Ride.instance();
+      if (gui != null) {
+         String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+
+         URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+         if (styleSheetUrl != null) {
+            getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+         }
+      }
 
       setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
    }
