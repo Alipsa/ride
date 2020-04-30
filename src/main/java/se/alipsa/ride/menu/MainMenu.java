@@ -54,9 +54,9 @@ import java.util.Properties;
 
 public class MainMenu extends MenuBar {
 
-  private Ride gui;
+  private final Ride gui;
   private MenuItem interruptMI;
-  private static Logger log = LogManager.getLogger(MainMenu.class);
+  private static final Logger log = LogManager.getLogger(MainMenu.class);
 
   public MainMenu(Ride gui) {
     this.gui = gui;
