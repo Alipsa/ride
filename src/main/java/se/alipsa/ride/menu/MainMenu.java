@@ -1,5 +1,6 @@
 package se.alipsa.ride.menu;
 
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
 import static se.alipsa.ride.Constants.THEME;
 import static se.alipsa.ride.menu.GlobalOptions.*;
 
@@ -66,12 +67,12 @@ public class MainMenu extends MenuBar {
     //Menu menuPlots = new Menu("Plots");
     Menu menuSession = createSessionMenu();
     //Menu menuBuild = new Menu("Build");
-    Menu menuDebug = new Menu("Debug");
+    //Menu menuDebug = new Menu("Debug");
     //Menu menuProfile = new Menu("Profile");
     Menu menuTools = createToolsMenu();
     Menu menuHelp = createHelpMenu();
     getMenus().addAll(menuFile, menuEdit, menuCode, /*menuView, menuPlots,*/ menuSession,
-        /*menuBuild, */ menuDebug, /*menuProfile, */ menuTools, menuHelp);
+        /*menuBuild, menuDebug, menuProfile, */ menuTools, menuHelp);
   }
 
   private Menu createCodeMenu() {
@@ -383,9 +384,6 @@ public class MainMenu extends MenuBar {
     stage.toFront();
     stage.requestFocus();
     stage.setAlwaysOnTop(false);
-
-
-
   }
 
   private void displayAbout(ActionEvent actionEvent) {
@@ -424,6 +422,12 @@ public class MainMenu extends MenuBar {
 
     alert.getDialogPane().setPrefHeight(contentHeight);
     alert.getDialogPane().setPrefWidth(contentWidth);
+
+    String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+    URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+    if (styleSheetUrl != null) {
+      alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+    }
 
     alert.showAndWait();
   }
