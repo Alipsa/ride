@@ -14,7 +14,7 @@
         <!-- overridden by start script -->
         <ride.jar>1.2-SNAPSHOT</ride.jar>
         <!-- overridden by start script -->
-        <release.tag>1.2-beta</release.tag>
+        <release.tag>1.2-beta2</release.tag>
     </properties>
 
     <dependencies>
