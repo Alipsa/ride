@@ -13,10 +13,12 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import org.renjin.aether.AetherPackageLoader;
 import org.renjin.primitives.packaging.ClasspathPackageLoader;
+import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
@@ -29,12 +31,13 @@ import java.util.List;
 
 class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
-  private TableViewWithVisibleRowCount<Repo> reposTable;
-  private ComboBox<Class<?>> pkgLoaderCb;
-  private IntField intField;
-  private ComboBox<String> themes;
-  private CheckBox useMavenFileClasspath;
-  private CheckBox addBuildDirToClasspath;
+  private final TableViewWithVisibleRowCount<Repo> reposTable;
+  private final ComboBox<Class<?>> pkgLoaderCb;
+  private final IntField intField;
+  private final ComboBox<String> themes;
+  private final CheckBox useMavenFileClasspath;
+  private final CheckBox addBuildDirToClasspath;
+  private final CheckBox enableGit;
 
   GlobalOptionsDialog(Ride gui) {
     setTitle("Global options");
@@ -154,19 +157,36 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     themes.getSelectionModel().select(gui.getPrefs().get(THEME, BRIGHT_THEME));
     grid.add(themes, 1, 3);
 
+    FlowPane cpPane = new FlowPane();
+    grid.add(cpPane, 0,4, 2, 1);
+
     Label useMavenFileClasspathLabel = new Label("Use pom classpath");
     useMavenFileClasspathLabel.setTooltip(new Tooltip("Use classpath from pom.xml (if available) when running R code"));
-    grid.add(useMavenFileClasspathLabel, 0, 4);
+    //grid.add(useMavenFileClasspathLabel, 0, 4);
+    useMavenFileClasspathLabel.setPadding(new Insets(0, 27, 0, 0));
+    cpPane.getChildren().add(useMavenFileClasspathLabel);
     useMavenFileClasspath = new CheckBox();
     useMavenFileClasspath.setSelected(gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false));
-    grid.add(useMavenFileClasspath, 1, 4);
+    cpPane.getChildren().add(useMavenFileClasspath);
+    //grid.add(useMavenFileClasspath, 1, 4);
 
     Label addBuildDirToClasspathLabel = new Label("Add build dir to classpath");
+    addBuildDirToClasspathLabel.setPadding(new Insets(0, 27, 0, 70));
     addBuildDirToClasspathLabel.setTooltip(new Tooltip("Add target/classes and target/test-classes to classpath"));
-    grid.add(addBuildDirToClasspathLabel, 0, 5);
+    //grid.add(addBuildDirToClasspathLabel, 2, 4);
+    cpPane.getChildren().add(addBuildDirToClasspathLabel);
     addBuildDirToClasspath = new CheckBox();
     addBuildDirToClasspath.setSelected(gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true));
-    grid.add(addBuildDirToClasspath, 1, 5);
+    //grid.add(addBuildDirToClasspath, 3, 4);
+    cpPane.getChildren().add(addBuildDirToClasspath);
+
+    Label enableGitLabel = new Label("Enable git integration");
+    enableGitLabel.setTooltip(new Tooltip("note: git must be initialized in the project dir for integration to work"));
+    grid.add(enableGitLabel, 0, 5);
+    enableGit = new CheckBox();
+    enableGit.setSelected(gui.getPrefs().getBoolean(ENABLE_GIT, true));
+    grid.add(enableGit, 1, 5);
+
 
     getDialogPane().setPrefSize(800, 400);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -203,12 +223,13 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
   private GlobalOptions createResult() {
     GlobalOptions result = new GlobalOptions();
-    result.put(GlobalOptions.REMOTE_REPOSITORIES, reposTable.getItems());
-    result.put(GlobalOptions.PKG_LOADER, pkgLoaderCb.getSelectionModel().getSelectedItem());
+    result.put(REMOTE_REPOSITORIES, reposTable.getItems());
+    result.put(PKG_LOADER, pkgLoaderCb.getSelectionModel().getSelectedItem());
     result.put(CONSOLE_MAX_LENGTH_PREF, intField.getValue());
     result.put(THEME, themes.getValue());
     result.put(USE_MAVEN_CLASSLOADER, useMavenFileClasspath.isSelected());
     result.put(ADD_BUILDDIR_TO_CLASSPATH, addBuildDirToClasspath.isSelected());
+    result.put(ENABLE_GIT, enableGit.isSelected());
     return result;
   }
 

@@ -12,6 +12,7 @@ public class GlobalOptions extends HashMap<String, Object> {
   public static final String CONSOLE_MAX_LENGTH_PREF = "ConsoleTextArea.MaxLength";
   public static final String USE_MAVEN_CLASSLOADER = "GlobalOptions.UseMavenClassloader";
   public static final String ADD_BUILDDIR_TO_CLASSPATH = "GlobalOptions.AddBuildDirToClasspath";
+  public static final String ENABLE_GIT = "GlobalOptions.EnableGit";
 
   private static final long serialVersionUID = -4781261903018339389L;
 
@@ -34,7 +35,8 @@ public class GlobalOptions extends HashMap<String, Object> {
     }
   }
 
-   public List<Repo> getRepoList(String key) {
+  @SuppressWarnings("unchecked")
+  public List<Repo> getRepoList(String key) {
     return (List<Repo>)get(key);
-   }
+  }
 }

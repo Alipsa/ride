@@ -52,10 +52,12 @@ public class FileTree extends TreeView<FileItem> {
   private FileOpener fileOpener;
   private DynamicContextMenu menu;
   private Git git;
+  private final InoutComponent inoutComponent;
 
-  FileTree(Ride gui) {
+  FileTree(Ride gui, InoutComponent inoutComponent) {
     this.gui = gui;
     CodeComponent codeComponent = gui.getCodeComponent();
+    this.inoutComponent = inoutComponent;
     fileOpener = new FileOpener(codeComponent);
     this.getStyleClass().add("fileTree");
 
@@ -75,7 +77,9 @@ public class FileTree extends TreeView<FileItem> {
       log.info("Setting working dir to {}", current);
       setWorkingDir(current);
       setRoot(createTree(current));
-      gitColorTree(getRoot());
+      if (inoutComponent.isGitEnabled()) {
+        gitColorTree(getRoot());
+      }
       sortTree(getRoot());
       getRoot().setExpanded(true);
     }
@@ -105,7 +109,7 @@ public class FileTree extends TreeView<FileItem> {
     });
 
     setOnMouseClicked(this::handleClick);
-    menu = new DynamicContextMenu(this, gui);
+    menu = new DynamicContextMenu(this, gui, inoutComponent);
     //setContextMenu(createContextMenu());
     addEventHandler(MouseEvent.MOUSE_RELEASED, e->{
       if (e.getButton() == MouseButton.SECONDARY) {
@@ -180,7 +184,7 @@ public class FileTree extends TreeView<FileItem> {
       try {
         git = Git.open(rootDir);
         String branch = git.getRepository().getBranch();
-        gui.getInoutComponent().getBranchLabel().setText("Branch: " + branch);
+        inoutComponent.getBranchLabel().setText("Branch: " + branch);
         Status status;
         try {
           status = git.status().call();
@@ -313,9 +317,11 @@ public class FileTree extends TreeView<FileItem> {
     setRoot(createTree(dir));
     sortTree(getRoot());
     getRoot().setExpanded(true);
-    gitColorTree(getRoot());
+    if (inoutComponent.isGitEnabled()) {
+      gitColorTree(getRoot());
+    }
     setWorkingDirPref(dir);
-    menu = new DynamicContextMenu(this, gui);
+    menu = new DynamicContextMenu(this, gui, inoutComponent);
   }
 
   public void refresh() {
@@ -323,8 +329,10 @@ public class FileTree extends TreeView<FileItem> {
     setRoot(createTree(current));
     sortTree(getRoot());
     getRoot().setExpanded(true);
-    gitColorTree(getRoot());
-    menu = new DynamicContextMenu(this, gui);
+    if (inoutComponent.isGitEnabled()) {
+      gitColorTree(getRoot());
+    }
+    menu = new DynamicContextMenu(this, gui, inoutComponent);
   }
 
   private TreeItem<FileItem> findTreeViewItem(TreeItem<FileItem> item, File value) {

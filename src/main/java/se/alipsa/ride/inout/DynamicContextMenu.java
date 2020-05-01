@@ -88,7 +88,7 @@ public class DynamicContextMenu extends ContextMenu {
 
    private Logger log = LogManager.getLogger();
 
-   public DynamicContextMenu(FileTree fileTree, Ride gui) {
+   public DynamicContextMenu(FileTree fileTree, Ride gui, InoutComponent inoutComponent) {
       this.fileTree = fileTree;
       this.gui = gui;
       credentialsProvider = null;
@@ -154,6 +154,12 @@ public class DynamicContextMenu extends ContextMenu {
       });
       getItems().add(deleteMI);
 
+      if (inoutComponent.isGitEnabled()) {
+         createGitMenu(fileTree);
+      }
+   }
+
+   private void createGitMenu(FileTree fileTree) {
       Menu gitMenu = new Menu("Git");
 
       boolean gitInitialized = false;

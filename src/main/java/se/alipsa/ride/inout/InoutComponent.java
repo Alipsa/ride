@@ -1,5 +1,6 @@
 package se.alipsa.ride.inout;
 
+import static se.alipsa.ride.menu.GlobalOptions.ENABLE_GIT;
 import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 
 import javafx.application.Platform;
@@ -44,21 +45,23 @@ import java.util.concurrent.FutureTask;
 
 public class InoutComponent extends TabPane implements InOut {
 
-  private FileTree fileTree;
-  private PlotsTab plotsTab;
-  private Tab packages;
-  private ViewTab viewer;
-  private Ride gui;
-  private Label branchLabel;
-  private TextField statusField;
+  private final FileTree fileTree;
+  private final PlotsTab plotsTab;
+  private final Tab packages;
+  private final ViewTab viewer;
+  private final Ride gui;
+  private final Label branchLabel;
+  private final TextField statusField;
+  private boolean enableGit;
 
   private static final Logger log = LogManager.getLogger(InoutComponent.class);
 
   public InoutComponent(Ride gui) {
 
     this.gui = gui;
+    enableGit = gui.getPrefs().getBoolean(ENABLE_GIT, true);
 
-    fileTree = new FileTree(gui);
+    fileTree = new FileTree(gui, this);
 
     Tab filesTab = new Tab();
     filesTab.setText("Files");
@@ -318,5 +321,20 @@ public class InoutComponent extends TabPane implements InOut {
 
   public void clearStatus() {
     setStatus("");
+  }
+
+  public void setEnableGit(boolean enableGit) {
+    boolean doRefresh = false;
+    if (this.enableGit != enableGit) {
+      doRefresh = true;
+    }
+    this.enableGit = enableGit;
+    if (doRefresh) {
+      refreshFileTree();
+    }
+  }
+
+  public boolean isGitEnabled() {
+    return enableGit;
   }
 }

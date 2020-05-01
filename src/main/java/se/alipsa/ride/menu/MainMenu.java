@@ -473,6 +473,8 @@ public class MainMenu extends MenuBar {
   private void handleGlobalOptions(ActionEvent actionEvent) {
     GlobalOptionsDialog dialog = new GlobalOptionsDialog(gui);
     Optional<GlobalOptions> res = dialog.showAndWait();
+    boolean shouldRestartR = false;
+
     if (!res.isPresent()) {
       return;
     }
@@ -485,7 +487,7 @@ public class MainMenu extends MenuBar {
       PackageLoader loader = gui.getConsoleComponent().packageLoaderForName(this.getClass().getClassLoader(), selectedPkgLoader.getSimpleName());
       gui.getConsoleComponent().setPackageLoader(loader);
       log.info("Package loader changed, restarting R session");
-      restartR();
+      shouldRestartR = true;
     }
 
     List<Repo> selectedRepos = result.getRepoList(GlobalOptions.REMOTE_REPOSITORIES);
@@ -518,15 +520,24 @@ public class MainMenu extends MenuBar {
     if (useMavenClassLoader != gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, !useMavenClassLoader)) {
       log.info("useMavenClassLoader changed, restarting R session");
       gui.getPrefs().putBoolean(USE_MAVEN_CLASSLOADER, useMavenClassLoader);
-      gui.getConsoleComponent().restartR();
+      shouldRestartR = true;
     }
 
     boolean addBuildDirToClasspath = result.getBoolean(ADD_BUILDDIR_TO_CLASSPATH);
     if (addBuildDirToClasspath != gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, !addBuildDirToClasspath)) {
       log.info("addBuildDirToClasspath changed, restarting R session");
       gui.getPrefs().putBoolean(ADD_BUILDDIR_TO_CLASSPATH, addBuildDirToClasspath);
-      gui.getConsoleComponent().restartR();
+      shouldRestartR = true;
     }
+
+    boolean enableGit = result.getBoolean(ENABLE_GIT);
+    gui.getInoutComponent().setEnableGit(enableGit);
+    gui.getPrefs().putBoolean(ENABLE_GIT, enableGit);
+
+    if (shouldRestartR) {
+      restartR();
+    }
+
     gui.setNormalCursor();
   }
 

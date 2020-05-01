@@ -53,9 +53,10 @@
     <p>
     The AetherPackageLoader is used per default so libraries will be fetched automatically from
     bedatadriven or maven central repos. This can be modified in the Global Options menu.</p>
-    <p>If you change to the ClasspathPackageLoader you need to add dependencies to the maven pom.xml
+    <p>If you change to the ClasspathPackageLoader you should also add dependencies to the maven pom.xml
     when running Ride. The change of package loader is persistent so add any required dependency to the pom and restart Ride.</p>
-    <p>This is useful when moving from development to test to make sure dependencies are correct
+    <p>In many case this is just as convenient as using AetherPackageLoader (ClasspathPackageLoader + use pom + "add build dir").
+        At the very least, this is very useful when moving from development to test to make sure dependencies are correct
     prior to integration testing in embedded mode on e.g. an app server. In the Packages tab you can see
     a list of packages loaded for the session (in case you missed a library call in the script but loaded
     it from another script - the session is shared).</p>
