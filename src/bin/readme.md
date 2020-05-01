@@ -56,6 +56,7 @@ that might take for ever to parse, instead we just do not initialize the file tr
 - Add styling to dialogs
 - Add target/classes and target/test.classes to classpath to classic classloader (adjustable in options)
 - Only insert right side of brackets if we are on the end of the line (feels more intuitive this way).
+- Make git integration optional (configurable)
 
 ### 1.2 Beta 1
 - Add maven build support
