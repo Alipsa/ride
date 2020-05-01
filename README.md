@@ -47,13 +47,17 @@ inout$display(readImage(fileName), "svgplot")
 The AetherPackageLoader is used per default so libraries will be fetched automatically from 
 bedatadriven or maven central repos. This can be modified in the Global Options menu.
 
-If you change to the ClasspathPackageLoader you need to add dependencies to the maven pom.xml
-when running Ride. The change is persistent so just add any required dependency and start Ride.
+If you change to the ClasspathPackageLoader it makes sense to add dependencies to the maven pom.xml
+when running Ride. This will give you similar functionality as the AetherPackageLoader but restricted to 
+the versions you have defined in your pom. The change is persistent so just add any required dependency and start Ride.
 
-This is useful when moving from development to test to make sure dependencies are correct 
-prior to integration testing in embedded mode on e.g. an app server. In the Packages tab you can see
-a list of packages loaded for the session (in case you missed a library call in the script but loaded 
-it from another script - the session is shared).
+For a smooth development experience you should also add the build dir to the classpath (which is how maven 
+normally works).  This combination (ClasspathPackageLoader + add pom dependencies + add build dir) is a 
+setup that I think is very useful, maybe even better than using AetherPackageLoader in some cases e.g. for
+package development and when you aim to embed your R code in an app server as it enables you to make sure 
+that dependencies are correct prior to integration testing in embedded mode on e.g. an app server. 
+In the Packages tab you can see a list of packages loaded for the session (in case you missed a library 
+call in the script but loaded it from another script - the session is shared).
 
 ### Installing and Running ride
 There are two distributions of Ride. Go to the releases tab and expand the assets section at the bottom of the release. The zip file called ride-<version>-dist.zip e.g. ride-1.1-final-dist.zip is the "slim" distribution whereas the ride-fat-<version>-dist.zip e.g. ride-fat-1.1-final-dist.zip is the "fat" distribution.
