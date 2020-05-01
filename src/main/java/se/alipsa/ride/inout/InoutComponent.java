@@ -329,6 +329,12 @@ public class InoutComponent extends TabPane implements InOut {
       doRefresh = true;
     }
     this.enableGit = enableGit;
+
+    if (!enableGit) {
+      branchLabel.setText("");
+      statusField.setText("");
+    }
+
     if (doRefresh) {
       refreshFileTree();
     }
