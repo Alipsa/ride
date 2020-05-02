@@ -45,6 +45,7 @@ import se.alipsa.ride.utils.ConsoleRepositoryEventListener;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -117,25 +118,26 @@ public class MavenUtils {
     RepositorySystem repositorySystem = getRepositorySystem();
     RepositorySystemSession repositorySystemSession = getRepositorySystemSession(repositorySystem);
 
+
     Model model = parsePom(pomFile);
     List<RemoteRepository> repositories = getRepositories(model);
     Set<File> dependencies = new HashSet<>();
     log.trace("Maven model resolved: {}, parsing its dependencies...", model);
     for (org.apache.maven.model.Dependency d : model.getDependencies()) {
       log.trace("processing dependency: {}", d);
-      Artifact artifact = new DefaultArtifact(d.getGroupId(), d.getArtifactId(), d.getType(),
-         d.getVersion());
+      Artifact artifact = new DefaultArtifact(d.getGroupId(), d.getArtifactId(), d.getType(), d.getVersion());
 
       ///// Resolve main + transient
       log.debug("resolving {}:{}:{}...", artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion() );
       CollectRequest collectRequest = new CollectRequest(new Dependency(artifact, JavaScopes.COMPILE), repositories);
       DependencyFilter filter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE);
       DependencyRequest request = new DependencyRequest(collectRequest, filter);
+
       DependencyResult result = null;
       try {
         result = repositorySystem.resolveDependencies(repositorySystemSession, request);
       } catch (DependencyResolutionException e) {
-        log.warn("Error resolving dependent artifact: {}:{}:{}", d.getGroupId(), d.getArtifactId(), d.getVersion(),e);
+        log.warn("Error resolving dependent artifact: {}:{}:{}", d.getGroupId(), d.getArtifactId(), d.getVersion(), e);
         continue;
       }
 
@@ -144,10 +146,8 @@ public class MavenUtils {
         log.debug("artifact {} resolved to {}", art, art.getFile());
         dependencies.add(art.getFile());
       }
-      /////
-
-
-    };
+    }
+    /////
     return dependencies;
   }
 
@@ -231,9 +231,14 @@ public class MavenUtils {
 
   public static List<RemoteRepository> getRepositories(Model model) {
     List<RemoteRepository> repos = new ArrayList<>();
-    repos.add(getCentralMavenRepository());
     model.getRepositories().forEach(r ->
        repos.add(new RemoteRepository.Builder(r.getId(), r.getLayout(), r.getUrl()).build()));
+    RemoteRepository central = getCentralMavenRepository();
+    if (repos.stream()
+       .filter(p -> central.getId().equals(p.getId()) || central.getUrl().equals(p.getUrl()))
+       .findAny().orElse(null) == null) {
+      repos.add(central);
+    }
     return repos;
   }
 

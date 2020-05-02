@@ -243,14 +243,14 @@ public class Ride extends Application {
   public void setWaitCursor() {
     Platform.runLater(() -> {
       scene.setCursor(Cursor.WAIT);
-      consoleComponent.setCursor(Cursor.WAIT);
+      consoleComponent.busy();
     });
   }
 
   public void setNormalCursor() {
     Platform.runLater(() -> {
       scene.setCursor(Cursor.DEFAULT);
-      consoleComponent.setCursor(Cursor.DEFAULT);
+      consoleComponent.waiting();
     });
   }
 

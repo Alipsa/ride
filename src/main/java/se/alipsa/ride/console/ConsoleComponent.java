@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Tooltip;
@@ -966,6 +967,16 @@ public class ConsoleComponent extends BorderPane {
       log.warn("There is already a process running, Overriding existing running thread");
     }
     runningThread = thread;
+  }
+
+  public void busy() {
+    this.setCursor(Cursor.WAIT);
+    console.setCursor(Cursor.WAIT);
+  }
+
+  public void ready() {
+    this.setCursor(Cursor.DEFAULT);
+    console.setCursor(Cursor.DEFAULT);
   }
 
 }
