@@ -123,8 +123,7 @@ public class XmlTab extends TextAreaTab {
 
     Thread mvnThread = new Thread(task);
     mvnThread.setDaemon(false);
-    mvnThread.start();
-    gui.getConsoleComponent().setRunningThread(mvnThread);
+    gui.getConsoleComponent().startThreadWhenOthersAreFinished(mvnThread, "runMaven");
   }
 
   private class ConsoleOutputHandler implements InvocationOutputHandler {

@@ -250,7 +250,7 @@ public class Ride extends Application {
   public void setNormalCursor() {
     Platform.runLater(() -> {
       scene.setCursor(Cursor.DEFAULT);
-      consoleComponent.waiting();
+      consoleComponent.ready();
     });
   }
 

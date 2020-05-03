@@ -498,7 +498,7 @@ public class MainMenu extends MenuBar {
     if (!currentRepos.equals(selectedRepos)) {
       log.info("Remote repositories changed, restarting R session");
       log.info("selectedRepos = {}\n currentRepos = {}", selectedRepos, currentRepos);
-      gui.getConsoleComponent().setRemoterepositories(selectedRepos,
+      gui.getConsoleComponent().setRemoteRepositories(selectedRepos,
          Thread.currentThread().getContextClassLoader()
       );
     }

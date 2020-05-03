@@ -53,7 +53,6 @@ import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.environment.EnvironmentComponent;
-import se.alipsa.ride.inout.plot.grdevice.GrDevice;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
@@ -67,12 +66,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.script.ScriptException;
 
@@ -98,6 +92,7 @@ public class ConsoleComponent extends BorderPane {
   private PackageLoader packageLoader;
   private Thread runningThread;
   private File workingDir;
+  private Map<Thread, String> threadMap = new HashMap<>();
 
   public ConsoleComponent(Ride gui) {
     this.gui = gui;
@@ -355,6 +350,7 @@ public class ConsoleComponent extends BorderPane {
       sleep(2000);
       console.appendFx("\nStopping process...");
       runningThread.stop();
+      threadMap.remove(runningThread);
       console.appendText("\n>");
     }
   }
@@ -431,9 +427,9 @@ public class ConsoleComponent extends BorderPane {
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
       promptAndScrollToEnd();
     });
-    runningThread = new Thread(task);
-    runningThread.setDaemon(false);
-    runningThread.start();
+    Thread thread = new Thread(task);
+    thread.setDaemon(false);
+    startThreadWhenOthersAreFinished(thread, "runScriptAsync: " + title);
   }
 
   public String createMessageFromEvalException(Throwable ex) {
@@ -583,9 +579,9 @@ public class ConsoleComponent extends BorderPane {
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
       promptAndScrollToEnd();
     });
-    runningThread = new Thread(task);
-    runningThread.setDaemon(false);
-    runningThread.start();
+    Thread thread = new Thread(task);
+    thread.setDaemon(false);
+    startThreadWhenOthersAreFinished(thread, "runTestthatTests: " + title);
   }
 
   private void runHamcrestTests(String script, String title, TaskListener taskListener) {
@@ -673,9 +669,9 @@ public class ConsoleComponent extends BorderPane {
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
       promptAndScrollToEnd();
     });
-    runningThread = new Thread(task);
-    runningThread.setDaemon(false);
-    runningThread.start();
+    Thread thread = new Thread(task);
+    thread.setDaemon(false);
+    startThreadWhenOthersAreFinished(thread, "runHamcrestTests: " + title);
   }
 
   private void printResult(String title, StringWriter out, StringWriter err, TestResult result, String indent) {
@@ -847,7 +843,7 @@ public class ConsoleComponent extends BorderPane {
   /**
    * this should be called last as the Session is reinitialized at the end
    */
-  public void setRemoterepositories(List<Repo> repos, ClassLoader cl) {
+  public void setRemoteRepositories(List<Repo> repos, ClassLoader cl) {
     ObjectMapper mapper = new ObjectMapper();
     StringWriter writer = new StringWriter();
     try {
@@ -869,7 +865,7 @@ public class ConsoleComponent extends BorderPane {
       showTooltip(statusButton);
       gui.getMainMenu().enableInterruptMenuItem();
     });
-    sleep(10);
+    sleep(20);
   }
 
   public void waiting() {
@@ -962,11 +958,34 @@ public class ConsoleComponent extends BorderPane {
     return console;
   }
 
-  public void setRunningThread(Thread thread) {
-    if (runningThread != null && thread.isAlive()) {
-      log.warn("There is already a process running, Overriding existing running thread");
+  public void startThreadWhenOthersAreFinished(Thread thread, String context) {
+    if (runningThread == null) {
+      log.debug("Starting thread {}", context);
+      thread.start();
+    } else if (runningThread.getState() == Thread.State.WAITING || runningThread.getState() == Thread.State.TIMED_WAITING) {
+      log.debug("Waiting for thread {} to finish", threadMap.get(runningThread));
+      try {
+        // This is bit ugly as now the console output will not show until the thread has finished.
+        runningThread.join();
+        thread.start();
+      } catch (InterruptedException e) {
+        log.warn("Thread was interrupted", e);
+        log.info("Running thread {}", context);
+        thread.start();
+      }
+
+    } else if (runningThread.isAlive() && runningThread.getState() != Thread.State.TERMINATED) {
+      log.warn("There is already a process running: {} in state {}, Overriding existing running thread", threadMap.get(runningThread), runningThread.getState());
+      thread.start();
+    } else {
+      if (runningThread.getState() != Thread.State.TERMINATED) {
+        log.error("Missed some condition, running thread {} is {}", threadMap.get(runningThread), runningThread.getState());
+      }
+      thread.start();
     }
+    threadMap.remove(runningThread);
     runningThread = thread;
+    threadMap.put(thread, context);
   }
 
   public void busy() {
