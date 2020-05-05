@@ -1,9 +1,22 @@
 package se.alipsa.ride.menu;
 
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
+
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,9 +25,6 @@ import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
 import java.net.URL;
-
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
 
 public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult> {
 
@@ -156,7 +166,7 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     CreatePackageWizardResult res = new CreatePackageWizardResult();
     res.groupName = groupNameField.getText();
     res.packageName = packageNameField.getText();
-    res.dir = new File(selectedDirectory, packageNameField.getText().trim());
+    res.dir = new File(packageDirField.getText().trim());
     res.changeToDir = changeToDir.isSelected();
     return res;
   }
