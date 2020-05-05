@@ -27,6 +27,8 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
   private TextField dirField;
   private CheckBox changeToDir;
 
+  private TextField packageDirField;
+
   CreatePackageWizardDialog(Ride gui) {
     this.gui = gui;
     setTitle("Create Package Wizard");
@@ -63,13 +65,18 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     packageNameField = new TextField();
     packageNameField.setPrefColumnCount(10);
     packageNameField.setTooltip(new Tooltip("The name of your package; do not use spaces or slashes, only a-z, 0-9, _, -"));
+    packageNameField.focusedProperty().addListener((arg0, wasFocused, isNowFocused) -> {
+      if (!isNowFocused) {
+        updateDirField(packageNameField.getText());
+      }
+    });
     packageBox.getChildren().add(packageNameField);
 
     HBox dirBox = new HBox();
     dirBox.setPadding(insets);
     dirBox.setSpacing(10);
     vBox.getChildren().add(dirBox);
-    Label chooseDirLabel = new Label("Project dir");
+    Label chooseDirLabel = new Label("Base dir");
     dirBox.getChildren().add(chooseDirLabel);
     Button chooseDirButton = new Button("Browse...");
     dirBox.getChildren().add(chooseDirButton);
@@ -86,6 +93,20 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     dirField.setText(selectedDirectory.getAbsolutePath());
     dirWrapper.setTooltip(new Tooltip(selectedDirectory.getAbsolutePath()));
     dirBox.getChildren().add(dirWrapper);
+
+    HBox packageDirBox = new HBox();
+    packageDirBox.setPadding(insets);
+    packageDirBox.setSpacing(10);
+    vBox.getChildren().add(packageDirBox);
+    Label packageDirlabel = new Label("Package project dir");
+    packageDirField = new TextField();
+    packageDirField.setText(selectedDirectory.getAbsolutePath());
+    packageDirField.setDisable(true);
+    HBox.setHgrow(packageDirField, Priority.ALWAYS);
+    HBox.setHgrow(packageDirlabel, Priority.ALWAYS);
+    packageDirlabel.setMaxWidth(Double.MAX_VALUE);
+    packageDirField.setMaxWidth(Double.MAX_VALUE);
+    packageDirBox.getChildren().addAll(packageDirlabel, packageDirField);
 
     HBox changeToDirBox = new HBox();
     changeToDirBox.setPadding(insets);
@@ -108,6 +129,10 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
   }
 
+  private void updateDirField(String artifactName) {
+    packageDirField.setText(new File(selectedDirectory, artifactName.trim()).getAbsolutePath());
+  }
+
   private void chooseProjectDir(ActionEvent actionEvent) {
     DirectoryChooser dirChooser = new DirectoryChooser();
     File rootDir = gui.getInoutComponent().getRootDir();
@@ -121,7 +146,8 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
       log.info("No Directory selected, revert to previous dir ({})", orgSelectedDir);
       selectedDirectory = orgSelectedDir;
     } else {
-      dirField.setText(new File(selectedDirectory, packageNameField.getText().trim()).getAbsolutePath());
+      dirField.setText(selectedDirectory.getAbsolutePath());
+      packageDirField.setText(new File(selectedDirectory, packageNameField.getText().trim()).getAbsolutePath());
       getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
     }
   }
