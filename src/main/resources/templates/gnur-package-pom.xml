@@ -81,6 +81,12 @@
   </pluginRepositories>
 
   <build>
+    <testSourceDirectory>${project.basedir}/renjin/test/java</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/renjin/test/resources</directory>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.renjin</groupId>
@@ -93,6 +99,10 @@
               <goal>namespace-compile</goal>
             </goals>
             <phase>process-classes</phase>
+            <configuration>
+              <sourceDirectory>${basedir}/R</sourceDirectory>
+              <dataDirectory>${basedir}/data</dataDirectory>
+            </configuration>
           </execution>
         </executions>
         <dependencies>
@@ -123,9 +133,25 @@
         <executions>
           <execution>
             <phase>test</phase>
+            <id>testthat</id>
             <goals>
               <goal>testR</goal>
             </goals>
+            <configuration>
+              <testFailureIgnore>true</testFailureIgnore>
+              <testSourceDirectory>${project.basedir}/tests</testSourceDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>hamcrest</id>
+            <phase>test</phase>
+            <goals>
+              <goal>testR</goal>
+            </goals>
+            <configuration>
+              <testFailureIgnore>true</testFailureIgnore>
+              <testSourceDirectory>${project.basedir}/renjin/test/R</testSourceDirectory>
+            </configuration>
           </execution>
         </executions>
         <dependencies>
