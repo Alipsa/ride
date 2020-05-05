@@ -61,6 +61,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Since we have a dependency on AetherPackageLoader we use the same
+ * Aether versions here. The versions of Aether are rather old and Aether has moved to apache
+ * Consider submitting a PR to Renjin upgrading to the apache equivalents:
+ * org.apache.maven.resolver:maven-resolver-api
+ * org.apache.maven.resolver:maven-resolver-util
+ *
+ * Since the package name org.eclipse.aether is still kept in the apache version
+ * just upgrading these in Ride will probably not work (will conflict with AetherPackageLoader)
+ */
 public class MavenUtils {
 
   private static final Logger log = LogManager.getLogger();

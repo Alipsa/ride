@@ -39,7 +39,7 @@ NAMESPACE, SAS, SPSS
 
 ### add Roxygen support
 
-### enable users to use a pom file for defining the classpath to run
+### enable users to use a pom file for defining the classpath to run (done)
 Currently to be able to run R code depending on other projects AetherpackageLoader often fails
 and classpath package loader requires you to alter the ride pom.xml 
 
