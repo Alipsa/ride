@@ -1,5 +1,8 @@
 package se.alipsa.ride.menu;
 
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
+
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -20,19 +23,17 @@ import se.alipsa.ride.utils.FileUtils;
 import java.io.File;
 import java.net.URL;
 
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
-
 public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult> {
 
   private static final Logger log = LogManager.getLogger();
 
   private TextField groupNameField;
-  private TextField packageNameField;
+  private TextField projectNameField;
   private File selectedDirectory;
   private Ride gui;
   private TextField dirField;
   private CheckBox changeToDir;
+  private TextField projectDirField;
 
   CreateProjectWizardDialog(Ride gui) {
     this.gui = gui;
@@ -41,10 +42,12 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
     getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
     getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
 
+    Insets insets = new Insets(10, 15, 10, 10);
+
     GridPane grid = new GridPane();
     grid.setHgap(10);
     grid.setVgap(10);
-    grid.setPadding(new Insets(10, 15, 10, 10));
+    grid.setPadding(insets);
     getDialogPane().setContent(grid);
 
     Label groupNameLabel = new Label("Group Name");
@@ -58,12 +61,17 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
     Label packageNameLabel = new Label("Project Name");
     packageNameLabel.setWrapText(false);
     grid.add(packageNameLabel,0,1);
-    packageNameField = new TextField();
-    packageNameField.setPrefColumnCount(10);
-    packageNameField.setTooltip(new Tooltip("The name of your project; do not use spaces or slashes, only a-z, 0-9, _, -"));
-    grid.add(packageNameField, 1,1);
+    projectNameField = new TextField();
+    projectNameField.setPrefColumnCount(10);
+    projectNameField.setTooltip(new Tooltip("The name of your project; do not use spaces or slashes, only a-z, 0-9, _, -"));
+    projectNameField.focusedProperty().addListener((arg0, wasFocused, isNowFocused) -> {
+      if (!isNowFocused) {
+        updateDirField(projectNameField.getText());
+      }
+    });
+    grid.add(projectNameField, 1,1);
 
-    Label chooseDirLabel = new Label("Project dir");
+    Label chooseDirLabel = new Label("Base dir");
     chooseDirLabel.setWrapText(false);
     grid.add(chooseDirLabel, 0,2);
     Button chooseDirButton = new Button("Browse...");
@@ -77,9 +85,16 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
     selectedDirectory = gui.getInoutComponent().getRootDir();
     dirField.setText(selectedDirectory.getAbsolutePath());
 
+    Label packageDirlabel = new Label("Package project dir");
+    grid.add(packageDirlabel, 0, 3);
+    projectDirField = new TextField();
+    projectDirField.setText(selectedDirectory.getAbsolutePath());
+    projectDirField.setDisable(true);
+    grid.add(projectDirField, 1, 3, 2, 1);
+
     changeToDir = new CheckBox("Change to new project dir");
     changeToDir.setSelected(true);
-    grid.add(changeToDir, 0, 3, 2, 1);
+    grid.add(changeToDir, 0, 4, 2, 1);
 
     getDialogPane().setPrefSize(700, 300);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
@@ -92,6 +107,10 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
     }
 
     setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
+  }
+
+  private void updateDirField(String projectName) {
+    projectDirField.setText(new File(selectedDirectory, projectName.trim()).getAbsolutePath());
   }
 
   private void chooseProjectDir(ActionEvent actionEvent) {
@@ -107,7 +126,8 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
       log.info("No Directory selected, revert to previous dir ({})", orgSelectedDir);
       selectedDirectory = orgSelectedDir;
     } else {
-      dirField.setText(new File(selectedDirectory, packageNameField.getText().trim()).getAbsolutePath());
+      dirField.setText(selectedDirectory.getAbsolutePath());
+      projectDirField.setText(new File(selectedDirectory, projectNameField.getText().trim()).getAbsolutePath());
       getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
     }
   }
@@ -115,8 +135,8 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
   private CreateProjectWizardResult createResult() {
     CreateProjectWizardResult res = new CreateProjectWizardResult();
     res.groupName = groupNameField.getText();
-    res.projectName = packageNameField.getText();
-    res.dir = new File(selectedDirectory, packageNameField.getText().trim());
+    res.projectName = projectNameField.getText();
+    res.dir = new File(projectDirField.getText());
     res.changeToDir = changeToDir.isSelected();
     return res;
   }
