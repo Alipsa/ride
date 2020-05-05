@@ -14,7 +14,7 @@
         <!-- overridden by start script -->
         <ride.jar>1.2-SNAPSHOT</ride.jar>
         <!-- overridden by start script -->
-        <release.tag>1.2-beta2</release.tag>
+        <release.tag>1.2-beta3</release.tag>
     </properties>
 
     <dependencies>
@@ -216,12 +216,12 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.19</version>
+            <version>8.0.20</version>
         </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.28.0</version>
+            <version>3.31.1</version>
         </dependency>
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
@@ -236,7 +236,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>mssql-jdbc</artifactId>
-            <version>7.4.1.jre8</version>
+            <version>8.2.2.jre8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.shared</groupId>
@@ -282,6 +282,26 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M3</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.0.5,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
