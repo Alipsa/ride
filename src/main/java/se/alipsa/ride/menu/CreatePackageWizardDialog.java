@@ -10,7 +10,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -125,6 +127,18 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     changeToDir = new CheckBox("Change to new project dir");
     changeToDir.setSelected(true);
     changeToDirBox.getChildren().add(changeToDir);
+
+    HBox packageLayoutBox = new HBox();
+    packageLayoutBox.setPadding(insets);
+    packageLayoutBox.setSpacing(10);
+    vBox.getChildren().add(packageLayoutBox);
+    final ToggleGroup group = new ToggleGroup();
+    RadioButton renjinLayout = new RadioButton("Renjin Layout");
+    renjinLayout.setToggleGroup(group);
+    renjinLayout.setSelected(true);
+    RadioButton gnurLayout = new RadioButton("GNU R Layout");
+    gnurLayout.setToggleGroup(group);
+    packageLayoutBox.getChildren().addAll(renjinLayout, gnurLayout);
 
     getDialogPane().setPrefSize(700, 300);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
