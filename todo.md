@@ -1,20 +1,9 @@
 # Todo / Roadmap
 
-## version 1.2
-
-### Implement History tab (done)
-
 ### Code menu improvements
 - Format code, support https://bioconductor.org/developers/how-to/coding-style/
  and Hadley Wickham style guide http://adv-r.had.co.nz/Style.html#Assignment
  
-- Create package wizard to give a good starting point for creating packages (DONE)
-### Add support for creating extensions (packages) (Done)
-- create dir layout
-- create pom
-- run using maven-embedder: http://maven.apache.org/ref/3-LATEST/maven-embedder/summary.html
-
-
 ### Tools -> Options menu
 Make it possible to customize tab as \t or number of spaces
 
@@ -23,11 +12,21 @@ use metadata to determine suggestion
 
 ### Implements graphics support (grDevices) for javafx
 
-## version 1.3
+### Improve search
+- Highlight found text
+- Restart from beginning when end is reached
+- Pop up "Not found" when there is no match
+- Remember last search
+- Add option for replace (shortcut <ctrl + r> or <ctrl + shift + j>)
 
-### Tools -> Generate menu
-Create Maven pom (not in Rstudio). Create a Maven pom stub with dependencies for 
-Renjin + whatever is needed for all library() commands to work.
+### Enhance table browser
+- add refresh option to right click menu
+
+### Enhance FileViewer
+- move file (maybe drag drop)
+
+### Enhance code completion
+- does not work well for . e.g. as.da+ctrl+space
 
 ### Add import dataSet in File meny
 Should generate code at current cursor
@@ -35,37 +34,33 @@ Should generate code at current cursor
 ### Add more syntax highlighting support
 NAMESPACE, SAS, SPSS
 
+### Parse and report on issues in R code
+- misspelled objects / vars
+- syntax errors
+
+### Add current variables to code completion
+e.g. when library("se.alipsa:R2JDBC") is loaded it should be possible to do 
+dbGe+ctrl+space and get suggestion for dbGetQuery and dbGetException
+
+Also for my own Reference and R6 classes the available methods and fields should be suggested e.g.
+
+student <- setRefClass("student",
+fields = list(name = "character", age = "numeric", GPA = "numeric"))
+
+student$+ctrl+space should suggest name, age and GPA
+
+### Enhance packages section
+add checkbox and tick off is loaded into session, available packages should be listed from current classpath
+(probably only useful for ClasspathPackageLoader, available packages would not relevant for Aether as everything is available)
+
 ### add Rmd support
 
 ### add Roxygen support
-
-### enable users to use a pom file for defining the classpath to run (done)
-Currently to be able to run R code depending on other projects AetherpackageLoader often fails
-and classpath package loader requires you to alter the ride pom.xml 
-
-since we have maven support for building, it would make sense to provide an
-option to use the classpath which is the result of the dependencies described in the pom
-See se.alipsa.ride.utils.maven.MavenUtils for a start
-
-See here https://www.hascode.com/2017/09/downloading-maven-artifacts-from-a-pom-file-programmatically-with-eclipse-aether/ for some ideas...
-Also https://mitre.github.io/mvndeps/ is doing basically this
-https://github.com/nanosai/modrun classloading magic with maven
-https://github.com/mguymon/naether dependency resolver
-https://github.com/diet4j/ reads maven and exposes classloaders 
-
-## Version 1.4
-### Enable git integration (Done)
-use jGit see 
-- https://wiki.eclipse.org/JGit/User_Guide
-- https://download.eclipse.org/jgit/site/5.2.0.201812061821-r/apidocs/index.html
-- http://www.doublecloud.org/2013/01/how-to-read-git-repository-using-java-apis/
-- https://git-scm.com/book/uz/v2/Appendix-B%3A-Embedding-Git-in-your-Applications-JGit
-- https://github.com/centic9/jgit-cookbook
 
 ### Enhanced offline mode
 - To allow explicit setting Aether to offline
 - The maven Settings class created by AetherFactory must be publicly exposed,
 ideally by AetherPackageLoader  
 
-### Further out (post 1.4)
+### Maybe Further out 
 - Support fastR in addition to Renjin, maybe also GNU R.
