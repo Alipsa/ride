@@ -251,13 +251,15 @@ public class MavenUtils {
     boolean addCentral = true;
     while (it.hasNext()) {
       RemoteRepository repo = it.next();
+      // The Maven version is old and inserts a non valid url for central, so we deal with that below
       if (repo.getUrl().equals("http://repo.maven.apache.org/maven2")) {
         it.remove();
       }
-      if (repo.getId().equals(central.getId()) || repo.getUrl().equals(central.getUrl())) {
+      if (repo.getId().equals(central.getId()) || repo.getUrl().contains(".maven.org/maven2")) {
         addCentral = false;
       }
     }
+    // Add a good central url in case the pom did not have it, the invalid model one was removed
     if (addCentral) {
       repos.add(central);
     }

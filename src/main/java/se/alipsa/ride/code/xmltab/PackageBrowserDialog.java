@@ -80,7 +80,9 @@ public class PackageBrowserDialog extends Dialog<Void> {
             .append("\n\t").append("<groupId>org.renjin.cran</groupId>")
             .append("\n\t").append("<artifactId>").append(artifact).append("</artifactId>")
             .append("\n\t").append("<version>").append(version).append("</version>")
-            .append("\n</dependency>");
+            .append("\n</dependency>\n\n")
+            .append("Package status: http://packages.renjin.org/package/org.renjin.cran/")
+            .append(artifact);
 
          textArea.setText(sb.toString());
 

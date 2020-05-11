@@ -50,7 +50,7 @@ public class RTextArea extends CodeTextArea {
       "parent.env", "pairlist", "paste", "paste0", "path.package", "pbinom", "pipe", "pmax", "pmin", "pnorm", "Position", "ppois", "prettyNum", "print", "provideDimnames", "psigamma", "punif",
       "qbinom", "qpois", "qnorm", "quantile", "qunif",
       "range", "rbind", "rbinom", "read.dcf", "require", "regexec", "regexpr", "rep", "return", "round", "rowMeans", "rownames", "rowSums", "rpois", "rnorm", "R.home", "Recall", "Reduce", "RNGkind", "RNGversion", "runif",
-      "sapply", "scale", "sd", "seq", "set.seed", "setwd", "signif", "sin", "single", "sinpi", "socketConnection", "sqrt", "stop", "stopifnot", "str", "strsplit", "sub", "subset", "substr", "sum", "summary", "switch", "Sys.chmod", "Sys.Date", "Sys.getenv", "Sys.getpid", "Sys.junction", "Sys.localeconv", "Sys.setFileTime", "Sys.sleep", "Sys.time", "Sys.umask", "Sys.which",
+      "sapply", "scale", "sd", "seq", "set.seed", "setClass", "setRefClass", "setwd", "signif", "sin", "single", "sinpi", "socketConnection", "sqrt", "stop", "stopifnot", "str", "strsplit", "sub", "subset", "substr", "sum", "summary", "switch", "Sys.chmod", "Sys.Date", "Sys.getenv", "Sys.getpid", "Sys.junction", "Sys.localeconv", "Sys.setFileTime", "Sys.sleep", "Sys.time", "Sys.umask", "Sys.which",
       "table", "tan", "tanpi", "toupper", "tolower", "trigamma", "trunc", "tryCatch", "typeof",
       "unclass", "unlist", "unz", "url", "UseMethod",
       "Vectorize",
