@@ -54,12 +54,7 @@ import se.alipsa.ride.utils.FileUtils;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Since we have a dependency on AetherPackageLoader we use the same
@@ -251,9 +246,19 @@ public class MavenUtils {
     model.getRepositories().forEach(r ->
        repos.add(new RemoteRepository.Builder(r.getId(), r.getLayout(), r.getUrl()).build()));
     RemoteRepository central = getCentralMavenRepository();
-    if (repos.stream()
-       .filter(p -> central.getId().equals(p.getId()) || central.getUrl().equals(p.getUrl()))
-       .findAny().orElse(null) == null) {
+
+    Iterator<RemoteRepository> it = repos.iterator();
+    boolean addCentral = true;
+    while (it.hasNext()) {
+      RemoteRepository repo = it.next();
+      if (repo.getUrl().equals("http://repo.maven.apache.org/maven2")) {
+        it.remove();
+      }
+      if (repo.getId().equals(central.getId()) || repo.getUrl().equals(central.getUrl())) {
+        addCentral = false;
+      }
+    }
+    if (addCentral) {
       repos.add(central);
     }
     return repos;
