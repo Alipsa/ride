@@ -347,7 +347,7 @@ public class ConnectionsTab extends Tab {
   private void showConnectionMetaData(ConnectionInfo con) {
     setWaitCursor();
     String sql;
-    boolean addNaWhenBlank = true;
+    boolean addNaWhenBlank = false;
     if (con.getDriver().equals(DRV_SQLLITE)) {
       boolean hasTables = false;
       try {
@@ -398,6 +398,9 @@ public class ConnectionsTab extends Tab {
          "      on col.TABLE_NAME = tab.TABLE_NAME and col.TABLE_SCHEMA = tab.TABLE_SCHEMA\n" +
          "where TABLE_TYPE <> 'SYSTEM TABLE'\n" +
          "and tab.TABLE_SCHEMA not in ('SYSTEM TABLE', 'PG_CATALOG', 'INFORMATION_SCHEMA', 'pg_catalog', 'information_schema')";
+    }
+    if (con.getDriver().equals(DRV_SQLSERVER)) {
+      addNaWhenBlank = true;
     }
     String rCode = baseRQueryString(con, "connectionsTabDf <- dbGetQuery", sql, addNaWhenBlank).toString();
 
