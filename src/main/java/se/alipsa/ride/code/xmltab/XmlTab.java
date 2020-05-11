@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,14 +30,16 @@ import java.io.File;
 
 public class XmlTab extends TextAreaTab {
 
-  private XmlTextArea xmlTextArea;
+  private final XmlTextArea xmlTextArea;
 
-  private Button executeButton;
-  private TextField targetsField;
-  private Label goalLabel;
+  private final Button executeButton;
+  private final TextField targetsField;
+  private final Label goalLabel;
+  private final Button packageBrowserButton;
 
-  private InvocationOutputHandler consoleOutputHandler;
-  private InvocationOutputHandler warningOutputHandler;
+
+  private final InvocationOutputHandler consoleOutputHandler;
+  private final InvocationOutputHandler warningOutputHandler;
 
   private static final Logger log = LogManager.getLogger(XmlTab.class);
 
@@ -52,7 +55,11 @@ public class XmlTab extends TextAreaTab {
     targetsField.setText("clean install");
     targetsField.setPrefColumnCount(30);
     goalLabel = new Label("Goals:");
-    buttonPane.getChildren().addAll(goalLabel, targetsField);
+
+    packageBrowserButton = new Button("Lookup");
+    packageBrowserButton.setTooltip(new Tooltip("Search for package on Renjin CRAN"));
+    packageBrowserButton.setOnAction(this::lockupPackage);
+    buttonPane.getChildren().addAll(goalLabel, targetsField, packageBrowserButton);
 
     xmlTextArea = new XmlTextArea(this);
     VirtualizedScrollPane<CodeTextArea> xmlPane = new VirtualizedScrollPane<>(xmlTextArea);
@@ -68,6 +75,11 @@ public class XmlTab extends TextAreaTab {
         gui.getConsoleComponent().initRenjin(gui.getClass().getClassLoader());
       }
     });
+  }
+
+  private void lockupPackage(ActionEvent actionEvent) {
+    PackageBrowserDialog browserDialog = new PackageBrowserDialog(gui);
+    browserDialog.show();
   }
 
   private void runMaven(ActionEvent actionEvent) {

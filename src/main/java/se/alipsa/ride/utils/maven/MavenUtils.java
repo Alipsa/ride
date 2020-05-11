@@ -183,9 +183,9 @@ public class MavenUtils {
 
   public static RepositorySystem getRepositorySystem() {
     DefaultServiceLocator serviceLocator = MavenRepositorySystemUtils.newServiceLocator();
-    serviceLocator
-       .addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+    serviceLocator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
     serviceLocator.addService(TransporterFactory.class, FileTransporterFactory.class);
+
     serviceLocator.addService(TransporterFactory.class, HttpTransporterFactory.class);
 
     serviceLocator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
@@ -199,8 +199,7 @@ public class MavenUtils {
   }
 
   public static DefaultRepositorySystemSession getRepositorySystemSession(RepositorySystem system) throws SettingsBuildingException {
-    DefaultRepositorySystemSession repositorySystemSession = MavenRepositorySystemUtils
-       .newSession();
+    DefaultRepositorySystemSession repositorySystemSession = MavenRepositorySystemUtils.newSession();
     LocalRepository localRepository = getLocalRepository();
     repositorySystemSession.setLocalRepositoryManager(
        system.newLocalRepositoryManager(repositorySystemSession, localRepository));
@@ -261,7 +260,7 @@ public class MavenUtils {
   }
 
   private static RemoteRepository getCentralMavenRepository() {
-    return new RemoteRepository.Builder("central", "default", "http://central.maven.org/maven2/")
+    return new RemoteRepository.Builder("central", "default", "https://central.maven.org/maven2/")
        .build();
   }
 }
