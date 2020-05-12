@@ -27,13 +27,13 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
 
   private static final Logger log = LogManager.getLogger();
 
-  private TextField groupNameField;
-  private TextField projectNameField;
+  private final TextField groupNameField;
+  private final TextField projectNameField;
   private File selectedDirectory;
-  private Ride gui;
-  private TextField dirField;
-  private CheckBox changeToDir;
-  private TextField projectDirField;
+  private final Ride gui;
+  private final TextField dirField;
+  private final CheckBox changeToDir;
+  private final TextField projectDirField;
 
   CreateProjectWizardDialog(Ride gui) {
     this.gui = gui;

@@ -5,15 +5,8 @@ import static se.alipsa.ride.Constants.THEME;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -32,23 +25,26 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
 
   private static final Logger log = LogManager.getLogger();
 
-  private TextField groupNameField;
-  private TextField packageNameField;
+  private final TextField groupNameField;
+  private final TextField packageNameField;
   private File selectedDirectory;
-  private Ride gui;
-  private TextField dirField;
-  private CheckBox changeToDir;
+  private final Ride gui;
+  private final TextField dirField;
+  private final CheckBox changeToDir;
 
-  private TextField packageDirField;
+  private final TextField packageDirField;
+  private final Node okButton;
 
   CreatePackageWizardDialog(Ride gui) {
     this.gui = gui;
+    //initOwner(gui.getStage());
     setTitle("Create Package Wizard");
 
     Insets insets = new Insets(10, 15, 10, 10);
 
     getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-    getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+    okButton = getDialogPane().lookupButton(ButtonType.OK);
+    okButton.setDisable(true);
 
     BorderPane pane = new BorderPane();
     pane.setPadding(insets);
@@ -66,6 +62,11 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     groupNameField = new TextField();
     groupNameField.setPrefColumnCount(10);
     groupNameField.setTooltip(new Tooltip("Should be reverse domain name of your org e.g. com.acme"));
+    groupNameField.focusedProperty().addListener((arg0, wasFocused, isNowFocused) -> {
+      if (!isNowFocused) {
+        checkAndMaybeEnableButtons();
+      }
+    });
     groupBox.getChildren().add(groupNameField);
 
     HBox packageBox = new HBox();
@@ -94,7 +95,7 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     dirBox.getChildren().add(chooseDirButton);
     chooseDirButton.setOnAction(this::chooseProjectDir);
     dirField = new TextField();
-    // Need to warp it as disabled nodes cannot show tooltips.
+    // Need to wrap it as disabled nodes cannot show tooltips.
     Label dirWrapper = new Label("", dirField);
     dirField.setDisable(true);
     HBox.setHgrow(dirField, Priority.ALWAYS);
@@ -128,6 +129,7 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     changeToDir.setSelected(true);
     changeToDirBox.getChildren().add(changeToDir);
 
+
     HBox packageLayoutBox = new HBox();
     packageLayoutBox.setPadding(insets);
     packageLayoutBox.setSpacing(10);
@@ -138,9 +140,14 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     renjinLayout.setSelected(true);
     RadioButton gnurLayout = new RadioButton("GNU R Layout");
     gnurLayout.setToggleGroup(group);
+
+    // TODO not yet implemented so disable them
+    renjinLayout.setDisable(true);
+    gnurLayout.setDisable(true);
     packageLayoutBox.getChildren().addAll(renjinLayout, gnurLayout);
 
-    getDialogPane().setPrefSize(700, 300);
+
+    getDialogPane().setPrefSize(700, 320);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     setResizable(true);
 
@@ -155,6 +162,7 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
 
   private void updateDirField(String artifactName) {
     packageDirField.setText(new File(selectedDirectory, artifactName.trim()).getAbsolutePath());
+    checkAndMaybeEnableButtons();
   }
 
   private void chooseProjectDir(ActionEvent actionEvent) {
@@ -172,7 +180,13 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     } else {
       dirField.setText(selectedDirectory.getAbsolutePath());
       packageDirField.setText(new File(selectedDirectory, packageNameField.getText().trim()).getAbsolutePath());
-      getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
+      checkAndMaybeEnableButtons();
+    }
+  }
+
+  private void checkAndMaybeEnableButtons() {
+    if (!packageNameField.getText().trim().equals("") && !groupNameField.getText().trim().equals("") && !packageDirField.getText().trim().equals("")) {
+      okButton.setDisable(false);
     }
   }
 
