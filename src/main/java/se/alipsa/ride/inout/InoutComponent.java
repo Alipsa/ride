@@ -38,6 +38,7 @@ import se.alipsa.ride.inout.viewer.ViewTab;
 import se.alipsa.ride.model.Table;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.rideutils.ReadImage;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -189,6 +190,12 @@ public class InoutComponent extends TabPane implements InOut {
   public void display(Image img, String... title) {
     ImageView node = new ImageView(img);
     display(node, title);
+  }
+
+  @Override
+  public void display(String fileName, String... title) {
+    // We use ReadImage from Rideutils here as it understands svg images
+    display(ReadImage.read(fileName), title);
   }
 
   public void View(SEXP sexp, String... title) {

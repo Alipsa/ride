@@ -18,6 +18,11 @@ public interface InOut {
   void display(Image img, String... title);
 
   /**
+   * display an image in the Plot tab
+   */
+  void display(String fileName, String... title);
+
+  /**
    * display data in the Viewer tab
    */
   void View(SEXP sexp, String... title);
