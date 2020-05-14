@@ -35,10 +35,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.StoredConfig;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.transport.CredentialsProvider;
-import org.eclipse.jgit.transport.PushResult;
-import org.eclipse.jgit.transport.URIish;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.eclipse.jgit.transport.*;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.inout.git.AddRemoteDialog;
@@ -243,6 +240,10 @@ public class DynamicContextMenu extends ContextMenu {
          // Remote sub menu
          Menu gitRemoteMenu = new Menu("Remote");
          gitMenu.getItems().add(gitRemoteMenu);
+
+         MenuItem gitListRemotesMI = new MenuItem("list remotes");
+         gitListRemotesMI.setOnAction(this::gitListRemotes);
+         gitRemoteMenu.getItems().add(gitListRemotesMI);
 
          MenuItem gitAddRemoteMI = new MenuItem("add remote");
          gitAddRemoteMI.setOnAction(this::gitAddRemote);
@@ -570,6 +571,27 @@ public class DynamicContextMenu extends ContextMenu {
       Thread runningThread = new Thread(task);
       runningThread.setDaemon(false);
       runningThread.start();
+   }
+
+   private void gitListRemotes(ActionEvent actionEvent) {
+      try {
+         List<RemoteConfig> remoteConfigs = git.remoteList().call();
+         StringBuilder sb = new StringBuilder();
+         for (RemoteConfig rc : remoteConfigs) {
+            for (URIish uri : rc.getURIs()) {
+               sb.append(rc.getName()).append("  ").append(uri).append("  ").append("(fetch and push)\n");
+            }
+            for (URIish uri : rc.getPushURIs()) {
+               sb.append(rc.getName()).append("  ").append(uri).append("  ").append("(push-only)\n");
+            }
+         }
+         if (sb.length() == 0) {
+            sb.append("No remotes found");
+         }
+         Alerts.info("Git remotes", sb.toString());
+      } catch (GitAPIException e) {
+         ExceptionAlert.showAlert("Failed to get list of remotes", e);
+      }
    }
 
    private void gitAddRemote(ActionEvent actionEvent) {
