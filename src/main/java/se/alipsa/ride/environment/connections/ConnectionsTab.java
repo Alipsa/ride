@@ -180,7 +180,7 @@ public class ConnectionsTab extends Tab {
   }
 
   private void addConnection(ConnectionInfo con) {
-    log.info("Add or update connection for {}", con.asJson());
+    log.debug("Add or update connection for {}", con.asJson());
     setPref(NAME_PREF, name.getValue());
     setPref(DRIVER_PREF, driverText.getText());
     setPref(URL_PREF, urlText.getText());
