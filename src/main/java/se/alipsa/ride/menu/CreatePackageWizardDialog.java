@@ -115,11 +115,12 @@ public class CreatePackageWizardDialog extends Dialog<CreatePackageWizardResult>
     packageDirField = new TextField();
     packageDirField.setText(selectedDirectory.getAbsolutePath());
     packageDirField.setDisable(true);
+    Label packageDirWrapper = new Label("", packageDirField);
     HBox.setHgrow(packageDirField, Priority.ALWAYS);
-    HBox.setHgrow(packageDirlabel, Priority.ALWAYS);
-    packageDirlabel.setMaxWidth(Double.MAX_VALUE);
+    HBox.setHgrow(packageDirWrapper, Priority.ALWAYS);
+    packageDirWrapper.setMaxWidth(Double.MAX_VALUE);
     packageDirField.setMaxWidth(Double.MAX_VALUE);
-    packageDirBox.getChildren().addAll(packageDirlabel, packageDirField);
+    packageDirBox.getChildren().addAll(packageDirlabel, packageDirWrapper);
 
     HBox changeToDirBox = new HBox();
     changeToDirBox.setPadding(insets);

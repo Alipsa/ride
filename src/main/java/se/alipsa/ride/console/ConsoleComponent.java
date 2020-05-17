@@ -332,7 +332,8 @@ public class ConsoleComponent extends BorderPane {
 
   public void restartR() {
     console.append("Restarting Renjin..\n");
-    initRenjin(getStoredRemoteRepositories(), Thread.currentThread().getContextClassLoader());
+    //initRenjin(getStoredRemoteRepositories(), Thread.currentThread().getContextClassLoader());
+    initRenjin(getStoredRemoteRepositories(), gui.getClass().getClassLoader());
     gui.getEnvironmentComponent().clearEnvironment();
   }
 
@@ -785,7 +786,6 @@ public class ConsoleComponent extends BorderPane {
     ) {
 
       engine.put("inout", gui.getInoutComponent());
-      //engine.put("packageLoader", getPackageLoader());
 
       Platform.runLater(() -> {
         console.append(title);

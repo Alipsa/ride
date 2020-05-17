@@ -1,5 +1,6 @@
 package se.alipsa.ride.utils;
 
+import static org.apache.maven.shared.utils.StringUtils.isBlank;
 import static se.alipsa.ride.Constants.GitStatus.GIT_ADDED;
 import static se.alipsa.ride.Constants.GitStatus.GIT_CHANGED;
 import static se.alipsa.ride.Constants.GitStatus.GIT_CONFLICT;
@@ -96,6 +97,9 @@ public class GitUtils {
    public static CredentialsProvider getStoredCredentials(String url) throws IOException, URISyntaxException {
       File gitCredentials = getCredentialsFile();
       if (!gitCredentials.exists()) {
+         return null;
+      }
+      if (isBlank(url)) {
          return null;
       }
       URIish remoteUri = new URIish(url);

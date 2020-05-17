@@ -6,6 +6,7 @@ import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -135,7 +136,19 @@ public class InoutComponent extends TabPane implements InOut {
     if (selectedDirectory == null) {
       log.info("No Directory selected");
     } else {
+      setBusy(true);
       changeRootDir(selectedDirectory);
+      setBusy(false);
+    }
+  }
+
+  private void setBusy(boolean busy) {
+    if (busy) {
+      gui.setWaitCursor();
+      this.setCursor(Cursor.WAIT);
+    } else {
+      gui.setNormalCursor();
+      this.setCursor(Cursor.DEFAULT);
     }
   }
 

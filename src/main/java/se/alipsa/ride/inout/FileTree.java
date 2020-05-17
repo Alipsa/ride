@@ -115,7 +115,7 @@ public class FileTree extends TreeView<FileItem> {
       if (e.getButton() == MouseButton.SECONDARY) {
         TreeItem<FileItem> selected = getSelectionModel().getSelectedItem();
         //item is selected - this prevents fail when clicking on empty space
-        if (selected!=null) {
+        if (selected != null) {
           //open context menu on current screen position
           openContextMenu(selected, e.getScreenX(), e.getScreenY());
         }

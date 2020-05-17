@@ -1,5 +1,6 @@
 package se.alipsa.ride.inout;
 
+import static org.apache.maven.shared.utils.StringUtils.isBlank;
 import static se.alipsa.ride.Constants.REPORT_BUG;
 import static se.alipsa.ride.utils.GitUtils.asRelativePath;
 
@@ -69,17 +70,18 @@ import java.util.Set;
 public class DynamicContextMenu extends ContextMenu {
 
    private Git git;
-   private Ride gui;
-   private FileTree fileTree;
+   private final Ride gui;
+   private final FileTree fileTree;
    private TreeItem<FileItem> currentNode;
    private File currentFile;
    private CredentialsProvider credentialsProvider;
 
-   private MenuItem createDirMI;
-   private MenuItem createFileMI;
-   private MenuItem expandAllMI;
+   private final MenuItem createDirMI;
+   private final MenuItem createFileMI;
+   private final MenuItem expandAllMI;
    private MenuItem deleteMI;
    private MenuItem gitAddMI;
+   private MenuItem renameMI;
 
    MenuItem gitInitMI = new MenuItem("Initialize root as git repo");
 
@@ -133,6 +135,42 @@ public class DynamicContextMenu extends ContextMenu {
       expandAllMI = new MenuItem("expand all");
       expandAllMI.setOnAction(e -> fileTree.expandAllChildren(currentNode));
       getItems().add(expandAllMI);
+
+      renameMI = new MenuItem("rename");
+      renameMI.setOnAction(e -> {
+         String fileType = " file ";
+         if (currentFile.isDirectory()) {
+            fileType = " directory ";
+         }
+         TextInputDialog dialog = new TextInputDialog(currentFile.getName());
+         dialog.setTitle("Rename " + currentFile.getName());
+         Optional<String> toName = dialog.showAndWait();
+         if (!toName.isPresent()) {
+            return;
+         }
+
+         // File (or directory) with new name
+         File file2 = new File(currentFile.getParent(), toName.get());
+
+         if (file2.exists()) {
+            Alerts.warn("File already exists", "Cannot rename" + fileType + currentFile.getName() + " as " + file2.getAbsolutePath() + "already exists!");
+            return;
+         }
+
+         // Rename file (or directory)
+         boolean success = currentFile.renameTo(file2);
+
+         if (!success) {
+            Alerts.warn("Rename failed", "Failed to rename" + fileType + currentFile.getName() + " to " + file2.getAbsolutePath());
+            return;
+         }
+         currentFile = file2;
+         log.info("Renamed file to {}", currentFile);
+         currentNode.setValue(null); // need to set null first, otherwise it will not refresh
+         currentNode.setValue(new FileItem(currentFile));
+      });
+      getItems().add(renameMI);
+
 
       deleteMI = new MenuItem("delete");
       deleteMI.setOnAction(e -> {
@@ -238,24 +276,28 @@ public class DynamicContextMenu extends ContextMenu {
          gitBranchMenu.getItems().add(gitBranchMergeMI);
 
          // Remote sub menu
+         boolean haveRemote = !isBlank(getRemoteGitUrl());
          Menu gitRemoteMenu = new Menu("Remote");
          gitMenu.getItems().add(gitRemoteMenu);
-
-         MenuItem gitListRemotesMI = new MenuItem("list remotes");
-         gitListRemotesMI.setOnAction(this::gitListRemotes);
-         gitRemoteMenu.getItems().add(gitListRemotesMI);
 
          MenuItem gitAddRemoteMI = new MenuItem("add remote");
          gitAddRemoteMI.setOnAction(this::gitAddRemote);
          gitRemoteMenu.getItems().add(gitAddRemoteMI);
 
-         MenuItem gitPushMI = new MenuItem("push");
-         gitPushMI.setOnAction(this::gitPush);
-         gitRemoteMenu.getItems().add(gitPushMI);
+         if (haveRemote) {
+            MenuItem gitListRemotesMI = new MenuItem("list remotes");
+            gitListRemotesMI.setOnAction(this::gitListRemotes);
+            gitRemoteMenu.getItems().add(gitListRemotesMI);
 
-         MenuItem gitPullMI = new MenuItem("pull");
-         gitPullMI.setOnAction(this::gitPull);
-         gitRemoteMenu.getItems().add(gitPullMI);
+            MenuItem gitPushMI = new MenuItem("push");
+            gitPushMI.setOnAction(this::gitPush);
+            gitRemoteMenu.getItems().add(gitPushMI);
+
+            MenuItem gitPullMI = new MenuItem("pull");
+            gitPullMI.setOnAction(this::gitPull);
+            gitRemoteMenu.getItems().add(gitPullMI);
+         }
+
       }
       getItems().add(gitMenu);
    }
