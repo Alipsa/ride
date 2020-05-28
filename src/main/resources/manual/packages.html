@@ -84,7 +84,31 @@ Some of the basic packages that works flawlessly from my own personal experience
         <td>See the "Examples" tab</td>
     </tr>
     <tr>
-        <td>import excel files</td>
+        <td>import/export spreadsheets (excel or open/libre office calc)</td>
+        <td>se.alipsa:spreadsheets</td>
+        <td>Use version 1.0</td>
+        <td><div class="codeblock"><span class="keyword">library</span>("se.alipsa:spreadsheets")<br/>
+            <span class="comment"># Read </span><br/>
+            sheetIndex <- 2<br/>
+            excelDf <- importSpreadsheet(
+            filePath = file,
+            sheet = sheetIndex,
+            startRow = 1,
+            endRow = 7,
+            startColumn = <span class="string">"A"</span>,
+            endColumn = <span class="string">"F"</span>,
+            firstRowAsColumnNames = <span class="keyword">TRUE</span>
+            )<br/>
+            <span class="comment"># Write</span><br/>
+            exportSpreadsheet(
+            df = someDf,
+            filePath = <span class="string">"data_sum.xlsx"</span>,
+            sheet = <span class="string">"Sheet1"</span>
+            )<br/>
+        </div></td>
+    </tr>
+    <tr>
+        <td>import excel files (alternative to the above)</td>
         <td>org.renjin.cran:xlsx</td>
         <td>Used version 0.6.1-b7</td>
         <td><div class="codeblock"><span class="keyword">library</span>(xlsx)<br/>
@@ -115,6 +139,12 @@ Some of the basic packages that works flawlessly from my own personal experience
         </div></td>
     </tr>
     <tr>
+        <td>Import csv files</td>
+        <td>Base R, no additional package required</td>
+        <td></td>
+        <td><div class="codeblock">customerData <- read.csv(file=<span class="string">"some/path/input.csv"</span>, header=<span class="keyword">TRUE</span>, sep=<span class="string">","</span>)</div></td>
+    </tr>
+    <tr>
         <td>Handle json</td>
         <td>org.renjin.cran:rjson</td>
         <td>Used version 0.2.15-renjin-21</td>
@@ -124,10 +154,28 @@ Some of the basic packages that works flawlessly from my own personal experience
         </td>
     </tr>
     <tr>
-        <td>Import csv files</td>
-        <td>Base R, no additional package required</td>
-        <td></td>
-        <td><div class="codeblock">customerData <- read.csv(file=<span class="string">"some/path/input.csv"</span>, header=<span class="keyword">TRUE</span>, sep=<span class="string">","</span>)</div></td>
+        <td>Handle XML: several alternatives</td>
+        <td>org.renjin.cran:xml2<br/>
+            org.renjin.cran:xmlr<br/>
+            org.renjin.cran:XiMpLe
+        </td>
+        <td>xml2 ver: 1.2-renjin-10<br/>
+            xmlr ver: 0.1.2<br/>
+            XiMpLe ver: 0.10-2-b6</td>
+        <td><div class="codeblock">
+            <span class="keyword">library</span>(<span class="string">'org.renjin.cran:xmlr'</span>)<br/>
+            doc <- Document$new()<br/>
+            root <- Element$new(<span class="string">"table"</span>)
+            root$setAttribute(<span class="string">"xmlns"</span>, <span class="string">"http://www.w3.org/TR/html4/"</span>)
+
+            root$addContent(
+            Element$new(<span class="string">"tr"</span>)
+            $addContent(Element$new(<span class="string">"td"</span>)$setText(<span class="string">"Apples"</span>))
+            $addContent(Element$new(<span class="string">"td"</span>)$setText(<span class="string">"Bananas"</span>))
+            )
+            doc$setRootElement(root)
+        </div>
+        </td>
     </tr>
 </table>
 </body>
