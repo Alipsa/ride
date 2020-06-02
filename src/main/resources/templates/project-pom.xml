@@ -46,7 +46,7 @@
     <!--dependency>
       <groupId>se.alipsa</groupId>
       <artifactId>rideutils</artifactId>
-      <version>1.0</version>
+      <version>1.2</version>
     </dependency-->
 
     <!-- the hamcrest package is only required if you use it for unit tests -->

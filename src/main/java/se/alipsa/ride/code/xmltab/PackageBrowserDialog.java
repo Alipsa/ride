@@ -1,53 +1,63 @@
 package se.alipsa.ride.code.xmltab;
 
+import static se.alipsa.ride.Constants.FLOWPANE_INSETS;
+
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import org.apache.commons.io.IOUtils;
+import javafx.scene.layout.HBox;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.utils.ExceptionAlert;
 
+import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-
-import static se.alipsa.ride.Constants.FLOWPANE_INSETS;
 
 public class PackageBrowserDialog extends Dialog<Void> {
 
    private final Ride gui;
    private final TextArea textArea = new TextArea();
    private final TextField artifactField;
+   private final TextField groupField;
+   private final ComboBox<LookupUrl> repoCombo;
 
    public PackageBrowserDialog(Ride gui) {
       initOwner(gui.getStage());
       this.gui = gui;
-      setTitle("Search for package in Renjin CRAN");
+      setTitle("Search for package info");
       getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
       BorderPane borderPane = new BorderPane();
       getDialogPane().setContent(borderPane);
-
-      Insets insets = new Insets(5,5,5,5);
 
       textArea.setPrefColumnCount(40);
       textArea.setPrefRowCount(8);
       borderPane.setCenter(textArea);
 
 
-      FlowPane topPane = new FlowPane();
+      HBox topPane = new HBox();
       topPane.setPadding(FLOWPANE_INSETS);
       borderPane.setTop(topPane);
+
+      Label groupLabel = new Label("Group name");
+      groupLabel.setPadding(FLOWPANE_INSETS);
+      topPane.getChildren().add(groupLabel);
+
+      groupField = new TextField("org.renjin.cran");
+      groupField.setPrefWidth(150);
+      groupField.setPadding(FLOWPANE_INSETS);
+      topPane.getChildren().add(groupField);
+
       Label artifactLabel = new Label("Artifact name");
       artifactLabel.setPadding(FLOWPANE_INSETS);
       topPane.getChildren().add(artifactLabel);
@@ -61,12 +71,39 @@ public class PackageBrowserDialog extends Dialog<Void> {
       searchButton.setPadding(FLOWPANE_INSETS);
       searchButton.setOnAction(this::lookupArtifact);
       topPane.getChildren().add(searchButton);
+
+      repoCombo = new ComboBox<>();
+      HBox.setMargin(repoCombo, new Insets(0,5,0,10));
+      repoCombo.getItems().addAll(LookupUrl.RENJIN_CRAN, LookupUrl.MAVEN_CENTRAL);
+      repoCombo.getSelectionModel().select(LookupUrl.RENJIN_CRAN);
+      repoCombo.setOnAction(e -> {
+         if (repoCombo.getSelectionModel().getSelectedItem().equals(LookupUrl.RENJIN_CRAN)) {
+            groupField.setText("org.renjin.cran");
+         }
+      });
+      topPane.getChildren().add(repoCombo);
+   }
+
+   private enum LookupUrl {
+      RENJIN_CRAN("Renjin CRAN", "https://nexus.bedatadriven.com/content/groups/public/"),
+      MAVEN_CENTRAL("Maven Central", "https://repo1.maven.org/maven2/");
+
+      String name;
+      String baseUrl;
+
+      LookupUrl(String name, String baseUrl) {
+         this.name = name;
+         this.baseUrl = baseUrl;
+      }
    }
 
    private void lookupArtifact(ActionEvent actionEvent) {
+      String group = groupField.getText().trim();
+      String groupUrlpart = group.replace('.', '/') + "/";
       String artifact = artifactField.getText().trim();
-      String baseUrl = "https://nexus.bedatadriven.com/content/groups/public/org/renjin/cran/";
-      String url = baseUrl + artifact + "/maven-metadata.xml";
+      LookupUrl lookupUrl = repoCombo.getSelectionModel().getSelectedItem();
+      String baseUrl = lookupUrl.baseUrl;
+      String url = baseUrl + groupUrlpart + artifact + "/maven-metadata.xml";
       try {
          DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
          DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -77,12 +114,15 @@ public class PackageBrowserDialog extends Dialog<Void> {
 
          StringBuilder sb = new StringBuilder("Latest version is:")
             .append("\n<dependency>")
-            .append("\n\t").append("<groupId>org.renjin.cran</groupId>")
+            .append("\n\t").append("<groupId>").append(group).append("</groupId>")
             .append("\n\t").append("<artifactId>").append(artifact).append("</artifactId>")
             .append("\n\t").append("<version>").append(version).append("</version>")
-            .append("\n</dependency>\n\n")
-            .append("Package status: http://packages.renjin.org/package/org.renjin.cran/")
-            .append(artifact);
+            .append("\n</dependency>\n\n");
+
+             if (lookupUrl.equals(LookupUrl.RENJIN_CRAN)) {
+               sb.append("Package status: http://packages.renjin.org/package/org.renjin.cran/")
+                    .append(artifact);
+             }
 
          textArea.setText(sb.toString());
 

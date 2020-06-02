@@ -42,6 +42,7 @@ import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.rideutils.ReadImage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -260,12 +261,15 @@ public class InoutComponent extends TabPane implements InOut {
 
     try {
       File file = gui.getCodeComponent().getActiveTab().getFile();
-      return file == null ? null : file.getAbsolutePath();
+      if (file == null) {
+        return null;
+      }
+      return file.getCanonicalPath().replace('\\', '/');
     } catch (IllegalStateException e) {
       log.info("Not on javafx thread", e);
       final FutureTask<String> query = new FutureTask<>(() -> {
         File file = gui.getCodeComponent().getActiveTab().getFile();
-        return file == null ? null : file.getAbsolutePath();
+        return file.getCanonicalPath().replace('\\', '/');
       });
       Platform.runLater(query);
       try {
@@ -274,6 +278,10 @@ public class InoutComponent extends TabPane implements InOut {
         Platform.runLater(() -> ExceptionAlert.showAlert("Failed to get file from active tab", e1));
         return null;
       }
+    } catch (IOException e) {
+      log.info("Failed to resolve canonical path", e);
+      File file = gui.getCodeComponent().getActiveTab().getFile();
+      return file.getAbsolutePath().replace('\\', '/');
     }
   }
 

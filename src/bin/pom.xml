@@ -330,9 +330,9 @@
                         <configuration>
                             <groupId>se.alipsa</groupId>
                             <artifactId>rideutils</artifactId>
-                            <version>1.0</version>
+                            <version>1.2</version>
                             <packaging>jar</packaging>
-                            <file>lib/rideutils-1.0.jar</file>
+                            <file>lib/rideutils-1.2.jar</file>
                         </configuration>
                     </execution-->
                 </executions>
