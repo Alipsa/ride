@@ -42,13 +42,15 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2 Beta 3
+- Create a package browser to easily find the latest version of an artifact
 - Removed the maven based execution to make things simpler
-- Add windows exe
+- Removed ant based startup and just rely on scripts
+- Add windows executable
 
 ### 1.2 Beta 2
 - Enhanced connection functionality (auto save, jdbc url wizard)
 - If the previous working dir has been removed we no longer move to parent as 
-that might take for ever to parse, instead we just do not initialize the file tree.
+that might take forever to parse, instead we just do not initialize the file tree.
 - Add styling to dialogs
 - Add target/classes and target/test.classes to classpath to classic classloader (adjustable in options)
 - Only insert right side of brackets if we are on the end of the line (feels more intuitive this way).
