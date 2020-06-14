@@ -85,7 +85,7 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
     selectedDirectory = gui.getInoutComponent().getRootDir();
     dirField.setText(selectedDirectory.getAbsolutePath());
 
-    Label packageDirlabel = new Label("Package project dir");
+    Label packageDirlabel = new Label("Project dir");
     grid.add(packageDirlabel, 0, 3);
     projectDirField = new TextField();
     projectDirField.setText(selectedDirectory.getAbsolutePath());
