@@ -15,10 +15,7 @@ VERSION=$(getProperty "version")
 JAR_NAME=$(getProperty "jar.name")
 RELEASE_TAG=$(getProperty "release.tag")
 
-TARGET=${DIR}/${JAR_NAME}
-
 LIB_DIR=${DIR}/lib
-mkdir -p ${LIB_DIR}
 export PATH=$PATH:${LIB_DIR}
 
 # This is just to avoid warnings about missing native BLAS libs when running the REPL
@@ -28,14 +25,8 @@ LAPACK=com.github.fommil.netlib.F2jLAPACK
 ARPACK=com.github.fommil.netlib.F2jARPACK
 
 java -cp ${JAR_NAME} se.alipsa.ride.splash.SplashScreen &
-
-mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG} --no-snapshot-updates
-
-mvn exec:java \
--Duser.home=$HOME \
--Djava.library.path=${LIB_DIR} \
--Dride.jar=${TARGET} \
--Drelease.tag=${RELEASE_TAG} \
+java -Djava.library.path=${LIB_DIR} -cp "${JAR_NAME}:${LIB_DIR}/*" \
 -Dcom.github.fommil.netlib.BLAS=${BLAS} \
 -Dcom.github.fommil.netlib.LAPACK=${LAPACK} \
--Dcom.github.fommil.netlib.ARPACK=${ARPACK}
+-Dcom.github.fommil.netlib.ARPACK=${ARPACK} \
+se.alipsa.ride.Ride &

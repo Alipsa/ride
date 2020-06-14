@@ -12,11 +12,7 @@ set JAR_NAME=%jar.name%
 
 set RELEASE_TAG=%release.tag%
 
-set TARGET=%DIR%\%jar.name%
-
 set "LIB_DIR=%DIR%\lib"
-
-if not exist %LIB_DIR% mkdir %LIB_DIR%
 
 set "PATH=%PATH%;%LIB_DIR%"
 
@@ -28,13 +24,8 @@ set "ARPACK=com.github.fommil.netlib.F2jARPACK"
 
 start javaw -cp %JAR_NAME% se.alipsa.ride.splash.SplashScreen
 
-call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG% --no-snapshot-updates
-
-call mvn "exec:java" ^
--Duser.home=%USERPROFILE% ^
--Djava.library.path="%LIB_DIR%" ^
--Dride.jar=%TARGET% ^
--Drelease.tag=%RELEASE_TAG% ^
+java -Djava.library.path="%LIB_DIR%" -cp %JAR_NAME%;%LIB_DIR%/* ^
 -Dcom.github.fommil.netlib.BLAS=%BLAS% ^
 -Dcom.github.fommil.netlib.LAPACK=%LAPACK% ^
--Dcom.github.fommil.netlib.ARPACK=%ARPACK%
+-Dcom.github.fommil.netlib.ARPACK=%ARPACK% ^
+se.alipsa.ride.Ride

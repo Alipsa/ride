@@ -1,26 +1,23 @@
 This is version 1.2 of Ride.
 
-At this point Ride is usable for muc more than just simple edititing and running R scripts. 
+At this point Ride is usable for much more than just simple editing and running R scripts. 
 It provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine but
 it also support SQL querying and updating as well as simple java development so that complete Renjin projects,
-packages can be developed, built and tested. Ride support maven build files as well as git.
+packages can be developed, built and tested. Ride supports maven build files as well as git.
   
-To run Ride you need to have maven and Java 1.8 or later installed. 
+To run Ride you need to have maven and Java 1.8 installed. 
 If you use open JDK on Linux then you might need to do something like `sudo apt-get install openjfx` depending on your distro.
 
-Ride is started using maven (see ride.sh/ride.cmd for details). 
-This is because Renjin is not included in the fat jar and needs to be wired in to the classpath upon startup. 
-You can specify a different Renjin version in the pom if you like but note that it requires renjin version 0.9.2716 or later to work. 
-An offline version with everything needed to run is available that does not require maven or an internet connection.
+Ride is started using ant (see ride.sh/ride.cmd for details). 
 
 Since you probably want to run the ScriptEngine with the ClassPathPackageLoader when embedding your R app, 
-you can set Ride to use this to resolve packages. You then need to include those dependencies to the maven.pom and hence
-test that you got all dependencies right before attempting to run the R scripts from the java application (server). 
+you can set Ride to use this to resolve packages. You then need to include those dependencies to the maven.pom 
+of your project and hence test that you got all dependencies right before attempting to run the R scripts from the 
+java application (server). 
 
 ## How to install:
 Pre requisites:
 - Java 8 with java fx
-- Maven 
 
 Unzip ride-1.2-final-dist.zip to a directory of choice
 
@@ -32,14 +29,9 @@ or on windows
 
 `$ .\ride.cmd`
 
-## If you need to run ride offline 
-
-Unzip ride-fat-1.2-final-dist.zip to a directory of choice
-
-The `ride-offline.sh` / `ride-offline.cmd` starts ride with the Classpath package loader and includes all jars
-in the lib folder. You need to manually add jars to the liv folder if you need a package or jdbc driver that is 
-not included per default. Ant is used to run it (as opposed to maven for online use) so edit the ride.xml if you 
-need to tweak it. 
+If possible, create a project and use the pom file to manage dependencies.  
+If that does not work, you might need to manually add / override jars in the lib folder but this runs the risk of
+making ride unable to start. Ant is used to run it so edit the ride.xml if you need to tweak it. 
 
 ## JDBC native components
 For some jdbc drivers there are OS native files that is required for some connections features to work. 
@@ -48,6 +40,10 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 
 # Version Descriptions
+
+### 1.2 Beta 3
+- Removed the maven based execution to make things simpler
+- Add windows exe
 
 ### 1.2 Beta 2
 - Enhanced connection functionality (auto save, jdbc url wizard)

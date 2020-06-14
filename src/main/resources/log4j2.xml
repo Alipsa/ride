@@ -16,21 +16,27 @@
     </Root>
     <logger name="org.renjin" level="info" additivity="false">
       <AppenderRef ref="console"/>
+      <AppenderRef ref="RideLog"/>
     </logger>
     <logger name="org.apache" level="info" additivity="false">
       <AppenderRef ref="console"/>
+      <AppenderRef ref="RideLog"/>
     </logger>
     <logger name="org.apache.commons" level="warn" additivity="false">
       <AppenderRef ref="console"/>
+      <AppenderRef ref="RideLog"/>
     </logger>
     <logger name="org.apache.commons" level="warn" additivity="false">
       <AppenderRef ref="console"/>
+      <AppenderRef ref="RideLog"/>
     </logger>
     <logger name="se.alipsa" level="info" additivity="false">
       <AppenderRef ref="console"/>
+      <AppenderRef ref="RideLog"/>
     </logger>
     <logger name="se.alipsa.ride.console" level="info" additivity="false">
       <AppenderRef ref="console"/>
+      <AppenderRef ref="RideLog"/>
     </logger>
     <!-- uncomment to see package loading out put etc. -->
     <!--logger name="se.alipsa.ride.console.ConsoleComponent" level="debug" additivity="false">
