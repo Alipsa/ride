@@ -46,6 +46,13 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Removed the maven based execution to make things simpler
 - Removed ant based startup and just rely on scripts
 - Add windows executable
+- Many small fixes e.g.
+    - recognize global assignment operators (<<-, ->>)
+    - add git "list remotes" context menu
+    - adjust height of package Wizard
+    - bump dependency versions
+    - change central url to use https
+    
 
 ### 1.2 Beta 2
 - Enhanced connection functionality (auto save, jdbc url wizard)
