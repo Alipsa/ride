@@ -11,6 +11,7 @@
    <packaging>jar</packaging>
 
    <properties>
+      <exe.version>1.2.0.0</exe.version>
       <maven.compiler.source>1.8</maven.compiler.source>
       <maven.compiler.target>1.8</maven.compiler.target>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -398,7 +399,7 @@
                      <dontWrapJar>true</dontWrapJar>
                      <errTitle>${project.artifactId}</errTitle>
                      <icon>${project.basedir}/src/bin/ride-icon.ico</icon>
-                     <downloadUrl>https://adoptopenjdk.net/releases.html?variant=openjdk8&amp;jvmVariant=hotspot#x64_win</downloadUrl>
+                     <downloadUrl>https://download.bell-sw.com/java/8u252+9/bellsoft-jdk8u252+9-windows-amd64-full.msi</downloadUrl>
                      <classPath>
                         <mainClass>se.alipsa.ride.Ride</mainClass>
                         <addDependencies>true</addDependencies>
@@ -419,14 +420,14 @@
                         <timeoutErr>false</timeoutErr>
                      </splash>
                      <versionInfo>
-                        <fileVersion>1.0.0.0</fileVersion>
+                        <fileVersion>${exe.version}</fileVersion>
                         <txtFileVersion>${project.version}</txtFileVersion>
                         <fileDescription>Ride</fileDescription>
                         <copyright>Alipsa HB</copyright>
-                        <productVersion>1.0.0.0</productVersion>
+                        <productVersion>${exe.version}</productVersion>
                         <txtProductVersion>${project.version}</txtProductVersion>
-                        <productName>${project.version}</productName>
-                        <internalName>${project.version}</internalName>
+                        <productName>${project.artifactId}</productName>
+                        <internalName>${project.artifactId}-${project.version}</internalName>
                         <originalFilename>${project.artifactId}.exe</originalFilename>
                      </versionInfo>
                   </configuration>
