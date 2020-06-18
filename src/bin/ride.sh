@@ -25,6 +25,11 @@ LAPACK=com.github.fommil.netlib.F2jLAPACK
 ARPACK=com.github.fommil.netlib.F2jARPACK
 
 java -cp ${JAR_NAME} se.alipsa.ride.splash.SplashScreen &
+
+# it is possible to force the initial packageloader by adding:
+# -DConsoleComponent.PackageLoader=ClasspathPackageLoader
+# to the command below
+
 java -Djava.library.path=${LIB_DIR} -cp "${JAR_NAME}:${LIB_DIR}/*" \
 -Dcom.github.fommil.netlib.BLAS=${BLAS} \
 -Dcom.github.fommil.netlib.LAPACK=${LAPACK} \
