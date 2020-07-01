@@ -5,7 +5,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ${DIR}
 
-mvn clean install
+mvn clean package
 status=$?
 if [ $status -ne 0 ]; then
    echo "Build failed"
@@ -25,9 +25,8 @@ VERSION=$(getProperty "version")
 JAR_NAME=$(getProperty "jar.name")
 RELEASE_TAG=$(getProperty "release.tag")
 
-TARGET=~/.m2/repository/se/alipsa/ride/${VERSION}/${JAR_NAME}
+TARGET=${DIR}/target/${JAR_NAME}
 
-cd src/bin
 java -cp ${TARGET} se.alipsa.ride.splash.SplashScreen &
 #mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
-mvn exec:java -Dride.jar=${TARGET} -Drelease.tag=${VERSION}
+mvn exec:java
