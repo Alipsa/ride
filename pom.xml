@@ -321,9 +321,9 @@
                   <configuration>
                      <target>
                         <echo file="version.properties">
-                           version=${project.version}
-                           jar.name=${project.artifactId}-${project.version}.jar
-                           release.tag=${release.tag}
+version=${project.version}
+jar.name=${project.artifactId}-${project.version}.jar
+release.tag=${release.tag}
                         </echo>
                         <copy file="version.properties" toDir="${project.build.outputDirectory}"/>
                      </target>
@@ -505,5 +505,4 @@
          </plugin>
       </plugins>
    </reporting>
-
 </project>
