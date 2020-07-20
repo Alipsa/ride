@@ -79,8 +79,14 @@ properly, e.g.
 ```shell script
 #!/usr/bin/env bash
 
+# Java is managed by SDK, load it
 source ~/.sdkman/bin/sdkman-init.sh
+# We want to run with java 11 with embedded javafx
+sdk use java 11.0.8.fx-librca
+# Scale the application 200% as I have a hpdi screen, see https://wiki.archlinux.org/index.php/HiDPI#Java_applications
+JAVA_OPTS="-Dglass.gtk.uiScale=200%"
 ```
+The last setting (JAVA_OPTS) is a special variable to add system properties (-D values) to java starting up.
 
 ### A SQL script screenshot
 Showing the result of a select query in the viewer tab and the connection view that is shown when you right click 

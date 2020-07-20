@@ -25,7 +25,7 @@ LAPACK=com.github.fommil.netlib.F2jLAPACK
 ARPACK=com.github.fommil.netlib.F2jARPACK
 
 # Allow for any kind of customization of variables or paths etc. without having to change this script
-# Which would be overwritten on a subsequent install.
+# which would otherwise be overwritten on a subsequent install.
 if [[ -f $DIR/env.sh ]]; then
   source "$DIR/env.sh"
 fi

@@ -22,7 +22,13 @@ set "BLAS=com.github.fommil.netlib.F2jBLAS"
 set "LAPACK=com.github.fommil.netlib.F2jLAPACK"
 set "ARPACK=com.github.fommil.netlib.F2jARPACK"
 
-start javaw -cp %JAR_NAME% se.alipsa.ride.splash.SplashScreen
+:: Allow for any kind of customization of variables or paths etc. without having to change this script
+:: which would otherwise be overwritten on a subsequent install.
+if exist %DIR%\env.cmd (
+    call %DIR%\env.cmd
+)
+
+start javaw -cp %JAR_NAME% %JAVA_OPTS% se.alipsa.ride.splash.SplashScreen
 
 :: it is possible to force the initial packageloader by adding:
 :: -DConsoleComponent.PackageLoader=ClasspathPackageLoader
@@ -33,4 +39,5 @@ java -Djava.library.path="%LIB_DIR%" -cp %JAR_NAME%;%LIB_DIR%/* ^
 -Dcom.github.fommil.netlib.BLAS=%BLAS% ^
 -Dcom.github.fommil.netlib.LAPACK=%LAPACK% ^
 -Dcom.github.fommil.netlib.ARPACK=%ARPACK% ^
+%JAVA_OPTS% ^
 se.alipsa.ride.Ride
