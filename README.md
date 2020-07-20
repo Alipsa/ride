@@ -60,17 +60,16 @@ In the Packages tab you can see a list of packages loaded for the session (in ca
 call in the script but loaded it from another script - the session is shared).
 
 ### Installing and Running ride
-There are two distributions of Ride. Go to the releases tab and expand the assets section at the bottom of the release. The zip file called ride-<version>-dist.zip e.g. ride-1.1-final-dist.zip is the "slim" distribution whereas the ride-fat-<version>-dist.zip e.g. ride-fat-1.1-final-dist.zip is the "fat" distribution.
+Go to the releases tab and expand the assets section at the bottom of the release. 
+Unzip the zip file ride-<version>-dist.zip e.g. ride-1.2-beta3-dist.zip to a directory of choice.
 
 There are icons for windows and Linux in the base folder of the unpacked zip that can be used to create a desktop shortcut/launcher.
 
-#### Ride slim
-This uses maven as the means to download resources and start Ride. All external dependencies are described in the pom.xml file. When preparing for your R code to be intergrated into your application it is quite useful to use the ClasspathPackageLoader and modify the pom.xml to include your dependencies and then verify that your code runs as expected. If it does you can be sure it will work in your application as well once you have added those same dependecies. 
-Use ride.cmd or ride.sh to start ride. 
-
-#### Ride fat
-This uses ant to start Ride. It contains all the artifacts needed to run Ride. Anything that is in the lib folder will be added to the classpath. To add a new artefact just put it in the lib dir and restart ride. This is useful if you are working off the grid or manage your artefacts in some other way that makes them unavailable from a maven remote repository. Note that you can combine Ride off line with AetherPackageLoader to still dynamically download packages as needed. 
-Use ride-offline.cmd or ride-offline.sh to start ride. 
+Use ride.cmd or ride.sh to start ride. There is also an (experimental) executable for Windows aimed to
+provide a slightly more "integrated" experience. To run it make sure you have JAVA_HOME and path set to 
+s java 8 version that includes javafx. I have seen some issues running with OpenJDK which seems to be
+related to not setting registry values in the same way as the Oracle JDK. The workaround to this would be to 
+bundle the entire JDK which is not something I want to do so if the exe is not working for you, use the cmd script.  
 
 ### A SQL script screenshot
 Showing the result of a select query in the viewer tab and the connection view that is shown when you right click 
@@ -80,7 +79,7 @@ a connection and choose "view connection".
 
 # Building and compiling
 
-To build Ride, simply do ` mvn -Ponline clean install`
+To build Ride, simply do ` mvn clean install`
 
 There are some wrapper scripts that you might find useful.  
 To create a runnable jar and run it do 
