@@ -83,7 +83,7 @@ properly, e.g.
 source ~/.sdkman/bin/sdkman-init.sh
 # We want to run with java 11 with embedded javafx
 sdk use java 11.0.8.fx-librca
-# Scale the application 200% as I have a hpdi screen, see https://wiki.archlinux.org/index.php/HiDPI#Java_applications
+# Scale the application 200% as I have a Hi-DPI screen, see https://wiki.archlinux.org/index.php/HiDPI#Java_applications
 JAVA_OPTS="-Dglass.gtk.uiScale=200%"
 ```
 The last setting (JAVA_OPTS) is a special variable to add system properties (-D values) to java starting up.
