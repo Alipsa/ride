@@ -24,6 +24,12 @@ BLAS=com.github.fommil.netlib.F2jBLAS
 LAPACK=com.github.fommil.netlib.F2jLAPACK
 ARPACK=com.github.fommil.netlib.F2jARPACK
 
+# Allow for any kind of customization of variables or paths etc. without having to change this script
+# Which would be overwritten on a subsequent install.
+if [[ -f $DIR/env.sh ]]; then
+  source "$DIR/env.sh"
+fi
+
 java -cp ${JAR_NAME} se.alipsa.ride.splash.SplashScreen &
 
 # it is possible to force the initial packageloader by adding:

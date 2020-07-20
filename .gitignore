@@ -28,3 +28,4 @@ hs_err_pid*
 /nnrelease.sh
 /out/
 /build/
+/deployLocal.sh

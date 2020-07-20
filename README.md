@@ -8,7 +8,7 @@ much like you would use R Studio.
 
 It was created to have a familiar (similar to RStudio) interface to develop R scripts that
 will later run in embedded mode on application servers such as Wildfly or Play Framework.
-I use it daily at work and have been doing so for several months now. It started as a tool to develop and test R code 
+I use it daily at work and have been doing so for over a year now. It started as a tool to develop and test R code 
 that I created using RStudio but needed a manageable intermediary to make sure my code worked in Renjin before integrating it with the java application servers I use at work - due to fact that many packages commonly used in GNU R does not yet work 
 in Renjin. Later, it evolved to the point where I now use it as my primary data analysis tool.
 
@@ -16,7 +16,9 @@ in Renjin. Later, it evolved to the point where I now use it as my primary data 
 It is fully functional i.e. it is possible to create, open, save and execute R scripts, 
 run selected text, ctrl + enter execution of current line or selected text, view packages loaded, 
 see variables created, syntax highlighting for R, XML, SQL  and Java files etc. but it has some way to go compared to 
-all the rich functionality of RStudio at this point. 
+all the rich functionality of RStudio at this point. However, it has some Renjin specific features such as support for 
+the different package loaders, wizards to create Renjin projects and Renjin extensions, maven support making a very
+convenient environment for serious R development targeted for the JVM using Renjin.
 
 ![Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Screenshot.png "Screenshot")
 
@@ -70,6 +72,15 @@ provide a slightly more "integrated" experience. To run it make sure you have JA
 s java 8 version that includes javafx. I have seen some issues running with OpenJDK which seems to be
 related to not setting registry values in the same way as the Oracle JDK. The workaround to this would be to 
 bundle the entire JDK which is not something I want to do so if the exe is not working for you, use the cmd script.  
+
+If you want to override or customize startup options you can create a file called env.sh (or env.cmd) in the base directory
+where you installed (unzipped) Ride. An example would be to set the right java environment variables so the launcher works
+properly, e.g.
+```shell script
+#!/usr/bin/env bash
+
+source ~/.sdkman/bin/sdkman-init.sh
+```
 
 ### A SQL script screenshot
 Showing the result of a select query in the viewer tab and the connection view that is shown when you right click 
