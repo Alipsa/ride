@@ -4,6 +4,8 @@ import static se.alipsa.ride.Constants.FLOWPANE_INSETS;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
@@ -13,11 +15,16 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
@@ -31,9 +38,12 @@ public class PackageBrowserDialog extends Dialog<Void> {
    private final TextField artifactField;
    private final TextField groupField;
    private final ComboBox<LookupUrl> repoCombo;
+   
+   private static final Logger log = LogManager.getLogger();
 
    public PackageBrowserDialog(Ride gui) {
       initOwner(gui.getStage());
+      setResizable(true);
       this.gui = gui;
       setTitle("Search for package info");
       getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
@@ -127,7 +137,48 @@ public class PackageBrowserDialog extends Dialog<Void> {
          textArea.setText(sb.toString());
 
       } catch (IOException | ParserConfigurationException | SAXException e) {
-         ExceptionAlert.showAlert("Failed to get metadata from " + url, e);
+         log.info("Failed to get metadata from {}, opening search browser", url);
+         openMavenSearchBrowser();
       }
+   }
+
+   private void openMavenSearchBrowser() {
+      gui.setWaitCursor();
+
+      String group = groupField.getText().trim();
+      String artifact = artifactField.getText().trim();
+      String url;
+      if (LookupUrl.RENJIN_CRAN.equals(repoCombo.getValue())) {
+         String searchString = artifact.length() > 0 ? artifact : group;
+         url = "http://packages.renjin.org/packages/search?q=" + searchString;
+      } else {
+         url = "https://mvnrepository.com/search?q=" + group + "+" + artifact;
+      }
+      WebView browser = new WebView();
+      WebEngine webEngine = browser.getEngine();
+      BorderPane borderPane = new BorderPane();
+      borderPane.setCursor(Cursor.WAIT);
+      borderPane.setCenter(browser);
+      String cssPath = gui.getStyleSheets().get(0);
+      webEngine.setUserStyleSheetLocation(cssPath);
+      browser.getStylesheets().addAll(gui.getStyleSheets());
+      Scene scene = new Scene(borderPane, 1280, 800);
+      browser.setCursor(Cursor.WAIT);
+      scene.setCursor(Cursor.WAIT);
+      Stage stage = new Stage();
+      stage.initModality(Modality.NONE);
+      stage.initOwner(gui.getStage());
+      stage.setTitle("Artifact not found, showing repository search...");
+      stage.setScene(scene);
+      stage.sizeToScene();
+      stage.show();
+      webEngine.load(url);
+      stage.toFront();
+      stage.requestFocus();
+      stage.setAlwaysOnTop(false);
+      borderPane.setCursor(Cursor.DEFAULT);
+      browser.setCursor(Cursor.DEFAULT);
+      scene.setCursor(Cursor.DEFAULT);
+      gui.setNormalCursor();
    }
 }
