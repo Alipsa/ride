@@ -2,6 +2,7 @@ package se.alipsa.ride.code.xmltab;
 
 import static se.alipsa.ride.Constants.FLOWPANE_INSETS;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -31,6 +32,17 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+/*
+   --------------------------
+   |    top input, action   |
+   --------------------------
+   |                        |
+   |    center textarea     |
+   |                        |
+   --------------------------
+   |    bottom, usage hint  |
+   --------------------------
+ */
 public class PackageBrowserDialog extends Dialog<Void> {
 
    private final Ride gui;
@@ -38,6 +50,7 @@ public class PackageBrowserDialog extends Dialog<Void> {
    private final TextField artifactField;
    private final TextField groupField;
    private final ComboBox<LookupUrl> repoCombo;
+   private Stage browserStage = null;
    
    private static final Logger log = LogManager.getLogger();
 
@@ -49,11 +62,6 @@ public class PackageBrowserDialog extends Dialog<Void> {
       getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
       BorderPane borderPane = new BorderPane();
       getDialogPane().setContent(borderPane);
-
-      textArea.setPrefColumnCount(40);
-      textArea.setPrefRowCount(8);
-      borderPane.setCenter(textArea);
-
 
       HBox topPane = new HBox();
       topPane.setPadding(FLOWPANE_INSETS);
@@ -92,6 +100,20 @@ public class PackageBrowserDialog extends Dialog<Void> {
          }
       });
       topPane.getChildren().add(repoCombo);
+
+      textArea.setPrefColumnCount(40);
+      textArea.setPrefRowCount(8);
+      borderPane.setCenter(textArea);
+
+      Label hintLabel = new Label("Hint: copy useful text from the search result before closing the dialog.");
+      borderPane.setBottom(hintLabel);
+
+      setOnCloseRequest(eh -> {
+         if (browserStage != null) {
+            browserStage.close();
+         }
+         close();
+      });
    }
 
    private enum LookupUrl {
@@ -144,7 +166,24 @@ public class PackageBrowserDialog extends Dialog<Void> {
 
    private void openMavenSearchBrowser() {
       gui.setWaitCursor();
-
+      WebView browser = new WebView();
+      WebEngine webEngine = browser.getEngine();
+      BorderPane borderPane = new BorderPane();
+      borderPane.setCenter(browser);
+      String cssPath = gui.getStyleSheets().get(0);
+      webEngine.setUserStyleSheetLocation(cssPath);
+      browser.getStylesheets().addAll(gui.getStyleSheets());
+      Scene scene = new Scene(borderPane, 1280, 800);
+      Platform.runLater(() -> {
+         browser.setCursor(Cursor.WAIT);
+         scene.setCursor(Cursor.WAIT);
+      });
+      browserStage = new Stage();
+      browserStage.initModality(Modality.NONE);
+      browserStage.setTitle("Artifact not found, showing repository search...");
+      browserStage.setScene(scene);
+      browserStage.sizeToScene();
+      browserStage.show();
       String group = groupField.getText().trim();
       String artifact = artifactField.getText().trim();
       String url;
@@ -154,29 +193,10 @@ public class PackageBrowserDialog extends Dialog<Void> {
       } else {
          url = "https://mvnrepository.com/search?q=" + group + "+" + artifact;
       }
-      WebView browser = new WebView();
-      WebEngine webEngine = browser.getEngine();
-      BorderPane borderPane = new BorderPane();
-      borderPane.setCursor(Cursor.WAIT);
-      borderPane.setCenter(browser);
-      String cssPath = gui.getStyleSheets().get(0);
-      webEngine.setUserStyleSheetLocation(cssPath);
-      browser.getStylesheets().addAll(gui.getStyleSheets());
-      Scene scene = new Scene(borderPane, 1280, 800);
-      browser.setCursor(Cursor.WAIT);
-      scene.setCursor(Cursor.WAIT);
-      Stage stage = new Stage();
-      stage.initModality(Modality.NONE);
-      stage.initOwner(gui.getStage());
-      stage.setTitle("Artifact not found, showing repository search...");
-      stage.setScene(scene);
-      stage.sizeToScene();
-      stage.show();
       webEngine.load(url);
-      stage.toFront();
-      stage.requestFocus();
-      stage.setAlwaysOnTop(false);
-      borderPane.setCursor(Cursor.DEFAULT);
+      browserStage.toFront();
+      browserStage.requestFocus();
+      browserStage.setAlwaysOnTop(false);
       browser.setCursor(Cursor.DEFAULT);
       scene.setCursor(Cursor.DEFAULT);
       gui.setNormalCursor();
