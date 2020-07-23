@@ -1,5 +1,8 @@
 apply plugin: 'java'
 
+// This is work in process and not yet up to par with all the stuff we do in maven
+// It can build fine but not create a dist yet.
+
 repositories {
    mavenCentral()
    maven { url "https://nexus.bedatadriven.com/content/groups/public" }

@@ -9,7 +9,8 @@ much like you would use R Studio.
 It was created to have a familiar (similar to RStudio) interface to develop R scripts that
 will later run in embedded mode on application servers such as Wildfly or Play Framework.
 I use it daily at work and have been doing so for over a year now. It started as a tool to develop and test R code 
-that I created using RStudio but needed a manageable intermediary to make sure my code worked in Renjin before integrating it with the java application servers I use at work - due to fact that many packages commonly used in GNU R does not yet work 
+that I created using RStudio but needed a manageable intermediary to make sure my code worked in Renjin before integrating 
+it with the java application servers I use at work - due to fact that some packages commonly used in GNU R does not yet work 
 in Renjin. Later, it evolved to the point where I now use it as my primary data analysis tool.
 
 
