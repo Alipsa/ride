@@ -1,4 +1,6 @@
-apply plugin: 'java'
+plugins {
+   id 'java'
+}
 
 // This is work in process and not yet up to par with all the stuff we do in maven
 // It can build fine but not create a dist yet.
@@ -69,21 +71,5 @@ dependencies {
    testImplementation 'org.hamcrest:hamcrest-library:2.2'
    testImplementation 'org.hamcrest:hamcrest-core:2.2'
 
-   task createLinuxBin {
-      doLast {
-         def binFile = buildDir
-         '''
-            <echo message="Creating linux executable"/>
-            <property name="linux.bin" value="${project.build.directory}/${project.artifactId}-${release.tag}.bin"/>
-            <concat destfile="${linux.bin}"
-         force="no">
-            <filelist dir="${project.build.scriptSourceDirectory}"
-         files="stub.sh"/>
-            <fileset dir="${project.build.directory}"
-         files="${project.build.finalName}.jar"/>
-            </concat>
-                                 <chmod file="${linux.bin}" perm="+x"/>
-         '''
-      }
-   }
+
 }
