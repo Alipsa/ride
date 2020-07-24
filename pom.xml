@@ -60,7 +60,7 @@
       <dependency>
          <groupId>se.alipsa</groupId>
          <artifactId>rideutils</artifactId>
-         <version>1.2</version>
+         <version>1.3</version>
       </dependency>
       <dependency>
          <groupId>de.codecentric.centerdevice</groupId>
@@ -351,7 +351,7 @@ release.tag=${release.tag}
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>
-            <version>3.0.0-M2</version>
+            <version>3.0.0-M3</version>
             <executions>
                <execution>
                   <id>enforce-releases-maven-java</id>

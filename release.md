@@ -5,10 +5,10 @@ It provides a nice IDE for developing and testing R scripts aimed to run in the 
 it also support SQL querying and updating as well as simple java development so that complete Renjin projects,
 packages can be developed, built and tested. Ride supports maven build files as well as git.
   
-To run Ride you need to have maven and Java 1.8 installed. 
+To run Ride you need to have maven and Java 1.8 or higher installed (preferably with bundled javafx). 
 If you use open JDK on Linux then you might need to do something like `sudo apt-get install openjfx` depending on your distro.
 
-Ride is started using ant (see ride.sh/ride.cmd for details). 
+Ride is started using the start script appropriate for your environment (see ride.sh/ride.cmd for details). 
 
 Since you probably want to run the ScriptEngine with the ClassPathPackageLoader when embedding your R app, 
 you can set Ride to use this to resolve packages. You then need to include those dependencies to the maven.pom 
@@ -17,7 +17,7 @@ java application (server).
 
 ## How to install:
 Pre requisites:
-- Java 8 with java fx
+- Java 8 or higher with java fx
 
 Unzip ride-1.2-final-dist.zip to a directory of choice
 
@@ -29,9 +29,16 @@ or on windows
 
 `$ .\ride.cmd`
 
+If you need to customize things, I suggest that you add those things in an env.sh/env.cmd file. THis way you will not
+need to worry about upgrading to a later version of Ride later. The special variable
+JAVA_OPTS can be used to add system properties (-D key/values) to java. SOme reasons why you want to do this are
+- You do not have javafx in you jdk and need to wire it in
+- You have a high DPI display and need to customize the (scale) the screen
+- You want to add more available memory to Ride than the default
+
 If possible, create a project and use the pom file to manage dependencies.  
 If that does not work, you might need to manually add / override jars in the lib folder but this runs the risk of
-making ride unable to start. Ant is used to run it so edit the ride.xml if you need to tweak it. 
+making ride unable to start. 
 
 ## JDBC native components
 For some jdbc drivers there are OS native files that is required for some connections features to work. 
@@ -40,6 +47,12 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 
 # Version Descriptions
+
+### 1.2 Beta 4
+- Test and make adjustments so it also works in Java 11 (with bundled javafx)
+- Open a Browser if the artifact lookup comes back empty
+- Bump dependency versions, notably rideutils which now 
+provides additional gui interactive abilities (prompt, chooseFile and chooseDir)
 
 ### 1.2 Beta 3
 - Create a package browser to easily find the latest version of an artifact
@@ -52,7 +65,6 @@ In those cases just copy the native files to the lib dir, the startup script poi
     - adjust height of package Wizard
     - bump dependency versions
     - change central url to use https
-    
 
 ### 1.2 Beta 2
 - Enhanced connection functionality (auto save, jdbc url wizard)

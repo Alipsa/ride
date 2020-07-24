@@ -5,7 +5,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ${DIR}
 
-mvn clean package
+mvn -DskipTests clean package
 status=$?
 if [ $status -ne 0 ]; then
    echo "Build failed"
@@ -27,6 +27,13 @@ RELEASE_TAG=$(getProperty "release.tag")
 
 TARGET=${DIR}/target/${JAR_NAME}
 
-java -cp ${TARGET} se.alipsa.ride.splash.SplashScreen &
+# Allow for any kind of customization of variables or paths etc. without having to change this script
+# which would otherwise be overwritten on a subsequent install.
+if [[ -f $DIR/env.sh ]]; then
+  source "$DIR/env.sh"
+fi
+
+
+java -cp ${TARGET} $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
 #mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
-mvn exec:java
+mvn $JAVA_OPTS exec:java

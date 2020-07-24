@@ -22,6 +22,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
@@ -289,6 +290,11 @@ public class InoutComponent extends TabPane implements InOut {
   public ConnectionInfo connection(String name) {
     return  gui.getEnvironmentComponent().getConnections().stream()
         .filter(ci -> ci.getName().equals(name)).findAny().orElse(null);
+  }
+
+  @Override
+  public Stage getStage() {
+    return gui.getStage();
   }
 
   private void view(Matrix mat, String... title) {

@@ -18,20 +18,18 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import org.renjin.aether.AetherPackageLoader;
 import org.renjin.primitives.packaging.ClasspathPackageLoader;
-import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.IntField;
-import se.alipsa.ride.utils.TableViewWithVisibleRowCount;
 
 import java.net.URL;
 import java.util.List;
 
 class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
-  private final TableViewWithVisibleRowCount<Repo> reposTable;
+  private final TableView<Repo> reposTable;
   private final ComboBox<Class<?>> pkgLoaderCb;
   private final IntField intField;
   private final ComboBox<String> themes;
@@ -67,7 +65,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     Label reposLabel = new Label("Remote Repositories");
     grid.add(reposLabel, 0, 1);
 
-    reposTable = new TableViewWithVisibleRowCount<>();
+    reposTable = new TableView<>();
     List<Repo> repos = gui.getConsoleComponent().getRemoteRepositories();
 
     TableColumn<Repo, String> idCol = new TableColumn<>("id");
@@ -128,7 +126,6 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
 
     reposTable.setItems(createObservable(repos));
-    reposTable.setNumberOfRows(reposTable.getItems().size());
     reposTable.setEditable(true);
 
     if (ClasspathPackageLoader.class.equals(pkgLoaderCb.getValue())) {
@@ -162,22 +159,18 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
     Label useMavenFileClasspathLabel = new Label("Use pom classpath");
     useMavenFileClasspathLabel.setTooltip(new Tooltip("Use classpath from pom.xml (if available) when running R code"));
-    //grid.add(useMavenFileClasspathLabel, 0, 4);
     useMavenFileClasspathLabel.setPadding(new Insets(0, 27, 0, 0));
     cpPane.getChildren().add(useMavenFileClasspathLabel);
     useMavenFileClasspath = new CheckBox();
     useMavenFileClasspath.setSelected(gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false));
     cpPane.getChildren().add(useMavenFileClasspath);
-    //grid.add(useMavenFileClasspath, 1, 4);
 
     Label addBuildDirToClasspathLabel = new Label("Add build dir to classpath");
     addBuildDirToClasspathLabel.setPadding(new Insets(0, 27, 0, 70));
     addBuildDirToClasspathLabel.setTooltip(new Tooltip("Add target/classes and target/test-classes to classpath"));
-    //grid.add(addBuildDirToClasspathLabel, 2, 4);
     cpPane.getChildren().add(addBuildDirToClasspathLabel);
     addBuildDirToClasspath = new CheckBox();
     addBuildDirToClasspath.setSelected(gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true));
-    //grid.add(addBuildDirToClasspath, 3, 4);
     cpPane.getChildren().add(addBuildDirToClasspath);
 
     Label enableGitLabel = new Label("Enable git integration");
@@ -203,7 +196,6 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
   private void addRow(Repo repo) {
     reposTable.getItems().add(repo);
-    reposTable.setNumberOfRows(reposTable.getItems().size());
   }
 
   private void addRenjinRepo(ActionEvent actionEvent) {

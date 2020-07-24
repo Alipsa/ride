@@ -100,5 +100,87 @@ Here is an example:<br/>
     &nbsp;&nbsp;password = testCon$getPassword()<br/>
     )<br/>
 </div>
+<hr/>
+<h2>User input</h2>
+It is also possible to do simple gui input interaction with the user running the R script using rideutils. There are
+3 methods available:
+<ol>
+    <li><b>prompt</b> - Pops up a dialog prompting for a text input</li>
+    <li><b>chooseFile</b> - Opens a file chooser dialog</li>
+    <li><b>chooseDir</b> - Opens a directory chooser dialog</li>
+</ol>
+
+Here is an example:
+<div class="codeblock">
+    <span class="keyword">library</span>(<span class="string">"se.alipsa:rideutils"</span>)<br/>
+    <br/>
+    fileType <- prompt(<span class="string">"What kind of filetype?"</span>, message = <span class="string">"Enter the extension here"</span>)<br/>
+    print(paste(<span class="string">"Filetype is"</span>, fileType))<br/>
+    <br/>
+    file <- chooseFile(<br/>
+    <span class="string">"pick a file"</span>,<br/>
+    <span class="string">"."</span>,<br/>
+    paste(fileType, <span class="string">"files"</span>),<br/>
+    paste0(<span class="string">"*."</span>, tolower(fileType)),<br/>
+    paste0(<span class="string">"*."</span>, toupper(fileType))<br/>
+    )<br/>
+    print(paste(<span class="string">"File chosen was"</span>, file))<br/>
+    <br/>
+    dir <- chooseDir(<span class="string">"Select output dir"</span>, <span class="string">"."</span>)<br/>
+    print(paste(<span class="string">"Output dir set to"</span>, dir))<br/>
+</div>
+
+They are defined as follows:
+
+<h3>prompt</h3>
+Allows a user to enter string input which we can use i subsequent code. It is defined as follows:
+<div class="codeblock">
+prompt <- function(title = "", headerText = "", message = "")
+</div>
+It <strong>returns</strong> a string (character vector) with user input or NA if cancel was pressed.<br/>
+<br/>
+The following example:
+<div class="codeblock">
+    fileType <- prompt(<span class="string">"Year month"</span>, <span class="string">"Enter start period"</span>,
+    <span class="string">"What year month to begin with (yyyy-MM)?"</span>)<br/>
+</div>
+Will result in the following (blocking) pop up:<br/>
+<img src="prompt.png" alt="prompt screenshot" width="400">
+
+<h3>chooseFile</h3>
+Allows a user to pick a file. it is defined as follows:
+<div class="codeblock">
+chooseFile <- function (title, initialDir = ".", description, ...)
+</div>
+The elipsis parameter (...) are the allowed file patterns (typically extensions) that the user can pick.<br/>
+<br/>
+It <strong>returns</strong> a string (character vector) with the full path to the chosen file or NA if cancel was pressed.<br/>
+<br/>
+The following example:
+<div class="codeblock">
+file <- chooseFile(<br/>
+    <span class="string">"Choose the forecast excel for previous month"</span>,<br/>
+    <span class="string">"."</span>,<br/>
+    <span class="string">"Excel files"</span>,<br/>
+    <span class="string">"*.xls"</span>, <span class="string">"*.xlsx"</span><br/>
+)
+</div>
+Will result in the following (blocking) pop up:<br/>
+<img src="chooseFile.png" alt="chooseFile screenshot" width="500">
+
+<h3>chooseDir</h3>
+Allows a user to pick a directory. it is defined as follows:
+<div class="codeblock">
+chooseDir <- function (title, initialDir = ".")
+</div>
+It <strong>returns</strong> a string (character vector) with the full path to the chosen directory or NA if cancel was pressed.<br/>
+<br/>
+The following example:
+<div class="codeblock">
+    dir <- chooseDir(<span class="string">"Select output dir"</span>, <span class="string">"."</span>)
+</div>
+Will result in the following (blocking) pop up:<br/>
+<img src="chooseDir.png" alt="chooseFile screenshot" width="500">
+
 </body>
 </html>

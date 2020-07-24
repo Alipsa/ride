@@ -2,6 +2,7 @@ package se.alipsa.ride.inout;
 
 import javafx.scene.Node;
 import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import org.renjin.sexp.SEXP;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 
@@ -32,4 +33,7 @@ public interface InOut {
 
   /** Return a connections for the name defined in Ride */
   ConnectionInfo connection(String name);
+
+  /** Allows Dialogs and similar in eternal packages to interact with Ride **/
+  Stage getStage();
 }
