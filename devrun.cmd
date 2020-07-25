@@ -2,7 +2,7 @@
 set DIR=%~dp0%
 cd %DIR%
 
-call mvn clean install
+call mvn -DskipTests clean install
 
 set PROPERTY_FILE=version.properties
 
@@ -15,12 +15,16 @@ set JAR_NAME=%jar.name%
 set RELEASE_TAG=%release.tag%
 
 ::set TARGET=%DIR%\target\%jar.name%
-set TARGET=%USERPROFILE%\.m2\repository\se\alipsa\ride\%VERSION%\%JAR_NAME
+set TARGET=%DIR%\target\%JAR_NAME%
 
-cd src/bin
+:: Allow for any kind of customization of variables or paths etc. without having to change this script
+:: which would otherwise be overwritten on a subsequent install.
+if exist %DIR%\env.cmd (
+    call %DIR%\env.cmd
+)
 
-start javaw -cp %TARGET% se.alipsa.ride.splash.SplashScreen
+start javaw -cp %TARGET% %JAVA_OPTS% se.alipsa.ride.splash.SplashScreen
 
 ::call mvn initialize -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
 
-call mvn "exec:java" -Dride.jar=%TARGET% -Drelease.tag=%RELEASE_TAG%
+call mvn %JAVA_OPTS% "exec:java"

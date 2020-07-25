@@ -3,7 +3,7 @@
 # build and run Ride
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd ${DIR}
+cd "${DIR}"
 
 mvn -DskipTests clean package
 status=$?
@@ -16,7 +16,7 @@ PROPERTY_FILE=version.properties
 
 function getProperty {
    PROP_KEY=$1
-   PROP_VALUE=`cat $PROPERTY_FILE | grep "$PROP_KEY" | cut -d'=' -f2`
+   PROP_VALUE=$(cat $PROPERTY_FILE | grep "$PROP_KEY" | cut -d'=' -f2)
    echo $PROP_VALUE | xargs
 }
 

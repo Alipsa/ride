@@ -49,6 +49,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2 Beta 4
+- Add support for env customizations (env.sh/env.cmd called from start scripts if it exists)
 - Test and make adjustments so it also works in Java 11 (with bundled javafx)
 - Open a Browser if the artifact lookup comes back empty
 - Bump dependency versions, notably rideutils which now 
