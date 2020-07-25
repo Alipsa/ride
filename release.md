@@ -54,6 +54,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Open a Browser if the artifact lookup comes back empty
 - Bump dependency versions, notably rideutils which now 
 provides additional gui interactive abilities (prompt, chooseFile and chooseDir)
+- doc improvements, fixes to wait cursor, revert to an older (working) version of jgit
 
 ### 1.2 Beta 3
 - Create a package browser to easily find the latest version of an artifact
