@@ -1,5 +1,13 @@
 # Todo / Roadmap
 
+### Project menu and project support
+Add a project menu
+Add support for project settings file which will override globals settings e.g.
+    - classloading settings
+Move the two generators from the code section (package and maven project)
+Add support for "classic R project layout"
+Add "clone from git repository" option
+
 ### Code menu improvements
 - Format code, support https://bioconductor.org/developers/how-to/coding-style/
  and Hadley Wickham style guide http://adv-r.had.co.nz/Style.html#Assignment
