@@ -147,6 +147,16 @@ The following example:
 Will result in the following (blocking) pop up:<br/>
 <img src="prompt.png" alt="prompt screenshot" width="400">
 
+<h3>readline</h3>
+
+Overrides the base R readline function and pops up a graphical input dialog instead of reading from stdin. It is defined as follows:
+<div class="codeblock">readline <- function(prompt = "")</div>>
+The following example:
+<div class="codeblock">
+    var <- readline(<span class="string">"enter a number"</span>)
+    print(paste(<span class="string">"var is"</span>, var))
+</div>
+
 <h3>chooseFile</h3>
 Allows a user to pick a file. it is defined as follows:
 <div class="codeblock">
@@ -169,7 +179,7 @@ Will result in the following (blocking) pop up:<br/>
 <img src="chooseFile.png" alt="chooseFile screenshot" width="500">
 
 <h3>chooseDir</h3>
-Allows a user to pick a directory. it is defined as follows:
+Allows a user to pick a directory. It is defined as follows:
 <div class="codeblock">
 chooseDir <- function (title, initialDir = ".")
 </div>
@@ -181,6 +191,54 @@ The following example:
 </div>
 Will result in the following (blocking) pop up:<br/>
 <img src="chooseDir.png" alt="chooseFile screenshot" width="500">
+
+<h3>promptDate</h3>
+Pops up a date picker dialog allowing the user to pick a date. It is defined as follows:
+<div class="codeblock">promptDate <- function(title = <span class="string">""</span>, message = <span class="string">""</span>,
+    outputFormat = <span class="string">"yyyy-MM-dd"</span>)</div>
+
+<h4>Parameters:</h4>
+<ul>
+    <li><strong>outputFormat</strong> - determines the format of the picked date in the dialog as well as in the
+    return value</li>
+</ul>
+
+<strong>return value:</strong> a character string formatted according to the outputFormat param or
+in the format "yyyy-MM-dd" is no outputFormat is given.
+
+<h3>promptYearMonth</h3>
+<div class="codeblock">promptYearMonth <- function(title = <span class="string">""</span>,
+    message = <span class="string">""</span>, from=<span class="keyword">NA</span>, to=<span class="keyword">NA</span>,
+    initial=<span class="keyword">NA</span>, languageTag=<span class="keyword">NA</span>,
+    monthFormat = <span class="string">"MMMM"</span>, outputFormat = <span class="string">"yyyy-MM"</span>)</div>
+
+<h4>Parameters:</h4>
+<ul>
+    <li><strong>from</strong> - a character string with the start year month than can be chosen in the format "yyyy-MM".
+        Default value NA will be converted to the initial date minus 3 years</li>
+
+    <li><strong>to</strong> - a character string with the en year month than can be chosen in the format "yyyy-MM"
+        Default value NA will be converted to the initial date plus 3 years</li>
+
+    <li><strong>initial</strong> - the initial (default) value in the format "yyyy-MM"
+        Default value NA will be converted to current year month.</li>
+
+    <li><strong>languageTag</strong> - The short code for the local e.g. en-US. For a full list of
+language tags see https://www.oracle.com/java/technologies/javase/jdk8-jre8-suported-locales.html
+        Default value NA vill be converted to the system default language setting.</li>
+
+    <li><strong>monthFormat</strong> - determines the format of the month in the dialog</li>
+
+    <li><strong>outputFormat</strong> - determines the format of the picked date in the dialog as well as in the
+        return value</li>
+</ul>
+Example:
+<div class="codeblock">
+    <span class="keyword">library</span>(<span class="string">"se.alipsa:rideutils"</span>)
+    date2 <- promptDate(<span class="string">"Date"</span>, message = <span class="string">"Another date"</span>,
+    outputFormat = <span class="string">"dd MMM yyyy"</span>)
+    print(paste(<span class="string">"Date is"</span>, date2))
+</div>
 
 </body>
 </html>
