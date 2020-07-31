@@ -48,6 +48,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2 Final
+- add ability to create a basic pom.xml in "any" directory
+
 ### 1.2 Beta 4
 - Add support for env customizations (env.sh/env.cmd called from start scripts if it exists)
 - Test and make adjustments so it also works in Java 11 (with bundled javafx)

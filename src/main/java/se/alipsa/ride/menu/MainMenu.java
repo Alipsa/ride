@@ -91,7 +91,27 @@ public class MainMenu extends MenuBar {
     packageWizard.setOnAction(this::showPackageWizard);
     menu.getItems().add(packageWizard);
 
+    MenuItem createBasicPomMI = new MenuItem("Create basic pom.xml");
+    createBasicPomMI.setOnAction(this::createBasicPom);
+    menu.getItems().add(createBasicPomMI);
+
     return menu;
+  }
+
+  private void createBasicPom(ActionEvent actionEvent) {
+    CreateProjectWizardDialog dialog = new CreateProjectWizardDialog(gui, "Create basic pom", false);
+    Optional<CreateProjectWizardResult> result = dialog.showAndWait();
+    if (!result.isPresent()) {
+      return;
+    }
+    CreateProjectWizardResult res = result.get();
+    try {
+      String pomContent = createPom("templates/project-pom.xml", res.groupName, res.projectName);
+      FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
+      gui.getInoutComponent().refreshFileTree();
+    } catch (IOException e) {
+      ExceptionAlert.showAlert("Failed to create basic pom", e);
+    }
   }
 
   private void showProjectWizard(ActionEvent actionEvent) {
@@ -107,11 +127,7 @@ public class MainMenu extends MenuBar {
       String camelCasedPackageName = CaseUtils.toCamelCase(res.projectName, true,
           ' ', '_', '-', ',', '.', '/', '\\');
 
-      String pomContent = FileUtils.readContent("templates/project-pom.xml")
-          .replace("[groupId]", res.groupName)
-          .replace("[artifactId]", res.projectName)
-          .replace("[name]", res.projectName)
-          .replace("[renjinVersion]", RenjinVersion.getVersionName());
+      String pomContent = createPom("templates/project-pom.xml", res.groupName, res.projectName);
       FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
 
       Path mainPath = new File(res.dir, "src/main/R").toPath();
@@ -156,6 +172,14 @@ public class MainMenu extends MenuBar {
     }
   }
 
+  private String createPom(String s, String groupName, String projectName) throws IOException {
+    return FileUtils.readContent(s)
+            .replace("[groupId]", groupName)
+            .replace("[artifactId]", projectName)
+            .replace("[name]", projectName)
+            .replace("[renjinVersion]", RenjinVersion.getVersionName());
+  }
+
   private void showPackageWizard(ActionEvent actionEvent) {
     CreatePackageWizardDialog dialog = new CreatePackageWizardDialog(gui);
     Optional<CreatePackageWizardResult> result = dialog.showAndWait();
@@ -169,11 +193,7 @@ public class MainMenu extends MenuBar {
       String camelCasedPackageName = CaseUtils.toCamelCase(res.packageName, true,
          ' ', '_', '-', ',', '.', '/', '\\');
 
-      String pomContent = FileUtils.readContent("templates/package-pom.xml")
-         .replace("[groupId]", res.groupName)
-         .replace("[artifactId]", res.packageName)
-         .replace("[name]", res.packageName)
-         .replace("[renjinVersion]", RenjinVersion.getVersionName());
+      String pomContent = createPom("templates/package-pom.xml", res.groupName, res.packageName);
       FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
 
       FileUtils.copy("templates/NAMESPACE", res.dir);

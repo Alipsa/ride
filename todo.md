@@ -1,5 +1,13 @@
 # Todo / Roadmap
 
+### Minor fixes
+Search 
+    - should remember last search
+    - should move to beginning after reaching the end
+    - should alert that nothing matched if no results
+ 
+    
+
 ### Project menu and project support
 Add a project menu
 Add support for project settings file which will override globals settings e.g.
