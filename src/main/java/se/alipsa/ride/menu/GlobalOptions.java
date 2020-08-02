@@ -10,6 +10,7 @@ public class GlobalOptions extends HashMap<String, Object> {
   public static final String PKG_LOADER = "PackageLoader";
   public static final String REMOTE_REPOSITORIES = "RemoteRepositories";
   public static final String CONSOLE_MAX_LENGTH_PREF = "ConsoleTextArea.MaxLength";
+  public static final String MAVEN_HOME = "GlobalOptions.MavenHome";
   public static final String USE_MAVEN_CLASSLOADER = "GlobalOptions.UseMavenClassloader";
   public static final String ADD_BUILDDIR_TO_CLASSPATH = "GlobalOptions.AddBuildDirToClasspath";
   public static final String ENABLE_GIT = "GlobalOptions.EnableGit";

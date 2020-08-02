@@ -10,12 +10,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import org.renjin.aether.AetherPackageLoader;
 import org.renjin.primitives.packaging.ClasspathPackageLoader;
 import se.alipsa.ride.Ride;
@@ -34,8 +33,10 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
   private final IntField intField;
   private final ComboBox<String> themes;
   private final CheckBox useMavenFileClasspath;
+  private TextField mavenHome;
   private final CheckBox addBuildDirToClasspath;
   private final CheckBox enableGit;
+
 
   GlobalOptionsDialog(Ride gui) {
     setTitle("Global options");
@@ -159,7 +160,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
     Label useMavenFileClasspathLabel = new Label("Use pom classpath");
     useMavenFileClasspathLabel.setTooltip(new Tooltip("Use classpath from pom.xml (if available) when running R code"));
-    useMavenFileClasspathLabel.setPadding(new Insets(0, 27, 0, 0));
+    useMavenFileClasspathLabel.setPadding(new Insets(0, 37, 0, 0));
     cpPane.getChildren().add(useMavenFileClasspathLabel);
     useMavenFileClasspath = new CheckBox();
     useMavenFileClasspath.setSelected(gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false));
@@ -173,12 +174,29 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     addBuildDirToClasspath.setSelected(gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true));
     cpPane.getChildren().add(addBuildDirToClasspath);
 
+
+    Label mavenHomeLabel = new Label("MAVEN_HOME");
+    mavenHomeLabel.setTooltip(new Tooltip("The location of your maven installation directory"));
+    //mavenHomeLabel.setPadding(new Insets(0, 27, 0, 0));
+    grid.add(mavenHomeLabel, 0,5);
+
+    HBox mavenHomePane = new HBox();
+    mavenHomePane.setAlignment(Pos.CENTER_LEFT);
+    mavenHome = new TextField();
+    HBox.setHgrow(mavenHome, Priority.ALWAYS);
+    mavenHome.setText(gui.getPrefs().get(MAVEN_HOME, System.getProperty("MAVEN_HOME", System.getenv("MAVEN_HOME"))));
+    mavenHomePane.getChildren().add(mavenHome);
+    grid.add(mavenHomePane, 1,5,2, 1);
+
+    FlowPane gitOptionPane = new FlowPane();
     Label enableGitLabel = new Label("Enable git integration");
+    enableGitLabel.setPadding(new Insets(0, 20, 0, 0));
     enableGitLabel.setTooltip(new Tooltip("note: git must be initialized in the project dir for integration to work"));
-    grid.add(enableGitLabel, 0, 5);
+    gitOptionPane.getChildren().add(enableGitLabel);
     enableGit = new CheckBox();
     enableGit.setSelected(gui.getPrefs().getBoolean(ENABLE_GIT, true));
-    grid.add(enableGit, 1, 5);
+    gitOptionPane.getChildren().add(enableGit);
+    grid.add(gitOptionPane, 0, 6, 2, 1);
 
 
     getDialogPane().setPrefSize(800, 400);

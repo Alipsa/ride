@@ -1,6 +1,7 @@
 package se.alipsa.ride.utils.maven;
 
 import static se.alipsa.ride.menu.GlobalOptions.ADD_BUILDDIR_TO_CLASSPATH;
+import static se.alipsa.ride.menu.GlobalOptions.MAVEN_HOME;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -122,6 +123,15 @@ public class MavenUtils {
     request.setBaseDirectory(dir);
     log.info("Running maven from dir {} with args {}", dir, String.join(" ", mvnArgs));
     Invoker invoker = new DefaultInvoker();
+    String mavenDefaultHome = System.getProperty("MAVEN_HOME", System.getenv("MAVEN_HOME"));
+    String mavenHome = Ride.instance().getPrefs().get(MAVEN_HOME, mavenDefaultHome);
+    File mavenHomeDir = new File(mavenHome);
+    if (mavenHomeDir.exists()) {
+      log.debug("MAVEN_HOME used is {}", mavenHome);
+      invoker.setMavenHome(mavenHomeDir);
+    } else {
+      log.warn("No maven home set or set do an non existing maven home: {}, this might not go well...", mavenHome);
+    }
     invoker.setOutputHandler(consoleOutputHandler);
     invoker.setErrorHandler(warningOutputHandler);
     return invoker.execute( request );
