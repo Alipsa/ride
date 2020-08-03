@@ -132,6 +132,7 @@ public class ConsoleComponent extends BorderPane {
     Platform.runLater(() -> initRenjin(getStoredRemoteRepositories(), parentClassLoader));
   }
 
+  // TODO: run this is a separate thread since pom parsing takes some time and the GUI freezes for a while as a result
   private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader) {
     String version = "unknown";
 
