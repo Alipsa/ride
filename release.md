@@ -1,4 +1,4 @@
-This is version 1.2 of Ride.
+# This is version 1.2 of Ride.
 
 At this point Ride is usable for much more than just simple editing and running R scripts. 
 It provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine but
