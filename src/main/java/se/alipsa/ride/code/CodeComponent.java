@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.groovytab.GroovyTab;
 import se.alipsa.ride.code.javatab.JavaTab;
 import se.alipsa.ride.code.mdtab.MdTab;
 import se.alipsa.ride.code.rtab.RTab;
@@ -58,6 +59,9 @@ public class CodeComponent extends BorderPane {
       case MD:
         tab = new MdTab(type.getDisplayValue(), gui);
         break;
+      case GROOVY:
+        tab = new GroovyTab(type.getDisplayValue(), gui);
+        break;
       default:
         throw new RuntimeException("Unknown filetype " + type);
     }
@@ -94,9 +98,6 @@ public class CodeComponent extends BorderPane {
       case R:
         tab = new RTab(title, gui);
         break;
-      case TXT:
-        tab = new TxtTab(title, gui);
-        break;
       case MD:
         tab = new MdTab(title, gui);
         break;
@@ -109,6 +110,10 @@ public class CodeComponent extends BorderPane {
       case SQL:
         tab = new SqlTab(title, gui);
         break;
+      case GROOVY:
+        tab = new GroovyTab(title, gui);
+        break;
+      case TXT:
       default:
         tab = new TxtTab(title, gui);
     }

@@ -780,8 +780,8 @@ public class ConsoleComponent extends BorderPane {
 
     EnvironmentComponent env = gui.getEnvironmentComponent();
     try (
-         AppenderPrintWriter out = new AppenderPrintWriter();
-         WarningAppenderWriter err = new WarningAppenderWriter();
+         AppenderPrintWriter out = new AppenderPrintWriter(console);
+         WarningAppenderWriter err = new WarningAppenderWriter(console);
          PrintWriter outputWriter = new PrintWriter(out);
          PrintWriter errWriter = new PrintWriter(err)
     ) {
@@ -921,38 +921,6 @@ public class ConsoleComponent extends BorderPane {
 
   public int getConsoleMaxSize() {
     return console.getConsoleMaxSize();
-  }
-
-  class AppenderPrintWriter extends Writer {
-
-    @Override
-    public void write(char[] cbuf, int off, int len) {
-      console.appendFx(new String(cbuf, off, len));
-    }
-
-    @Override
-    public void flush() {
-    }
-
-    @Override
-    public void close() {
-    }
-  }
-
-  class WarningAppenderWriter extends Writer {
-
-    @Override
-    public void write(char[] cbuf, int off, int len) {
-      console.appendWarningFx(new String(cbuf, off, len));
-    }
-
-    @Override
-    public void flush() {
-    }
-
-    @Override
-    public void close() {
-    }
   }
 
   public ConsoleTextArea getConsole() {

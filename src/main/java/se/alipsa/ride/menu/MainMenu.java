@@ -635,10 +635,6 @@ public class MainMenu extends MenuBar {
     nSql.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.SQL));
     fileMenu.getItems().add(nSql);
 
-    MenuItem nJava = new MenuItem("Java file");
-    nJava.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.JAVA));
-    fileMenu.getItems().add(nJava);
-
     MenuItem nMarkdown = new MenuItem("Markdown file");
     nMarkdown.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.MD));
     fileMenu.getItems().add(nMarkdown);
@@ -646,6 +642,14 @@ public class MainMenu extends MenuBar {
     MenuItem nXml = new MenuItem("Xml file");
     nXml.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.XML));
     fileMenu.getItems().add(nXml);
+
+    MenuItem nJava = new MenuItem("Java file");
+    nJava.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.JAVA));
+    fileMenu.getItems().add(nJava);
+
+    MenuItem nGroovy = new MenuItem("Groovy file");
+    nGroovy.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.GROOVY));
+    fileMenu.getItems().add(nGroovy);
 
     MenuItem save = new MenuItem("Save  ctrl+S");
     save.setOnAction(this::saveContent);
