@@ -163,7 +163,11 @@ Used to run maven (run pom.xml files). Apache Software License, Version 2.0.
 Used to provide git support. Eclipse Distribution License v1.0
 
 ### Various jdbc drivers
-These are included for convenience only. Licenced under various open source licenses. There is no direct dependency on any jdbc driver in Ride.
+These are included for convenience only. Licenced under various open source licenses. 
+There is no direct dependency on any jdbc driver in Ride.
+
+### org.codehaus.groovy:groovy-all
+Makes it possible to run Groovy scripts. Apache Software License, Version 2.0.
 
 # Contributing
 If you are interested in helping out, reporting issues, creating tests or implementing new features

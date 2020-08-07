@@ -48,6 +48,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2.1
+- add support for Groovy
+
 ### 1.2 Final
 - add ability to create a basic pom.xml in "any" directory
 
