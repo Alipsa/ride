@@ -39,7 +39,7 @@ public class GroovyTextArea extends CodeTextArea {
   private static final String BRACE_PATTERN = "\\{|\\}";
   private static final String BRACKET_PATTERN = "\\[|\\]";
   private static final String SEMICOLON_PATTERN = "\\;";
-  private static final String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
+  private static final String STRING_PATTERN = "\"\"|''|\"[^\"]+\"|'[^']+'";
   private static final String COMMENT_PATTERN = "//[^\n]*" + "|" + "/\\*(.|\\R)*?\\*/";
 
   private static final Pattern PATTERN = Pattern.compile(
