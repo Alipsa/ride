@@ -49,7 +49,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.1
-- Add support for Groovy
+- Add support for Groovy (see [Groovy.md](Groovy.md)) for details.
 - Do Renjin initialization in a separate thread to reduce GUI freezes
 
 ### 1.2 Final
