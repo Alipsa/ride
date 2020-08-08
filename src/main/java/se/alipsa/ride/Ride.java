@@ -146,16 +146,7 @@ public class Ride extends Application {
     primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
     primaryStage.setScene(scene);
     enableDragDrop(scene);
-
-    Task<Void> task = new Task<Void>() {
-      @Override
-      protected Void call() {
-        consoleComponent.initRenjin(Ride.this.getClass().getClassLoader());
-        return null;
-      }
-    };
-    new Thread(task).start();
-
+    consoleComponent.initRenjin(Ride.this.getClass().getClassLoader());
     primaryStage.show();
   }
 
