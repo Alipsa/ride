@@ -5,33 +5,28 @@ useful in developing, testing as well as certain data analysis situations.
 
 Just as with R code, the inout component in injected into the Groovy session allowing you to interact
 with Ride in a simple way. E.g:
-
+(sample adopted from [PieChartFXDemo1](https://github.com/jfree/jfree-fxdemos/blob/master/src/main/java/org/jfree/chart/fx/demo/PieChartFXDemo1.java))
 ```groovy
 @Grab('org.jfree:jfreechart:1.5.0')
 @Grab(group='org.jfree', module='jfreechart-fx', version='1.0.1')
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Font
-import java.awt.GradientPaint
-import java.awt.Point
 import java.awt.RadialGradientPaint
 import java.awt.geom.Point2D
 import org.jfree.chart.ChartFactory
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.fx.ChartViewer;
-import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.chart.ui.HorizontalAlignment;
 import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.general.DefaultPieDataset
-import org.jfree.data.general.PieDataset
 
 
-RadialGradientPaint createGradientPaint(Color c1, Color c2) {
-  Point2D center = new Point2D.Float(0, 0)
-  float radius = 200
-  def dist = [0.0f, 1.0f] as float[]
-  return new RadialGradientPaint(center, radius, dist, new Color[] {c1, c2})
+def createGradientPaint(Color c1, Color c2) {
+    def center = new Point2D.Float(0, 0)
+    def radius = 200f
+    def dist = [0.0f, 1.0f] as float[]
+    return new RadialGradientPaint(center, radius, dist, new Color[] {c1, c2})
 }
 
 DefaultPieDataset dataset = new DefaultPieDataset()
@@ -47,7 +42,7 @@ t.setHorizontalAlignment(HorizontalAlignment.LEFT)
 t.setPaint(new Color(240, 240, 240))
 t.setFont(new Font("Arial", Font.BOLD, 26))
 
-PiePlot plot = (PiePlot) chart.getPlot()
+def plot = chart.getPlot()
 plot.setBackgroundPaint(null)
 plot.setInteriorGap(0.04)
 plot.setOutlineVisible(false)
@@ -70,14 +65,14 @@ plot.setLabelPaint(Color.WHITE)
 plot.setLabelBackgroundPaint(null)
 
 // add a subtitle giving the data source
-TextTitle source = new TextTitle("Source: http://www.bbc.co.uk/news/business-15489523", 
-        new Font("Courier New", Font.PLAIN, 12))
+def source = new TextTitle("Source: http://www.bbc.co.uk/news/business-15489523",
+    new Font("Courier New", Font.PLAIN, 12))
 source.setPaint(Color.WHITE)
 source.setPosition(RectangleEdge.BOTTOM)
 source.setHorizontalAlignment(HorizontalAlignment.RIGHT)
 chart.addSubtitle(source)
 viewer = new ChartViewer(chart)
-inout.display(viewer)          
+inout.display(viewer)       
 ```
 ![Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/GroovyPieChart.png)
 
