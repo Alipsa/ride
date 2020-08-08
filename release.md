@@ -1,8 +1,8 @@
-# This is version 1.2 of Ride.
+# This is version 1.2.1 of Ride.
 
 At this point Ride is usable for much more than just simple editing and running R scripts. 
 It provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine but
-it also support SQL querying and updating as well as simple java development so that complete Renjin projects,
+it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects,
 packages can be developed, built and tested. Ride supports maven build files as well as git.
   
 To run Ride you need to have maven and Java 1.8 or higher installed (preferably with bundled javafx). 
@@ -31,7 +31,7 @@ or on windows
 
 If you need to customize things, I suggest that you add those things in an env.sh/env.cmd file. THis way you will not
 need to worry about upgrading to a later version of Ride later. The special variable
-JAVA_OPTS can be used to add system properties (-D key/values) to java. SOme reasons why you want to do this are
+JAVA_OPTS can be used to add system properties (-D key/values) to java. Some reasons why you want to do this are
 - You do not have javafx in you jdk and need to wire it in
 - You have a high DPI display and need to customize the (scale) the screen
 - You want to add more available memory to Ride than the default
@@ -49,7 +49,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.1
-- add support for Groovy
+- Add support for Groovy
+- Do Renjin initialization in a separate thread to reduce GUI freezes
 
 ### 1.2 Final
 - add ability to create a basic pom.xml in "any" directory
