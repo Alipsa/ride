@@ -80,3 +80,11 @@ viewer = new ChartViewer(chart)
 inout.display(viewer)          
 ```
 ![Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/GroovyPieChart.png)
+
+Just like With R code you can execute line by line by pressing ctrl+enter (ctrl+enter executes the selected code if any
+otherwise the current line). There is a session concept somewhat similar to R although in the Groovy case there
+is one session (GroovyShell) for each Tab (with R code the session is Global).
+
+If you want to make the groovy code part of a package it is a bit more involved. The easiest I have found is
+to use the [groovy-eclipse-compiler](https://github.com/groovy/groovy-eclipse/wiki/Groovy-Eclipse-Maven-plugin) 
+to compile the Groovy code into class files that can be used in your Renjin R code and/or Java code. 
