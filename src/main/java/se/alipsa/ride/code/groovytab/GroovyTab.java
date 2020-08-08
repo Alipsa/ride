@@ -1,6 +1,7 @@
 package se.alipsa.ride.code.groovytab;
 
 import groovy.lang.Binding;
+import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -45,7 +46,8 @@ public class GroovyTab extends TextAreaTab {
   public void initSession() {
     Binding sharedData = new Binding();
     sharedData.setProperty("inout", gui.getInoutComponent());
-    groovyShell = new GroovyShell(sharedData);
+    GroovyClassLoader gcl = new GroovyClassLoader();
+    groovyShell = new GroovyShell(gcl, sharedData);
   }
 
   private void runGroovy(ActionEvent actionEvent) {

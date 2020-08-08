@@ -130,7 +130,8 @@ public class MavenUtils {
       log.debug("MAVEN_HOME used is {}", mavenHome);
       invoker.setMavenHome(mavenHomeDir);
     } else {
-      log.warn("No maven home set or set do an non existing maven home: {}, this might not go well...", mavenHome);
+      // Without maven home, only a small subset of maven commands will work
+      log.warn("No MAVEN_HOME set or set to an non existing maven home: {}, this might not go well...", mavenHome);
     }
     invoker.setOutputHandler(consoleOutputHandler);
     invoker.setErrorHandler(warningOutputHandler);
