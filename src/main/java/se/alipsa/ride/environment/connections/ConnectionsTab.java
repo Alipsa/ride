@@ -530,8 +530,8 @@ public class ConnectionsTab extends Tab {
     stage.setAlwaysOnTop(false);
     stage.setResizable(true);
     stage.show();
-    stage.toFront();
     stage.requestFocus();
+    stage.toFront();
   }
 
   private void setNormalCursor() {

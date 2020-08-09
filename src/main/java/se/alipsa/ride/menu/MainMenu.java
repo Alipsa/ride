@@ -6,11 +6,14 @@ import static se.alipsa.ride.menu.GlobalOptions.*;
 
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.PopupFeatures;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -37,6 +40,7 @@ import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.GitUtils;
+import se.alipsa.ride.utils.UniqueList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,18 +49,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 public class MainMenu extends MenuBar {
 
   private final Ride gui;
   private MenuItem interruptMI;
   private static final Logger log = LogManager.getLogger(MainMenu.class);
+  private final List<String> searchStrings = new UniqueList<>();
+  private Stage searchWindow;
 
   public MainMenu(Ride gui) {
     this.gui = gui;
@@ -275,7 +276,7 @@ public class MainMenu extends MenuBar {
     undo.setOnAction(this::undo);
     MenuItem redo = new MenuItem("Redo ctrl+Y");
     redo.setOnAction(this::redo);
-    MenuItem find = new MenuItem("Find  ctrl+F");
+    MenuItem find = new MenuItem("Find ctrl+F");
     find.setOnAction(this::displayFind);
     menu.getItems().addAll(undo, redo, find);
     return menu;
@@ -298,34 +299,78 @@ public class MainMenu extends MenuBar {
   }
 
   public void displayFind() {
+    if (searchWindow != null) {
+      searchWindow.show();
+      searchWindow.toFront();
+    }
 
+    VBox vBox = new VBox();
+    vBox.setPadding(new Insets(3));
     FlowPane pane = new FlowPane();
+    vBox.getChildren().add(pane);
+    Label resultLabel = new Label();
+    resultLabel.setPadding(new Insets(1));
+    vBox.getChildren().add(resultLabel);
     pane.setPadding(Constants.FLOWPANE_INSETS);
     pane.setHgap(Constants.HGAP);
     pane.setVgap(Constants.VGAP);
-
-    TextField searchTF = new TextField();
     Button findButton = new Button("search");
+
+    ComboBox<String> searchInput = new ComboBox<>();
+    searchInput.setOnKeyPressed(e -> {
+      if (e.getCode() == KeyCode.ENTER) {
+        findButton.fire();
+      }
+    });
+    searchInput.setEditable(true);
+    if (searchStrings.size() > 0) {
+      searchStrings.forEach(s -> searchInput.getItems().add(s));
+      searchInput.setValue(searchStrings.get(searchStrings.size()-1));
+    }
+
     findButton.setOnAction(e -> {
       TextAreaTab codeTab = gui.getCodeComponent().getActiveTab();
       CodeTextArea codeArea = codeTab.getCodeArea();
       int caretPos = codeArea.getCaretPosition();
       String text = codeTab.getAllTextContent().substring(caretPos);
-      String searchWord = searchTF.getText();
+      String searchWord = searchInput.getValue();
+      if (searchWord == null) {
+        searchWord = searchInput.getEditor().getText();
+        if (searchWord == null) {
+          log.warn("searchWord is null and nothing entered in the combobox text field, nothing that can be searched");
+          return;
+        }
+      }
+      searchStrings.add(searchWord);
+      if (!searchInput.getItems().contains(searchWord)) {
+        searchInput.getItems().add(searchWord);
+      }
       if (text.contains(searchWord)) {
         int place = text.indexOf(searchWord);
         codeArea.moveTo(place);
         codeArea.selectRange(caretPos + place, caretPos + place + searchWord.length());
         codeArea.requestFollowCaret();
+        resultLabel.setText("found on line " + (codeArea.getCurrentParagraph() + 1));
+      } else {
+        resultLabel.setText(searchWord + " not found");
       }
     });
-    pane.getChildren().addAll(searchTF, findButton);
-    Scene scene = new Scene(pane);
-    Stage stage = new Stage();
-    stage.setTitle("Find");
-    stage.setScene(scene);
-    stage.show();
-    stage.toFront();
+
+    Button toTopButton = new Button("To beginning");
+    toTopButton.setOnAction(a -> {
+      TextAreaTab codeTab = gui.getCodeComponent().getActiveTab();
+      CodeTextArea codeArea = codeTab.getCodeArea();
+      codeArea.moveTo(0);
+      codeArea.requestFollowCaret();
+    });
+    pane.getChildren().addAll(searchInput, findButton, toTopButton);
+    Scene scene = new Scene(vBox);
+    searchWindow = new Stage();
+    searchWindow.setTitle("Find");
+    searchWindow.setScene(scene);
+    searchWindow.sizeToScene();
+    searchWindow.show();
+    searchWindow.toFront();
   }
 
   private Menu createHelpMenu() {
