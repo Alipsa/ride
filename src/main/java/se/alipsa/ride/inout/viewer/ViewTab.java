@@ -20,6 +20,7 @@ import java.util.TreeSet;
 public class ViewTab extends Tab {
 
   private TabPane viewPane;
+  private List<String> headerList;
 
   public ViewTab() {
     setText("Viewer");
@@ -29,7 +30,7 @@ public class ViewTab extends Tab {
   }
 
   public void viewTable(Table table, String... title) {
-    List<String> colList = table.getColList();
+    headerList = table.getColList();
     List<List<Object>> rowList = table.getRowList();
     NumberFormat numberFormatter = NumberFormat.getInstance();
     numberFormatter.setGroupingUsed(false);
@@ -38,7 +39,9 @@ public class ViewTab extends Tab {
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.setOnKeyPressed(event -> {
       if (KEY_CODE_COPY.match(event)) {
-        copySelectionToClipboard(tableView);
+        // Include header if all rows are selected
+        boolean includeHeader = tableView.getSelectionModel().getSelectedCells().size() == rowList.size();
+        copySelectionToClipboard(tableView, includeHeader);
       }
     });
 
@@ -46,8 +49,11 @@ public class ViewTab extends Tab {
       final TableRow<List<String>> row = new TableRow<>();
       final ContextMenu contextMenu = new ContextMenu();
       final MenuItem copyMenuItem = new MenuItem("copy");
-      copyMenuItem.setOnAction(event -> copySelectionToClipboard(tv));
-      contextMenu.getItems().addAll(copyMenuItem);
+      copyMenuItem.setOnAction(event -> copySelectionToClipboard(tv, false));
+      final MenuItem copyWithHeaderMenuItem = new MenuItem("copy with header");
+      copyWithHeaderMenuItem.setOnAction(event -> copySelectionToClipboard(tv, true));
+
+      contextMenu.getItems().addAll(copyMenuItem, copyWithHeaderMenuItem);
       row.contextMenuProperty().bind(
           Bindings.when(row.emptyProperty())
               .then((ContextMenu) null)
@@ -56,9 +62,9 @@ public class ViewTab extends Tab {
       return row;
     });
 
-    for (int i = 0; i < colList.size(); i++) {
+    for (int i = 0; i < headerList.size(); i++) {
       final int j = i;
-      String colName = colList.get(i);
+      String colName = headerList.get(i);
       TableColumn<List<String>, String> col = new TableColumn<>(colName);
       tableView.getColumns().add(col);
       col.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
@@ -89,13 +95,17 @@ public class ViewTab extends Tab {
     selectionModel.select(tab);
   }
 
+
   @SuppressWarnings("rawtypes")
-  private void copySelectionToClipboard(final TableView<?> table) {
+  private void copySelectionToClipboard(final TableView<?> table, boolean includeHeader) {
     final Set<Integer> rows = new TreeSet<>();
     for (final TablePosition tablePosition : table.getSelectionModel().getSelectedCells()) {
       rows.add(tablePosition.getRow());
     }
     final StringBuilder strb = new StringBuilder();
+    if (includeHeader) {
+      strb.append(String.join("\t", headerList)).append("\n");
+    }
     boolean firstRow = true;
     for (final Integer row : rows) {
       if (!firstRow) {

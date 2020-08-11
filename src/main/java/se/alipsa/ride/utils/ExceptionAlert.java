@@ -1,5 +1,8 @@
 package se.alipsa.ride.utils;
 
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
+
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -13,9 +16,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Optional;
-
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
 
 public class ExceptionAlert extends Alert {
 
@@ -64,6 +64,7 @@ public class ExceptionAlert extends Alert {
     alert.getDialogPane().setExpandableContent(expContent);
 
     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.getDialogPane().setPrefWidth(500);
 
     Ride gui = Ride.instance();
     if (gui != null) {

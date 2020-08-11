@@ -1,13 +1,13 @@
 package code.groovy;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GroovyTest {
 
@@ -32,9 +32,9 @@ public class GroovyTest {
                 .append("lang = Lang.instance(NameType.GENERIC)\n")
                 .append("lang.guessLanguage('båtflykting')\n");
 
-        System.out.println(sb);
+        //System.out.println(sb);
         Object result = groovyShell.evaluate(sb.toString());
-        System.out.println(result);
+        //System.out.println(result);
         assertEquals("any",result);
     }
 
@@ -48,13 +48,13 @@ public class GroovyTest {
                 .append("import org.jdom2.Document\n")
                 .append("import org.jdom2.Element\n")
                 .append("root = new Element('theRootElement')\n")
-                .append("print('root element name is ' + root.getName())");
+                .append("print('root element name is ' + root.getName() + System.getProperty(\"line.separator\"))");
 
-        System.out.println("--- script:");
-        System.out.println(sb);
-        System.out.println("---");
+        //System.out.println("--- script:");
+        //System.out.println(sb);
+        //System.out.println("---");
         Object result = groovyShell.evaluate(sb.toString());
-        System.out.println("\nResult is " + result);
+        //System.out.println("\nResult is " + result);
         Object o = groovyShell.getProperty("root");
         Method m = o.getClass().getMethod("getName");
         assertEquals("theRootElement", m.invoke(o));

@@ -162,7 +162,9 @@ public class SqlTab extends TextAreaTab {
       setNormalCursor();
       Throwable exc = updateTask.getException();
       consoleComponent.addWarning("","Failed to execute query", true);
-      ExceptionAlert.showAlert("Failed to execute query", exc );
+      String clazz = exc.getClass().getName();
+      String message = exc.getMessage() == null ? "" : "\n" + exc.getMessage();
+      ExceptionAlert.showAlert("Query failed: " + clazz + message, exc );
     });
 
     Thread scriptThread = new Thread(updateTask);
