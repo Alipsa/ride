@@ -300,8 +300,9 @@ public class MainMenu extends MenuBar {
 
   public void displayFind() {
     if (searchWindow != null) {
-      searchWindow.show();
       searchWindow.toFront();
+      searchWindow.requestFocus();
+      return;
     }
 
     VBox vBox = new VBox();
@@ -330,6 +331,10 @@ public class MainMenu extends MenuBar {
 
     findButton.setOnAction(e -> {
       TextAreaTab codeTab = gui.getCodeComponent().getActiveTab();
+      if (codeTab == null) {
+        resultLabel.setText("No active code tab exists, nothing to search in");
+        return;
+      }
       CodeTextArea codeArea = codeTab.getCodeArea();
       int caretPos = codeArea.getCaretPosition();
       String text = codeTab.getAllTextContent().substring(caretPos);
@@ -338,6 +343,7 @@ public class MainMenu extends MenuBar {
         searchWord = searchInput.getEditor().getText();
         if (searchWord == null) {
           log.warn("searchWord is null and nothing entered in the combobox text field, nothing that can be searched");
+          resultLabel.setText("Nothing to search for");
           return;
         }
       }
@@ -366,11 +372,14 @@ public class MainMenu extends MenuBar {
     pane.getChildren().addAll(searchInput, findButton, toTopButton);
     Scene scene = new Scene(vBox);
     searchWindow = new Stage();
+    searchWindow.setOnCloseRequest(event -> searchWindow = null);
     searchWindow.setTitle("Find");
     searchWindow.setScene(scene);
     searchWindow.sizeToScene();
     searchWindow.show();
     searchWindow.toFront();
+    searchWindow.setAlwaysOnTop(true);
+
   }
 
   private Menu createHelpMenu() {
@@ -426,7 +435,10 @@ public class MainMenu extends MenuBar {
        (PopupFeatures config) -> {
          WebView nBrowser = new WebView();
          // Always use bright theme as external links will usually look funny when coming from dark mode
-         nBrowser.getEngine().setUserStyleSheetLocation(FileUtils.getResourceUrl(Constants.BRIGHT_THEME).toExternalForm());
+         URL themeUrl = FileUtils.getResourceUrl(Constants.BRIGHT_THEME);
+         if (themeUrl != null) {
+           nBrowser.getEngine().setUserStyleSheetLocation(themeUrl.toExternalForm());
+         }
          nBrowser.getStylesheets().addAll(gui.getStyleSheets());
          Scene scene = new Scene(nBrowser);
          Stage stage = new Stage();
@@ -547,6 +559,7 @@ public class MainMenu extends MenuBar {
     gui.setWaitCursor();
     GlobalOptions result = res.get();
 
+    @SuppressWarnings("rawtypes")
     Class<?> selectedPkgLoader = (Class) result.get(GlobalOptions.PKG_LOADER);
     if (!selectedPkgLoader.isInstance(gui.getConsoleComponent().getPackageLoader())) {
       PackageLoader loader = gui.getConsoleComponent().packageLoaderForName(this.getClass().getClassLoader(), selectedPkgLoader.getSimpleName());

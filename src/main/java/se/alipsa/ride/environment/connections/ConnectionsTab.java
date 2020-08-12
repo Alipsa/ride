@@ -527,7 +527,7 @@ public class ConnectionsTab extends Tab {
     stage.initModality(Modality.NONE);
     stage.setTitle(title);
     stage.setScene(dialog);
-    stage.setAlwaysOnTop(false);
+    stage.setAlwaysOnTop(true);
     stage.setResizable(true);
     stage.show();
     stage.requestFocus();

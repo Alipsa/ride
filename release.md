@@ -55,6 +55,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Size the Exception alert so it looks decent in windows on jfx 8
 - Include meaningful part of SQL exception directly in the Alert so "expand" in not really needed
 to understand what went wrong.  
+- Search enhancements (only allow one search window, always on top, handle weird scenarios)
 
 ### 1.2 Final
 - add ability to create a basic pom.xml in "any" directory
