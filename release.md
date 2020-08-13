@@ -1,8 +1,7 @@
 # This is version 1.2.1 of Ride.
 
-At this point Ride is usable for much more than just simple editing and running R scripts. 
-It provides a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine but
-it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects,
+Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine but
+it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
 packages can be developed, built and tested. Ride supports maven build files as well as git.
   
 To run Ride you need to have maven and Java 1.8 or higher installed (preferably with bundled javafx). 
