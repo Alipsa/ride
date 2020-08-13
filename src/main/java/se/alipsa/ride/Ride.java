@@ -6,7 +6,6 @@ import static se.alipsa.ride.Constants.THEME;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -33,6 +32,7 @@ import se.alipsa.ride.menu.MainMenu;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -128,6 +128,13 @@ public class Ride extends Application {
         alert.setTitle("Are you sure you want to exit?");
         alert.setHeaderText("There are unsaved files");
         alert.setContentText("Are you sure you want to exit \n -even though you have unsaved files?");
+        alert.initOwner(getStage());
+        String styleSheetPath = getPrefs().get(THEME, BRIGHT_THEME);
+
+        URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+        if (styleSheetUrl != null) {
+          alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+        }
 
         Optional<ButtonType> result = alert.showAndWait();
         if (!result.isPresent()) {

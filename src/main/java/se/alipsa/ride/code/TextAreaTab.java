@@ -11,6 +11,7 @@ import se.alipsa.ride.Ride;
 import se.alipsa.ride.inout.FileItem;
 import se.alipsa.ride.utils.FileUtils;
 
+import java.net.URL;
 import java.util.Optional;
 
 public abstract class TextAreaTab extends Tab implements TabTextArea {
@@ -55,6 +56,13 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
             alert.getButtonTypes().addAll(yes, no);
             alert.setTitle("File is not saved");
             alert.setHeaderText("Save file " + getTitle());
+            alert.initOwner(gui.getStage());
+            String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+
+            URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+            if (styleSheetUrl != null) {
+              alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+            }
 
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == yes) {

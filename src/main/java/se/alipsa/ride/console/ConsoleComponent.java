@@ -56,6 +56,7 @@ import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.maven.DependenciesResolveException;
 import se.alipsa.ride.utils.maven.MavenUtils;
 
 import java.io.File;
@@ -65,7 +66,13 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.script.ScriptException;
@@ -132,7 +139,7 @@ public class ConsoleComponent extends BorderPane {
   }
 
 
-  private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader) {
+  private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader, boolean... skipMavenClassloading) {
     AtomicReference<String> version = new AtomicReference<>("unknown");
 
     Task<Void> initTask = new Task<Void>() {
@@ -152,12 +159,25 @@ public class ConsoleComponent extends BorderPane {
 
           ClassLoader cl = parentClassLoader;
 
-          if (gui.getInoutComponent() != null && gui.getInoutComponent().getRoot() != null &&
-                  gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false)) {
+          boolean useMavenClassloader = skipMavenClassloading.length > 0
+              ? !skipMavenClassloading[0]
+              : gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false);
+
+          if (gui.getInoutComponent() != null && gui.getInoutComponent().getRoot() != null && useMavenClassloader ) {
             File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
             if (pomFile.exists()) {
               log.info("Parsing pom to use maven classloader");
-              cl = MavenUtils.getMavenDependenciesClassloader(pomFile, parentClassLoader);
+              console.append("* Parsing pom to create maven classloader...");
+              try {
+                cl = MavenUtils.getMavenDependenciesClassloader(pomFile, parentClassLoader);
+              } catch (Exception e) {
+                if (e instanceof DependenciesResolveException) {
+                  Platform.runLater(() -> ExceptionAlert.showAlert("Failed to resolve maven dependency: " + e.getMessage(), e));
+                  log.info("Initializing renjing without maven...");
+                } else {
+                  throw e;
+                }
+              }
             } else {
               log.info("Use maven class loader is set but pomfile {} does not exist", pomFile);
             }
@@ -229,9 +249,7 @@ public class ConsoleComponent extends BorderPane {
       if (ex == null) {
         ex = throwable;
       }
-
       String msg = createMessageFromEvalException(ex);
-
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
       promptAndScrollToEnd();
     });
@@ -467,11 +485,11 @@ public class ConsoleComponent extends BorderPane {
     } else if (ex instanceof RuntimeException) {
       msg = "An unknown error occurred running R script: ";
     } else if (ex instanceof IOException) {
-      msg = "Failed to close writer capturing renjin results";
+      msg = "Failed to close writer capturing renjin results ";
     } else if (ex instanceof RuntimeScriptException) {
       msg = "An unknown error occurred running R script: ";
     } else if (ex instanceof Exception) {
-      msg = "Exception thrown when running script";
+      msg = "An Exception occurred: ";
     }
     return msg;
   }

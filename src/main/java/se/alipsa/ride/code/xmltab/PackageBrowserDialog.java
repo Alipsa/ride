@@ -57,6 +57,7 @@ public class PackageBrowserDialog extends Dialog<Void> {
    public PackageBrowserDialog(Ride gui) {
       initOwner(gui.getStage());
       setResizable(true);
+      getDialogPane().setPrefWidth(800);
       this.gui = gui;
       setTitle("Search for package info");
       getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);

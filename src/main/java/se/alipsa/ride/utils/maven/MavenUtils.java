@@ -139,7 +139,8 @@ public class MavenUtils {
   }
 
 
-  public static Set<File> resolveDependencies(File pomFile) throws SettingsBuildingException, ModelBuildingException {
+  public static Set<File> resolveDependencies(File pomFile) throws SettingsBuildingException, ModelBuildingException,
+      DependenciesResolveException {
     RepositorySystem repositorySystem = getRepositorySystem();
     RepositorySystemSession repositorySystemSession = getRepositorySystemSession(repositorySystem);
 
@@ -162,7 +163,7 @@ public class MavenUtils {
         result = repositorySystem.resolveDependencies(repositorySystemSession, request);
       } catch (DependencyResolutionException | RuntimeException e) {
         log.warn("Error resolving dependent artifact: {}:{}:{}", d.getGroupId(), d.getArtifactId(), d.getVersion(), e);
-        continue;
+        throw new DependenciesResolveException("Error resolving dependent artifact: "+ d.getGroupId() + ":" + d.getArtifactId() + ":" + d.getVersion(), e);
       }
 
       for (ArtifactResult artifactResult : result.getArtifactResults()) {

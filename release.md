@@ -55,6 +55,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Include meaningful part of SQL exception directly in the Alert so "expand" in not really needed
 to understand what went wrong.  
 - Search enhancements (only allow one search window, always on top, handle weird scenarios)
+- Handle dependency issue a little better (throw and display exception), fallback to init renjin without maven cl
+- Add styling to confirmation dialogs (on exit and on not saved)
 
 ### 1.2 Final
 - add ability to create a basic pom.xml in "any" directory
