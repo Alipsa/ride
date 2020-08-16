@@ -48,7 +48,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.1
-- Add support for Groovy (see [/perNyfelt/ride/blob/master/Groovy.md](Groovy.md) for details).
+- Add support for Groovy (see [Groovy.md](/perNyfelt/ride/blob/master/Groovy.md) for details).
 - Do Renjin initialization in a separate thread to reduce GUI freezes
 - Add right click option to copy Viewer tables including headers, include headers if (ctrl + a) + (ctrl + c)
 - Size the Exception alert, so it looks decent in windows on jfx 8
