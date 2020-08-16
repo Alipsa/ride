@@ -50,13 +50,14 @@ In those cases just copy the native files to the lib dir, the startup script poi
 ### 1.2.1
 - Add support for Groovy (see [Groovy.md](Groovy.md)) for details.
 - Do Renjin initialization in a separate thread to reduce GUI freezes
-- Add right click option to copy including headers, include headers if (ctrl + a) + (ctrl + c)
-- Size the Exception alert so it looks decent in windows on jfx 8
+- Add right click option to copy Viewer tables including headers, include headers if (ctrl + a) + (ctrl + c)
+- Size the Exception alert, so it looks decent in windows on jfx 8
 - Include meaningful part of SQL exception directly in the Alert so "expand" in not really needed
 to understand what went wrong.  
 - Search enhancements (only allow one search window, always on top, handle weird scenarios)
 - Handle dependency issue a little better (throw and display exception), fallback to init renjin without maven cl
 - Add styling to confirmation dialogs (on exit and on not saved)
+- bump up versions plugin version and postgres jdbc driver version
 
 ### 1.2 Final
 - add ability to create a basic pom.xml in "any" directory
