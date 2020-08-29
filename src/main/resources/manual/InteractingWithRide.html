@@ -205,6 +205,13 @@ Pops up a date picker dialog allowing the user to pick a date. It is defined as 
 
 <strong>return value:</strong> a character string formatted according to the outputFormat param or
 in the format "yyyy-MM-dd" is no outputFormat is given.
+Example:
+<div class="codeblock">
+    <span class="keyword">library</span>(<span class="string">"se.alipsa:rideutils"</span>)<br/>
+    date2 <- promptDate(<span class="string">"Date"</span>, message = <span class="string">"Another date"</span>,
+    outputFormat = <span class="string">"dd MMM yyyy"</span>)<br/>
+    print(paste(<span class="string">"Date is"</span>, date2))
+</div>
 
 <h3>promptYearMonth</h3>
 <div class="codeblock">promptYearMonth <- function(title = <span class="string">""</span>,
@@ -232,13 +239,6 @@ language tags see https://www.oracle.com/java/technologies/javase/jdk8-jre8-supo
     <li><strong>outputFormat</strong> - determines the format of the picked date in the dialog as well as in the
         return value</li>
 </ul>
-Example:
-<div class="codeblock">
-    <span class="keyword">library</span>(<span class="string">"se.alipsa:rideutils"</span>)
-    date2 <- promptDate(<span class="string">"Date"</span>, message = <span class="string">"Another date"</span>,
-    outputFormat = <span class="string">"dd MMM yyyy"</span>)
-    print(paste(<span class="string">"Date is"</span>, date2))
-</div>
 
 </body>
 </html>
