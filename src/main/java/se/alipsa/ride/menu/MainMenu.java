@@ -2,8 +2,14 @@ package se.alipsa.ride.menu;
 
 import static se.alipsa.ride.Constants.BRIGHT_THEME;
 import static se.alipsa.ride.Constants.THEME;
-import static se.alipsa.ride.menu.GlobalOptions.*;
+import static se.alipsa.ride.menu.GlobalOptions.ADD_BUILDDIR_TO_CLASSPATH;
+import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
+import static se.alipsa.ride.menu.GlobalOptions.ENABLE_GIT;
+import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -12,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.PopupFeatures;
@@ -49,7 +56,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
 
 public class MainMenu extends MenuBar {
 
@@ -386,16 +398,71 @@ public class MainMenu extends MenuBar {
     Menu menu = new Menu("Help");
     
     MenuItem manual = new MenuItem("User Manual");
-    manual.setOnAction(this::diplayUserManual);
+    manual.setOnAction(this::displayUserManual);
     
     MenuItem about = new MenuItem("About Ride");
     about.setOnAction(this::displayAbout);
 
-    menu.getItems().addAll(manual, about);
+    MenuItem checkVersion = new MenuItem("Check for updates");
+    checkVersion.setOnAction(this::checkForUpdates);
+
+    menu.getItems().addAll(manual, about, checkVersion);
     return menu;
   }
 
-  private void diplayUserManual(ActionEvent actionEvent) {
+  private void checkForUpdates(ActionEvent actionEvent) {
+      gui.setWaitCursor();
+      Alert popup = new Alert(Alert.AlertType.INFORMATION);
+      popup.setTitle("Check latest version");
+      popup.getDialogPane().setHeaderText("Ride version info");
+      TextArea textArea = new TextArea("Checking for the latest version....");
+      textArea.setEditable(false);
+      textArea.setWrapText(true);
+      GridPane gridPane = new GridPane();
+      gridPane.setMaxWidth(Double.MAX_VALUE);
+      gridPane.add(textArea, 0, 0);
+      popup.getDialogPane().setContent(gridPane);
+      popup.setResizable(true);
+      popup.initOwner(gui.getStage());
+      popup.show();
+
+      Platform.runLater(() -> {
+        try {
+          URL url = new URL("https://api.github.com/repos/perNyfelt/ride/releases/latest");
+          ObjectMapper mapper = new ObjectMapper();
+          JsonNode rootNode = mapper.readTree(url);
+          JsonNode tagNode = rootNode.findValue("tag_name");
+          String tag = tagNode.asText();
+          String releaseTag = "unknown";
+          String version = "unknown";
+          Properties props = new Properties();
+          try (InputStream is = Objects.requireNonNull(FileUtils.getResourceUrl("version.properties")).openStream()) {
+            props.load(is);
+            version = props.getProperty("version");
+            releaseTag = props.getProperty("release.tag");
+          } catch (IOException e) {
+            ExceptionAlert.showAlert("Failed to load properties file", e);
+          }
+          StringBuilder sb = new StringBuilder("Your version: ")
+              .append(version)
+              .append("\nYour release tag:")
+              .append(releaseTag)
+              .append("\n\nLatest version on github: ").append(tag);
+          if (version.equalsIgnoreCase(releaseTag)) {
+            sb.append("\nYou are running the latest version");
+          } else {
+            sb.append("\nGet it from https://github.com/perNyfelt/ride/releases/latest");
+          }
+          textArea.setText(sb.toString());
+          gui.setNormalCursor();
+        } catch (IOException e) {
+          gui.setNormalCursor();
+          ExceptionAlert.showAlert("Failed to get latest version", e);
+        }
+    });
+  }
+
+  private void displayUserManual(ActionEvent actionEvent) {
     WebView browser = new WebView();
     WebEngine webEngine = browser.getEngine();
     BorderPane borderPane = new BorderPane();
