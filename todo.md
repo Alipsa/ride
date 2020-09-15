@@ -8,6 +8,24 @@ S3 object/function: methods() , List all available methods for an S3 generic fun
 
 S4: showMethods()
 RC: Element$methods() or for an object print(ele$getRefClass()$methods())
+
+view all the functions that are built into an R package:
+
+`lsf.str("package:dplyr")`
+To list all objects in the package use ls
+
+`ls("package:dplyr")`
+
+```r
+library("se.alipsa:rideutils")
+
+print(lsf.str("package:rideutils"))
+print(ls("package:rideutils"))
+
+print(lsf.str("package:base"))
+print(ls("package:base"))
+```
+
 ### Minor fixes
 Search 
     - should remember last search
