@@ -1,5 +1,13 @@
 # Todo / Roadmap
 
+### Code completion
+Available methods on an object: https://stackoverflow.com/questions/8691812/get-object-methods-r
+S3 object/function: methods() , List all available methods for an S3 generic function, or all methods for a class.)
+> A <- matrix(runif(10))
+> B <- methods(class=class(A))
+
+S4: showMethods()
+RC: Element$methods() or for an object print(ele$getRefClass()$methods())
 ### Minor fixes
 Search 
     - should remember last search
