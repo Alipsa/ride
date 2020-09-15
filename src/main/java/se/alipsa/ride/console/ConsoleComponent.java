@@ -66,13 +66,7 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import javax.script.ScriptException;
@@ -517,6 +511,21 @@ public class ConsoleComponent extends BorderPane {
     }
     gui.getInoutComponent().setPackages(pkgs);
 
+
+    Set<String> functions = new HashSet<>();
+    String script = "ride_funcList <- c()\n" +
+            "for (ride_pkg in paste0('package:',.packages())) {\n" +
+            "   ride_funcList <- c(ride_funcList, ls(ride_pkg))   \n" +
+            "}\n" +
+            "ride_funcList";
+    try {
+      pkgs = (StringVector) engine.eval(script);
+      engine.eval("rm(ride_funcList, ride_pkg)");
+      StringVector lsObjects = (StringVector) engine.eval("ls()");
+      // TODO update contextFunctions in the RTextArea
+    } catch (ScriptException e) {
+      ExceptionAlert.showAlert("Error updating contextFunctions", e);
+    }
     // TODO consider setting the working dir in filetree after each run as setwd() night have changed it
     // Below is how to get it:
     // log.info("Working dir is {}", engine.getSession().getWorkingDirectory().getName().getPath());

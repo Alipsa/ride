@@ -12,10 +12,7 @@ import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.console.ConsoleComponent;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +32,7 @@ public class RTextArea extends CodeTextArea {
   // Will be too long for styling the textarea but useful for suggestions using ctrl + tab
   // see https://github.com/FXMisc/RichTextFX/issues/91 for some ideas
   private static final String[] FUNCTIONS = new String[]{
-      "abs", "acos", "addNA", "aggregate", "agrep", "alist", "all", "all.equal", "all.names", "all.vars", "any", "anyDuplicated", "anyNA", "apply", "append", "aperm", "array", "args", "asin", "atan", "atan2", "as.array", "as.call", "as.character", "as.complex", "as.data.frame", "as.Date", "as.difftime", "as.double", "as.environment", "as.expression", "as.factor", "as.hexmode", "as.integer", "as.list", "as.matrix", "as.null", "as.numeric", "as.ordered", "as.pairlist", "as.POSIXct", "as.POSIXlt", "as.single", "as.vector", "attach", "attr", "attributes",
+      "abs", "acos", "addNA", "aggregate", "agrep", "alist", "all", "all.equal", "all.names", "all.vars", "any", "anyDuplicated", "anyNA", "apply", "append", "aperm", "array", "args", "asin", "atan", "atan2", "as.array", "as.call", "as.character", "as.complex", "as.data.frame", "as.Date", "as.difftime", "as.double", "as.environment", "as.expression", "as.factor", "as.hexmode", "as.integer", "as.list", "as.logical", "as.matrix", "as.null", "as.numeric", "as.ordered", "as.pairlist", "as.POSIXct", "as.POSIXlt", "as.single", "as.vector", "attach", "attr", "attributes",
       "backsolve", "baseenv", "basename", "beta", "besselI", "besselK", "besselJ", "besselY", "bindtextdomain", "bitwAnd", "bitwNot", "bitwOr", "bitwShiftL", "bitwShiftR", "bitwXor", "body", "bquote", "browser", "browserCondition", "browserSetDebug", "browserText", "builtins", "by", "bzfile",
       "c", "call", "casefold", "cat", "cbind", "ceiling", "charmatch", "chartr", "chol", "chol2inv", "choose", "class", "close", "col", "colMeans", "colnames", "colSums", "comment", "complex", "conflicts", "cos", "cospi", "cummax", "cummin", "cumsum", "cumprod", "curlGetHeaders", "cut",
       "data.class", "data.frame", "deparse", "date", "det", "determinant", "detach", "dget", "dbinom", "diag", "diff", "difftime", "digamma", "dim", "dimnames", "dnorm", "dir.create", "dir.exists", "dirname", "do.call", "dontCheck", "dpois", "dput", "drop", "dunif", "duplicated",
@@ -57,6 +54,9 @@ public class RTextArea extends CodeTextArea {
       "which", "with", "writeLines", "write.dcf",
       "xzfile"
   };
+
+  Set<String> contextFunctions = new HashSet<>();
+
   private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
   private static final String FUNCTIONS_PATTERN = "\\b(" + String.join("|", FUNCTIONS) + ")\\b";
   private static final String ASSIGNMENT_PATTERN = "->|<-|->>|<<-|=(?!=)|~|%>%|\\$";
@@ -80,7 +80,7 @@ public class RTextArea extends CodeTextArea {
       "(?<KEYWORD>" + KEYWORD_PATTERN + ")"
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
-  private static Logger log = LogManager.getLogger(RTextArea.class);
+  private static final Logger LOG = LogManager.getLogger(RTextArea.class);
   ContextMenu suggestionsPopup = new ContextMenu();
 
   public RTextArea() {
@@ -197,7 +197,16 @@ public class RTextArea extends CodeTextArea {
         suggestions.add(function + "()");
       }
     }
+    for (String context : contextFunctions) {
+      if (context.startsWith(lastWord)) {
+        suggestions.add(context + "()");
+      }
+    }
     suggestCompletion(lastWord, suggestions, suggestionsPopup);
+  }
+
+  public void addContextFunctions(Collection<String> functionNames) {
+    contextFunctions = new HashSet<>(functionNames);
   }
 
 }
