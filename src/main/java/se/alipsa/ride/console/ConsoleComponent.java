@@ -43,12 +43,8 @@ import org.renjin.primitives.packaging.ClasspathPackageLoader;
 import org.renjin.primitives.packaging.PackageLoader;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
-import org.renjin.sexp.Closure;
-import org.renjin.sexp.Environment;
-import org.renjin.sexp.FunctionCall;
-import org.renjin.sexp.SEXP;
-import org.renjin.sexp.StringVector;
-import org.renjin.sexp.Symbol;
+import org.renjin.sexp.*;
+import org.renjin.sexp.Vector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.rtab.RTab;
@@ -501,31 +497,58 @@ public class ConsoleComponent extends BorderPane {
   private void updateEnvironment() {
     Environment global = session.getGlobalEnvironment();
     Context topContext = session.getTopLevelContext();
-    gui.getEnvironmentComponent().setEnvironment(global, topContext);
-    StringVector pkgs = null;
-    try {
-      pkgs = (StringVector) engine.eval("(.packages())");
+    Task<Void> task = new Task<Void>() {
+      @Override
+      protected Void call() throws Exception {
+        try {
+          StringVector pkgs = (StringVector) engine.eval("(.packages())");
+          Platform.runLater(() -> gui.getInoutComponent().setPackages(pkgs));
 
-    } catch (ScriptException e) {
-      ExceptionAlert.showAlert("Error updating environment", e);
-    }
-    gui.getInoutComponent().setPackages(pkgs);
+          String script = ".ride_funcList <- c()\n" +
+                  ".ride_objList <- c()\n" +
+                  "for (.ride_pkg in paste0('package:',.packages())) {\n" +
+                  "   .ride_funcList <- c(.ride_funcList,  ls(.ride_pkg)[(ls(.ride_pkg) %in% c(lsf.str(.ride_pkg)))]) \n" +
+                  "   .ride_objList <- c(.ride_objList, ls(.ride_pkg)[!(ls(.ride_pkg) %in% c(lsf.str(.ride_pkg)))]) \n" +
+                  "}\n" +
+                  ".ride_funcList <- c(.ride_funcList, ls()[(ls() %in% c(lsf.str()))]) \n" +
+                  ".ride_objList <- c(.ride_objList, ls()[!(ls() %in% c(lsf.str()))]) \n" +
+                  "list('functions' = .ride_funcList, 'objects' = .ride_objList)";
 
+          ListVector funcObj = (ListVector) engine.eval(script);
+          StringVector functions = (StringVector)funcObj.get("functions");
+          StringVector objects = (StringVector)funcObj.get("objects");
 
-    Set<String> functions = new HashSet<>();
-    String script = "ride_funcList <- c()\n" +
-            "for (ride_pkg in paste0('package:',.packages())) {\n" +
-            "   ride_funcList <- c(ride_funcList, ls(ride_pkg))   \n" +
-            "}\n" +
-            "ride_funcList";
-    try {
-      pkgs = (StringVector) engine.eval(script);
-      engine.eval("rm(ride_funcList, ride_pkg)");
-      StringVector lsObjects = (StringVector) engine.eval("ls()");
-      // TODO update contextFunctions in the RTextArea
-    } catch (ScriptException e) {
-      ExceptionAlert.showAlert("Error updating contextFunctions", e);
-    }
+          engine.eval("rm(.ride_funcList, .ride_objList, .ride_pkg)");
+          Platform.runLater(() -> {
+            gui.getEnvironmentComponent().setEnvironment(global, topContext);
+            gui.getEnvironmentComponent().updateContextFunctions(functions, objects);
+          });
+
+        } catch (RuntimeException e) {
+          // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
+          // this way we can get to the original one by extracting the cause from the thrown exception
+          System.out.println("Exception caught, rethrowing as wrapped Exception");
+          throw new Exception(e);
+        }
+
+        return null;
+      }
+    };
+    task.setOnFailed(e -> {
+      Throwable throwable = task.getException();
+      Throwable ex = throwable.getCause();
+      if (ex == null) {
+        ex = throwable;
+      }
+
+      String msg = createMessageFromEvalException(ex);
+
+      ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
+    });
+    Thread thread = new Thread(task);
+    thread.setDaemon(false);
+    startThreadWhenOthersAreFinished(thread, "updateEnvironment");
+
     // TODO consider setting the working dir in filetree after each run as setwd() night have changed it
     // Below is how to get it:
     // log.info("Working dir is {}", engine.getSession().getWorkingDirectory().getName().getPath());

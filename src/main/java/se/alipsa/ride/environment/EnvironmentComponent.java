@@ -2,8 +2,11 @@ package se.alipsa.ride.environment;
 
 import static se.alipsa.ride.Constants.INDENT;
 
+import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
 import org.renjin.eval.Context;
@@ -13,16 +16,23 @@ import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.environment.connections.ConnectionsTab;
+import se.alipsa.ride.utils.UniqueList;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class EnvironmentComponent extends TabPane {
+
+  private static final Logger LOG = LogManager.getLogger();
 
   private UnStyledCodeArea envTa;
 
   ConnectionsTab connectionsTab;
   HistoryTab historyTab;
+
+  List<ContextFunctionsUpdateListener> contextFunctionsUpdateListeners = new ArrayList<>();
 
   int MAX_CONTENT_LENGTH = 200;
 
@@ -94,5 +104,27 @@ public class EnvironmentComponent extends TabPane {
 
   public void rRestarted() {
     historyTab.rRestarted();
+  }
+
+  public void updateContextFunctions(StringVector functions, StringVector objects) {
+    final UniqueList<String> contextFunctions = new UniqueList<>();
+    final UniqueList<String> contextObjects = new UniqueList<>();
+    for (String fun : functions) {
+      contextFunctions.add(fun);
+    }
+    for (String obj : objects) {
+      contextObjects.add(obj);
+    }
+    Platform.runLater(() ->
+      contextFunctionsUpdateListeners.forEach(l -> l.updateContextFunctions(contextFunctions, contextObjects))
+    );
+  }
+
+  public void addContextFunctionsUpdateListener(ContextFunctionsUpdateListener listener) {
+    contextFunctionsUpdateListeners.add(listener);
+  }
+
+  public void removeContextFunctionsUpdateListener(ContextFunctionsUpdateListener listener) {
+    contextFunctionsUpdateListeners.remove(listener);
   }
 }

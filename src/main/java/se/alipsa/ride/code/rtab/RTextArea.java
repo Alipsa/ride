@@ -7,16 +7,19 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.renjin.sexp.StringVector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.console.ConsoleComponent;
+import se.alipsa.ride.environment.ContextFunctionsUpdateListener;
+import se.alipsa.ride.utils.UniqueList;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RTextArea extends CodeTextArea {
+public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateListener {
 
   // Since T and F are not true keywords (they can be reassigned e.g. T <- FALSE), they are not included below
   private static final String[] KEYWORDS = new String[]{
@@ -56,6 +59,7 @@ public class RTextArea extends CodeTextArea {
   };
 
   Set<String> contextFunctions = new HashSet<>();
+  Set<String> contextObjects = new HashSet<>();
 
   private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
   private static final String FUNCTIONS_PATTERN = "\\b(" + String.join("|", FUNCTIONS) + ")\\b";
@@ -119,6 +123,7 @@ public class RTextArea extends CodeTextArea {
         }
       }
     });
+
   }
 
   protected final StyleSpans<Collection<String>> computeHighlighting(String text) {
@@ -186,7 +191,7 @@ public class RTextArea extends CodeTextArea {
   }
 
   private void suggestCompletion(String lastWord) {
-    List<String> suggestions = new ArrayList<>();
+    UniqueList<String> suggestions = new UniqueList<>();
     for (String keyword : KEYWORDS) {
       if (keyword.startsWith(lastWord)) {
         suggestions.add(keyword);
@@ -202,11 +207,17 @@ public class RTextArea extends CodeTextArea {
         suggestions.add(context + "()");
       }
     }
+    for (String obj : contextObjects) {
+      if (obj.startsWith(lastWord)) {
+        suggestions.add(obj);
+      }
+    }
     suggestCompletion(lastWord, suggestions, suggestionsPopup);
   }
 
-  public void addContextFunctions(Collection<String> functionNames) {
-    contextFunctions = new HashSet<>(functionNames);
+  @Override
+  public void updateContextFunctions(UniqueList<String> functionList, UniqueList<String> objectList) {
+    contextFunctions = new HashSet<>(functionList);
+    contextObjects = new HashSet<>(objectList);
   }
-
 }

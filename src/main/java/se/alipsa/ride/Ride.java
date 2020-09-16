@@ -99,6 +99,9 @@ public class Ride extends Application {
     consoleComponent = new ConsoleComponent(this);
     stretch(consoleComponent, root);
 
+    environmentComponent = new EnvironmentComponent(this);
+    stretch(environmentComponent, root);
+
     codeComponent = new CodeComponent(this);
     stretch(codeComponent, root);
     leftSplitPane.getItems().addAll(codeComponent, consoleComponent);
@@ -108,8 +111,6 @@ public class Ride extends Application {
     SplitPane rightSplitPane = new SplitPane();
     rightSplitPane.setOrientation(Orientation.VERTICAL);
 
-    environmentComponent = new EnvironmentComponent(this);
-    stretch(environmentComponent, root);
 
     inoutComponent = new InoutComponent(this);
     stretch(inoutComponent, root);

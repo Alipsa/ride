@@ -44,6 +44,8 @@ public class RTab extends TextAreaTab implements TaskListener {
     rTextArea = new RTextArea(this);
     VirtualizedScrollPane<RTextArea> vPane = new VirtualizedScrollPane<>(rTextArea);
     pane.setCenter(vPane);
+    gui.getEnvironmentComponent().addContextFunctionsUpdateListener(rTextArea);
+    setOnClosed(e -> gui.getEnvironmentComponent().removeContextFunctionsUpdateListener(rTextArea));
   }
 
   @Override
