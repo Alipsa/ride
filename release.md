@@ -47,6 +47,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2.3
+- Enhanced autocomplete taking in functions and objects from everything loaded.
+  Also fixed the shortcoming of . being regarded as a word boundary (. is just a character in R).
 ### 1.2.2
 - Add simple "check for updates" to help menu.
 
