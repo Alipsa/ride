@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class EnvironmentComponent extends TabPane {
 
@@ -107,8 +108,8 @@ public class EnvironmentComponent extends TabPane {
   }
 
   public void updateContextFunctions(StringVector functions, StringVector objects) {
-    final UniqueList<String> contextFunctions = new UniqueList<>();
-    final UniqueList<String> contextObjects = new UniqueList<>();
+    final TreeSet<String> contextFunctions = new TreeSet<>();
+    final TreeSet<String> contextObjects = new TreeSet<>();
     for (String fun : functions) {
       contextFunctions.add(fun);
     }

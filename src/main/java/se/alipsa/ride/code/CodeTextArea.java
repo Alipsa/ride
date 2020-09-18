@@ -20,11 +20,7 @@ import se.alipsa.ride.utils.StringUtils;
 
 import java.io.File;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -262,7 +258,7 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
     // do nothing per default
   }
 
-  protected void suggestCompletion(String lastWord, List<String> keyWords, ContextMenu suggestionsPopup) {
+  protected void suggestCompletion(String lastWord, TreeSet<String> keyWords, ContextMenu suggestionsPopup) {
     List<CustomMenuItem> menuItems = new LinkedList<>();
     for (String result : keyWords) {
       Label entryLabel = new Label(result);

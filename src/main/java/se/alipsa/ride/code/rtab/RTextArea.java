@@ -58,8 +58,8 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
       "xzfile"
   };
 
-  Set<String> contextFunctions = new HashSet<>();
-  Set<String> contextObjects = new HashSet<>();
+  TreeSet<String> contextFunctions = new TreeSet<>();
+  TreeSet<String> contextObjects = new TreeSet<>();
 
   private static final String KEYWORD_PATTERN = "\\b(" + String.join("|", KEYWORDS) + ")\\b";
   private static final String FUNCTIONS_PATTERN = "\\b(" + String.join("|", FUNCTIONS) + ")\\b";
@@ -178,46 +178,72 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
     return spansBuilder.create();
   }
 
-  // TODO: as. does not work: find a better way to autocomplete
+  /**
+   * TODO: maybe a regex would be more performant?
+   * "^.*?(\\w+)\\W*$" is not sufficient as it handles dots as word boundary
+   */
   @Override
   public void autoComplete() {
     String line = getText(getCurrentParagraph());
-    String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
-    if (line.endsWith(lastWord) && !"".equals(lastWord)) {
+    String currentText = line.substring(0, getCaretColumn());
+    //System.out.println("Current text is " + currentText);
+    String lastWord;
+    int index = currentText.indexOf(' ');
+    if (index == -1 ) {
+      lastWord = currentText;
+    } else {
+      lastWord = currentText.substring(currentText.lastIndexOf(' ') + 1);
+    }
+    index = lastWord.indexOf('(');
+    if (index > -1) {
+      lastWord = lastWord.substring(index+1);
+    }
+    index = lastWord.indexOf('[');
+    if (index > -1) {
+      lastWord = lastWord.substring(index+1);
+    }
+    index = lastWord.indexOf('{');
+    if (index > -1) {
+      lastWord = lastWord.substring(index+1);
+    }
+
+    //System.out.println("Last word is '" + lastWord + "'");
+    if (lastWord.length() > 0) {
       suggestCompletion(lastWord);
-    } else if (line.endsWith(lastWord + ".")) {
-      suggestCompletion(lastWord + ".");
     }
   }
 
   private void suggestCompletion(String lastWord) {
-    UniqueList<String> suggestions = new UniqueList<>();
-    for (String keyword : KEYWORDS) {
-      if (keyword.startsWith(lastWord)) {
-        suggestions.add(keyword);
+    TreeSet<String> suggestions = new TreeSet<>();
+    if (contextFunctions.isEmpty() && contextObjects.isEmpty()) {
+      for (String keyword : KEYWORDS) {
+        if (keyword.startsWith(lastWord)) {
+          suggestions.add(keyword);
+        }
       }
-    }
-    for (String function : FUNCTIONS) {
-      if (function.startsWith(lastWord)) {
-        suggestions.add(function + "()");
+      for (String function : FUNCTIONS) {
+        if (function.startsWith(lastWord)) {
+          suggestions.add(function + "()");
+        }
       }
-    }
-    for (String context : contextFunctions) {
-      if (context.startsWith(lastWord)) {
-        suggestions.add(context + "()");
+    } else {
+      for (String context : contextFunctions) {
+        if (context.startsWith(lastWord)) {
+          suggestions.add(context + "()");
+        }
       }
-    }
-    for (String obj : contextObjects) {
-      if (obj.startsWith(lastWord)) {
-        suggestions.add(obj);
+      for (String obj : contextObjects) {
+        if (obj.startsWith(lastWord)) {
+          suggestions.add(obj);
+        }
       }
     }
     suggestCompletion(lastWord, suggestions, suggestionsPopup);
   }
 
   @Override
-  public void updateContextFunctions(UniqueList<String> functionList, UniqueList<String> objectList) {
-    contextFunctions = new HashSet<>(functionList);
-    contextObjects = new HashSet<>(objectList);
+  public void updateContextFunctions(TreeSet<String> functionList, TreeSet<String> objectList) {
+    contextFunctions = functionList;
+    contextObjects = objectList;
   }
 }

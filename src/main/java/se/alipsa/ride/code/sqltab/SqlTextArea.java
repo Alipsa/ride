@@ -7,10 +7,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.CodeTextArea;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -121,9 +118,13 @@ public class SqlTextArea extends CodeTextArea {
     String line = getText(getCurrentParagraph());
     String lastWord = line.replaceAll("^.*?(\\w+)\\W*$", "$1");
     if (line.endsWith(lastWord) && !"".equals(lastWord)) {
-      List<String> suggestions = Arrays.stream(KEYWORDS)
-          .filter(p -> p.startsWith(lastWord.toLowerCase()))
-          .collect(Collectors.toList());
+      TreeSet<String> suggestions = new TreeSet<>();
+      String lcLastWord = lastWord.toLowerCase();
+      for (String keyWord : KEYWORDS) {
+        if (keyWord.startsWith(lcLastWord)) {
+          suggestions.add(keyWord);
+        }
+      }
       suggestCompletion(lastWord, suggestions, suggestionsPopup);
     }
   }
