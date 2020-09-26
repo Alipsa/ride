@@ -1,4 +1,4 @@
-# This is version 1.2.1 of Ride.
+# This is version 1.2.3 of Ride.
 
 Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine but
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
@@ -18,7 +18,7 @@ java application (server).
 Pre requisites:
 - Java 8 or higher with java fx
 
-Unzip ride-1.2-final-dist.zip to a directory of choice
+Unzip ride-1.2.3-final-dist.zip to a directory of choice
 
 ## How to run:
 
@@ -48,9 +48,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.3
-- Enhanced autocomplete taking in functions and objects from everything loaded.
+- Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).
   Also fixed the shortcoming of . being regarded as a word boundary (. is just a character in R).
-- Fixed bug in testRunner that did not capture errors properly in the summary
+- Run Tests: Fixed bug in testRunner that did not capture errors properly in the summary
 - File types: Recognize DESCRIPTION and NAMESPACE and properties as test files even though they are empty
   Recognize gradle files as groovy files.
 
