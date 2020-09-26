@@ -694,12 +694,13 @@ public class ConsoleComponent extends BorderPane {
               if (isNoArgsFunction(value)) {
                 Context context = session.getTopLevelContext();
                 TestResult funcResult = runTestFunction(context, title, name);
-                results.add(result);
+                results.add(funcResult);
                 Platform.runLater(() -> printResult(methodName, out, err, funcResult, DOUBLE_INDENT));
               }
             }
           }
           end = System.currentTimeMillis();
+
           Map<TestResult.OutCome, List<TestResult>> resultMap = results.stream()
               .collect(Collectors.groupingBy(TestResult::getResult));
 
@@ -828,9 +829,10 @@ public class ConsoleComponent extends BorderPane {
     console.appendFx(INDENT + format("# Running test function {} in {}", methodName, title).trim());
     String issue;
     Exception exception;
-    TestResult result = new TestResult(title);
+    TestResult result = new TestResult(testName);
     try {
       context.evaluate(FunctionCall.newCall(name));
+      log.debug(testName + ": sucessful");
       result.setResult(TestResult.OutCome.SUCCESS);
       return result;
     } catch (EvalException e) {
@@ -846,6 +848,7 @@ public class ConsoleComponent extends BorderPane {
     result.setResult(TestResult.OutCome.FAILURE);
     result.setError(exception);
     result.setIssue(issue);
+    log.debug(testName + ": failed: {}", result);
     return result;
   }
 

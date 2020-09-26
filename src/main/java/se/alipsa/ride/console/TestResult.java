@@ -44,4 +44,14 @@ public class TestResult {
   }
 
   public enum OutCome {SUCCESS, FAILURE, ERROR}
+
+  @Override
+  public String toString() {
+    return "TestResult{" +
+            "testName='" + testName + '\'' +
+            ", result=" + result +
+            ", error=" + error +
+            ", issue='" + issue + '\'' +
+            '}';
+  }
 }

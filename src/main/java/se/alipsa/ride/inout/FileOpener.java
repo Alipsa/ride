@@ -46,7 +46,7 @@ public class FileOpener {
       if (strEndsWith(fileNameLower, ".java")) {
         return codeComponent.addTab(file, CodeType.JAVA);
       }
-      if (strEquals(type, "text/x-groovy") || strEndsWith(fileNameLower, ".groovy", ".gvy", ".gy", ".gsh")) {
+      if (strEquals(type, "text/x-groovy") || strEndsWith(fileNameLower, ".groovy", ".gvy", ".gy", ".gsh", ".gradle")) {
         return codeComponent.addTab(file, CodeType.GROOVY);
       }
       if (strEquals(type, "text/x-sql", "application/sql") || strEndsWith(fileNameLower, "sql")) {
@@ -59,7 +59,8 @@ public class FileOpener {
                  || strEquals(type, "application/x-bat",
           "application/x-sh", "application/json", "application/x-sas")
                  || "namespace".equals(fileNameLower)
-                 || strEndsWith(fileNameLower, ".txt", ".csv", ".gitignore")) {
+                 || "description".equals(fileNameLower)
+                 || strEndsWith(fileNameLower, ".txt", ".csv", ".gitignore", ".properties", "props")) {
         return codeComponent.addTab(file, CodeType.TXT);
       }
       if (allowOpenExternal && isDesktopSupported()) {
