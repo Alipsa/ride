@@ -8,7 +8,7 @@ much like you would use R Studio.
 
 It was created to have a familiar (similar to RStudio) interface to develop R scripts that
 will later run in embedded mode on application servers such as Wildfly or Play Framework.
-I use it daily at work and have been doing so for over a year now. It started as a tool to develop and test R code 
+I use it daily at work and have been doing so for almost two years now. It started as a tool to develop and test R code 
 that I created using RStudio but needed a manageable intermediary to make sure my code worked in Renjin before integrating 
 it with the java application servers I use at work - due to fact that some packages commonly used in GNU R does not yet work 
 in Renjin. Later, it evolved to the point where I now use it as my primary data analysis tool.
@@ -114,8 +114,7 @@ For released versions there is another shell script (ride.sh or ride.cmd) that s
 Note: only direct dependencies are listed below.
 
 ### org.renjin:renjin-script-engine, tools, and renjin-aether-package-loader
-The components that actually does something ;) i.e. executes R code. It is not included in the fat jar and 
-dependecies are scoped as provided. This enables us to run Ride with any version of Renjin (0.9.2716 or later)
+The components that actually does something ;) i.e. executes R code.
 
 Copyright © 2010-2019 BeDataDriven Groep B.V. and contributors under GNU General Public License v2.0
 
@@ -129,10 +128,10 @@ A bridge between awt and javafx so we can use the awt graphics devices in renjin
 
 Copyright (c) 2014-2018, Object Refinery Limited. Licensed under a BSD-style license
 
-### org.slf4j:slf4j-api and slf4j-log4j12
+### org.apache:log4j
 The logging framework used.
 
-Copyright (c) 2004-2017 QOS.ch under MIT license
+Apache 2.0 license
 
 ### com.fasterxml.jackson.core:jackson-core and jackson-databind
 Used for JSON handling in various places.
