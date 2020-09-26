@@ -244,12 +244,12 @@
       <version>2.5.0</version>
     </dependency>
 
-    <dependency>
+    <!--dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
       <version>1.4.200</version>
-    </dependency>
-    <dependency>
+    </dependency-->
+    <!--dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>42.2.16</version>
@@ -259,17 +259,17 @@
           <artifactId>slf4j-simple</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
+    </dependency-->
+    <!--dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>8.0.21</version>
-    </dependency>
-    <dependency>
+    </dependency-->
+    <!--dependency>
       <groupId>com.microsoft.sqlserver</groupId>
       <artifactId>mssql-jdbc</artifactId>
       <version>8.4.1.jre8</version>
-    </dependency>
+    </dependency-->
 
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -338,7 +338,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.6.2</version>
+      <version>5.7.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -394,12 +394,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M4</version>
+        <version>3.0.0-M5</version>
         <dependencies>
           <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.6.2</version>
+            <version>5.7.0</version>
           </dependency>
         </dependencies>
       </plugin>

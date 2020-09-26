@@ -28,16 +28,23 @@ or on windows
 
 `$ .\ride.cmd`
 
-If you need to customize things, I suggest that you add those things in an env.sh/env.cmd file. THis way you will not
-need to worry about upgrading to a later version of Ride later. The special variable
-JAVA_OPTS can be used to add system properties (-D key/values) to java. Some reasons why you want to do this are
+If you need to customize things, I suggest that you add those things in an env.sh/env.cmd file. 
+This way you will not need to worry about upgrading to a later version of Ride later. 
+The special variable JAVA_OPTS can be used to add system properties (-D key/values) to java. 
+Some reasons why you want to do this are
 - You do not have javafx in you jdk and need to wire it in
-- You have a high DPI display and need to customize the (scale) the screen
+- You have a high DPI display and need to customize (scale) the screen
 - You want to add more available memory to Ride than the default
 
-If possible, create a project and use the pom file to manage dependencies.  
+If possible, create a project and use the pom file to manage dependencies. Ride has wizards for
+projects (analysis projects using Renjin) and packages (renjin extensions).  
 If that does not work, you might need to manually add / override jars in the lib folder but this runs the risk of
-making ride unable to start. 
+making ride unable to start. The only reason I can think of where the latter is needed is if there is
+a Ride dependency that you must override. Older versions of Ride tried to include as many commonly used
+dependencies as possible to make it simple to write R code without having to think of dependency management
+but since Ride now has built in support for Maven (and soon also Gradle) we are moving away from this idea
+and will instead remove any dependency that Ride is not using itself, so they can be managed by the build file 
+in your project instead.
 
 ## JDBC native components
 For some jdbc drivers there are OS native files that is required for some connections features to work. 
