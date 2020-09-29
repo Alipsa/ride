@@ -5,12 +5,13 @@ import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.Cursor;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Tooltip;
-import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
@@ -18,15 +19,18 @@ import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.model.Table;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.SqlParser;
 import se.alipsa.ride.utils.StringUtils;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -100,34 +104,67 @@ public class SqlTab extends TextAreaTab {
         Connection con = null;
         try {
           ConnectionInfo ci = connectionCombo.getValue();
-          Class.forName(ci.getDriver());
-          if (ci.getUser() == null) {
-            con = DriverManager.getConnection(ci.getUrl());
-          } else {
-            con = DriverManager.getConnection(ci.getUrl(), ci.getUser(), ci.getPassword());
+
+          // DriverManager.getConnection uses system classloader no matter what so we need to dance around this
+          // to allow dynamic classloading from a pom etc. by getting the connection directly from the driver
+          Driver driver = null;
+          try {
+            Class<Driver> clazz = (Class<Driver>) Thread.currentThread().getContextClassLoader().loadClass(ci.getDriver());
+            log.debug("Loaded driver from session classloader, instating the driver {}", ci.getDriver());
+            try {
+              driver = clazz.getDeclaredConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+              log.error("Failed to instantiate the driver: {}", ci.getDriver(), e);
+            }
+          } catch (ClassCastException | ClassNotFoundException e) {
+            log.info("Failed to load the class for {}, attempting to use Class.forName instead", ci.getDriver());
+            try {
+              Class<?> clazz = Class.forName(ci.getDriver());
+              driver = ((Driver)clazz.getDeclaredConstructor().newInstance());
+              log.debug("Loaded driver {} with Class.forName successfully", ci.getDriver());
+            } catch (ClassNotFoundException classNotFoundException) {
+              log.info("Failed to load the driver class using Class.forName(\"{}\")", ci.getDriver());
+              Platform.runLater(() ->
+                  Alerts.showAlert("Failed to load driver",
+                  "You need to add the jar with " + ci.getDriver() + " to the classpath (pom.xml or ride lib dir)",
+                  Alert.AlertType.ERROR)
+              );
+              return null;
+            }
           }
+          Properties props = new Properties();
+          if (ci.getUser() != null) {
+            props.put("user", ci.getUser());
+            if ( ci.getPassword() != null) {
+              props.put("password",  ci.getPassword());
+            }
+          }
+          if (driver == null) {
+            con = DriverManager.getConnection(ci.getUrl(), props);
+          } else {
+            con = driver.connect(ci.getUrl(), props);
+          }
+
           AtomicInteger queryCount = new AtomicInteger(1);
 
           try (Statement stm = con.createStatement()) {
-            for (int count = 0; count < batchedQry.length; count++) {
-              String qry = batchedQry[count];
+            for (String qry : batchedQry) {
               boolean hasMoreResultSets = stm.execute(qry);
 
               int capLen = Math.min(qry.length(), PRINT_QUERY_LENGTH);
               String queryCapture = StringUtils.fixedLengthString(qry.substring(0, capLen).trim(), PRINT_QUERY_LENGTH);
 
-              while ( hasMoreResultSets || stm.getUpdateCount() != -1 ) {
-                if ( hasMoreResultSets ) {
+              while (hasMoreResultSets || stm.getUpdateCount() != -1) {
+                if (hasMoreResultSets) {
                   try (ResultSet rs = stm.getResultSet()) {
                     Table table = new Table(rs);
                     Platform.runLater(() ->
-                      gui.getInoutComponent().showInViewer(table, SqlTab.this.getTitle() + " " + queryCount.getAndIncrement() + ".")
+                        gui.getInoutComponent().showInViewer(table, SqlTab.this.getTitle() + " " + queryCount.getAndIncrement() + ".")
                     );
                   }
-                }
-                else { // if ddl/dml/...
+                } else { // if ddl/dml/...
                   int queryResult = stm.getUpdateCount();
-                  if ( queryResult == -1 ) { // no more queries processed
+                  if (queryResult == -1) { // no more queries processed
                     break;
                   }
 
@@ -168,6 +205,7 @@ public class SqlTab extends TextAreaTab {
     });
 
     Thread scriptThread = new Thread(updateTask);
+    scriptThread.setContextClassLoader(gui.getConsoleComponent().getSession().getClassLoader());
     scriptThread.setDaemon(false);
     scriptThread.start();
   }
