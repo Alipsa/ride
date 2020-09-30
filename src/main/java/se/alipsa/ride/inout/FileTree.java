@@ -34,7 +34,7 @@ import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.GitUtils;
+import se.alipsa.ride.utils.git.GitUtils;
 
 import java.io.File;
 import java.io.Serializable;

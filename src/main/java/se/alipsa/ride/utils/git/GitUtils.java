@@ -1,4 +1,4 @@
-package se.alipsa.ride.utils;
+package se.alipsa.ride.utils.git;
 
 import static org.apache.maven.shared.utils.StringUtils.isBlank;
 import static se.alipsa.ride.Constants.GitStatus.GIT_ADDED;
@@ -20,6 +20,8 @@ import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import se.alipsa.ride.inout.FileItem;
+import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +32,7 @@ import java.util.List;
 public class GitUtils {
 
    private static final Logger log = LogManager.getLogger();
+   private static final String CREDENTIALS_FILENAME = ".git-credentials";
 
    public static String asRelativePath(File currentFile, File rootDir) {
       String root = rootDir.getAbsolutePath();
@@ -97,6 +100,7 @@ public class GitUtils {
    public static CredentialsProvider getStoredCredentials(String url) throws IOException, URISyntaxException {
       File gitCredentials = getCredentialsFile();
       if (!gitCredentials.exists()) {
+         log.info("No credentials file ({}) found", CREDENTIALS_FILENAME);
          return null;
       }
       if (isBlank(url)) {
@@ -128,6 +132,6 @@ public class GitUtils {
    }
 
    private static File getCredentialsFile() {
-      return new File(FileUtils.getUserHome(), ".git-credentials");
+      return new File(FileUtils.getUserHome(), CREDENTIALS_FILENAME);
    }
 }

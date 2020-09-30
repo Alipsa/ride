@@ -2,7 +2,7 @@ package se.alipsa.ride.inout;
 
 import static org.apache.maven.shared.utils.StringUtils.isBlank;
 import static se.alipsa.ride.Constants.REPORT_BUG;
-import static se.alipsa.ride.utils.GitUtils.asRelativePath;
+import static se.alipsa.ride.utils.git.GitUtils.asRelativePath;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -47,7 +47,7 @@ import se.alipsa.ride.inout.git.GitStatusDialog;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.GitUtils;
+import se.alipsa.ride.utils.git.GitUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -576,7 +576,9 @@ public class DynamicContextMenu extends ContextMenu {
          public PullResult call() throws Exception {
             try {
                credentialsProvider = GitUtils.getStoredCredentials(url);
-               PullResult pullResult = git.pull().setCredentialsProvider(credentialsProvider).call();
+               PullResult pullResult = git.pull()
+                   .setCredentialsProvider(credentialsProvider)
+                   .call();
                log.info(pullResult.toString());
                return pullResult;
             } catch (RuntimeException e) {

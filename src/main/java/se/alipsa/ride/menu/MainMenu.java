@@ -46,7 +46,7 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.GitUtils;
+import se.alipsa.ride.utils.git.GitUtils;
 import se.alipsa.ride.utils.UniqueList;
 
 import java.io.File;

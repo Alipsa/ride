@@ -18,6 +18,8 @@
     <release.tag>1.2.2-beta</release.tag>
     <renjin.version>3.5-beta76</renjin.version>
     <gradle.version>6.1.1</gradle.version>
+    <!--jgit.version>5.7.0.202003110725-r</jgit.version-->
+    <jgit.version>5.9.0.202009080501-r</jgit.version>
   </properties>
 
   <repositories>
@@ -226,15 +228,18 @@
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit</artifactId>
-      <version>5.7.0.202003110725-r</version>
-      <!-- later versions have some issue with ssh -->
-      <!--version>5.8.1.202007141445-r</version-->
+      <version>${jgit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit.ssh.jsch</artifactId>
+      <version>${jgit.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>3.0.5</version>
+      <version>3.0.6</version>
       <type>pom</type>
     </dependency>
     <!-- enable @Grab to work in groovy -->
@@ -351,6 +356,12 @@
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-core</artifactId>
       <version>2.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.jodah</groupId>
+      <artifactId>concurrentunit</artifactId>
+      <version>0.4.6</version>
       <scope>test</scope>
     </dependency>
 
