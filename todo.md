@@ -1,30 +1,5 @@
 # Todo / Roadmap
 
-### Code completion
-Available methods on an object: https://stackoverflow.com/questions/8691812/get-object-methods-r
-S3 object/function: methods() , List all available methods for an S3 generic function, or all methods for a class.)
-> A <- matrix(runif(10))
-> B <- methods(class=class(A))
-
-S4: showMethods()
-RC: Element$methods() or for an object print(ele$getRefClass()$methods())
-
-view all the functions that are built into an R package:
-
-`lsf.str("package:dplyr")`
-To list all objects in the package use ls
-
-`ls("package:dplyr")`
-
-```r
-library("se.alipsa:rideutils")
-
-print(lsf.str("package:rideutils"))
-print(ls("package:rideutils"))
-
-print(lsf.str("package:base"))
-print(ls("package:base"))
-```
 
 ### Minor fixes
 Search 
@@ -32,7 +7,10 @@ Search
     - should move to beginning after reaching the end
     - should alert that nothing matched if no results
  
-    
+### Git integration
+It is likely that not all variations of authentication works
+[This article](https://www.codeaffine.com/2014/12/09/jgit-authentication/) is old but useful 
+to clarify how it works.    
 
 ### Project menu and project support
 Add a project menu
@@ -52,6 +30,14 @@ Make it possible to customize tab as \t or number of spaces
 ### Add suggestions when pressing . for SQL
 use metadata to determine suggestion 
 
+### Add object variables to code completion
+For users own Reference and R6 classes the available methods and fields should be suggested e.g.
+
+student <- setRefClass("student",
+fields = list(name = "character", age = "numeric", GPA = "numeric"))
+
+student$+ctrl+space should suggest name, age and GPA
+
 ### Implements graphics support (grDevices) for javafx
 
 ### Improve search
@@ -67,9 +53,6 @@ use metadata to determine suggestion
 ### Enhance FileViewer
 - move file (maybe drag drop)
 
-### Enhance code completion
-- does not work well for . e.g. as.da+ctrl+space
-
 ### Add import dataSet in File meny
 Should generate code at current cursor
 
@@ -79,17 +62,6 @@ NAMESPACE, SAS, SPSS
 ### Parse and report on issues in R code
 - misspelled objects / vars
 - syntax errors
-
-### Add current variables to code completion
-e.g. when library("se.alipsa:R2JDBC") is loaded it should be possible to do 
-dbGe+ctrl+space and get suggestion for dbGetQuery and dbGetException
-
-Also for my own Reference and R6 classes the available methods and fields should be suggested e.g.
-
-student <- setRefClass("student",
-fields = list(name = "character", age = "numeric", GPA = "numeric"))
-
-student$+ctrl+space should suggest name, age and GPA
 
 ### Enhance packages section
 add checkbox and tick off is loaded into session, available packages should be listed from current classpath
