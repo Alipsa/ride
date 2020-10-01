@@ -8,9 +8,21 @@ Search
     - should alert that nothing matched if no results
  
 ### Git integration
-It is likely that not all variations of authentication works
+Not all variations of authentication works
 [This article](https://www.codeaffine.com/2014/12/09/jgit-authentication/) is old but useful 
-to clarify how it works.    
+to clarify how it works.  
+
+For https when requiring a password the following error occurs:
+org.eclipse.jgit.errors.TransportException: https://someuser@server/someproject.git: Authentication is required but no CredentialsProvider has been registered
+        at org.eclipse.jgit.transport.TransportHttp.connect(TransportHttp.java:533) ~[org.eclipse.jgit-5.9.0.202009080501-r.jar:5.9.0.202009080501-r]
+        at org.eclipse.jgit.transport.TransportHttp.openFetch(TransportHttp.java:361) ~[org.eclipse.jgit-5.9.0.202009080501-r.jar:5.9.0.202009080501-r]
+        at org.eclipse.jgit.transport.FetchProcess.executeImp(FetchProcess.java:105) ~[org.eclipse.jgit-5.9.0.202009080501-r.jar:5.9.0.202009080501-r]
+        at org.eclipse.jgit.transport.FetchProcess.execute(FetchProcess.java:91) ~[org.eclipse.jgit-5.9.0.202009080501-r.jar:5.9.0.202009080501-r]
+        at org.eclipse.jgit.transport.Transport.fetch(Transport.java:1260) ~[org.eclipse.jgit-5.9.0.202009080501-r.jar:5.9.0.202009080501-r]
+        at org.eclipse.jgit.api.FetchCommand.call(FetchCommand.java:211) ~[org.eclipse.jgit-5.9.0.202009080501-r.jar:5.9.0.202009080501-r]
+        at org.eclipse.jgit.api.PullCommand.call(PullCommand.java:263) ~[org.eclipse.jgit-5.9.0.202009080501-r.jar:5.9.0.202009080501-r]
+        at se.alipsa.ride.inout.DynamicContextMenu$1.call(DynamicContextMenu.java:581) ~[ride-1.2.2-SNAPSHOT.jar:?]
+        at se.alipsa.ride.inout.DynamicContextMenu$1.call(DynamicContextMenu.java:574) ~[ride-1.2.2-SNAPSHOT.jar:?]  
 
 ### Project menu and project support
 Add a project menu
