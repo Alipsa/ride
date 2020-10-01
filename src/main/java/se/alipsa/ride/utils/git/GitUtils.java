@@ -24,8 +24,12 @@ import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -134,4 +138,44 @@ public class GitUtils {
    private static File getCredentialsFile() {
       return new File(FileUtils.getUserHome(), CREDENTIALS_FILENAME);
    }
+
+  public static void removeCredentials(String url) throws URISyntaxException, IOException {
+     File gitCredentials = getCredentialsFile();
+     if (!gitCredentials.exists()) {
+        log.info("No credentials file ({}) found", CREDENTIALS_FILENAME);
+        return;
+     }
+     if (isBlank(url)) {
+        return;
+     }
+     URIish remoteUri = new URIish(url);
+     List<String> lines = Files.readAllLines(gitCredentials.toPath());
+     String lineToRemove = null;
+     for (String line : lines) {
+        if (line == null || line.trim().equals("") || line.trim().startsWith("#")) {
+           continue;
+        }
+        URIish uri = new URIish(line);
+        String uriPath = uri.getPath();
+        String remotePath = remoteUri.getPath();
+        // if uri.getPath() == null it should always match, see https://git-scm.com/docs/gitcredentials
+        if (uriPath == null) {
+           uriPath = "";
+           remotePath = "";
+        }
+
+        if (uri.getScheme().equals(remoteUri.getScheme())
+            && uri.getHost().equals(remoteUri.getHost())
+            && uriPath.equals(remotePath)) {
+
+           lineToRemove = line;
+        }
+     }
+     lines.remove(lineToRemove);
+     try(Writer writer = new OutputStreamWriter(new FileOutputStream(gitCredentials), StandardCharsets.UTF_8)) {
+        for (String line : lines) {
+           writer.write(line + "\n");
+        }
+     }
+  }
 }

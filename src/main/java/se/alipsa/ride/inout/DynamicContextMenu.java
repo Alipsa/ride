@@ -62,6 +62,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -74,7 +75,7 @@ public class DynamicContextMenu extends ContextMenu {
    private final FileTree fileTree;
    private TreeItem<FileItem> currentNode;
    private File currentFile;
-   private CredentialsProvider credentialsProvider;
+   private Map<String, CredentialsProvider> credentialsProviders;
 
    private final MenuItem createDirMI;
    private final MenuItem createFileMI;
@@ -90,7 +91,7 @@ public class DynamicContextMenu extends ContextMenu {
    public DynamicContextMenu(FileTree fileTree, Ride gui, InoutComponent inoutComponent) {
       this.fileTree = fileTree;
       this.gui = gui;
-      credentialsProvider = null;
+      credentialsProviders = new HashMap<>();
 
       MenuItem copyMI = new MenuItem("copy name");
       copyMI.setOnAction(e -> fileTree.copySelectionToClipboard());
@@ -575,9 +576,8 @@ public class DynamicContextMenu extends ContextMenu {
          @Override
          public PullResult call() throws Exception {
             try {
-               credentialsProvider = GitUtils.getStoredCredentials(url);
                PullResult pullResult = git.pull()
-                   .setCredentialsProvider(credentialsProvider)
+                   .setCredentialsProvider(getCredentialsProvider(url))
                    .call();
                log.info(pullResult.toString());
                return pullResult;
@@ -604,8 +604,8 @@ public class DynamicContextMenu extends ContextMenu {
          if (ex == null) {
             ex = throwable;
          }
-         if (ex instanceof TransportException) {
-            handleTransportException((TransportException)ex, "pull");
+         if (ex instanceof TransportException || ex instanceof org.eclipse.jgit.errors.TransportException) {
+            handleTransportException(ex, "pull");
          } else {
             log.warn("Failed to pull", ex);
             ExceptionAlert.showAlert("Failed to pull", ex);
@@ -615,6 +615,14 @@ public class DynamicContextMenu extends ContextMenu {
       Thread runningThread = new Thread(task);
       runningThread.setDaemon(false);
       runningThread.start();
+   }
+
+   private CredentialsProvider getCredentialsProvider(String url) throws IOException, URISyntaxException {
+      CredentialsProvider credentialsProvider = credentialsProviders.get(url);
+      if (credentialsProvider == null) {
+         return GitUtils.getStoredCredentials(url);
+      }
+      return credentialsProvider;
    }
 
    private void gitListRemotes(ActionEvent actionEvent) {
@@ -669,8 +677,7 @@ public class DynamicContextMenu extends ContextMenu {
          @Override
          public StringBuilder call() throws Exception {
             try {
-               credentialsProvider = GitUtils.getStoredCredentials(url);
-               Iterable<PushResult> result = git.push().setCredentialsProvider(credentialsProvider).call();
+               Iterable<PushResult> result = git.push().setCredentialsProvider(getCredentialsProvider(url)).call();
                log.info("Git push was successful: {}", result);
                StringBuilder str = new StringBuilder();
                for (PushResult pushResult : result) {
@@ -703,8 +710,8 @@ public class DynamicContextMenu extends ContextMenu {
          if (ex == null) {
             ex = throwable;
          }
-         if (ex instanceof TransportException) {
-            handleTransportException((TransportException)ex, "push");
+         if (ex instanceof TransportException || ex instanceof org.eclipse.jgit.errors.TransportException) {
+            handleTransportException(ex, "push");
          } else {
             log.warn("Failed to push", ex);
             ExceptionAlert.showAlert("Failed to push", ex);
@@ -716,9 +723,9 @@ public class DynamicContextMenu extends ContextMenu {
       runningThread.start();
    }
 
-   private void handleTransportException(TransportException e, String operation) {
+   private void handleTransportException(Throwable e, String operation) {
       gui.setNormalCursor();
-      log.info("Error pulling from remote");
+      log.info("Error pulling from remote: {}", e.toString());
       // TODO: check if it is an ssl problem
       List<Class<? extends Throwable>> causes = new ArrayList<>();
       Throwable cause = e.getCause();
@@ -727,29 +734,42 @@ public class DynamicContextMenu extends ContextMenu {
          causes.add(cause.getClass());
          cause = cause.getCause();
       }
+      String url = getRemoteGitUrl();
       if (causes.contains(javax.net.ssl.SSLHandshakeException.class)) {
          handleSslValiationProblem(e, operation);
       } else if (e.getMessage().contains("Authentication is required but no CredentialsProvider has been registered")) {
 
-         CredentialsDialog credentialsDialog = new CredentialsDialog();
+         CredentialsDialog credentialsDialog = new CredentialsDialog("Authentication is required");
          Optional<Map<CredentialsDialog.KEY, String>> res = credentialsDialog.showAndWait();
          if (res.isPresent()) {
             Map<CredentialsDialog.KEY, String> creds = res.get();
             String userName = creds.get(CredentialsDialog.KEY.NAME);
             String password = creds.get(CredentialsDialog.KEY.PASSWORD);
-            credentialsProvider = new UsernamePasswordCredentialsProvider(userName, password);
+            CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(userName, password);
             boolean store = Boolean.parseBoolean(creds.get(CredentialsDialog.KEY.STORE_CREDENTIALS));
             if (store) {
-               String url = getRemoteGitUrl();
                try {
                   GitUtils.storeCredentials(url, userName, password);
                } catch (Exception ex) {
                   ExceptionAlert.showAlert("Failed to store credentials", ex);
                }
+            } else {
+               credentialsProviders.put(url, credentialsProvider);
             }
             //Alerts.info("Credentials set", "Credentials set, please try again!");
+         } else {
+            return;
          }
-      } else {
+      } else if (e.getMessage().contains("not authorized")) {
+         credentialsProviders.remove(url);
+         try {
+            GitUtils.removeCredentials(url);
+         } catch (Exception ex) {
+            log.warn("Failed to remove stored credentials", ex);
+         }
+         Alerts.warn("Incorrect credentials, all stored credentials have been reset", e.getMessage());
+      }
+      else {
          ExceptionAlert.showAlert("An unrecognized remote exception occurred. " + REPORT_BUG, e);
          return;
       }
@@ -766,7 +786,7 @@ public class DynamicContextMenu extends ContextMenu {
 
    }
 
-   private void handleSslValiationProblem(TransportException e, String operation) {
+   private void handleSslValiationProblem(Throwable e, String operation) {
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
       alert.setTitle("Failed to " + operation);
       alert.setContentText(e.toString() + "\n\nDo you want to disable ssl verification?");

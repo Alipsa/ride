@@ -1,8 +1,17 @@
 package se.alipsa.ride.inout.git;
 
 
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
+
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -13,9 +22,6 @@ import se.alipsa.ride.utils.FileUtils;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
 
 public class CredentialsDialog extends Dialog<Map<CredentialsDialog.KEY, String>> {
 
@@ -29,8 +35,8 @@ public class CredentialsDialog extends Dialog<Map<CredentialsDialog.KEY, String>
    private PasswordField passwordField;
    private  CheckBox storeCheckBox;
 
-   public CredentialsDialog() {
-      setTitle("Add credentials");
+   public CredentialsDialog(String title) {
+      setTitle("Git credentials");
 
       getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
@@ -41,6 +47,8 @@ public class CredentialsDialog extends Dialog<Map<CredentialsDialog.KEY, String>
       pane.setCenter(vBox);
       getDialogPane().setContent(pane);
 
+      Label titleLabel = new Label(title);
+      vBox.getChildren().add(titleLabel);
 
       HBox nameHbox = new HBox();
       nameHbox.setSpacing(10);
@@ -70,8 +78,11 @@ public class CredentialsDialog extends Dialog<Map<CredentialsDialog.KEY, String>
       storeHbox.setSpacing(10);
       storeHbox.setPadding(new Insets(10, 10, 10, 10));
       Label storeLabel = new Label("Save permanently");
+      Tooltip tooltip = new Tooltip("If checked then save to ~/.git-credentials otherwise just save in memory for this session");
+      storeLabel.setTooltip(tooltip);
       storeHbox.getChildren().add(storeLabel);
       storeCheckBox = new CheckBox();
+      storeCheckBox.setTooltip(tooltip);
       storeHbox.getChildren().add(storeCheckBox);
       vBox.getChildren().add(storeHbox);
 
