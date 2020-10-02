@@ -172,10 +172,6 @@ public class GitUtils {
         }
      }
      lines.remove(lineToRemove);
-     try(Writer writer = new OutputStreamWriter(new FileOutputStream(gitCredentials), StandardCharsets.UTF_8)) {
-        for (String line : lines) {
-           writer.write(line + "\n");
-        }
-     }
+     FileUtils.writeToFile(gitCredentials, lines);
   }
 }

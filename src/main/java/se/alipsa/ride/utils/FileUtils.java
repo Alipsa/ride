@@ -222,6 +222,33 @@ public class FileUtils {
     }
   }
 
+
+  /**
+   * @param file    the file to write to
+   * @param lines the content to write
+   * @throws IOException If the given file object does not denote an existing, writable regular file
+   *                               and a new regular file of that name cannot be created,
+   *                               or if some other error occurs while opening, creating or writing to the file
+   */
+  public static void writeToFile(File file, List<String> lines) throws IOException {
+    writeToFile(file, lines, "\n", StandardCharsets.UTF_8);
+  }
+
+  /**
+   * @param file    the file to write to
+   * @param lines the content to write
+   * @throws IOException If the given file object does not denote an existing, writable regular file
+   *                               and a new regular file of that name cannot be created,
+   *                               or if some other error occurs while opening, creating or writing to the file
+   */
+  public static void writeToFile(File file, List<String> lines, String lineEnding, Charset charset) throws IOException {
+    try(Writer writer = new OutputStreamWriter(new FileOutputStream(file), charset)) {
+      for (String line : lines) {
+        writer.write(line + lineEnding);
+      }
+    }
+  }
+
   public static void appendToOrCreateFile(File file, String content) throws IOException {
     if (!file.exists()) {
       file.createNewFile();

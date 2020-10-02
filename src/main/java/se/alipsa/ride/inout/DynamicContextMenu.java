@@ -725,8 +725,7 @@ public class DynamicContextMenu extends ContextMenu {
 
    private void handleTransportException(Throwable e, String operation) {
       gui.setNormalCursor();
-      log.info("Error pulling from remote: {}", e.toString());
-      // TODO: check if it is an ssl problem
+      log.info("Error when doing {} from/to remote: {}", operation, e.toString());
       List<Class<? extends Throwable>> causes = new ArrayList<>();
       Throwable cause = e.getCause();
       while (cause != null) {
@@ -736,8 +735,8 @@ public class DynamicContextMenu extends ContextMenu {
       }
       String url = getRemoteGitUrl();
       if (causes.contains(javax.net.ssl.SSLHandshakeException.class)) {
-         handleSslValiationProblem(e, operation);
-      } else if (e.getMessage().contains("Authentication is required but no CredentialsProvider has been registered")) {
+         handleSslValidationProblem(e, operation);
+      } else if (e.getMessage().contains("Authentication is required")) {
 
          CredentialsDialog credentialsDialog = new CredentialsDialog("Authentication is required");
          Optional<Map<CredentialsDialog.KEY, String>> res = credentialsDialog.showAndWait();
@@ -786,7 +785,7 @@ public class DynamicContextMenu extends ContextMenu {
 
    }
 
-   private void handleSslValiationProblem(Throwable e, String operation) {
+   private void handleSslValidationProblem(Throwable e, String operation) {
       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
       alert.setTitle("Failed to " + operation);
       alert.setContentText(e.toString() + "\n\nDo you want to disable ssl verification?");
