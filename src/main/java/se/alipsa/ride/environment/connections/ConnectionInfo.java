@@ -1,16 +1,23 @@
 package se.alipsa.ride.environment.connections;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.Alert;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.utils.Alerts;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class ConnectionInfo implements Comparable<ConnectionInfo> {
 
-  private static Logger log = LogManager.getLogger(ConnectionInfo.class);
+  private static final Logger log = LogManager.getLogger(ConnectionInfo.class);
 
   private final SimpleStringProperty name;
   private final SimpleStringProperty driver;
@@ -91,7 +98,7 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj != null && obj instanceof ConnectionInfo) {
+    if (obj instanceof ConnectionInfo) {
       return toString().equals(obj.toString());
     } else {
       return false;
@@ -99,6 +106,7 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
   }
 
   public Connection connect() throws SQLException {
+    /*
     String user = getUser();
     String password = getPassword();
     String theUrl = getUrl();
@@ -108,6 +116,48 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
       return DriverManager.getConnection(theUrl);
     }
     return DriverManager.getConnection(theUrl, user, password);
+    */
+
+    // DriverManager.getConnection uses system classloader no matter what so we need to dance around this
+    // to allow dynamic classloading from a pom etc. by getting the connection directly from the driver
+    Driver driver = null;
+    try {
+      ClassLoader cl = Ride.instance().getConsoleComponent().getSession().getClassLoader();
+      Class<Driver> clazz = (Class<Driver>) cl.loadClass(getDriver());
+      log.debug("Loaded driver from session classloader, instating the driver {}", getDriver());
+      try {
+        driver = clazz.getDeclaredConstructor().newInstance();
+      } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        log.error("Failed to instantiate the driver: {}", getDriver(), e);
+      }
+    } catch (ClassCastException | ClassNotFoundException e) {
+      log.info("Failed to load the class for {}, attempting to use Class.forName instead", getDriver());
+      try {
+        Class<?> clazz = Class.forName(getDriver());
+        driver = ((Driver)clazz.getDeclaredConstructor().newInstance());
+        log.debug("Loaded driver {} with Class.forName successfully", getDriver());
+      } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException classNotFoundException) {
+        log.info("Failed to load and instantiate the driver class using Class.forName(\"{}\")", getDriver());
+        Platform.runLater(() ->
+            Alerts.showAlert("Failed to load driver",
+                "You need to add the jar with " + getDriver() + " to the classpath (pom.xml or ride lib dir)",
+                Alert.AlertType.ERROR)
+        );
+        return null;
+      }
+    }
+    Properties props = new Properties();
+    if (getUser() != null) {
+      props.put("user", getUser());
+      if ( getPassword() != null) {
+        props.put("password",  getPassword());
+      }
+    }
+    if (driver == null) {
+      return DriverManager.getConnection(getUrl(), props);
+    } else {
+      return driver.connect(getUrl(), props);
+    }
   }
 
   public boolean urlContainsLogin() {
