@@ -161,6 +161,11 @@ public class ConnectionsTab extends Tab {
       ConnectionInfo con = new ConnectionInfo(name.getValue(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
       addConnection(con);
       saveConnection(con);
+      try(Connection connection = con.connect()) {
+        log.info("Connection created successfully, all good!");
+      } catch (SQLException ex) {
+        ExceptionAlert.showAlert("Failed to connect to database: " + ex.toString(), ex);
+      }
     });
     /*VBox buttonBox = new VBox();
     buttonBox.setPadding(new Insets(10, 10, 0, 10));
