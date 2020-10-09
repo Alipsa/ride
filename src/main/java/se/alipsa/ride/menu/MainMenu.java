@@ -463,71 +463,7 @@ public class MainMenu extends MenuBar {
   }
 
   private void displayUserManual(ActionEvent actionEvent) {
-    WebView browser = new WebView();
-    WebEngine webEngine = browser.getEngine();
-    BorderPane borderPane = new BorderPane();
-    borderPane.setCenter(browser);
-    String cssPath = gui.getStyleSheets().get(0);
-    log.debug("Adding style sheet {}", cssPath);
-    webEngine.setUserStyleSheetLocation(cssPath);
-    browser.getStylesheets().addAll(gui.getStyleSheets());
-
-    FlowPane linkPane = new FlowPane();
-    borderPane.setTop(linkPane);
-
-    URL featuresUrl = FileUtils.getResourceUrl("manual/features.html");
-    URL interactionUrl = FileUtils.getResourceUrl("manual/InteractingWithRide.html");
-    URL shortcutsUrl = FileUtils.getResourceUrl("manual/KeyBoardShortcuts.html");
-    URL examplesUrl = FileUtils.getResourceUrl("manual/examples.html");
-    URL packagesUrl = FileUtils.getResourceUrl("manual/packages.html");
-
-    Button featuresButton = new Button("Ride features");
-    featuresButton.setOnAction(e -> webEngine.load(Objects.requireNonNull(featuresUrl).toExternalForm()));
-
-    Button rideShortCuts = new Button("Ride keyboard shortcuts");
-    rideShortCuts.setOnAction(e -> webEngine.load(Objects.requireNonNull(shortcutsUrl).toExternalForm()));
-
-    Button interactingWithRideButton = new Button("Interacting with Ride");
-    interactingWithRideButton.setOnAction(e -> webEngine.load(Objects.requireNonNull(interactionUrl).toExternalForm()));
-
-    Button examplesButton = new Button("Tips and tricks");
-    examplesButton.setOnAction(e -> webEngine.load(Objects.requireNonNull(examplesUrl).toExternalForm()));
-
-    Button packagesButton = new Button("Packages");
-    packagesButton.setOnAction(e -> webEngine.load(Objects.requireNonNull(packagesUrl).toExternalForm()));
-
-    linkPane.getChildren().addAll(featuresButton, rideShortCuts, interactingWithRideButton, packagesButton, examplesButton);
-
-    webEngine.setCreatePopupHandler(
-       (PopupFeatures config) -> {
-         WebView nBrowser = new WebView();
-         // Always use bright theme as external links will usually look funny when coming from dark mode
-         URL themeUrl = FileUtils.getResourceUrl(Constants.BRIGHT_THEME);
-         if (themeUrl != null) {
-           nBrowser.getEngine().setUserStyleSheetLocation(themeUrl.toExternalForm());
-         }
-         nBrowser.getStylesheets().addAll(gui.getStyleSheets());
-         Scene scene = new Scene(nBrowser);
-         Stage stage = new Stage();
-         stage.setScene(scene);
-         stage.show();
-         return nBrowser.getEngine();
-       });
-
-
-    Scene dialog = new Scene(borderPane, 1024, 768);
-    Stage stage = new Stage();
-    stage.setWidth(1024);
-    stage.setHeight(768);
-    stage.initModality(Modality.NONE);
-    stage.initOwner(gui.getStage());
-    stage.setTitle("User Manual");
-    stage.setScene(dialog);
-    stage.show();
-    webEngine.load(Objects.requireNonNull(featuresUrl).toExternalForm());
-    stage.toFront();
-    stage.requestFocus();
-    stage.setAlwaysOnTop(false);
+    new UserManual(gui).show();
   }
 
   private void displayAbout(ActionEvent actionEvent) {

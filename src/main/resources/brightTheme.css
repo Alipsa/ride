@@ -206,3 +206,12 @@ body {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+
+.usermanual-normal-button {
+    -fx-background-color: -fx-base;
+}
+
+.usermanual-clicked-button {
+    -fx-background-color: white;
+}

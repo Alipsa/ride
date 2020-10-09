@@ -345,3 +345,11 @@ body {
 a {
     color: royalblue;
 }
+
+.usermanual-normal-button {
+    -fx-background-color: -fx-selected-bgcolor;
+}
+
+.usermanual-clicked-button {
+    -fx-background-color: -fx-base-bgcolor;
+}
