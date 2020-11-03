@@ -94,17 +94,20 @@
   <build>
     <resources>
       <resource>
-        <directory>src/main/R</directory>
+        <directory>${project.basedir}/R</directory>
       </resource>
     </resources>
     <plugins>
       <plugin>
         <groupId>se.alipsa</groupId>
         <artifactId>renjin-test-maven-plugin</artifactId>
-        <version>1.3.4</version>
+        <version>1.3.5</version>
         <configuration>
           <testFailureIgnore>false</testFailureIgnore>
           <runSourceScriptsBeforeTests>true</runSourceScriptsBeforeTests>
+          <sourceDirectory>${project.basedir}/R</sourceDirectory>
+          <testSourceDirectory>${project.basedir}/tests</testSourceDirectory>
+          <testResourceDirectory>${project.basedir}/tests/resources</testResourceDirectory>
         </configuration>
         <executions>
           <execution>
@@ -143,6 +146,12 @@
           </dependency>
         </dependencies>
       </plugin>
+      <!-- uncomment this to be able to run the main R script from maven with mvn runR -->
+      <!--plugin>
+        <groupId>se.alipsa</groupId>
+        <artifactId>renjin-run-project-maven-plugin</artifactId>
+        <version>1.0.0</version>
+      </plugin-->
     </plugins>
   </build>
   <!-- TODO: uncomment this and add the real url if you have a repository to deploy to -->

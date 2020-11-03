@@ -28,6 +28,16 @@ public interface InOut {
    */
   void View(SEXP sexp, String... title);
 
+  /**
+   * display html in the Viewer tab
+   */
+  void viewHtml(SEXP sexp, String... title);
+
+  /**
+   * display html in the Viewer tab
+   */
+  void viewer(SEXP sexp, String... title);
+
   /** Return the current active script file or null if is has not been saved yet */
   String scriptFile();
 

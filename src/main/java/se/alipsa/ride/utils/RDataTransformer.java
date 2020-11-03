@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @deprecated use version in renjin-client-data-utils
+ */
+@Deprecated
 public class RDataTransformer {
 
   public static List<String> toColumnList(ListVector df) {

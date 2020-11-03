@@ -143,11 +143,11 @@ public class MainMenu extends MenuBar {
       String pomContent = createPom("templates/project-pom.xml", res.groupName, res.projectName);
       FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
 
-      Path mainPath = new File(res.dir, "src/main/R").toPath();
+      Path mainPath = new File(res.dir, "R").toPath();
       Files.createDirectories(mainPath);
       Path rFile = mainPath.resolve(camelCasedPackageName + ".R");
       Files.createFile(rFile);
-      Path testPath = new File(res.dir, "src/test/R").toPath();
+      Path testPath = new File(res.dir, "tests").toPath();
       Files.createDirectories(testPath);
       Path testFile = Files.createFile(testPath.resolve(camelCasedPackageName + "Test.R"));
       FileUtils.writeToFile(testFile.toFile(), "library('hamcrest')\n");
@@ -155,6 +155,7 @@ public class MainMenu extends MenuBar {
       String lowercaseProjectName = camelCasedPackageName.toLowerCase();
 
       String groupPath = res.groupName.replace('.', '/');
+      /*
       Path loaderPath = new File(res.dir, "src/main/java/" + groupPath + "/" + lowercaseProjectName).toPath();
       Files.createDirectories(loaderPath);
       String loaderContent = FileUtils.readContent("templates/ScriptLoader.java")
@@ -163,6 +164,8 @@ public class MainMenu extends MenuBar {
           .replace("[fileName]", rFile.getFileName().toString());
       FileUtils.writeToFile(new File(loaderPath.toFile(), "ScriptLoader.java"), loaderContent);
 
+       */
+      /*
       Path javaTestPath = new File(res.dir, "src/test/java/" + groupPath + "/" + lowercaseProjectName).toPath();
       Files.createDirectories(javaTestPath);
       String javaTestContent = FileUtils.readContent("templates/Test.java")
@@ -170,8 +173,9 @@ public class MainMenu extends MenuBar {
           .replace("[lowercaseProjectName]", lowercaseProjectName)
           .replace("[className]", camelCasedPackageName);
       FileUtils.writeToFile(new File(javaTestPath.toFile(), camelCasedPackageName + "Test.java"), javaTestContent);
+       */
 
-      Path testResourcePath = new File(res.dir, "src/test/resources/").toPath();
+      Path testResourcePath = new File(res.dir, "tests/resources/").toPath();
       Files.createDirectories(testResourcePath);
       FileUtils.copy("templates/log4j.properties", testResourcePath.toFile());
 

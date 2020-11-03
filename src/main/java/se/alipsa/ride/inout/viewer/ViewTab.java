@@ -9,8 +9,14 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import se.alipsa.ride.model.Table;
+import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.ExceptionAlert;
 
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -125,5 +131,39 @@ public class ViewTab extends Tab {
     final ClipboardContent clipboardContent = new ClipboardContent();
     clipboardContent.putString(strb.toString());
     Clipboard.getSystemClipboard().setContent(clipboardContent);
+  }
+
+  public void viewHtml(String content, String... title) {
+    Tab tab = new Tab();
+    if (title.length > 0) {
+      tab.setText(title[0]);
+    }
+    viewPane.getTabs().add(tab);
+    WebView browser = new WebView();
+    WebEngine webEngine = browser.getEngine();
+    webEngine.loadContent(content);
+    tab.setContent(browser);
+    viewPane.getSelectionModel().select(tab);
+  }
+
+  public void viewer(String url, String... title) {
+    Tab tab = new Tab();
+    if (title.length > 0) {
+      tab.setText(title[0]);
+    }
+    viewPane.getTabs().add(tab);
+    WebView browser = new WebView();
+    WebEngine webEngine = browser.getEngine();
+    if (url.indexOf(':') > -1) {
+      webEngine.load(url);
+    } else {
+      try {
+        webEngine.load(Paths.get(url).toUri().toURL().toExternalForm());
+      } catch (MalformedURLException e) {
+        ExceptionAlert.showAlert("Failed to transform the path to an URL", e);
+      }
+    }
+    tab.setContent(browser);
+    viewPane.getSelectionModel().select(tab);
   }
 }

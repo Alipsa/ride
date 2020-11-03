@@ -12,6 +12,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @deprecated use version in renjin-client-data-utils
+ */
+@Deprecated
 public class Table {
 
   List<String> colList;

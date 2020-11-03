@@ -251,6 +251,22 @@ public class InoutComponent extends TabPane implements InOut {
     }
   }
 
+  @Override
+  public void viewHtml(SEXP sexp, String... title) {
+    Platform.runLater(() -> {
+      viewer.viewHtml(sexp.asString(), title);
+      getSelectionModel().select(viewer);
+    });
+  }
+
+  @Override
+  public void viewer(SEXP sexp, String... title) {
+    Platform.runLater(() -> {
+      viewer.viewer(sexp.asString(), title);
+      getSelectionModel().select(viewer);
+    });
+  }
+
   /**
    * As this is called from the script engine which runs on a separate thread
    * any gui interaction must be performed in a Platform.runLater (not sure if this qualifies as gui interaction though)
