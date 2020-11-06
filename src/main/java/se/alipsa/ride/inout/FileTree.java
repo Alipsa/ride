@@ -70,6 +70,7 @@ public class FileTree extends TreeView<FileItem> {
       } else {
         current = new File(".");
       }
+
       //log.warn("{} does not exist, setting working dir to {}", prefPath, current.getAbsolutePath());
       log.warn("{} does not exist, no working dir set", current.getAbsolutePath());
     }
@@ -156,6 +157,7 @@ public class FileTree extends TreeView<FileItem> {
   private void setWorkingDir(File dir) {
     gui.getConsoleComponent().setWorkingDir(dir);
     System.setProperty("user.dir", dir.getAbsolutePath());
+    Platform.runLater(() -> gui.setTitle(dir.getName()));
   }
 
   private TreeItem<FileItem> createTree(File file) {

@@ -215,6 +215,10 @@ public class Ride extends Application {
     component.prefWidthProperty().bind(root.widthProperty());
   }
 
+  public void setTitle(String title) {
+    primaryStage.setTitle("Ride, a Renjin IDE: " + title);
+  }
+
   public ConsoleComponent getConsoleComponent() {
     return consoleComponent;
   }
