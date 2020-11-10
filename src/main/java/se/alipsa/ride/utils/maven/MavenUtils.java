@@ -10,6 +10,7 @@ import org.apache.maven.model.building.DefaultModelBuildingRequest;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.model.building.ModelBuildingException;
 import org.apache.maven.model.building.ModelBuildingResult;
+import org.apache.maven.model.resolution.ModelResolver;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilder;
@@ -179,6 +180,12 @@ public class MavenUtils {
   public static Model parsePom(File pomFile) throws ModelBuildingException {
     final DefaultModelBuildingRequest modelBuildingRequest = new DefaultModelBuildingRequest()
        .setPomFile(pomFile);
+
+    //ModelResolver modelResolver = modelBuildingRequest.getModelResolver();
+    //System.out.println("modelResolver = " + modelResolver);
+    // This is null which will cause problems if the pom has a parent pom
+    // to fix this we need a custom ModelResolver
+    //modelBuildingRequest.setModelResolver();
 
     //ModelBuilder modelBuilder = new DefaultModelBuilderFactory().newInstance();
     ModelBuilder modelBuilder = new ParentPomsAsDependencyModelBuilder();

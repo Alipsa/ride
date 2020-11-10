@@ -2,10 +2,8 @@
 
 
 ### Minor fixes
-Search 
-    - should remember last search
-    - should move to beginning after reaching the end
-    - should alert that nothing matched if no results
+Add support for parent poms, currently this throws exceptions due to a missing ModelBuilder which
+is an interface with no DefaultImplementations available to use (they are package private).
  
 ### Git integration
 Perhaps not all variations of authentication works
