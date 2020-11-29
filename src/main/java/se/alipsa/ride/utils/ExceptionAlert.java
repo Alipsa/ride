@@ -9,6 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 
@@ -19,15 +21,17 @@ import java.util.Optional;
 
 public class ExceptionAlert extends Alert {
 
+  private static final Logger log = LogManager.getLogger();
+
   public ExceptionAlert() {
     super(AlertType.ERROR);
   }
 
   /**
-   * display the exception.
+   * log and display the exception.
    */
   public static Optional<ButtonType> showAlert(String message, Throwable throwable) {
-    throwable.printStackTrace();
+    log.warn(message, throwable);
     Alert alert = new ExceptionAlert();
     alert.setTitle("Exception Dialog");
     alert.setHeaderText("An Exception Occurred");

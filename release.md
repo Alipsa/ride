@@ -60,10 +60,11 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Run Tests: Fixed bug in testRunner that did not capture errors properly in the summary
 - File types: Recognize DESCRIPTION and NAMESPACE and properties as text files even though they are empty
   Recognize gradle files as groovy files.
-- Add viewer to view html files (similar to RStudio) and viewHtml to view html content (strings)
+- Add a viewer to view html files (similar to RStudio) and viewHtml to view html content (strings)
 - Add simple "check for updates" to help menu.
 - Change structure for project pom to be more intuitive
 - Add project dir to title
+- Add ability to view the log file from the help menu
 
 ### 1.2.1
 - Add support for Groovy (see [Groovy.md](/Groovy.md) for details).

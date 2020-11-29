@@ -30,7 +30,10 @@ import javafx.stage.Stage;
 import org.apache.commons.text.CaseUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.appender.FileAppender;
 import org.eclipse.jgit.api.Git;
+import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.RenjinVersion;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
@@ -44,6 +47,7 @@ import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.Repo;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.git.GitUtils;
@@ -56,12 +60,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 public class MainMenu extends MenuBar {
 
@@ -410,8 +409,34 @@ public class MainMenu extends MenuBar {
     MenuItem checkVersion = new MenuItem("Check for updates");
     checkVersion.setOnAction(this::checkForUpdates);
 
-    menu.getItems().addAll(manual, about, checkVersion);
+    MenuItem viewLogFile = new MenuItem("View logfile");
+    viewLogFile.setOnAction(this::viewLogFile);
+
+    menu.getItems().addAll(manual, about, checkVersion, viewLogFile);
     return menu;
+  }
+
+  private void viewLogFile(ActionEvent actionEvent) {
+    org.apache.logging.log4j.core.Logger logger = (org.apache.logging.log4j.core.Logger)LogManager.getRootLogger();
+    Map.Entry<String, Appender> appenderEntry = logger.get().getAppenders().entrySet().stream()
+        .filter(e -> "RideLog".equals(e.getKey())).findAny().orElse(null);
+    if (appenderEntry == null) {
+      Alerts.warn("Failed to find log file", "Failed to find an appender called RideLog");
+      return;
+    }
+    FileAppender appender = (FileAppender)appenderEntry.getValue();
+
+    File logFile = new File(appender.getFileName());
+    if (!logFile.exists()) {
+      Alerts.warn("Failed to find log file", "Failed to find log file " + logFile.getAbsolutePath());
+      return;
+    }
+    try {
+      String content = FileUtils.readContent(logFile);
+      showInfoAlert(logFile.getAbsolutePath(), content, 1200, 900);
+    } catch (IOException e) {
+      ExceptionAlert.showAlert("Failed to read log file content", e);
+    }
   }
 
   private void checkForUpdates(ActionEvent actionEvent) {
@@ -492,14 +517,19 @@ public class MainMenu extends MenuBar {
   }
 
   private void showInfoAlert(String title, StringBuilder content, double contentWidth, double contentHeight) {
+    showInfoAlert(title, content.toString(), contentWidth, contentHeight);
+  }
+
+  private void showInfoAlert(String title, String content, double contentWidth, double contentHeight) {
     Alert alert = new Alert(Alert.AlertType.INFORMATION);
     alert.setTitle(title);
     alert.setHeaderText(null);
     UnStyledCodeArea ta = new UnStyledCodeArea();
     ta.getStyleClass().add("txtarea");
     ta.setWrapText(true);
-    ta.replaceText(content.toString());
-    alert.getDialogPane().setContent(ta);
+    ta.replaceText(content);
+    VirtualizedScrollPane<UnStyledCodeArea> scrollPane = new VirtualizedScrollPane<>(ta);
+    alert.getDialogPane().setContent(scrollPane);
     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     alert.getDialogPane().setMinWidth(Region.USE_PREF_SIZE);
     alert.setResizable(true);
@@ -775,7 +805,7 @@ public class MainMenu extends MenuBar {
   private void saveFile(TextAreaTab codeArea, File file) throws FileNotFoundException {
     boolean fileExisted = file.exists();
     FileUtils.writeToFile(file, codeArea.getAllTextContent());
-    log.info("File {} saved", file.getAbsolutePath());
+    log.debug("File {} saved", file.getAbsolutePath());
     if (!fileExisted) {
       gui.getInoutComponent().fileAdded(file);
     }
