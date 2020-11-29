@@ -65,6 +65,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Change structure for project pom to be more intuitive
 - Add project dir to title
 - Add ability to view the log file from the help menu
+- Style the search window
 
 ### 1.2.1
 - Add support for Groovy (see [Groovy.md](/Groovy.md) for details).

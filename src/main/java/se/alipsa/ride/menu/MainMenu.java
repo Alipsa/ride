@@ -386,6 +386,7 @@ public class MainMenu extends MenuBar {
     });
     pane.getChildren().addAll(searchInput, findButton, toTopButton);
     Scene scene = new Scene(vBox);
+    scene.getStylesheets().addAll(Ride.instance().getStyleSheets());
     searchWindow = new Stage();
     searchWindow.setOnCloseRequest(event -> searchWindow = null);
     searchWindow.setTitle("Find");
