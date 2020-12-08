@@ -42,11 +42,43 @@
       <version>1.7.30</version>
       <scope>provided</scope>
     </dependency>
-    <!-- uncomment this to enable GUi interaction from R code (e.g. View)-->
-    <!--dependency>
+
+    <dependency>
+      <groupId>org.renjin.cran</groupId>
+      <artifactId>DBI</artifactId>
+      <version>1.0.0-b9</version>
+    </dependency>
+    <dependency>
       <groupId>se.alipsa</groupId>
-      <artifactId>rideutils</artifactId>
-      <version>1.6</version>
+      <artifactId>R2JDBC</artifactId>
+      <version>10.0.20</version>
+    </dependency>
+    <!-- uncomment the appropriate jdbc driver to be able to connect to a relational db -->
+    <!--dependency>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>mssql-jdbc</artifactId>
+      <version>8.4.1.jre8</version>
+    </dependency-->
+    <!--dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.4.200</version>
+    </dependency-->
+    <!--dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.2.18</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-simple</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency-->
+    <!--dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.22</version>
     </dependency-->
 
     <!-- the hamcrest package is only required if you use it for unit tests -->
