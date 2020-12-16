@@ -45,8 +45,8 @@ import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.git.GitUtils;
 import se.alipsa.ride.utils.UniqueList;
+import se.alipsa.ride.utils.git.GitUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,7 +55,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
 
 public class MainMenu extends MenuBar {
 
@@ -555,12 +561,19 @@ public class MainMenu extends MenuBar {
 
     MenuItem replMI = new MenuItem("Run REPL in console");
     replMI.setOnAction(this::runRepl);
+    if (System.console() == null) {
+      replMI.setDisable(true);
+    }
     toolsMenu.getItems().add(replMI);
 
     return toolsMenu;
   }
 
   private void runRepl(ActionEvent actionEvent) {
+    if (System.console() == null) {
+      Alerts.info("No console available", "No console available, change the launcher script to start with a console (e.g. java instead of javaw on windows)");
+      return;
+    }
     System.out.println();
     System.out.println("Console is now running the Renjin REPL, type quit() to exit");
     System.out.println();
