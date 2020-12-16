@@ -413,25 +413,29 @@ public class MainMenu extends MenuBar {
   }
 
   private void viewLogFile(ActionEvent actionEvent) {
-    org.apache.logging.log4j.core.Logger logger = (org.apache.logging.log4j.core.Logger)LogManager.getRootLogger();
-    Map.Entry<String, Appender> appenderEntry = logger.get().getAppenders().entrySet().stream()
-        .filter(e -> "RideLog".equals(e.getKey())).findAny().orElse(null);
-    if (appenderEntry == null) {
-      Alerts.warn("Failed to find log file", "Failed to find an appender called RideLog");
-      return;
-    }
-    FileAppender appender = (FileAppender)appenderEntry.getValue();
-
-    File logFile = new File(appender.getFileName());
-    if (!logFile.exists()) {
-      Alerts.warn("Failed to find log file", "Failed to find log file " + logFile.getAbsolutePath());
-      return;
-    }
     try {
-      String content = FileUtils.readContent(logFile);
-      showInfoAlert(logFile.getAbsolutePath(), content, 1200, 900);
-    } catch (IOException e) {
-      ExceptionAlert.showAlert("Failed to read log file content", e);
+      org.apache.logging.log4j.core.Logger logger = (org.apache.logging.log4j.core.Logger) LogManager.getRootLogger();
+      Map.Entry<String, Appender> appenderEntry = logger.get().getAppenders().entrySet().stream()
+          .filter(e -> "RideLog".equals(e.getKey())).findAny().orElse(null);
+      if (appenderEntry == null) {
+        Alerts.warn("Failed to find log file", "Failed to find an appender called RideLog");
+        return;
+      }
+      FileAppender appender = (FileAppender) appenderEntry.getValue();
+
+      File logFile = new File(appender.getFileName());
+      if (!logFile.exists()) {
+        Alerts.warn("Failed to find log file", "Failed to find log file " + logFile.getAbsolutePath());
+        return;
+      }
+      try {
+        String content = FileUtils.readContent(logFile);
+        showInfoAlert(logFile.getAbsolutePath(), content, 1200, 900);
+      } catch (IOException e) {
+        ExceptionAlert.showAlert("Failed to read log file content", e);
+      }
+    } catch (RuntimeException e) {
+      ExceptionAlert.showAlert("Failed to show log file", e);
     }
   }
 

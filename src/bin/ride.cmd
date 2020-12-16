@@ -35,7 +35,7 @@ start javaw -cp %JAR_NAME% %JAVA_OPTS% se.alipsa.ride.splash.SplashScreen
 :: to the command below
 :: also if you dont want the console to remain, do start javaw instead of java
 
-java -Djava.library.path="%LIB_DIR%" -cp %JAR_NAME%;%LIB_DIR%/* ^
+start javaw -Djava.library.path="%LIB_DIR%" -cp %JAR_NAME%;%LIB_DIR%/* ^
 -Dcom.github.fommil.netlib.BLAS=%BLAS% ^
 -Dcom.github.fommil.netlib.LAPACK=%LAPACK% ^
 -Dcom.github.fommil.netlib.ARPACK=%ARPACK% ^

@@ -2,8 +2,6 @@ package se.alipsa.ride.utils;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -11,7 +9,11 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -259,7 +261,7 @@ public class FileUtils {
   }
 
   public static String readContent(File file, Charset... charsetOpt) throws IOException {
-    Charset charset = charsetOpt.length > 0 ? charsetOpt[0] : StandardCharsets.UTF_8;
+    Charset charset = charsetOpt.length > 0 ? charsetOpt[0] : Charset.defaultCharset();
     StringBuilder str = new StringBuilder();
     Stream<String> stream = Files.lines( file.toPath(), charset);
     stream.forEach(s -> str.append(s).append("\n"));
