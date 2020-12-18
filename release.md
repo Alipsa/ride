@@ -59,7 +59,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
   Also fixed the shortcoming of . being regarded as a word boundary (. is just a character in R).
 - Run Tests: Fixed bug in testRunner that did not capture errors properly in the summary
 - File types: Recognize DESCRIPTION and NAMESPACE and properties as text files even though they are empty
-  Recognize gradle files as groovy files.
+  Recognize gradle files as groovy files (limited gradle support will be in the next version).
 - Add a viewer to view html files (similar to RStudio) and viewHtml to view html content (strings)
 - Add simple "check for updates" to help menu.
 - Change structure for project pom to be more intuitive
