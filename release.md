@@ -65,7 +65,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Change structure for project pom to be more intuitive
 - Add project dir to title
 - Add ability to view the log file from the help menu
-- Style the search window
+- Style dialogs such the search window, git popup dialogs, and file tree dialogs
+- Remove jdbc driver from being included in Ride, so a specific driver version can be used for each project.
+  Present a useful exception alert when the driver is missing.
 
 ### 1.2.1
 - Add support for Groovy (see [Groovy.md](/Groovy.md) for details).
