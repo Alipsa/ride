@@ -47,6 +47,7 @@ import se.alipsa.ride.inout.git.GitStatusDialog;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.GuiUtils;
 import se.alipsa.ride.utils.git.GitUtils;
 
 import java.io.File;
@@ -144,6 +145,7 @@ public class DynamicContextMenu extends ContextMenu {
             fileType = " directory ";
          }
          TextInputDialog dialog = new TextInputDialog(currentFile.getName());
+         GuiUtils.addStyle(gui, dialog);
          dialog.setTitle("Rename " + currentFile.getName());
          Optional<String> toName = dialog.showAndWait();
          if (!toName.isPresent()) {
@@ -353,6 +355,7 @@ public class DynamicContextMenu extends ContextMenu {
       dialog.setTitle("Merge branch");
       dialog.setHeaderText("Merge another branch into current branch (" + currentBranch + ")");
       dialog.setContentText("Branch to merge from:");
+      GuiUtils.addStyle(gui, dialog);
 
       Optional<String> result = dialog.showAndWait();
       if (result.isPresent()) {
@@ -399,6 +402,7 @@ public class DynamicContextMenu extends ContextMenu {
       dialog.setTitle("Checkout branch");
       dialog.setHeaderText("Checkout branch");
       dialog.setContentText("Branch name:");
+      GuiUtils.addStyle(gui, dialog);
 
       Optional<String> result = dialog.showAndWait();
       if (result.isPresent()) {
@@ -827,6 +831,7 @@ public class DynamicContextMenu extends ContextMenu {
 
    private void gitCommit(ActionEvent actionEvent) {
       TextInputDialog td = new TextInputDialog();
+      GuiUtils.addStyle(gui, td);
       td.setHeaderText("Enter commit message");
       final Optional<String> result = td.showAndWait();
       if (result.isPresent()) {
@@ -912,6 +917,7 @@ public class DynamicContextMenu extends ContextMenu {
       TextInputDialog dialog = new TextInputDialog();
       dialog.setTitle(title);
       dialog.setContentText(content);
+      GuiUtils.addStyle(gui, dialog);
       Optional<String> result = dialog.showAndWait();
       if (!result.isPresent()) {
          return null;

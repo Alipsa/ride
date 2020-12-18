@@ -172,6 +172,7 @@ public class ConsoleComponent extends BorderPane {
               log.info("Use maven class loader is set but pomfile {} does not exist", pomFile);
             }
           } else {
+            assert gui.getInoutComponent() != null;
             File wd = gui.getInoutComponent().getRootDir();
             if (gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true) && wd != null && wd.exists()) {
               File classesDir = new File(wd, "target/classes");
@@ -185,7 +186,7 @@ public class ConsoleComponent extends BorderPane {
                   urlList.add(testClasses.toURI().toURL());
                 }
               } catch (MalformedURLException e) {
-                e.printStackTrace();
+                log.warn("Failed to find classes dir", e);
               }
               if (urlList.size() > 0) {
                 log.info("Adding compile dirs to classloader: {}", urlList);
