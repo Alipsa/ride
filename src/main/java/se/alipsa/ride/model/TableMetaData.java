@@ -4,6 +4,8 @@ import java.util.List;
 
 public class TableMetaData {
 
+  //private static final Logger log = LogManager.getLogger();
+
   public static final String COLUMN_META_START = " [ ";
   public static final String COLUMN_META_END = " ]";
   private String tableName;
@@ -20,17 +22,17 @@ public class TableMetaData {
 
 
   public TableMetaData(List<Object> row) {
-    setTableName((String) row.get(0));
-    setTableType((String) row.get(1));
-    setColumnName((String) row.get(2));
-    setOrdinalPosition((Integer) row.get(3));
-    setIsNullable(row.get(4).toString());
-    setDataType(row.get(5).toString()); // On h2 this is an INT, on SQL Server it is VARCHAR, toString works in both cases
-    setCharacterMaximumLength((Integer) row.get(6));
-    setNumericPrecision((Integer) row.get(7));
-    setNumericPrecisionRadix((Integer) row.get(8));
-    setNumericScale((Integer) row.get(9));
-    setCollationName((String) row.get(10));
+    setTableName(String.valueOf(row.get(0)));
+    setTableType(String.valueOf(row.get(1)));
+    setColumnName(String.valueOf(row.get(2)));
+    setOrdinalPosition(toInt(row.get(3))); // Usually an int but on hsqldb this is a double
+    setIsNullable(String.valueOf(row.get(4)));
+    setDataType(String.valueOf(row.get(5).toString())); // On h2 this is an INT, on SQL Server it is VARCHAR
+    setCharacterMaximumLength(toInt(row.get(6)));
+    setNumericPrecision(toInt(row.get(7)));
+    setNumericPrecisionRadix(toInt(row.get(8)));
+    setNumericScale(toInt(row.get(9)));
+    setCollationName(String.valueOf(row.get(10)));
   }
 
   public TableMetaData(Object tableName, Object tableType, Object columnName, Object ordinalPosition,
@@ -220,5 +222,12 @@ public class TableMetaData {
     }
     //System.out.println(columnName + COLUMN_META_START + dataType + precision + ", " + nullable + COLUMN_META_END);
     return columnName + COLUMN_META_START + dataType + precision + ", " + nullable + COLUMN_META_END;
+  }
+
+  private int toInt(Object obj) {
+    if (obj instanceof Integer) {
+      return (Integer)obj;
+    }
+    return (int)Math.round(Double.parseDouble(String.valueOf(obj)));
   }
 }
