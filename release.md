@@ -68,6 +68,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Style dialogs such the search window, git popup dialogs, and file tree dialogs
 - Remove jdbc driver from being included in Ride, so a specific driver version can be used for each project.
   Present a useful exception alert when the driver is missing.
+- make TableMetaData more robust (able to handle more databases)  
 
 ### 1.2.1
 - Add support for Groovy (see [Groovy.md](/Groovy.md) for details).
