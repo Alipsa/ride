@@ -6,16 +6,16 @@
 
   <groupId>se.alipsa</groupId>
   <artifactId>ride</artifactId>
-  <version>1.2.2</version>
+  <version>1.2.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <properties>
-    <exe.version>1.2.2.0</exe.version>
+    <exe.version>1.2.3.0</exe.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <release.tag>1.2.2-final</release.tag>
+    <release.tag>1.2.3-beta</release.tag>
     <renjin.version>3.5-beta76</renjin.version>
     <gradle.version>6.1.1</gradle.version>
     <!--jgit.version>5.7.0.202003110725-r</jgit.version-->
