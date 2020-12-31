@@ -54,6 +54,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2.3-SNAPSHOT
+- treat rmd like a md file (should be improved in the future to support syntax highlighting for R sections)
+
 ### 1.2.2
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).
   Also fixed the shortcoming of . being regarded as a word boundary (. is just a character in R).
