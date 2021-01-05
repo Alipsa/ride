@@ -55,7 +55,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.3-SNAPSHOT
-- treat rmd like a md file (should be improved in the future to support syntax highlighting for R sections)
+- Treat rmd like a md file (should be improved in the future to support syntax highlighting for R sections)
+- Move the inout interface to Rideutils, add and implement viewer methods to maintain similarities with RStudio
 
 ### 1.2.2
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).

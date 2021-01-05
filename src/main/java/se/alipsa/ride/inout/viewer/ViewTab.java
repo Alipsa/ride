@@ -11,6 +11,8 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.model.Table;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
@@ -25,7 +27,9 @@ import java.util.TreeSet;
 
 public class ViewTab extends Tab {
 
-  private TabPane viewPane;
+  private static final Logger log = LogManager.getLogger();
+
+  private final TabPane viewPane;
   private List<String> headerList;
 
   public ViewTab() {
@@ -147,6 +151,10 @@ public class ViewTab extends Tab {
   }
 
   public void viewer(String url, String... title) {
+    if (url == null) {
+      log.warn("url is null, nothing to view");
+      return;
+    }
     Tab tab = new Tab();
     if (title.length > 0) {
       tab.setText(title[0]);
@@ -154,11 +162,19 @@ public class ViewTab extends Tab {
     viewPane.getTabs().add(tab);
     WebView browser = new WebView();
     WebEngine webEngine = browser.getEngine();
-    if (url.indexOf(':') > -1) {
+    if (url.startsWith("http")) {
+      log.info("Opening {} in view tab", url);
       webEngine.load(url);
     } else {
       try {
-        webEngine.load(Paths.get(url).toUri().toURL().toExternalForm());
+        if (Paths.get(url).toFile().exists()) {
+          String path = Paths.get(url).toUri().toURL().toExternalForm();
+          log.info("Opening {} in view tab", path);
+          webEngine.load(path);
+        } else {
+          log.info("url {} is not a http url nor a local path, assuming it is content...", url);
+          webEngine.loadContent(url);
+        }
       } catch (MalformedURLException e) {
         ExceptionAlert.showAlert("Failed to transform the path to an URL", e);
       }

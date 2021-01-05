@@ -45,6 +45,17 @@ Here is an example; also showing the use of rideutils (readImage) which is alway
     display(fileName, <span class="string">"svgplot"</span>)<br/>
 </div>
 
+Note: rideutils also provides a convenience method to view a plot:
+<div class="codeblock">
+viewPlot(func, title = "")
+</div>
+Example:
+<div class="codeblock">
+    viewPlot(plot(pressure))<br/><br/>
+    <span class="comment"># viewPlot returns the path to the svg file created so you can interact with it later, e.g.</span><br/>
+    pressurePlot <- viewPlot(plot(pressure))
+</div>
+
 <h4>Display tabular data in the View tab</h4>
 <div class="codeblock">
     <div class="comment">
@@ -68,6 +79,31 @@ Note that data is presented "as is" which is sometimes not what you want. E.g. c
 will be shown as numbers which is the underlying implementation of dates in R.
 If you use rideutils then this will be handled for you, otherwise you probably want to do something like this
 to get understandable data: inout$View(format(df)).
+
+<h4>Display html in the View tab</h4>
+<div class="codeblock">
+    <div class="comment">
+        /**<br/>
+        * display html in the Viewer tab<br/>
+        */
+    </div>
+    <span class="keyword">void</span> viewHtml(SEXP sexp, String... title);<br/>
+</div>
+Here is an example:<br/>
+<div class="codeblock">
+    inout$viewHtml(<span class="string">"&lt;h1&gt;Hello world3&lt;/h1&gt;"</span>, <span class="string">"viewHtml"</span>)<br/>
+    <br/>
+    <span class="comment"># if you use the rideutils library you can simplify it to</span><br/>
+    library(<span class="string">"se.alipsa:rideutils"</span>)<br/>
+    viewHtml(<span class="string">"&lt;h1&gt;Hello world3&lt;/h1&gt;"</span>, <span class="string">"viewHtml"</span>)<br/>
+</div>
+Note: viewer is an alternative. You can pass a url, file or html content to the viewer function. E.g:
+<div class="codeblock">
+    library(<span class="string">"se.alipsa:rideutils"</span>)<br/>
+    viewer(<span class="string">"&lt;h1&gt;Hello world2&lt;/h1&gt;"</span>, <span class="string">"view htmlcontent"</span>)<br/>
+    viewer(<span class="string">"http://www.alipsa.se"</span>, <span class="string">"view url"</span>)<br/>
+    viewer(paste0(getwd(), <span class="string">"/tests/resources/hello.html"</span>), <span class="string">"view url"</span>)
+</div>
 
 <h4>File and dir contexts</h4>
 <div class="codeblock">
