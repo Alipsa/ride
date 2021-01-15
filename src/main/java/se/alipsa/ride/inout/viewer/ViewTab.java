@@ -13,8 +13,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import se.alipsa.ride.model.Table;
-import se.alipsa.ride.utils.Alerts;
+import se.alipsa.renjin.client.datautils.Table;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.net.MalformedURLException;
@@ -40,7 +39,7 @@ public class ViewTab extends Tab {
   }
 
   public void viewTable(Table table, String... title) {
-    headerList = table.getColList();
+    headerList = table.getHeaderList();
     List<List<Object>> rowList = table.getRowList();
     NumberFormat numberFormatter = NumberFormat.getInstance();
     numberFormatter.setGroupingUsed(false);

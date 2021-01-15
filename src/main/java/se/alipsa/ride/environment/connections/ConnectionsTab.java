@@ -32,11 +32,12 @@ import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.ListVector;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import se.alipsa.renjin.client.datautils.Table;
+import se.alipsa.renjin.client.datautils.RDataTransformer;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.rtab.RTextArea;
-import se.alipsa.ride.model.Table;
 import se.alipsa.ride.model.TableMetaData;
 import se.alipsa.ride.utils.*;
 

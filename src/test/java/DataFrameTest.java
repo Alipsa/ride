@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static se.alipsa.ride.utils.RDataTransformer.toRowlist;
+import static se.alipsa.renjin.client.datautils.RDataTransformer.toRowlist;
 
 public class DataFrameTest {
 
