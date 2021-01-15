@@ -57,6 +57,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 ### 1.2.3-SNAPSHOT
 - Treat rmd like a md file (should be improved in the future to support syntax highlighting for R sections)
 - Move the inout interface to Rideutils, add and implement viewer methods to maintain similarities with RStudio
+- Remove Table and RdataTransformer and use the ones in renjin-client-data-utils instead. 
 
 ### 1.2.2
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).
