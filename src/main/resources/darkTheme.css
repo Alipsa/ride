@@ -202,6 +202,7 @@
 .function {
     -fx-font-style: italic;
     /*-fx-fill: lightblue;*/
+    -fx-fill: lightskyblue;
 }
 
 .keyword {

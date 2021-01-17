@@ -59,6 +59,7 @@
 .function {
     -fx-font-style: italic;
     /*-fx-fill: darkblue;*/
+    -fx-fill: mediumblue;
 }
 
 .keyword {

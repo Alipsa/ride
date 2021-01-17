@@ -67,7 +67,7 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
         getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
       }
     });
-    grid.add(groupNameField, 1,0);
+    grid.add(groupNameField, 1,0,2, 1);
 
     Label packageNameLabel = new Label("Project Name");
     packageNameLabel.setWrapText(false);
@@ -84,7 +84,7 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
         }
       }
     });
-    grid.add(projectNameField, 1,1);
+    grid.add(projectNameField, 1,1, 2, 1);
 
     Label chooseDirLabel = new Label("Base dir");
     chooseDirLabel.setWrapText(false);
