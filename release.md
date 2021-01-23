@@ -59,11 +59,13 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Support mdr files  
   - View button that renders the mdr as html and shows it in the viewer.
   - should be improved in the future to support syntax highlighting for R sections
+  - add highlight js styling for mdr files.
 - Move the inout interface to Rideutils, add and implement viewer methods to maintain similarities with RStudio
 - Remove Table and RdataTransformer and use the ones in renjin-client-data-utils instead. 
 - Format project wizard dialog
 - Add base R functions to syntax highlighting and autocomplete, 
 - use the same color for built-in functions as for keywords
+- add right click navigation menu for html views.
 
 ### 1.2.2
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).
