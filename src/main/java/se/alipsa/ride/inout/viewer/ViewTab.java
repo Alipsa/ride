@@ -2,6 +2,7 @@ package se.alipsa.ride.inout.viewer;
 
 import static se.alipsa.ride.Constants.KEY_CODE_COPY;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -9,14 +10,18 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.renjin.client.datautils.Table;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.FileUtils;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -31,11 +36,20 @@ public class ViewTab extends Tab {
   private final TabPane viewPane;
   private List<String> headerList;
 
+  public final String highlightJsCss = "<link rel='stylesheet' href='" + resourceUrlExternalForm("highlightJs/default.css") + "'>";
+  public final String highlightJsScript = "<script src='" + resourceUrlExternalForm("highlightJs/highlight.pack.js") + "'></script>";
+  public final String bootstrapCss = resourceUrlExternalForm("META-INF/resources/webjars/bootstrap/4.6.0/css/bootstrap.css");
+
   public ViewTab() {
     setText("Viewer");
     viewPane = new TabPane();
     setContent(viewPane);
     viewPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+  }
+
+  private String resourceUrlExternalForm(String resource) {
+    URL url = FileUtils.getResourceUrl(resource);
+    return url == null ? "" : url.toExternalForm();
   }
 
   public void viewTable(Table table, String... title) {
@@ -136,6 +150,75 @@ public class ViewTab extends Tab {
     Clipboard.getSystemClipboard().setContent(clipboardContent);
   }
 
+  public void viewHtmlWithBootstrap(String content, String... title) {
+    Tab tab = new Tab();
+    if (title.length > 0) {
+      tab.setText(title[0]);
+    }
+    viewPane.getTabs().add(tab);
+    WebView browser = new WebView();
+    browser.setContextMenuEnabled(false);
+
+    WebEngine webEngine = browser.getEngine();
+    webEngine.setUserStyleSheetLocation(bootstrapCss);
+
+    content = highlightJsCss + "\n" + highlightJsScript + "\n<script>hljs.initHighlightingOnLoad();</script>\n" + content;
+    webEngine.loadContent(content);
+    createContextMenu(browser, content);
+    tab.setContent(browser);
+    viewPane.getSelectionModel().select(tab);
+  }
+
+  private void createContextMenu(WebView browser, String content, boolean... useLoadOpt) {
+    boolean useLoad = useLoadOpt.length > 0 ? useLoadOpt[0] : false;
+    ContextMenu contextMenu = new ContextMenu();
+    WebEngine webEngine = browser.getEngine();
+
+    MenuItem reloadMI = new MenuItem("Reload");
+    reloadMI.setOnAction(e -> webEngine.reload());
+
+    MenuItem originalPageMI = new MenuItem("Original page");
+    // history only updates for external urls, so we add original back as a fallback
+    // e.g when going from a local file to an external link
+    originalPageMI.setOnAction(e -> {
+      if (useLoad) {
+        webEngine.load(content);
+      } else {
+        webEngine.loadContent(content);
+      }
+    });
+
+    MenuItem goBackMI = new MenuItem("Go back");
+    goBackMI.setOnAction(e -> goBack(webEngine));
+
+    MenuItem goForwardMI = new MenuItem("Go forward");
+    goForwardMI.setOnAction(a -> goForward(webEngine));
+
+    contextMenu.getItems().addAll(reloadMI, originalPageMI, goBackMI, goForwardMI);
+    browser.setOnMousePressed(e -> {
+      if (e.getButton() == MouseButton.SECONDARY) {
+        contextMenu.show(browser, e.getScreenX(), e.getScreenY());
+      } else {
+        contextMenu.hide();
+      }
+    });
+  }
+
+  private void goBack(WebEngine webEngine) {
+    final WebHistory history = webEngine.getHistory();
+    ObservableList<WebHistory.Entry> entryList = history.getEntries();
+    int currentIndex = history.getCurrentIndex();
+    int backOffset= entryList.size() > 1 && currentIndex > 0 ? -1 : 0;
+    history.go(backOffset);
+  }
+
+  private void goForward(WebEngine webEngine) {
+    final WebHistory history = webEngine.getHistory();
+    ObservableList<WebHistory.Entry> entryList = history.getEntries();
+    int currentIndex = history.getCurrentIndex();
+    history.go(entryList.size() > 1 && currentIndex < entryList.size() - 1 ? 1 : 0);
+  }
+
   public void viewHtml(String content, String... title) {
     Tab tab = new Tab();
     if (title.length > 0) {
@@ -146,6 +229,8 @@ public class ViewTab extends Tab {
     WebEngine webEngine = browser.getEngine();
     webEngine.loadContent(content);
     tab.setContent(browser);
+    browser.setContextMenuEnabled(false);
+    createContextMenu(browser, content);
     viewPane.getSelectionModel().select(tab);
   }
 
@@ -160,19 +245,23 @@ public class ViewTab extends Tab {
     }
     viewPane.getTabs().add(tab);
     WebView browser = new WebView();
+    browser.setContextMenuEnabled(false);
     WebEngine webEngine = browser.getEngine();
     if (url.startsWith("http")) {
       log.info("Opening {} in view tab", url);
       webEngine.load(url);
+      createContextMenu(browser, url, true);
     } else {
       try {
         if (Paths.get(url).toFile().exists()) {
           String path = Paths.get(url).toUri().toURL().toExternalForm();
           log.info("Opening {} in view tab", path);
           webEngine.load(path);
+          createContextMenu(browser, path, true);
         } else {
           log.info("url {} is not a http url nor a local path, assuming it is content...", url);
           webEngine.loadContent(url);
+          createContextMenu(browser, url);
         }
       } catch (MalformedURLException e) {
         ExceptionAlert.showAlert("Failed to transform the path to an URL", e);

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.groovytab.GroovyTab;
 import se.alipsa.ride.code.javatab.JavaTab;
+import se.alipsa.ride.code.mdrtab.MdrTab;
 import se.alipsa.ride.code.mdtab.MdTab;
 import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.code.sqltab.SqlTab;
@@ -59,6 +60,9 @@ public class CodeComponent extends BorderPane {
       case MD:
         tab = new MdTab(type.getDisplayValue(), gui);
         break;
+      case MDR:
+        tab = new MdrTab(type.getDisplayValue(), gui);
+        break;
       case GROOVY:
         tab = new GroovyTab(type.getDisplayValue(), gui);
         break;
@@ -100,6 +104,9 @@ public class CodeComponent extends BorderPane {
         break;
       case MD:
         tab = new MdTab(title, gui);
+        break;
+      case MDR:
+        tab = new MdrTab(title, gui);
         break;
       case XML:
         tab = new XmlTab(title, gui);

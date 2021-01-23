@@ -397,6 +397,13 @@ public class ConsoleComponent extends BorderPane {
     }
   }
 
+  public SEXP runScriptSilent(String script, Map<String, Object> additionalParams) throws Exception {
+    for (Map.Entry<String, Object> entry : additionalParams.entrySet()) {
+      engine.put(entry.getKey(), entry.getValue());
+    }
+    return runScriptSilent(script);
+  }
+
   public SEXP runScriptSilent(String script) throws Exception {
     try (PrintWriter out = new PrintWriter(System.out);
          PrintWriter err = new PrintWriter(System.err)) {
@@ -418,6 +425,13 @@ public class ConsoleComponent extends BorderPane {
     Environment global = getSession().getGlobalEnvironment();
     Context topContext = getSession().getTopLevelContext();
     return global.getVariable(topContext, varName);
+  }
+
+  public void runScriptAsync(String script, String title, TaskListener taskListener, Map<String, Object> additionalParams) {
+    for (Map.Entry<String, Object> entry : additionalParams.entrySet()) {
+      engine.put(entry.getKey(), entry.getValue());
+    }
+    runScriptAsync(script, title, taskListener);
   }
 
   public void runScriptAsync(String script, String title, TaskListener taskListener) {

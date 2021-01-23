@@ -74,6 +74,18 @@
       <artifactId>rideutils</artifactId>
       <version>1.7-SNAPSHOT</version>
     </dependency>
+
+    <dependency>
+      <groupId>se.alipsa</groupId>
+      <artifactId>mdr2html</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>bootstrap</artifactId>
+      <version>4.6.0</version>
+    </dependency>
+
     <dependency>
       <groupId>de.codecentric.centerdevice</groupId>
       <artifactId>javafxsvg</artifactId>

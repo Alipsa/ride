@@ -52,9 +52,11 @@ public class FileOpener {
       if (strEquals(type, "text/x-sql", "application/sql") || strEndsWith(fileNameLower, "sql")) {
         return codeComponent.addTab(file, CodeType.SQL);
       }
-      // Treat rmd and mdr files as md docs for now...
-      if (strEndsWith(fileNameLower, ".md") || strEndsWith(fileNameLower, ".rmd") || strEndsWith(fileNameLower, ".mdr")) {
+      if (strEndsWith(fileNameLower, ".md") || strEndsWith(fileNameLower, ".rmd")) {
         return codeComponent.addTab(file, CodeType.MD);
+      }
+      if (strEndsWith(fileNameLower, ".mdr")) {
+        return codeComponent.addTab(file, CodeType.MDR);
       }
       if (strStartsWith(type, "text")
                  || strEquals(type, "application/x-bat",

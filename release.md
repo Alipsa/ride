@@ -55,7 +55,10 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.3-SNAPSHOT
-- Treat rmd like a md file (should be improved in the future to support syntax highlighting for R sections)
+- Treat rmd like a md file
+- Support mdr files  
+  - View button that renders the mdr as html and shows it in the viewer.
+  - should be improved in the future to support syntax highlighting for R sections
 - Move the inout interface to Rideutils, add and implement viewer methods to maintain similarities with RStudio
 - Remove Table and RdataTransformer and use the ones in renjin-client-data-utils instead. 
 - Format project wizard dialog

@@ -747,6 +747,10 @@ public class MainMenu extends MenuBar {
     nMarkdown.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.MD));
     fileMenu.getItems().add(nMarkdown);
 
+    MenuItem nMdr = new MenuItem("Mdr file");
+    nMdr.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.MDR));
+    fileMenu.getItems().add(nMdr);
+
     MenuItem nXml = new MenuItem("Xml file");
     nXml.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.XML));
     fileMenu.getItems().add(nXml);
@@ -819,6 +823,7 @@ public class MainMenu extends MenuBar {
     boolean fileExisted = file.exists();
     FileUtils.writeToFile(file, codeArea.getAllTextContent());
     log.debug("File {} saved", file.getAbsolutePath());
+    codeArea.setTitle(file.getName());
     if (!fileExisted) {
       gui.getInoutComponent().fileAdded(file);
     }

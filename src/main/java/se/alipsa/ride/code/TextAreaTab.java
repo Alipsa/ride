@@ -16,8 +16,10 @@ import java.util.Optional;
 
 public abstract class TextAreaTab extends Tab implements TabTextArea {
 
-  private static final Image IMG_SAVE = new Image(FileUtils
+  public static final Image IMG_SAVE = new Image(FileUtils
       .getResourceUrl("image/save.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
+  public static final Image IMG_VIEW = new Image(FileUtils
+      .getResourceUrl("image/view.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
   protected boolean isChanged = false;
   protected Button saveButton = new Button();
   protected Ride gui;

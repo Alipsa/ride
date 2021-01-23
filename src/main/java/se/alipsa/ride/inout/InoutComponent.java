@@ -259,6 +259,13 @@ public class InoutComponent extends TabPane implements InOut {
     });
   }
 
+  public void viewHtmlWithBootstrap(SEXP sexp, String... title) {
+    Platform.runLater(() -> {
+      viewer.viewHtmlWithBootstrap(sexp.asString(), title);
+      getSelectionModel().select(viewer);
+    });
+  }
+
   @Override
   public void viewer(SEXP sexp, String... title) {
     Platform.runLater(() -> {
