@@ -105,6 +105,7 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public Connection connect() throws SQLException {
     /*
     String user = getUser();

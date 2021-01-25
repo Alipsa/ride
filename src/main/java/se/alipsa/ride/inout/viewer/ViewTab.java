@@ -36,6 +36,7 @@ public class ViewTab extends Tab {
   private final TabPane viewPane;
   private List<String> headerList;
 
+  // The highlightJs stuff is in mdr2html
   public final String highlightJsCss = "<link rel='stylesheet' href='" + resourceUrlExternalForm("highlightJs/default.css") + "'>";
   public final String highlightJsScript = "<script src='" + resourceUrlExternalForm("highlightJs/highlight.pack.js") + "'></script>";
   public final String bootstrapCss = resourceUrlExternalForm("META-INF/resources/webjars/bootstrap/4.6.0/css/bootstrap.css");

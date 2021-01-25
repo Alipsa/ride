@@ -7,6 +7,12 @@ import javafx.scene.input.KeyCombination;
 
 public class Constants {
 
+  public static final String SESSION_MUNIN_CONNECTION = "MuninConnection";
+
+  public static final String PREF_MUNIN_SERVER = "MuninConnection.serverName";
+  public static final String PREF_MUNIN_PORT = "MuninConnection.serverPort";
+  public static final String PREF_MUNIN_USERNAME = "MuninConnection.userName";
+
   public static final int ICON_HEIGHT = 20;
   public static final int ICON_WIDTH = 20;
 
@@ -41,7 +47,7 @@ public class Constants {
     GIT_UNCOMITTED_CHANGE("-fx-text-fill:  #8AA4C8"),
     GIT_NONE("");
 
-    private String style;
+    private final String style;
     GitStatus(String style) {
       this.style = style;
     }

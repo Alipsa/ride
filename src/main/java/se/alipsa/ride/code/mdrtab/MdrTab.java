@@ -46,7 +46,9 @@ public class MdrTab extends TextAreaTab {
       @Override
       public Void call() throws Exception {
         try {
-          SEXP htmlContent = consoleComponent.runScriptSilent("library('se.alipsa:mdr2html')\n renderMdr(mdrContent)", Collections.singletonMap("mdrContent", getTextContent()));
+          SEXP htmlContent = consoleComponent
+              .runScriptSilent("library('se.alipsa:mdr2html')\n renderMdr(mdrContent)",
+                  Collections.singletonMap("mdrContent", getTextContent()));
           inout.viewHtmlWithBootstrap(htmlContent, viewerTabName);
         } catch (RuntimeException e) {
           throw new Exception(e);

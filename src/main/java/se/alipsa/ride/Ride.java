@@ -33,9 +33,7 @@ import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.prefs.Preferences;
 
 public class Ride extends Application {
@@ -49,6 +47,7 @@ public class Ride extends Application {
   private Scene scene;
   private MainMenu mainMenu;
   private Preferences preferences;
+  private final Map<String, Object> sessionMap = new HashMap<>();
 
   private FileOpener fileOpener;
 
@@ -263,5 +262,13 @@ public class Ride extends Application {
 
   public Scene getScene() {
     return scene;
+  }
+
+  public void saveSessionObject(String key, Object val) {
+    sessionMap.put(key, val);
+  }
+
+  public Object getSessionObject(String key) {
+    return sessionMap.get(key);
   }
 }

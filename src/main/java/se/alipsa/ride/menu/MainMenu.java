@@ -1,7 +1,6 @@
 package se.alipsa.ride.menu;
 
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
+import static se.alipsa.ride.Constants.*;
 import static se.alipsa.ride.menu.GlobalOptions.ADD_BUILDDIR_TO_CLASSPATH;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 import static se.alipsa.ride.menu.GlobalOptions.ENABLE_GIT;
@@ -41,11 +40,10 @@ import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
+import se.alipsa.ride.model.MuninConnection;
+import se.alipsa.ride.model.MuninReport;
 import se.alipsa.ride.model.Repo;
-import se.alipsa.ride.utils.Alerts;
-import se.alipsa.ride.utils.ExceptionAlert;
-import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.UniqueList;
+import se.alipsa.ride.utils.*;
 import se.alipsa.ride.utils.git.GitUtils;
 
 import java.io.File;
@@ -62,6 +60,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.prefs.Preferences;
 
 public class MainMenu extends MenuBar {
 
@@ -83,9 +82,84 @@ public class MainMenu extends MenuBar {
     //Menu menuDebug = new Menu("Debug");
     //Menu menuProfile = new Menu("Profile");
     Menu menuTools = createToolsMenu();
+    Menu menuMunin = createMuninMenu();
     Menu menuHelp = createHelpMenu();
     getMenus().addAll(menuFile, menuEdit, menuCode, /*menuView, menuPlots,*/ menuSession,
-        /*menuBuild, menuDebug, menuProfile, */ menuTools, menuHelp);
+        /*menuBuild, menuDebug, menuProfile, */ menuTools, menuMunin, menuHelp);
+  }
+
+  private Menu createMuninMenu() {
+    Menu menu = new Menu("Munin");
+    MenuItem configureMI = new MenuItem("Configure");
+    configureMI.setOnAction(a -> configureMuninConnection());
+    MenuItem loadReportMI = new MenuItem("Load report");
+    loadReportMI.setOnAction(a -> loadMuninReport());
+    menu.getItems().addAll(configureMI, loadReportMI);
+    return menu;
+  }
+
+  private void loadMuninReport() {
+    MuninConnection con = (MuninConnection) gui.getSessionObject(SESSION_MUNIN_CONNECTION);
+    if (con == null) {
+      con = configureMuninConnection();
+    }
+    if (con == null) return;
+
+    MuninReportDialog reportDialog = new MuninReportDialog(gui);
+    Optional<MuninReport> result = reportDialog.showAndWait();
+    if (!result.isPresent()) return;
+    MuninReport report = result.get();
+    System.out.println("Got " + report.getReportName() + " with content: " + report.getDefinition());
+    Alerts.info("Not yet implemented", "Open a tab with the report definition");
+  }
+
+
+  private MuninConnection configureMuninConnection() {
+    Dialog<MuninConnection> dialog = new Dialog<>();
+    GridPane pane = new GridPane();
+    dialog.getDialogPane().setContent(pane);
+
+    Preferences prefs = gui.getPrefs();
+
+    pane.add(new Label("Server name or IP: "), 0,0);
+    TextField serverTf = new TextField();
+    serverTf.setText(prefs.get(PREF_MUNIN_SERVER, ""));
+    pane.add(serverTf, 1, 0);
+
+    pane.add(new Label("Server port: "), 0, 1);
+    IntField serverPortIf = new IntField(0, 65535, 8088);
+    serverPortIf.setValue(prefs.getInt(PREF_MUNIN_PORT, 8088));
+    pane.add(serverPortIf, 1, 1);
+
+    pane.add(new Label("Username: "), 0, 2);
+    TextField userNameTf = new TextField();
+    userNameTf.setText(prefs.get(PREF_MUNIN_USERNAME, ""));
+    pane.add(userNameTf,1, 2);
+
+    pane.add(new Label("Password: "), 0, 3);
+    PasswordField pwdTf = new PasswordField();
+    pane.add(pwdTf, 1, 3);
+
+    dialog.setResultConverter(callback -> {
+      MuninConnection con = new MuninConnection();
+      con.setServerName(serverTf.getText());
+      con.setServerPort(serverPortIf.getValue());
+      con.setUserName(userNameTf.getText());
+      con.setPassword(pwdTf.getText());
+      return con;
+    });
+
+    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+    GuiUtils.addStyle(gui, dialog);
+
+    Optional<MuninConnection> opt = dialog.showAndWait();
+    MuninConnection con = opt.orElse(null);
+    if (con == null) return null;
+    gui.saveSessionObject(SESSION_MUNIN_CONNECTION, con);
+    prefs.put(PREF_MUNIN_SERVER, con.getServerName());
+    prefs.putInt(PREF_MUNIN_PORT, con.getServerPort());
+    prefs.put(PREF_MUNIN_USERNAME, con.getUserName());
+    return con;
   }
 
   private Menu createCodeMenu() {
@@ -414,7 +488,7 @@ public class MainMenu extends MenuBar {
     MenuItem viewLogFile = new MenuItem("View logfile");
     viewLogFile.setOnAction(this::viewLogFile);
 
-    menu.getItems().addAll(manual, about, checkVersion, viewLogFile);
+    menu.getItems().addAll(manual, checkVersion, viewLogFile, about);
     return menu;
   }
 
