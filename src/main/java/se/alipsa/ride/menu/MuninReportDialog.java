@@ -7,13 +7,13 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
@@ -34,13 +34,22 @@ public class MuninReportDialog extends Dialog<MuninReport> {
   public MuninReportDialog(Ride gui) {
     getDialogPane().setPrefWidth(600);
     getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+    getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+
     GuiUtils.addStyle(gui, this);
     setTitle("Load Munin report");
     BorderPane pane = new BorderPane();
     getDialogPane().setContent(pane);
 
-    pane.setLeft(reportGroupsLV);
-    pane.setCenter(muninReportLV);
+    VBox leftBox = new VBox();
+    leftBox.getChildren().add(new Label("Report groups"));
+    leftBox.getChildren().add(reportGroupsLV);
+    pane.setLeft(leftBox);
+
+    VBox centerBox = new VBox();
+    centerBox.getChildren().add(new Label("Reports"));
+    centerBox.getChildren().add(muninReportLV);
+    pane.setCenter(centerBox);
 
     MuninConnection con = (MuninConnection) gui.getSessionObject(Constants.SESSION_MUNIN_CONNECTION);
     if (con.getPassword() == null || "".equals(con.getPassword().trim())) {
@@ -56,6 +65,10 @@ public class MuninReportDialog extends Dialog<MuninReport> {
     reportGroupsLV.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
       System.out.println("Selected item: " + newValue);
       populateReportsView(con, newValue);
+    });
+
+    muninReportLV.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+      getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
     });
 
     populateGroups(con);

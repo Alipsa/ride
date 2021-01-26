@@ -152,6 +152,10 @@ public class MainMenu extends MenuBar {
     dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
     GuiUtils.addStyle(gui, dialog);
 
+    if(serverTf.getText().length() > 0 && userNameTf.getText().length() > 0) {
+      Platform.runLater(pwdTf::requestFocus);
+    }
+
     Optional<MuninConnection> opt = dialog.showAndWait();
     MuninConnection con = opt.orElse(null);
     if (con == null) return null;

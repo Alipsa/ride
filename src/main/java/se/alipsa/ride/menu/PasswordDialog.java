@@ -1,11 +1,14 @@
 package se.alipsa.ride.menu;
 
-import javafx.scene.control.*;
+import javafx.geometry.Insets;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.utils.GuiUtils;
-
-import static se.alipsa.ride.Constants.PREF_MUNIN_USERNAME;
 
 public class PasswordDialog extends Dialog<String> {
 
@@ -15,6 +18,7 @@ public class PasswordDialog extends Dialog<String> {
     setTitle("Password is required");
     setContentText(text);
     GridPane pane = new GridPane();
+    pane.setPadding(new Insets(5));
     getDialogPane().setContent(pane);
 
     pane.add(new Label("Username: "), 0, 2);
