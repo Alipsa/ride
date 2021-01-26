@@ -38,7 +38,7 @@ public class CodeComponent extends BorderPane {
     addCodeTab(CodeType.R);
   }
 
-  public void addCodeTab(CodeType type) {
+  public TextAreaTab addCodeTab(CodeType type) {
     //final String untitled = "Untitled";
     TextAreaTab tab;
     switch (type) {
@@ -70,6 +70,7 @@ public class CodeComponent extends BorderPane {
         throw new RuntimeException("Unknown filetype " + type);
     }
     addTabAndActivate(tab);
+    return tab;
   }
 
   private TextAreaTab addTabAndActivate(TextAreaTab codeTab) {

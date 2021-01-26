@@ -29,6 +29,6 @@ public class PasswordDialog extends Dialog<String> {
     PasswordField pwdTf = new PasswordField();
     pane.add(pwdTf, 1, 3);
 
-    setResultConverter(callback -> pwdTf.getText());
+    setResultConverter(callback -> callback == ButtonType.OK ? pwdTf.getText() : null);
   }
 }

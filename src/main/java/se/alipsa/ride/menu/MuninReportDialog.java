@@ -12,9 +12,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.junit.jupiter.api.BeforeAll;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.model.MuninConnection;
@@ -57,8 +60,6 @@ public class MuninReportDialog extends Dialog<MuninReport> {
       Optional<String> passwdOpt = dialog.showAndWait();
       if (passwdOpt.isPresent()) {
         con.setPassword(passwdOpt.get());
-      } else {
-        return;
       }
     }
 
@@ -71,10 +72,14 @@ public class MuninReportDialog extends Dialog<MuninReport> {
       getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
     });
 
-    populateGroups(con);
-    setResultConverter(callback -> muninReportLV.getSelectionModel().getSelectedItem());
-
-
+    setResultConverter(callback -> callback == ButtonType.OK ? muninReportLV.getSelectionModel().getSelectedItem() : null);
+    if (con.getPassword() != null && !con.getPassword().trim().isEmpty()) {
+      populateGroups(con);
+    } else {
+      getDialogPane().setContent(new Label("No password supplied, nothing to do here!"));
+      getDialogPane().getButtonTypes().clear();
+      getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+    }
   }
 
   private void populateReportsView(MuninConnection con, String groupName) {

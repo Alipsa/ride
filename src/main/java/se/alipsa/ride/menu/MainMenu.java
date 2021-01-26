@@ -109,8 +109,9 @@ public class MainMenu extends MenuBar {
     Optional<MuninReport> result = reportDialog.showAndWait();
     if (!result.isPresent()) return;
     MuninReport report = result.get();
-    System.out.println("Got " + report.getReportName() + " with content: " + report.getDefinition());
-    Alerts.info("Not yet implemented", "Open a tab with the report definition");
+    TextAreaTab tab;
+    tab = gui.getCodeComponent().addCodeTab("MDR".equals(report.getReportType()) ? CodeType.MDR : CodeType.R);
+    tab.replaceContentText(0, 0, report.getDefinition());
   }
 
 
