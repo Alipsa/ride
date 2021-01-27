@@ -15,5 +15,6 @@ public class MuninMdrTab extends MuninTab {
   @Override
   void viewAction(ActionEvent actionEvent) {
     MdrViewerUtil.viewMdr(gui, getTitle(), getTextContent());
+    gui.getConsoleComponent().updateEnvironment();
   }
 }

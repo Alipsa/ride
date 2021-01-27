@@ -15,8 +15,7 @@ public class MdrViewerUtil {
  public static void viewMdr(Ride gui, String title, String textContent) {
     ConsoleComponent consoleComponent = gui.getConsoleComponent();
     consoleComponent.running();
-    String viewerTabName = title;
-    InoutComponent inout = gui.getInoutComponent();
+   InoutComponent inout = gui.getInoutComponent();
 
     Task<Void> task = new Task<Void>() {
       @Override
@@ -25,7 +24,7 @@ public class MdrViewerUtil {
           SEXP htmlContent = consoleComponent
               .runScriptSilent("library('se.alipsa:mdr2html')\n renderMdr(mdrContent)",
                   Collections.singletonMap("mdrContent", textContent));
-          inout.viewHtmlWithBootstrap(htmlContent, viewerTabName);
+          inout.viewHtmlWithBootstrap(htmlContent, title);
         } catch (RuntimeException e) {
           throw new Exception(e);
         }
@@ -45,7 +44,6 @@ public class MdrViewerUtil {
       }
       consoleComponent.waiting();
       ExceptionAlert.showAlert(ex.getMessage(), ex);
-      gui.getConsoleComponent().promptAndScrollToEnd();
     });
     Thread thread = new Thread(task);
     thread.setDaemon(false);

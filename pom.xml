@@ -77,6 +77,11 @@
 
     <dependency>
       <groupId>se.alipsa</groupId>
+      <artifactId>htmlcreator</artifactId>
+      <version>1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>se.alipsa</groupId>
       <artifactId>mdr2html</artifactId>
       <version>1.3-SNAPSHOT</version>
     </dependency>

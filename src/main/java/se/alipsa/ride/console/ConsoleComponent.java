@@ -509,7 +509,7 @@ public class ConsoleComponent extends BorderPane {
     console.requestFollowCaret();
   }
 
-  private void updateEnvironment() {
+  public void updateEnvironment() {
     Environment global = session.getGlobalEnvironment();
     Context topContext = session.getTopLevelContext();
     Task<Void> task = new Task<Void>() {
