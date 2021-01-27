@@ -73,7 +73,7 @@ public class CodeComponent extends BorderPane {
     return tab;
   }
 
-  private TextAreaTab addTabAndActivate(TextAreaTab codeTab) {
+  public TextAreaTab addTabAndActivate(TextAreaTab codeTab) {
     pane.getTabs().add(codeTab);
     SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();
     selectionModel.select(codeTab);

@@ -4,6 +4,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.TabTextArea;
+import se.alipsa.ride.code.TextAreaTab;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -61,7 +62,7 @@ public class MdrTextArea extends CodeTextArea implements TabTextArea {
          + "|(?<BLOCKQUOTE>" + BLOCK_QUOTE_PATTERN + ")"
    );
 
-   public MdrTextArea(MdrTab parent) {
+   public MdrTextArea(TextAreaTab parent) {
       super(parent);
    }
 

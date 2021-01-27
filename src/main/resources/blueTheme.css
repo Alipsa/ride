@@ -123,7 +123,8 @@
 }
 
 .lineno .text {
-    -fx-fill: darkgray;
+    /*-fx-fill: rgb(86, 101, 115);*/
+    -fx-fill: derive(-fx-base-bgcolor, +60%);
 }
 
 .paragraph-box:has-caret {

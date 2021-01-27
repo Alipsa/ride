@@ -3,19 +3,21 @@ package se.alipsa.ride.code.rtab;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.renjin.sexp.StringVector;
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.CodeTextArea;
+import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.ContextFunctionsUpdateListener;
-import se.alipsa.ride.utils.UniqueList;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -137,15 +139,18 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
   public RTextArea() {
   }
 
-  public RTextArea(RTab parent) {
+  public RTextArea(TextAreaTab parent) {
     super(parent);
     textProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue.contains("hamcrest") || newValue.contains("testthat")) {
-        parent.enableRunTestsButton();
-      } else {
-        parent.disableRunTestsButton();
+      if (parent instanceof RTab) {
+        if (newValue.contains("hamcrest") || newValue.contains("testthat")) {
+          ((RTab) parent).enableRunTestsButton();
+        } else {
+          ((RTab) parent).disableRunTestsButton();
+        }
       }
     });
+
     Ride gui = parent.getGui();
     ConsoleComponent console = gui.getConsoleComponent();
     addEventHandler(KeyEvent.KEY_PRESSED, e -> {
@@ -159,7 +164,14 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
           if (selected != null && !"".equals(selected)) {
             rCode = codeComponent.getTextFromActiveTab();
           }
-          console.runScriptAsync(rCode, codeComponent.getActiveScriptName(), parent);
+          if (parent instanceof TaskListener) {
+            console.runScriptAsync(rCode, codeComponent.getActiveScriptName(), (TaskListener)parent);
+          } else {
+            console.runScriptAsync(rCode, codeComponent.getActiveScriptName(), new TaskListener() {
+              @Override public void taskStarted() { }
+              @Override public void taskEnded() { }
+            });
+          }
           moveTo(getCurrentParagraph() + 1, 0);
           int totalLength = getAllTextContent().length();
           if (getCaretPosition() > totalLength) {

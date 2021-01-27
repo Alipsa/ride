@@ -39,6 +39,8 @@ import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.code.munin.MuninMdrTab;
+import se.alipsa.ride.code.munin.MuninRTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
@@ -110,8 +112,9 @@ public class MainMenu extends MenuBar {
     if (!result.isPresent()) return;
     MuninReport report = result.get();
     TextAreaTab tab;
-    tab = gui.getCodeComponent().addCodeTab("MDR".equals(report.getReportType()) ? CodeType.MDR : CodeType.R);
+    tab = "MDR".equals(report.getReportType()) ? new MuninMdrTab(gui, report, con) : new MuninRTab(gui, report, con);
     tab.replaceContentText(0, 0, report.getDefinition());
+    gui.getCodeComponent().addTabAndActivate(tab);
   }
 
 
