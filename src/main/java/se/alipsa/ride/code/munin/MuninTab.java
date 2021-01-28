@@ -1,5 +1,6 @@
 package se.alipsa.ride.code.munin;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
@@ -17,6 +18,7 @@ import se.alipsa.ride.code.rtab.RTextArea;
 import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
 import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
 
@@ -34,6 +36,7 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   public MuninTab(Ride gui, MuninReport report, MuninConnection con) {
     super(gui, "MDR".equals(report.getReportType()) ? CodeType.MDR : CodeType.R);
     muninConnection = con;
+    muninReport = report;
     codeTextArea = getCodeType() == CodeType.MDR ? new MdrTextArea(this) : new RTextArea(this);
     setTitle(report.getReportName());
 
@@ -56,7 +59,35 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   }
 
   private void publishReport(ActionEvent actionEvent) {
-    Alerts.info("Not yet implemented", "publish the report to " + muninConnection.target());
+    muninReport.setDefinition(getAllTextContent());
+    gui.setWaitCursor();
+    System.out.println("Updating report...");
+    Task<Void> task = new Task<Void>() {
+      @Override
+      protected Void call() throws Exception {
+        MuninClient.updateReport(muninConnection, muninReport);
+        return null;
+      }
+    };
+
+    task.setOnFailed(e -> {
+      System.err.println("Update report failed!");
+      gui.setNormalCursor();
+      Throwable throwable = task.getException();
+      Throwable ex = throwable.getCause();
+      if (ex == null) {
+        ex = throwable;
+      }
+      ExceptionAlert.showAlert(ex.getMessage(), ex);
+    });
+
+    task.setOnSucceeded(e -> {
+      System.out.println("Update report succeeded!");
+      gui.setNormalCursor();
+      Alerts.info("Publish successful",
+          "Successfully published " + muninReport.getReportName() + " to " + muninConnection.target());
+    });
+    new Thread(task).start();
   }
 
   abstract void viewAction(ActionEvent actionEvent);
