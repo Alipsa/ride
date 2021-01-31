@@ -66,6 +66,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Add base R functions to syntax highlighting and autocomplete, 
 - use the same color for built-in functions as for keywords
 - add right click navigation menu for html views.
+- allow partial view of unmanaged munin reports
+- view unmanaged report with bootstrap
+- add view source context menu for html views
 
 ### 1.2.2
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).

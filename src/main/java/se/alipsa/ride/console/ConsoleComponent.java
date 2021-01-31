@@ -44,7 +44,6 @@ import org.renjin.primitives.packaging.PackageLoader;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.*;
-import org.renjin.sexp.Vector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.rtab.RTab;
@@ -395,6 +394,33 @@ public class ConsoleComponent extends BorderPane {
     } catch (InterruptedException e) {
       log.info("Sleep was interrupted");
     }
+  }
+
+  public SEXP runScript(String script) throws Exception {
+    return runScript(script, null);
+  }
+
+  public void addVariableToSession(String key, Object val) {
+    engine.put(key, val);
+  }
+
+  public void removeVariableFromSession(String varName) {
+    try {
+      engine.eval("if (exists('" + varName + "')) rm(" + varName + ")");
+    } catch (ScriptException e) {
+      log.warn("Failed to remove variable {}", varName);
+    }
+  }
+
+  public SEXP runScript(String script, Map<String, Object> additionalParams) throws Exception {
+    if (additionalParams != null) {
+      for (Map.Entry<String, Object> entry : additionalParams.entrySet()) {
+        engine.put(entry.getKey(), entry.getValue());
+      }
+    }
+    SEXP result = (SEXP) engine.eval(script);
+    postEvalOutput();
+    return result;
   }
 
   public SEXP runScriptSilent(String script, Map<String, Object> additionalParams) throws Exception {

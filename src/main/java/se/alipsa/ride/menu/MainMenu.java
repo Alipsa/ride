@@ -96,8 +96,20 @@ public class MainMenu extends MenuBar {
     configureMI.setOnAction(a -> configureMuninConnection());
     MenuItem loadReportMI = new MenuItem("Load report");
     loadReportMI.setOnAction(a -> loadMuninReport());
-    menu.getItems().addAll(configureMI, loadReportMI);
+    MenuItem createUnmanagedReportMI = new MenuItem("Create R report");
+    createUnmanagedReportMI.setOnAction(a -> createUnmanagedReport());
+    MenuItem createMdrReportMI = new MenuItem("Create mdr report");
+    createMdrReportMI.setOnAction(a -> createMdrReport());
+    menu.getItems().addAll(configureMI, loadReportMI, createUnmanagedReportMI, createMdrReportMI);
     return menu;
+  }
+
+  private void createMdrReport() {
+    Alerts.info("Not yet implemented", "Cannot create mdr reports yet");
+  }
+
+  private void createUnmanagedReport() {
+    Alerts.info("Not yet implemented", "Cannot create R reports yet");
   }
 
   private void loadMuninReport() {

@@ -22,7 +22,7 @@ public class MdrViewerUtil {
       public Void call() throws Exception {
         try {
           SEXP htmlContent = consoleComponent
-              .runScriptSilent("library('se.alipsa:mdr2html')\n renderMdr(mdrContent)",
+              .runScript("library('se.alipsa:mdr2html')\n renderMdr(mdrContent)",
                   Collections.singletonMap("mdrContent", textContent));
           inout.viewHtmlWithBootstrap(htmlContent, title);
         } catch (RuntimeException e) {

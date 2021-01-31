@@ -16,10 +16,17 @@ import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
 import se.alipsa.renjin.client.datautils.Table;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -195,7 +202,10 @@ public class ViewTab extends Tab {
     MenuItem goForwardMI = new MenuItem("Go forward");
     goForwardMI.setOnAction(a -> goForward(webEngine));
 
-    contextMenu.getItems().addAll(reloadMI, originalPageMI, goBackMI, goForwardMI);
+    MenuItem viewSourceMI = new MenuItem("View source");
+    viewSourceMI.setOnAction(a -> viewSource(webEngine));
+
+    contextMenu.getItems().addAll(reloadMI, originalPageMI, goBackMI, goForwardMI, viewSourceMI);
     browser.setOnMousePressed(e -> {
       if (e.getButton() == MouseButton.SECONDARY) {
         contextMenu.show(browser, e.getScreenX(), e.getScreenY());
@@ -203,6 +213,23 @@ public class ViewTab extends Tab {
         contextMenu.hide();
       }
     });
+  }
+
+  private void viewSource(WebEngine webEngine) {
+    Document doc = webEngine.getDocument();
+    try (StringWriter writer = new StringWriter()){
+      Transformer transformer = TransformerFactory.newInstance().newTransformer();
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+      transformer.transform(new DOMSource(doc), new StreamResult(writer));
+      Alerts.info(webEngine.getTitle(), writer.toString());
+    } catch (TransformerException | IOException e) {
+      ExceptionAlert.showAlert("Failed to read DOM", e);
+    }
   }
 
   private void goBack(WebEngine webEngine) {
