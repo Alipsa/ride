@@ -3,6 +3,8 @@ package se.alipsa.ride.code.munin;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +16,7 @@ import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.mdrtab.MdrTextArea;
+import se.alipsa.ride.code.mdrtab.MiscTab;
 import se.alipsa.ride.code.rtab.RTextArea;
 import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
@@ -53,7 +56,12 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     buttonPane.getChildren().add(publishButton);
 
     VirtualizedScrollPane<CodeTextArea> vPane = new VirtualizedScrollPane<>(codeTextArea);
-    pane.setCenter(vPane);
+    TabPane tabPane = new TabPane();
+    Tab codeTab = new Tab("code");
+    codeTab.setContent(vPane);
+    tabPane.getTabs().add(codeTab);
+    tabPane.getTabs().add(new MiscTab(this));
+    pane.setCenter(tabPane);
     //gui.getEnvironmentComponent().addContextFunctionsUpdateListener(codeTextArea);
     //setOnClosed(e -> gui.getEnvironmentComponent().removeContextFunctionsUpdateListener(codeTextArea));
   }
@@ -130,5 +138,9 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   @Override
   public CodeTextArea getCodeArea() {
     return codeTextArea;
+  }
+
+  public MuninReport getMuninReport() {
+    return muninReport;
   }
 }

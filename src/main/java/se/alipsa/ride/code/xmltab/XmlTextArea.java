@@ -3,6 +3,7 @@ package se.alipsa.ride.code.xmltab;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import se.alipsa.ride.code.CodeTextArea;
+import se.alipsa.ride.code.TextAreaTab;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +25,7 @@ public class XmlTextArea extends CodeTextArea {
   private static final int GROUP_EQUAL_SYMBOL = 2;
   private static final int GROUP_ATTRIBUTE_VALUE = 3;
 
-  public XmlTextArea(XmlTab parent) {
+  public XmlTextArea(TextAreaTab parent) {
 
     super(parent);
     /* Comment this out, we need full functionality e.g. for maven building. Leave it in here until all other use cases
