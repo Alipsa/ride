@@ -28,6 +28,7 @@ import java.io.File;
 public abstract class MuninTab extends TextAreaTab implements TaskListener {
 
   private final CodeTextArea codeTextArea;
+  private final MiscTab miscTab;
   MuninConnection muninConnection;
   MuninReport muninReport;
 
@@ -41,6 +42,7 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     muninConnection = con;
     muninReport = report;
     codeTextArea = getCodeType() == CodeType.MDR ? new MdrTextArea(this) : new RTextArea(this);
+    miscTab = new MiscTab(this);
     setTitle(report.getReportName());
 
     viewButton = new Button();
@@ -60,16 +62,16 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     Tab codeTab = new Tab("code");
     codeTab.setContent(vPane);
     tabPane.getTabs().add(codeTab);
-    tabPane.getTabs().add(new MiscTab(this));
+    tabPane.getTabs().add(miscTab);
     pane.setCenter(tabPane);
     //gui.getEnvironmentComponent().addContextFunctionsUpdateListener(codeTextArea);
     //setOnClosed(e -> gui.getEnvironmentComponent().removeContextFunctionsUpdateListener(codeTextArea));
   }
 
   private void publishReport(ActionEvent actionEvent) {
-    muninReport.setDefinition(getAllTextContent());
+    muninReport = updateAndGetMuninReport();
     gui.setWaitCursor();
-    System.out.println("Updating report...");
+    System.out.println("Publishing report...");
     Task<Void> task = new Task<Void>() {
       @Override
       protected Void call() throws Exception {
@@ -141,6 +143,16 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   }
 
   public MuninReport getMuninReport() {
+    return muninReport;
+  }
+
+  public MuninReport updateAndGetMuninReport() {
+    muninReport.setDefinition(codeTextArea.getAllTextContent());
+    muninReport.setReportName(miscTab.getReportName());
+    muninReport.setDescription(miscTab.getDescription());
+    muninReport.setReportGroup(miscTab.getReportGroup());
+    muninReport.setReportType(miscTab.getReportType());
+    muninReport.setInputContent(miscTab.getInputContent());
     return muninReport;
   }
 }
