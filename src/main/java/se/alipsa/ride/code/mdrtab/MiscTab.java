@@ -22,7 +22,7 @@ public class MiscTab extends Tab {
 
   public MiscTab(MuninTab parentTab) {
     MuninReport muninReport = parentTab.getMuninReport();
-    setText("Config");
+    setText("config");
     VBox vBox = new VBox();
     vBox.setSpacing(5);
 
