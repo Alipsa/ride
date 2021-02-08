@@ -41,6 +41,8 @@ import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.munin.MuninMdrTab;
 import se.alipsa.ride.code.munin.MuninRTab;
+import se.alipsa.ride.code.munin.MuninTab;
+import se.alipsa.ride.code.munin.ReportType;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
@@ -105,11 +107,28 @@ public class MainMenu extends MenuBar {
   }
 
   private void createMdrReport() {
-    Alerts.info("Not yet implemented", "Cannot create mdr reports yet");
+    MuninConnection con = (MuninConnection) gui.getSessionObject(Constants.SESSION_MUNIN_CONNECTION);
+    if (con == null) {
+      con = configureMuninConnection();
+    }
+    MuninMdrTab tab = new MuninMdrTab(gui, new MuninReport("Mdr Report"), con);
+    tab.setNewReport();
+    gui.getCodeComponent().addTabAndActivate(tab);
   }
 
   private void createUnmanagedReport() {
-    Alerts.info("Not yet implemented", "Cannot create R reports yet");
+    MuninConnection con = (MuninConnection) gui.getSessionObject(Constants.SESSION_MUNIN_CONNECTION);
+    if (con == null) {
+      con = configureMuninConnection();
+    }
+
+    MuninReport report = new MuninReport("R report");
+    report.setDefinition("library('se.alipsa:htmlcreator')\n\n" +
+        "html.clear()\n" +
+        "html.add('<h1>add content like this here</h1>')");
+    MuninRTab tab = new MuninRTab(gui, report, con);
+    tab.setNewReport();
+    gui.getCodeComponent().addTabAndActivate(tab);
   }
 
   private void loadMuninReport() {
@@ -124,7 +143,7 @@ public class MainMenu extends MenuBar {
     if (!result.isPresent()) return;
     MuninReport report = result.get();
     TextAreaTab tab;
-    tab = "MDR".equals(report.getReportType()) ? new MuninMdrTab(gui, report, con) : new MuninRTab(gui, report, con);
+    tab = ReportType.MDR.equals(report.getReportType()) ? new MuninMdrTab(gui, report, con) : new MuninRTab(gui, report, con);
     tab.replaceContentText(0, 0, report.getDefinition());
     gui.getCodeComponent().addTabAndActivate(tab);
   }

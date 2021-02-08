@@ -1,5 +1,6 @@
 package se.alipsa.ride.code.munin;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -8,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import se.alipsa.ride.Constants;
 import se.alipsa.ride.code.xmltab.XmlTextArea;
 import se.alipsa.ride.model.MuninReport;
 
@@ -24,6 +26,7 @@ public class MiscTab extends Tab {
     setText("config");
     VBox vBox = new VBox();
     vBox.setSpacing(5);
+    vBox.setPadding(new Insets(5));
 
     HBox nameHbox = new HBox(5);
     reportNameTF = new TextField(muninReport.getReportName());
@@ -32,14 +35,9 @@ public class MiscTab extends Tab {
     if (muninReport.getReportName() != null && muninReport.getReportName().length() > 0) {
       reportNameTF.setDisable(true);
     }
-    //vBox.getChildren().addAll(new Label("Report name"), reportNameTF);
 
-
-    //HBox descriptionHbox = new HBox(5);
     descriptionTA = new TextArea(muninReport.getDescription());
     descriptionTA.setPrefRowCount(2);
-    //descriptionTA.setText(muninReport.getDescription());
-    //descriptionHbox.getChildren().addAll(new Label("Description"), descriptionTA);
     vBox.getChildren().addAll(new Label("Description"), descriptionTA);
 
     HBox groupAndTypeBox = new HBox(5);
@@ -47,20 +45,17 @@ public class MiscTab extends Tab {
     groupTF = new TextField(muninReport.getReportGroup());
     groupAndTypeBox.getChildren().addAll(new Label("Group"), groupTF);
     typeCB = new ComboBox<>();
-    typeCB.getItems().addAll("UNMANAGED", "MDR");
+    typeCB.getItems().addAll(ReportType.UNMANAGED, ReportType.MDR);
     typeCB.getSelectionModel().select(muninReport.getReportType());
     groupAndTypeBox.getChildren().addAll(new Label("Type"), typeCB);
 
-    //HBox inputHbox = new HBox(5);
     inputTA = new XmlTextArea(parentTab);
-    //inputTA.setPrefSize(100, 200);
-    inputTA.replaceContentText(0, 0, muninReport.getInputContent());
-    //inputTA.replaceText(muninReport.getInputContent());
-    //inputHbox.getChildren().addAll(new Label("Input parameters"), inputTA);
+    if (muninReport.getInputContent() != null) {
+      inputTA.replaceContentText(0, 0, muninReport.getInputContent());
+    }
     VBox.setVgrow(inputTA, Priority.ALWAYS);
     vBox.getChildren().addAll(new Label("Input parameters"), inputTA);
 
-    //vBox.getChildren().addAll(nameHbox, descriptionHbox, inputHbox);
     setContent(vBox);
   }
 
@@ -82,5 +77,13 @@ public class MiscTab extends Tab {
 
   public String getInputContent() {
     return inputTA.getAllTextContent();
+  }
+
+  public void setEditableReportName(boolean b) {
+    reportNameTF.setDisable(!b);
+  }
+
+  public void setReportType(String type) {
+    typeCB.getSelectionModel().select(type);
   }
 }

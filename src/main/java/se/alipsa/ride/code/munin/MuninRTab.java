@@ -30,6 +30,10 @@ public class MuninRTab extends MuninTab {
 
   public MuninRTab(Ride gui, MuninReport report, MuninConnection con) {
     super(gui, report, con);
+    getMiscTab().setReportType(ReportType.UNMANAGED);
+    if (report.getDefinition() != null) {
+      replaceContentText(0,0, report.getDefinition());
+    }
   }
 
   @Override

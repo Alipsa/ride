@@ -37,12 +37,13 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   private static Logger log = LogManager.getLogger(MuninTab.class);
 
   public MuninTab(Ride gui, MuninReport report, MuninConnection con) {
-    super(gui, "MDR".equals(report.getReportType()) ? CodeType.MDR : CodeType.R);
+    super(gui, ReportType.MDR.equals(report.getReportType()) ? CodeType.MDR : CodeType.R);
     muninConnection = con;
     muninReport = report;
     codeTextArea = getCodeType() == CodeType.MDR ? new MdrTextArea(this) : new RTextArea(this);
     miscTab = new MiscTab(this);
     setTitle(report.getReportName());
+
 
     viewButton = new Button();
     viewButton.setGraphic(new ImageView(IMG_VIEW));
@@ -58,6 +59,7 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
 
     VirtualizedScrollPane<CodeTextArea> vPane = new VirtualizedScrollPane<>(codeTextArea);
     TabPane tabPane = new TabPane();
+    tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
     Tab codeTab = new Tab("code");
     codeTab.setContent(vPane);
     tabPane.getTabs().add(codeTab);
@@ -153,5 +155,14 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     muninReport.setReportType(miscTab.getReportType());
     muninReport.setInputContent(miscTab.getInputContent());
     return muninReport;
+  }
+
+  public MiscTab getMiscTab() {
+    return miscTab;
+  }
+
+  public void setNewReport() {
+    miscTab.setEditableReportName(true);
+    super.contentChanged();
   }
 }

@@ -15,6 +15,7 @@ import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.wellbehaved.event.EventPattern;
 import org.fxmisc.wellbehaved.event.InputMap;
 import org.fxmisc.wellbehaved.event.Nodes;
+import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.utils.StringUtils;
 
@@ -75,7 +76,7 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
     this.parentTab = parent;
 
     plainTextChanges().subscribe(ptc -> {
-      if (parentTab.isChanged() == false && !blockChange) {
+      if (parentTab != null && parentTab.isChanged() == false && !blockChange) {
         parentTab.contentChanged();
       }
     });
@@ -84,11 +85,11 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
       KeyCode keyCode = e.getCode();
       if (e.isControlDown()) {
         if (KeyCode.F.equals(keyCode)) {
-          parentTab.getGui().getMainMenu().displayFind();
+          Ride.instance().getMainMenu().displayFind();
         } else if (KeyCode.S.equals(keyCode)) {
-          parentTab.getGui().getMainMenu().saveContent(parentTab);
+          Ride.instance().getMainMenu().saveContent(parentTab);
         } else if (e.isShiftDown() && KeyCode.C.equals(keyCode)) {
-          parentTab.getGui().getMainMenu().commentLines();
+          Ride.instance().getMainMenu().commentLines();
         } else if (e.isShiftDown() && (KeyCode.QUOTE.equals(e.getCode()) || KeyCode.ASTERISK.equals(e.getCode()))) {
           insertText(getCaretPosition(), "`");
         } else if (e.isAltDown() && KeyCode.QUOTE.equals(e.getCode())) {

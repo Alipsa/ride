@@ -9,6 +9,12 @@ public class MuninReport {
   private String reportType;
   private String reportGroup;
 
+  public MuninReport() {}
+
+  public MuninReport(String reportName) {
+    this.reportName = reportName;
+  }
+
   public String getReportName() {
     return reportName;
   }
