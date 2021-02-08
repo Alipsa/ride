@@ -16,7 +16,6 @@ import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.mdrtab.MdrTextArea;
-import se.alipsa.ride.code.mdrtab.MiscTab;
 import se.alipsa.ride.code.rtab.RTextArea;
 import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;

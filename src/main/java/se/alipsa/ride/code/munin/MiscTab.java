@@ -1,4 +1,4 @@
-package se.alipsa.ride.code.mdrtab;
+package se.alipsa.ride.code.munin;
 
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -8,7 +8,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import se.alipsa.ride.code.munin.MuninTab;
 import se.alipsa.ride.code.xmltab.XmlTextArea;
 import se.alipsa.ride.model.MuninReport;
 

@@ -1,17 +1,18 @@
 package se.alipsa.ride.utils;
 
-import com.sun.javafx.tk.Toolkit;
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.REPORT_BUG;
+import static se.alipsa.ride.Constants.THEME;
+
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.scene.Parent;
 import javafx.scene.control.Dialog;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 
-import javax.management.RuntimeErrorException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-
-import static se.alipsa.ride.Constants.*;
 
 public final class GuiUtils {
 
@@ -22,16 +23,24 @@ public final class GuiUtils {
   }
 
   public static void addStyle(Ride gui, Dialog<?> dialog) {
-    if (gui != null && dialog != null ) {
+    addStyle(gui, dialog.getDialogPane());
+  }
+
+  public static void addStyle(Ride gui, Parent dialog) {
+    addStyle(gui, dialog.getStylesheets());
+  }
+
+  public static void addStyle(Ride gui, ObservableList<String> styleSheetList) {
+    if (gui != null && styleSheetList != null ) {
       String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
 
       URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
       if (styleSheetUrl != null) {
-        dialog.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+        styleSheetList.add(styleSheetUrl.toExternalForm());
       }
     } else {
-      String msg = "GuiUtils.addStyle() : Ride instance is " + gui + ", dialog is " + dialog + ". Called from "
-          + InvocationUtils.callingMethod(3) + ". " + REPORT_BUG;
+      String msg = "GuiUtils.addStyle() : Ride instance is " + gui + ", style sheet list is " + styleSheetList + ". Called from "
+                   + InvocationUtils.callingMethod(3) + ". " + REPORT_BUG;
       log.error(msg);
 
       if (Platform.isFxApplicationThread()) {

@@ -2,7 +2,6 @@ package se.alipsa.ride.inout.viewer;
 
 import static se.alipsa.ride.Constants.KEY_CODE_COPY;
 
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -18,13 +17,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import se.alipsa.renjin.client.datautils.Table;
-import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.code.xmltab.XmlTextArea;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.GuiUtils;
 
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -35,6 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class ViewTab extends Tab {
 
@@ -44,9 +49,9 @@ public class ViewTab extends Tab {
   private List<String> headerList;
 
   // The highlightJs stuff is in mdr2html
-  public final String highlightJsCss = "<link rel='stylesheet' href='" + resourceUrlExternalForm("highlightJs/default.css") + "'>";
-  public final String highlightJsScript = "<script src='" + resourceUrlExternalForm("highlightJs/highlight.pack.js") + "'></script>";
-  public final String bootstrapCss = resourceUrlExternalForm("META-INF/resources/webjars/bootstrap/4.6.0/css/bootstrap.css");
+  public static final String HIGHLIGHT_JS_CSS = "<link rel='stylesheet' href='" + resourceUrlExternalForm("highlightJs/default.css") + "'>";
+  public static final String HIGHLIGHT_JS_SCRIPT = "<script src='" + resourceUrlExternalForm("highlightJs/highlight.pack.js") + "'></script>";
+  public static final String BOOTSTRAP_CSS = resourceUrlExternalForm("META-INF/resources/webjars/bootstrap/4.6.0/css/bootstrap.css");
 
   public ViewTab() {
     setText("Viewer");
@@ -55,7 +60,7 @@ public class ViewTab extends Tab {
     viewPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
   }
 
-  private String resourceUrlExternalForm(String resource) {
+  private static String resourceUrlExternalForm(String resource) {
     URL url = FileUtils.getResourceUrl(resource);
     return url == null ? "" : url.toExternalForm();
   }
@@ -168,9 +173,9 @@ public class ViewTab extends Tab {
     browser.setContextMenuEnabled(false);
 
     WebEngine webEngine = browser.getEngine();
-    webEngine.setUserStyleSheetLocation(bootstrapCss);
+    webEngine.setUserStyleSheetLocation(BOOTSTRAP_CSS);
 
-    content = highlightJsCss + "\n" + highlightJsScript + "\n<script>hljs.initHighlightingOnLoad();</script>\n" + content;
+    content = HIGHLIGHT_JS_CSS + "\n" + HIGHLIGHT_JS_SCRIPT + "\n<script>hljs.initHighlightingOnLoad();</script>\n" + content;
     webEngine.loadContent(content);
     createContextMenu(browser, content);
     tab.setContent(browser);
@@ -203,7 +208,8 @@ public class ViewTab extends Tab {
     goForwardMI.setOnAction(a -> goForward(webEngine));
 
     MenuItem viewSourceMI = new MenuItem("View source");
-    viewSourceMI.setOnAction(a -> viewSource(webEngine));
+
+    viewSourceMI.setOnAction(a -> viewSource(webEngine, null));
 
     contextMenu.getItems().addAll(reloadMI, originalPageMI, goBackMI, goForwardMI, viewSourceMI);
     browser.setOnMousePressed(e -> {
@@ -215,7 +221,7 @@ public class ViewTab extends Tab {
     });
   }
 
-  private void viewSource(WebEngine webEngine) {
+  public static void viewSource(WebEngine webEngine, TextAreaTab parent) {
     Document doc = webEngine.getDocument();
     try (StringWriter writer = new StringWriter()){
       Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -226,7 +232,17 @@ public class ViewTab extends Tab {
       transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
       transformer.transform(new DOMSource(doc), new StreamResult(writer));
-      Alerts.info(webEngine.getTitle(), writer.toString());
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle(webEngine.getTitle());
+      alert.setHeaderText(null);
+      XmlTextArea xmlTextArea = new XmlTextArea(parent);
+      xmlTextArea.replaceContentText(0,0, writer.toString());
+      alert.getDialogPane().setContent(xmlTextArea);
+      alert.setResizable(true);
+      alert.getDialogPane().setPrefSize(800, 600);
+      GuiUtils.addStyle(Ride.instance(), alert);
+      alert.showAndWait();
+      //Alerts.info(webEngine.getTitle(), writer.toString());
     } catch (TransformerException | IOException e) {
       ExceptionAlert.showAlert("Failed to read DOM", e);
     }
