@@ -23,14 +23,32 @@ public final class GuiUtils {
   }
 
   public static void addStyle(Ride gui, Dialog<?> dialog) {
-    addStyle(gui, dialog.getDialogPane());
+    if (validateDialogNotNull(gui, dialog)) return;
+    addStyle(gui, dialog.getDialogPane(), 4);
   }
 
-  public static void addStyle(Ride gui, Parent dialog) {
-    addStyle(gui, dialog.getStylesheets());
+  private static boolean validateDialogNotNull(Ride gui, Object dialog) {
+    if (dialog == null) {
+      String msg = "GuiUtils.addStyle() : Ride instance is " + gui + ", dialog is null. Called from "
+          + InvocationUtils.callingMethod(4) + ". " + REPORT_BUG;
+      if (Platform.isFxApplicationThread()) {
+        Alerts.warn("Unexpected error", msg);
+        return true;
+      } else {
+        throw new RuntimeException(msg);
+      }
+    }
+    return false;
   }
 
-  public static void addStyle(Ride gui, ObservableList<String> styleSheetList) {
+  public static void addStyle(Ride gui, Parent dialog, int... stacktraceElementOpt) {
+    if (validateDialogNotNull(gui, dialog)) return;
+    int stacktraceElement = stacktraceElementOpt.length > 0 ? stacktraceElementOpt[0] : 4;
+    addStyle(gui, dialog.getStylesheets(), stacktraceElement);
+  }
+
+  public static void addStyle(Ride gui, ObservableList<String> styleSheetList, int... stacktraceElementOpt) {
+    int stacktraceElement = stacktraceElementOpt.length > 0 ? stacktraceElementOpt[0] : 3;
     if (gui != null && styleSheetList != null ) {
       String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
 
@@ -40,7 +58,7 @@ public final class GuiUtils {
       }
     } else {
       String msg = "GuiUtils.addStyle() : Ride instance is " + gui + ", style sheet list is " + styleSheetList + ". Called from "
-                   + InvocationUtils.callingMethod(3) + ". " + REPORT_BUG;
+                   + InvocationUtils.callingMethod(stacktraceElement) + ". " + REPORT_BUG;
       log.error(msg);
 
       if (Platform.isFxApplicationThread()) {
