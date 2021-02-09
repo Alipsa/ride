@@ -1,5 +1,6 @@
 package se.alipsa.ride.code.munin;
 
+import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -13,6 +14,7 @@ import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MuninClient {
 
@@ -57,20 +59,49 @@ public class MuninClient {
     return response.readEntity(new GenericType<List<MuninReport>>() {});
   }
 
+  public static void publishReport(MuninConnection muninConnection, MuninReport muninReport, boolean newReport) throws Exception {
+    if(newReport) {
+      addReport(muninConnection, muninReport);
+    } else {
+      updateReport(muninConnection, muninReport);
+    }
+  }
+
+  public static void addReport(MuninConnection con, MuninReport report) throws Exception {
+    upsertReport(con, report, "/api/addReport", HttpMethod.POST);
+  }
+
   public static void updateReport(MuninConnection con, MuninReport report) throws Exception {
+    upsertReport(con, report, "/api/updateReport", HttpMethod.PUT);
+  }
+
+  private static void upsertReport(MuninConnection con, MuninReport report, String url, String method) throws Exception {
     Client client = createClient(con);
     WebTarget target = client.target(con.target());
     Response response;
     try {
-      response = target.path("/api/updateReport").request()
-          .put(Entity.entity(report, MediaType.APPLICATION_JSON_TYPE));
+      if (HttpMethod.PUT.equals(method)) {
+        response = target.path(url).request()
+            .put(Entity.entity(report, MediaType.APPLICATION_JSON_TYPE));
+      } else if (HttpMethod.POST.equals(method)) {
+        response = target.path(url).request()
+            .post(Entity.entity(report, MediaType.APPLICATION_JSON_TYPE));
+      } else {
+        throw new IllegalArgumentException("Unknown method: "  + method);
+      }
     } catch (ProcessingException e) {
       throw new Exception("Failed to update report on Munin server: " + con.target(), e);
     }
     if (response.getStatus() != 200) {
-      throw new Exception("Failed to update report on Munin server: " + con.target()
+      String headers = response.getHeaders().entrySet().stream()
+          .map(e -> e.getKey() + "=" + e.getValue())
+          .collect(Collectors.joining(", ", "{", "}"));
+      throw new Exception("Failed to publish report to Munin server: " + con.target()
                           + ". The response code was " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase()
+                          + "\n, message = " + response.readEntity(String.class) + "\n, headers = " + headers
       );
     }
   }
+
+
 }

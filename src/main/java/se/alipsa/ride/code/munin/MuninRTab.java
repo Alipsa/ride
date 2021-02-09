@@ -39,7 +39,7 @@ public class MuninRTab extends MuninTab {
   @Override
   void viewAction(ActionEvent actionEvent) {
     ConsoleComponent consoleComponent = gui.getConsoleComponent();
-    if (muninReport.getInputContent() != null && muninReport.getInputContent().trim().length() > 0) {
+    if (getMuninReport().getInputContent() != null && getMuninReport().getInputContent().trim().length() > 0) {
       //System.out.println("Report has parameters");
       Map<String, Object> inputParams = promptForInputParams();
       if (inputParams != null) {
@@ -112,7 +112,7 @@ public class MuninRTab extends MuninTab {
         }
     );
 
-    String form = "<div class='container pt-2'><form><div class='form-group'>" + muninReport.getInputContent() + "</div><button type='submit'>Submit</button></form></div>\n" +
+    String form = "<div class='container pt-2'><form><div class='form-group'>" + getMuninReport().getInputContent() + "</div><button type='submit'>Submit</button></form></div>\n" +
         "<script>\n" +
         "function submitForm(event) {\n" +
         "  event.preventDefault();\n" +
@@ -130,7 +130,7 @@ public class MuninRTab extends MuninTab {
     Scene dialog = new Scene(browser);
     stage.initModality(Modality.APPLICATION_MODAL);
     stage.initOwner(gui.getStage());
-    stage.setTitle(muninReport.getReportName() + ", input parameters");
+    stage.setTitle(getMuninReport().getReportName() + ", input parameters");
     //GuiUtils.addStyle(gui, dialog.getStylesheets());
     stage.setScene(dialog);
     stage.sizeToScene();

@@ -1,6 +1,13 @@
 package se.alipsa.ride.menu;
 
-import static se.alipsa.ride.Constants.*;
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.DEFAULT_MDR_REPORT_NAME;
+import static se.alipsa.ride.Constants.DEFAULT_R_REPORT_NAME;
+import static se.alipsa.ride.Constants.PREF_MUNIN_PORT;
+import static se.alipsa.ride.Constants.PREF_MUNIN_SERVER;
+import static se.alipsa.ride.Constants.PREF_MUNIN_USERNAME;
+import static se.alipsa.ride.Constants.SESSION_MUNIN_CONNECTION;
+import static se.alipsa.ride.Constants.THEME;
 import static se.alipsa.ride.menu.GlobalOptions.ADD_BUILDDIR_TO_CLASSPATH;
 import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
 import static se.alipsa.ride.menu.GlobalOptions.ENABLE_GIT;
@@ -41,13 +48,17 @@ import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.munin.MuninMdrTab;
 import se.alipsa.ride.code.munin.MuninRTab;
-import se.alipsa.ride.code.munin.MuninTab;
 import se.alipsa.ride.code.munin.ReportType;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
 import se.alipsa.ride.model.Repo;
-import se.alipsa.ride.utils.*;
+import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.GuiUtils;
+import se.alipsa.ride.utils.IntField;
+import se.alipsa.ride.utils.UniqueList;
 import se.alipsa.ride.utils.git.GitUtils;
 
 import java.io.File;
@@ -108,21 +119,22 @@ public class MainMenu extends MenuBar {
 
   private void createMdrReport() {
     MuninConnection con = (MuninConnection) gui.getSessionObject(Constants.SESSION_MUNIN_CONNECTION);
-    if (con == null) {
-      con = configureMuninConnection();
-    }
-    MuninMdrTab tab = new MuninMdrTab(gui, new MuninReport("Mdr Report"), con);
+    //if (con == null) {
+    //  con = configureMuninConnection();
+    //}
+    MuninReport report = new MuninReport(DEFAULT_MDR_REPORT_NAME, ReportType.MDR);
+    MuninMdrTab tab = new MuninMdrTab(gui, report, con);
     tab.setNewReport();
     gui.getCodeComponent().addTabAndActivate(tab);
   }
 
   private void createUnmanagedReport() {
     MuninConnection con = (MuninConnection) gui.getSessionObject(Constants.SESSION_MUNIN_CONNECTION);
-    if (con == null) {
-      con = configureMuninConnection();
-    }
+    //if (con == null) {
+    //  con = configureMuninConnection();
+    //}
 
-    MuninReport report = new MuninReport("R report");
+    MuninReport report = new MuninReport(DEFAULT_R_REPORT_NAME, ReportType.UNMANAGED);
     report.setDefinition("library('se.alipsa:htmlcreator')\n\n" +
         "html.clear()\n" +
         "html.add('<h1>add content like this here</h1>')");
@@ -149,7 +161,7 @@ public class MainMenu extends MenuBar {
   }
 
 
-  private MuninConnection configureMuninConnection() {
+  public MuninConnection configureMuninConnection() {
     Dialog<MuninConnection> dialog = new Dialog<>();
     GridPane pane = new GridPane();
     dialog.getDialogPane().setContent(pane);

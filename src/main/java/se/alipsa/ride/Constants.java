@@ -8,6 +8,8 @@ import javafx.scene.input.KeyCombination;
 public class Constants {
 
   public static final String SESSION_MUNIN_CONNECTION = "MuninConnection";
+  public static final String DEFAULT_MDR_REPORT_NAME = "Mdr Report";
+  public static final String DEFAULT_R_REPORT_NAME = "R Report";
 
   public static final String PREF_MUNIN_SERVER = "MuninConnection.serverName";
   public static final String PREF_MUNIN_PORT = "MuninConnection.serverPort";

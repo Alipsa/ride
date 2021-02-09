@@ -36,6 +36,7 @@ public class ExceptionAlert extends Alert {
     alert.setTitle("Exception Dialog");
     alert.setHeaderText("An Exception Occurred");
     alert.setContentText(message);
+    alert.setResizable(true);
 
     // Create expandable Exception.
     StringWriter sw = new StringWriter();

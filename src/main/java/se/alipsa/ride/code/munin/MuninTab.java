@@ -1,5 +1,8 @@
 package se.alipsa.ride.code.munin;
 
+import static se.alipsa.ride.Constants.DEFAULT_MDR_REPORT_NAME;
+import static se.alipsa.ride.Constants.DEFAULT_R_REPORT_NAME;
+
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
@@ -28,11 +31,13 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
 
   private final CodeTextArea codeTextArea;
   private final MiscTab miscTab;
-  MuninConnection muninConnection;
-  MuninReport muninReport;
+  private MuninConnection muninConnection;
+  private MuninReport muninReport;
+  private TabPane tabPane = new TabPane();
 
   protected Button viewButton;
   protected Button publishButton;
+  private boolean isNewReport = false;
 
   private static Logger log = LogManager.getLogger(MuninTab.class);
 
@@ -58,7 +63,6 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     buttonPane.getChildren().add(publishButton);
 
     VirtualizedScrollPane<CodeTextArea> vPane = new VirtualizedScrollPane<>(codeTextArea);
-    TabPane tabPane = new TabPane();
     tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
     Tab codeTab = new Tab("code");
     codeTab.setContent(vPane);
@@ -71,12 +75,22 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
 
   private void publishReport(ActionEvent actionEvent) {
     muninReport = updateAndGetMuninReport();
+    String reportName = muninReport.getReportName();
+    if (reportName == null || reportName.trim().length() == 0
+        || DEFAULT_R_REPORT_NAME.equals(reportName) || DEFAULT_MDR_REPORT_NAME.equals(reportName)) {
+      Alerts.warn("Missing report information", "You must specify a report name before it can be published");
+      tabPane.getSelectionModel().select(miscTab);
+      return;
+    }
+    if (muninConnection == null) {
+      muninConnection = gui.getMainMenu().configureMuninConnection();
+    }
     gui.setWaitCursor();
     System.out.println("Publishing report...");
     Task<Void> task = new Task<Void>() {
       @Override
       protected Void call() throws Exception {
-        MuninClient.updateReport(muninConnection, muninReport);
+        MuninClient.publishReport(muninConnection, muninReport, isNewReport());
         return null;
       }
     };
@@ -162,7 +176,12 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   }
 
   public void setNewReport() {
+    isNewReport = true;
     miscTab.setEditableReportName(true);
     super.contentChanged();
+  }
+
+  public boolean isNewReport() {
+    return isNewReport;
   }
 }

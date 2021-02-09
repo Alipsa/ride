@@ -110,9 +110,9 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
               int end = start + line.length();
               replaceText(start, end, s);
               moveTo(orgPos - INDENT.length());
-            } else {
+            } //else {
               //NO tab in the beginning, nothing to do
-            }
+            //}
           } else {
             IndexRange range = getSelection();
             int start = range.getStart();
@@ -163,7 +163,9 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
       } else if ("{".equals(character)) {
         String indent = StringUtils.getLeadingSpaces(line);
         if (line.length() == getCaretColumn()) {
-          if (line.endsWith("${")) { // No new lines for variables e.g. ${project.version}
+
+          // No new lines for variables e.g. ${project.version} or back quoted
+          if (line.endsWith("${") || line.endsWith("`{")) {
             int targetCaretPos = getCaretPosition();
             insertText(targetCaretPos, "}");
             moveTo(targetCaretPos);
