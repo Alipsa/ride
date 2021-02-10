@@ -124,7 +124,7 @@ public class MainMenu extends MenuBar {
     //}
     MuninReport report = new MuninReport(DEFAULT_MDR_REPORT_NAME, ReportType.MDR);
     MuninMdrTab tab = new MuninMdrTab(gui, report, con);
-    tab.setNewReport();
+    tab.setNewReport(true);
     gui.getCodeComponent().addTabAndActivate(tab);
   }
 
@@ -139,7 +139,7 @@ public class MainMenu extends MenuBar {
         "html.clear()\n" +
         "html.add('<h1>add content like this here</h1>')");
     MuninRTab tab = new MuninRTab(gui, report, con);
-    tab.setNewReport();
+    tab.setNewReport(true);
     gui.getCodeComponent().addTabAndActivate(tab);
   }
 
@@ -156,7 +156,7 @@ public class MainMenu extends MenuBar {
     MuninReport report = result.get();
     TextAreaTab tab;
     tab = ReportType.MDR.equals(report.getReportType()) ? new MuninMdrTab(gui, report, con) : new MuninRTab(gui, report, con);
-    tab.replaceContentText(0, 0, report.getDefinition());
+    //tab.replaceContentText(0, 0, report.getDefinition());
     gui.getCodeComponent().addTabAndActivate(tab);
   }
 

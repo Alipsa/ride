@@ -98,7 +98,7 @@ public class MuninClient {
           .collect(Collectors.joining(", ", "{", "}"));
       throw new Exception("Failed to publish report to Munin server: " + con.target()
                           + ". The response code was " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase()
-                          + "\n, message = " + response.readEntity(String.class) + "\n, headers = " + headers
+                          + "\n, Error message was '" + response.readEntity(String.class) + "'"
       );
     }
   }

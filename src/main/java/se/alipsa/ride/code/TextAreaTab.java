@@ -91,9 +91,11 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
   public abstract CodeTextArea getCodeArea();
 
   public void contentChanged() {
-    setTitle(getTitle() + "*");
-    isChanged = true;
-    saveButton.setDisable(false);
+    if (!getTitle().endsWith("*") && !isChanged) {
+      setTitle(getTitle() + "*");
+      isChanged = true;
+      saveButton.setDisable(false);
+    }
   }
 
   public void contentSaved() {

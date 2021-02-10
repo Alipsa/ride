@@ -107,10 +107,11 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     });
 
     task.setOnSucceeded(e -> {
-      System.out.println("Update report succeeded!");
+      log.info("Successfully published the report {}", muninReport.getReportName());
       gui.setNormalCursor();
       Alerts.info("Publish successful",
           "Successfully published " + muninReport.getReportName() + " to " + muninConnection.target());
+      setNewReport(false);
     });
     new Thread(task).start();
   }
@@ -175,10 +176,10 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     return miscTab;
   }
 
-  public void setNewReport() {
-    isNewReport = true;
-    miscTab.setEditableReportName(true);
-    super.contentChanged();
+  public void setNewReport(boolean isNewReport) {
+    this.isNewReport = isNewReport;
+    miscTab.setEditableReportName(isNewReport);
+    if (isNewReport) super.contentChanged();
   }
 
   public boolean isNewReport() {

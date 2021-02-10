@@ -1,5 +1,7 @@
 # Todo / Roadmap
 
+create a file format for munin reports (.mr files) - xml or json. 
+Saving a munin report should save as reportName.mr
 
 ### Minor fixes
 Add support for parent poms, currently this throws exceptions due to a missing ModelBuilder which
