@@ -8,19 +8,19 @@ import javafx.stage.Stage;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReportInput {
+public class ReportInputResponse {
 
   private String params;
   private Stage stage;
 
   public static final TypeReference<HashMap<String, Object>> TYPE_REF = new TypeReference<HashMap<String, Object>>() {};
 
-  public ReportInput(Stage stage) {
+  public ReportInputResponse(Stage stage) {
     this.stage = stage;
   }
 
   public void addParams(String jsonParams) {
-    //System.out.println("ReportInput: Got " + jsonParams);
+    //System.out.println("ReportInputResponse: Got " + jsonParams);
     this.params = jsonParams;
     stage.close();
   }

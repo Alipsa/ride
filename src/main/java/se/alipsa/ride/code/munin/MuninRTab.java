@@ -98,7 +98,7 @@ public class MuninRTab extends MuninTab {
     WebView browser = new WebView();
     WebEngine webEngine = browser.getEngine();
     webEngine.setUserStyleSheetLocation(ViewTab.BOOTSTRAP_CSS);
-    ReportInput reportInput = new ReportInput(stage);
+    ReportInputResponse reportInput = new ReportInputResponse(stage);
     browser.setContextMenuEnabled(false);
     createContextMenu(browser);
     webEngine.getLoadWorker().stateProperty().addListener(

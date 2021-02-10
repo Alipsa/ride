@@ -1,6 +1,12 @@
 package se.alipsa.ride.model;
 
+import java.util.Objects;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class MuninReport {
+
+  public static final String FILE_EXTENSION = ".mr";
 
   private String reportName;
   private String description;
@@ -69,5 +75,31 @@ public class MuninReport {
   @Override
   public String toString() {
     return reportName + " - " + description;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    MuninReport that = (MuninReport) o;
+
+    if (!Objects.equals(reportName, that.reportName)) return false;
+    if (!Objects.equals(description, that.description)) return false;
+    if (!Objects.equals(definition, that.definition)) return false;
+    if (!Objects.equals(inputContent, that.inputContent)) return false;
+    if (!Objects.equals(reportType, that.reportType)) return false;
+    return Objects.equals(reportGroup, that.reportGroup);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = reportName != null ? reportName.hashCode() : 0;
+    result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (definition != null ? definition.hashCode() : 0);
+    result = 31 * result + (inputContent != null ? inputContent.hashCode() : 0);
+    result = 31 * result + (reportType != null ? reportType.hashCode() : 0);
+    result = 31 * result + (reportGroup != null ? reportGroup.hashCode() : 0);
+    return result;
   }
 }
