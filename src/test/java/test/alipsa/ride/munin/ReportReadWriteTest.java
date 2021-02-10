@@ -48,5 +48,7 @@ public class ReportReadWriteTest {
     }
     assertEquals(report, r2);
 
+    // If everything succeeded, we can mark the file for deletion
+    file.deleteOnExit();
   }
 }
