@@ -12,6 +12,7 @@ import se.alipsa.ride.code.groovytab.GroovyTab;
 import se.alipsa.ride.code.javatab.JavaTab;
 import se.alipsa.ride.code.mdrtab.MdrTab;
 import se.alipsa.ride.code.mdtab.MdTab;
+import se.alipsa.ride.code.munin.MuninTab;
 import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
@@ -99,6 +100,7 @@ public class CodeComponent extends BorderPane {
   public TextAreaTab addTab(File file, CodeType type) {
     TextAreaTab tab;
     String title = file.getName();
+    boolean addContent = true;
     switch (type) {
       case R:
         tab = new RTab(title, gui);
@@ -108,6 +110,10 @@ public class CodeComponent extends BorderPane {
         break;
       case MDR:
         tab = new MdrTab(title, gui);
+        break;
+      case MR:
+        tab = MuninTab.fromFile(file);
+        addContent = false;
         break;
       case XML:
         tab = new XmlTab(title, gui);
@@ -125,21 +131,23 @@ public class CodeComponent extends BorderPane {
       default:
         tab = new TxtTab(title, gui);
     }
-    try {
-      byte[] textBytes = FileUtils.readFileToByteArray(file);
-      String content = "";
-      if (textBytes.length != 0) {
-        CharsetToolkit toolkit = new CharsetToolkit(textBytes);
-        toolkit.setEnforce8Bit(true);
-        Charset charset = toolkit.guessEncoding();
-        log.debug("Charset for {} detected as {}", file.getName(), charset);
-        content = new String(textBytes, charset);
-      }
+    if (addContent) {
+      try {
+        byte[] textBytes = FileUtils.readFileToByteArray(file);
+        String content = "";
+        if (textBytes.length != 0) {
+          CharsetToolkit toolkit = new CharsetToolkit(textBytes);
+          toolkit.setEnforce8Bit(true);
+          Charset charset = toolkit.guessEncoding();
+          log.debug("Charset for {} detected as {}", file.getName(), charset);
+          content = new String(textBytes, charset);
+        }
 
-      tab.setFile(file);
-      tab.replaceContentText(0, 0, content);
-    } catch (IOException e) {
-      ExceptionAlert.showAlert("Failed to read content of file " + file, e);
+        tab.setFile(file);
+        tab.replaceContentText(0, 0, content);
+      } catch (IOException e) {
+        ExceptionAlert.showAlert("Failed to read content of file " + file, e);
+      }
     }
     return addTabAndActivate(tab);
   }
@@ -161,7 +169,7 @@ public class CodeComponent extends BorderPane {
 
   public TextAreaTab getTab(File file) {
     for (Tab tab : pane.getTabs()) {
-      TextAreaTab textAreaTab = (TextAreaTab)tab;
+      TextAreaTab textAreaTab = (TextAreaTab) tab;
       if (file.equals(textAreaTab.getFile())) {
         return textAreaTab;
       }

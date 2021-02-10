@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.model.MuninReport;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 
@@ -35,6 +36,9 @@ public class FileOpener {
       String fileNameLower = file.getName().toLowerCase();
       if (strEndsWith(fileNameLower, ".r", ".s") || strEquals(type, "text/x-rsrc")) {
         return codeComponent.addTab(file, CodeType.R);
+      }
+      if (strEndsWith(fileNameLower, MuninReport.FILE_EXTENSION)) {
+        return codeComponent.addTab(file, CodeType.MR);
       }
       if ( strEquals(type, "application/xml", "text/xml", "text/html")
                  || strEndsWith(type, "+xml")

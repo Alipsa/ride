@@ -6,6 +6,7 @@ public enum CodeType {
   SQL("SQL script"),
   MD("Markdown file"),
   MDR("mdr file"),
+  MR("Munin report"),
   JAVA("Java code"),
   GROOVY("Groovy code");
 

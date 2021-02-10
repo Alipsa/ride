@@ -956,10 +956,25 @@ public class MainMenu extends MenuBar {
     codeArea.contentSaved();
   }
 
-  private File promptForFile() {
+  public File promptForFile() {
     FileChooser fileChooser = new FileChooser();
     fileChooser.setInitialDirectory(gui.getInoutComponent().getRootDir());
     fileChooser.setTitle("Save File");
     return fileChooser.showSaveDialog(gui.getStage());
+  }
+
+  public File promptForFile(String fileTypeDescription, String extension) {
+    FileChooser fileChooser = new FileChooser();
+    FileChooser.ExtensionFilter fileExtensions =
+        new FileChooser.ExtensionFilter(
+            fileTypeDescription, "*" + extension);
+    fileChooser.getExtensionFilters().add(fileExtensions);
+    fileChooser.setInitialDirectory(gui.getInoutComponent().getRootDir());
+    fileChooser.setTitle("Save File");
+    File file = fileChooser.showSaveDialog(gui.getStage());
+    if (file != null && !file.getName().endsWith(extension)) {
+      file = new File(file.getParentFile(), file.getName() + extension);
+    }
+    return file;
   }
 }

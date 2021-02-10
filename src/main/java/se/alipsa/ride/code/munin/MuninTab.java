@@ -12,6 +12,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.jgit.api.Git;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
@@ -24,8 +25,19 @@ import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.git.GitUtils;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public abstract class MuninTab extends TextAreaTab implements TaskListener {
 
@@ -39,7 +51,30 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   protected Button publishButton;
   private boolean isNewReport = false;
 
-  private static Logger log = LogManager.getLogger(MuninTab.class);
+  private static final Logger log = LogManager.getLogger(MuninTab.class);
+
+  public static MuninTab fromFile(File file) {
+
+    try {
+      JAXBContext context = JAXBContext.newInstance(MuninReport.class);
+      XMLInputFactory xmlInFact = XMLInputFactory.newInstance();
+      try(Reader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+        XMLStreamReader xmlReader = xmlInFact.createXMLStreamReader(reader);
+        MuninReport report = context.createUnmarshaller().unmarshal(xmlReader, MuninReport.class).getValue();
+        if (ReportType.MDR.equals(report.getReportType())) {
+          return new MuninMdrTab(Ride.instance(), report, null);
+        } else if (ReportType.UNMANAGED.equals(report.getReportType())) {
+          return new MuninRTab(Ride.instance(), report, null);
+        } else {
+          Alerts.warn("Unknown report type", "Dont know how to process " + report.getReportType());
+          throw new IllegalArgumentException("Unknown report type " + report.getReportType());
+        }
+      }
+    } catch (IOException | XMLStreamException | JAXBException e) {
+      ExceptionAlert.showAlert("Error reading mr file", e);
+    }
+    return null;
+  }
 
   public MuninTab(Ride gui, MuninReport report, MuninConnection con) {
     super(gui, ReportType.MDR.equals(report.getReportType()) ? CodeType.MDR : CodeType.R);
@@ -49,6 +84,7 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     miscTab = new MiscTab(this);
     setTitle(report.getReportName());
 
+    saveButton.setOnAction(a -> saveContent());
 
     viewButton = new Button();
     viewButton.setGraphic(new ImageView(IMG_VIEW));
@@ -71,6 +107,41 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     pane.setCenter(tabPane);
     //gui.getEnvironmentComponent().addContextFunctionsUpdateListener(codeTextArea);
     //setOnClosed(e -> gui.getEnvironmentComponent().removeContextFunctionsUpdateListener(codeTextArea));
+  }
+
+  private void saveContent() {
+    muninReport = updateAndGetMuninReport();
+    File file = getFile();
+    if (file == null) {
+      file = gui.getMainMenu().promptForFile("Munin report file", MuninReport.FILE_EXTENSION);
+      if (file == null) {
+        return;
+      }
+    }
+    try {
+      saveFile(muninReport, file);
+      Git git = gui.getInoutComponent().getGit();
+      if(getTreeItem() != null && git != null) {
+        String path = GitUtils.asRelativePath(getFile(), gui.getInoutComponent().getRootDir());
+        GitUtils.colorNode(git, path, getTreeItem());
+      }
+    } catch (IOException | JAXBException e) {
+      ExceptionAlert.showAlert("Failed to save file " + file, e);
+    }
+  }
+
+  protected void saveFile(MuninReport report, File file) throws IOException, JAXBException {
+    boolean fileExisted = file.exists();
+    JAXBContext context = JAXBContext.newInstance(MuninReport.class);
+    Marshaller mar= context.createMarshaller();
+    mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+    mar.marshal(report, file);
+    setTitle(file.getName());
+    if (!fileExisted) {
+      gui.getInoutComponent().fileAdded(file);
+    }
+    gui.getCodeComponent().fileSaved(file);
+    contentSaved();
   }
 
   private void publishReport(ActionEvent actionEvent) {
