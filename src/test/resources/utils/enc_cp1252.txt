@@ -1,0 +1,3 @@
+Det här är en text som är skriven med windows kodning.
+Här kan man också skriva Å, Ä och Ö.
+Vissa special tecken såsom euro symbolen (€) skiljer sig från iso-8859-1.

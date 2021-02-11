@@ -1,0 +1,2 @@
+En fil kodad som ISO-8859-1.
+Här finns både Å, Ä och Ö.

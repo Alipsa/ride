@@ -64,11 +64,12 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Remove Table and RdataTransformer and use the ones in renjin-client-data-utils instead. 
 - Format project wizard dialog
 - Add base R functions to syntax highlighting and autocomplete, 
-- use the same color for built-in functions as for keywords
-- add right click navigation menu for html views.
-- allow partial view of unmanaged munin reports
-- view unmanaged report with bootstrap
-- add view source context menu for html views
+- Use the same color for built-in functions as for keywords
+- Add right click navigation menu for html views.
+- Allow partial view of unmanaged munin reports
+- View unmanaged report with bootstrap
+- Add view source context menu for html views
+- Switch to Tika parser for better file encoding detection.
 
 ### 1.2.2
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).

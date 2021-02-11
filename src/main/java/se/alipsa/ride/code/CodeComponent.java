@@ -7,6 +7,8 @@ import javafx.scene.layout.BorderPane;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tika.parser.txt.CharsetDetector;
+import org.apache.tika.parser.txt.CharsetMatch;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.groovytab.GroovyTab;
 import se.alipsa.ride.code.javatab.JavaTab;
@@ -17,7 +19,6 @@ import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
 import se.alipsa.ride.code.xmltab.XmlTab;
-import se.alipsa.ride.utils.CharsetToolkit;
 import se.alipsa.ride.utils.ExceptionAlert;
 
 import java.io.File;
@@ -136,11 +137,9 @@ public class CodeComponent extends BorderPane {
         byte[] textBytes = FileUtils.readFileToByteArray(file);
         String content = "";
         if (textBytes.length != 0) {
-          CharsetToolkit toolkit = new CharsetToolkit(textBytes);
-          toolkit.setEnforce8Bit(true);
-          Charset charset = toolkit.guessEncoding();
-          log.debug("Charset for {} detected as {}", file.getName(), charset);
-          content = new String(textBytes, charset);
+          CharsetMatch match = new CharsetDetector().setText(textBytes).detect();
+          log.debug("Charset for {} detected as {} with {}% confidence", file.getName(), match.getName(), match.getConfidence());
+          content = new String(textBytes, Charset.forName(match.getName()));
         }
 
         tab.setFile(file);
