@@ -15,6 +15,7 @@ package se.alipsa.ride.utils;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 /**
@@ -36,7 +37,7 @@ import java.util.Collection;
  * <p>Usage:</p>
  * <pre>
  * // guess the encoding
- * Charset guessedCharset = com.glaforge.i18n.io.CharsetToolkit.guessEncoding(file, 4096);
+ * Charset guessedCharset = CharsetToolkit.guessEncoding(file, 4096);
  * <p/>
  * // create a reader with the charset we've just discovered
  * FileInputStream fis = new FileInputStream(file);
@@ -62,7 +63,7 @@ public class CharsetToolkit {
   private boolean enforce8Bit = false;
 
   /**
-   * Constructor of the <code>com.glaforge.i18n.io.CharsetToolkit</code> utility class.
+   * Constructor of the <code>CharsetToolkit</code> utility class.
    *
    * @param buffer the byte buffer of which we want to know the encoding.
    */
@@ -72,7 +73,7 @@ public class CharsetToolkit {
   }
 
   /**
-   * Constructor of the <code>com.glaforge.i18n.io.CharsetToolkit</code> utility class.
+   * Constructor of the <code>CharsetToolkit</code> utility class.
    *
    * @param buffer         the byte buffer of which we want to know the encoding.
    * @param defaultCharset the default Charset to use in case an 8-bit charset is recognized.
@@ -217,7 +218,7 @@ public class CharsetToolkit {
     return collection.toArray(new Charset[collection.size()]);
   }
 
-  public static void main(String[] args) throws FileNotFoundException, IOException {
+  public static void main(String[] args) throws IOException {
 //		File file = new File("utf-8.txt");
     File file = new File("d");
 
@@ -307,13 +308,13 @@ public class CharsetToolkit {
     // if the file has a Byte Order Marker, we can assume the file is in UTF-xx
     // otherwise, the file would not be human readable
     if (hasUTF8Bom(buffer)) {
-      return Charset.forName("UTF-8");
+      return StandardCharsets.UTF_8;
     }
     if (hasUTF16LEBom(buffer)) {
-      return Charset.forName("UTF-16LE");
+      return StandardCharsets.UTF_16LE;
     }
     if (hasUTF16BEBom(buffer)) {
-      return Charset.forName("UTF-16BE");
+      return StandardCharsets.UTF_16BE;
     }
 
     // if a byte has its most significant bit set, the file is in UTF-8 or in the default encoding
@@ -359,20 +360,20 @@ public class CharsetToolkit {
             i += 2;
           }
         }
-        // a four-bytes sequence was encoutered
+        // a four-bytes sequence was encountered
         else if (isFourBytesSequence(b0)) {
           // there must be three continuation bytes of the form 10xxxxxx,
-          // otherwise the following characteris is not a valid UTF-8 construct
+          // otherwise the following character is not a valid UTF-8 construct
           if (!(isContinuationChar(b1) && isContinuationChar(b2) && isContinuationChar(b3))) {
             validU8Char = false;
           } else {
             i += 3;
           }
         }
-        // a five-bytes sequence was encoutered
+        // a five-bytes sequence was encountered
         else if (isFiveBytesSequence(b0)) {
           // there must be four continuation bytes of the form 10xxxxxx,
-          // otherwise the following characteris is not a valid UTF-8 construct
+          // otherwise the following character is not a valid UTF-8 construct
           if (!(isContinuationChar(b1) && isContinuationChar(b2) && isContinuationChar(b3) &&
               isContinuationChar(b4))) {
             validU8Char = false;
@@ -380,10 +381,10 @@ public class CharsetToolkit {
             i += 4;
           }
         }
-        // a six-bytes sequence was encoutered
+        // a six-bytes sequence was encountered
         else if (isSixBytesSequence(b0)) {
           // there must be five continuation bytes of the form 10xxxxxx,
-          // otherwise the following characteris is not a valid UTF-8 construct
+          // otherwise the following character is not a valid UTF-8 construct
           if (!(isContinuationChar(b1) && isContinuationChar(b2) && isContinuationChar(b3) &&
               isContinuationChar(b4) && isContinuationChar(b5))) {
             validU8Char = false;
@@ -400,19 +401,19 @@ public class CharsetToolkit {
       i++;
     }
     // if no byte with an high order bit set, the encoding is US-ASCII
-    // (it might have been UTF-7, but this encoding is usually internally used only by mail systems)
+    // (it might have been UTF-7, but this encoding is usually used only by mail systems internally)
     if (!highOrderBit) {
       // returns the default charset rather than US-ASCII if the enforce8Bit flag is set.
       if (this.enforce8Bit) {
         return this.defaultCharset;
       } else {
-        return Charset.forName("US-ASCII");
+        return StandardCharsets.US_ASCII;
       }
     }
     // if no invalid UTF-8 were encountered, we can assume the encoding is UTF-8,
     // otherwise the file would not be human readable
     if (validU8Char) {
-      return Charset.forName("UTF-8");
+      return StandardCharsets.UTF_8;
     }
     // finally, if it's not UTF-8 nor US-ASCII, let's assume the encoding is the default encoding
     return this.defaultCharset;
