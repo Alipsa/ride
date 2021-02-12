@@ -1,7 +1,6 @@
 package se.alipsa.ride.inout;
 
 import javafx.concurrent.Task;
-import org.apache.tika.Tika;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.code.CodeComponent;
@@ -10,6 +9,7 @@ import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.model.MuninReport;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.TikaUtils;
 
 import java.awt.*;
 import java.io.File;
@@ -17,7 +17,6 @@ import java.io.IOException;
 
 public class FileOpener {
 
-  private Tika contentProber = new Tika();
   private CodeComponent codeComponent;
 
   private static Logger log = LogManager.getLogger(FileOpener.class);
@@ -97,7 +96,7 @@ public class FileOpener {
     String type;
     try {
       //type = Files.probeContentType(file.toPath());
-      type = contentProber.detect(file);
+      type = TikaUtils.instance().detectContentType(file);
     } catch (IOException e) {
       e.printStackTrace();
       return unknown;

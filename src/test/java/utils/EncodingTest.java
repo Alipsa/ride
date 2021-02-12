@@ -2,6 +2,7 @@ package utils;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.parser.txt.CharsetMatch;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -11,11 +12,22 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.tika.parser.txt.CharsetDetector;
+import org.junit.jupiter.api.TestInstance;
+import se.alipsa.ride.utils.TikaUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EncodingTest {
+
+  private TikaUtils tikaUtils;
+
+  @BeforeAll
+  public void warmup() {
+    tikaUtils = TikaUtils.instance();
+    tikaUtils.detectCharset("Hello world".getBytes(StandardCharsets.UTF_8), "Warmup");
+  }
 
   @Test
   public void testFileEncodingDetection() throws IOException {
@@ -25,6 +37,20 @@ public class EncodingTest {
     assertEquals(StandardCharsets.UTF_16BE, tika(file("enc-utf16BE.txt")));
     assertEquals(StandardCharsets.UTF_8, tika(file("enc-utf8NoBOM.txt")));
     assertEquals(StandardCharsets.UTF_8, tika(file("enc-utf8.txt")));
+  }
+
+  @Test
+  public void testFileEncodingDetection2() throws IOException {
+    assertEquals(StandardCharsets.ISO_8859_1, tika2(file("enc-iso8859-1.txt")));
+    assertEquals(Charset.forName("windows-1252"), tika2(file("enc_cp1252.txt")));
+    assertEquals(StandardCharsets.UTF_16LE, tika2(file("enc-utf16LE.txt")));
+    assertEquals(StandardCharsets.UTF_16BE, tika2(file("enc-utf16BE.txt")));
+    assertEquals(StandardCharsets.UTF_8, tika2(file("enc-utf8NoBOM.txt")));
+    assertEquals(StandardCharsets.UTF_8, tika2(file("enc-utf8.txt")));
+  }
+
+  private Charset tika2(File file) throws IOException {
+    return TikaUtils.instance().detectCharset(file);
   }
 
 
