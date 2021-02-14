@@ -26,7 +26,7 @@ convenient environment for serious R development targeted for the JVM using Renj
 As Renjins support for graphics such as plotting is still somewhat limited (It just pops up an AWT window with the plot).
 An alternative way is to use the inout component that has been injected into the session to display files e.g.
 
-````
+```r
 library(grDevices)
 library(graphics)
 
@@ -41,7 +41,7 @@ dev.off()
 library("se.alipsa:rideutils")
 # convert the image to a a javafx Image and display it in ride
 inout$display(readImage(fileName), "svgplot")
-````
+```
 
 
 ![Plot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Plot.png "Plot")

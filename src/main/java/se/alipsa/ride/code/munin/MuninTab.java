@@ -49,7 +49,6 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
 
   protected Button viewButton;
   protected Button publishButton;
-  private boolean isNewReport = false;
 
   private static final Logger log = LogManager.getLogger(MuninTab.class);
 
@@ -156,35 +155,8 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     if (muninConnection == null) {
       muninConnection = gui.getMainMenu().configureMuninConnection();
     }
-    gui.setWaitCursor();
-    System.out.println("Publishing report...");
-    Task<Void> task = new Task<Void>() {
-      @Override
-      protected Void call() throws Exception {
-        MuninClient.publishReport(muninConnection, muninReport, isNewReport());
-        return null;
-      }
-    };
-
-    task.setOnFailed(e -> {
-      System.err.println("Update report failed!");
-      gui.setNormalCursor();
-      Throwable throwable = task.getException();
-      Throwable ex = throwable.getCause();
-      if (ex == null) {
-        ex = throwable;
-      }
-      ExceptionAlert.showAlert(ex.getMessage(), ex);
-    });
-
-    task.setOnSucceeded(e -> {
-      log.info("Successfully published the report {}", muninReport.getReportName());
-      gui.setNormalCursor();
-      Alerts.info("Publish successful",
-          "Successfully published " + muninReport.getReportName() + " to " + muninConnection.target());
-      setNewReport(false);
-    });
-    new Thread(task).start();
+    PublishDialog dialog = new PublishDialog(gui, muninConnection, this);
+    dialog.showAndWait();
   }
 
   abstract void viewAction(ActionEvent actionEvent);
@@ -245,15 +217,5 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
 
   public MiscTab getMiscTab() {
     return miscTab;
-  }
-
-  public void setNewReport(boolean isNewReport) {
-    this.isNewReport = isNewReport;
-    miscTab.setEditableReportName(isNewReport);
-    if (isNewReport) super.contentChanged();
-  }
-
-  public boolean isNewReport() {
-    return isNewReport;
   }
 }

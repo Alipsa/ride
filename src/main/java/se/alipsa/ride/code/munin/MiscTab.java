@@ -35,9 +35,6 @@ public class MiscTab extends Tab {
       parentTab.contentChanged();
     });
     vBox.getChildren().add(nameHbox);
-    if (muninReport.getReportName() != null && muninReport.getReportName().length() > 0) {
-      reportNameTF.setDisable(true);
-    }
 
     descriptionTA = new TextArea(muninReport.getDescription());
     descriptionTA.setPrefRowCount(2);
@@ -91,10 +88,6 @@ public class MiscTab extends Tab {
 
   public String getInputContent() {
     return inputTA.getAllTextContent();
-  }
-
-  public void setEditableReportName(boolean b) {
-    reportNameTF.setDisable(!b);
   }
 
   public void setReportType(String type) {

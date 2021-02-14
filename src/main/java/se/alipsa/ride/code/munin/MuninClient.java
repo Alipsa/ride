@@ -14,6 +14,7 @@ import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MuninClient {
@@ -24,6 +25,22 @@ public class MuninClient {
     HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic(con.getUserName(), con.getPassword());
     client.register(feature);
     return client;
+  }
+
+  public static Map<String, List<String>> fetchReportInfo(MuninConnection con) throws Exception {
+    Client client = createClient(con);
+    WebTarget target = client.target(con.target()).path("/api/getReportInfo");
+    Response response;
+    try {
+      response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
+    } catch (ProcessingException e) {
+      throw new Exception("Failed to fetch report info on Munin server: " + con.target(), e);
+    }
+    if (response.getStatus() != 200) {
+      throw new Exception("Failed to fetch report info on Munin server: " + con.target()
+          + ". The response code was " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
+    }
+    return response.readEntity(new GenericType<Map<String, List<String>>>() {});
   }
 
   public static List<String> fetchReportGroups(MuninConnection con) throws Exception {
