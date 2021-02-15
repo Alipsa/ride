@@ -17,10 +17,10 @@ import java.io.IOException;
 
 public class FileOpener {
 
-  private Tika contentProber = new Tika();
-  private CodeComponent codeComponent;
+  private final Tika contentProber = new Tika();
+  private final CodeComponent codeComponent;
 
-  private static Logger log = LogManager.getLogger(FileOpener.class);
+  private static final Logger log = LogManager.getLogger(FileOpener.class);
 
   public FileOpener(CodeComponent codeComponent) {
     this.codeComponent = codeComponent;
