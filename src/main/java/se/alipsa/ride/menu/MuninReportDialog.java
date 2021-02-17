@@ -51,7 +51,6 @@ public class MuninReportDialog extends Dialog<MuninReport> {
     }
 
     reportGroupsLV.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      System.out.println("Selected item: " + newValue);
       populateReportsView(con, newValue);
     });
 
@@ -90,7 +89,7 @@ public class MuninReportDialog extends Dialog<MuninReport> {
 
     task.setOnSucceeded(e -> {
       List<MuninReport> reports = task.getValue();
-      System.out.println("Reports are " + reports);
+      //System.out.println("Reports are " + reports);
       muninReportLV.getItems().clear();
       muninReportLV.getItems().addAll(reports);
     });
