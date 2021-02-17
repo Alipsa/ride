@@ -413,6 +413,7 @@ public class ConsoleComponent extends BorderPane {
   }
 
   public SEXP runScript(String script, Map<String, Object> additionalParams) throws Exception {
+    engine.put("inout", gui.getInoutComponent());
     if (additionalParams != null) {
       for (Map.Entry<String, Object> entry : additionalParams.entrySet()) {
         engine.put(entry.getKey(), entry.getValue());

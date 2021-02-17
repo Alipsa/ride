@@ -8,8 +8,8 @@ import se.alipsa.ride.model.MuninReport;
 
 public class MuninMdrTab extends MuninTab {
 
-  public MuninMdrTab(Ride gui, MuninReport report, MuninConnection con) {
-    super(gui, report, con);
+  public MuninMdrTab(Ride gui, MuninReport report) {
+    super(gui, report);
     getMiscTab().setReportType(ReportType.MDR);
     if (report.getDefinition() != null) {
       replaceContentText(0,0, report.getDefinition());
