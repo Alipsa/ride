@@ -20,7 +20,6 @@ import java.util.Optional;
 
 public class MuninReportDialog extends Dialog<MuninReport> {
 
-  private MuninConnection con;
   private final ListView<String> reportGroupsLV = new ListView<>();
   private final ListView<MuninReport> muninReportLV = new ListView<>();
 
@@ -48,19 +47,16 @@ public class MuninReportDialog extends Dialog<MuninReport> {
     if (con.getPassword() == null || "".equals(con.getPassword().trim())) {
       PasswordDialog dialog = new PasswordDialog(gui, "Password to munin server", con.getUserName());
       Optional<String> passwdOpt = dialog.showAndWait();
-      if (passwdOpt.isPresent()) {
-        con.setPassword(passwdOpt.get());
-      }
+      passwdOpt.ifPresent(con::setPassword);
     }
 
     reportGroupsLV.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      System.out.println("Selected item: " + newValue);
       populateReportsView(con, newValue);
     });
 
-    muninReportLV.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
-    });
+    muninReportLV.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+        getDialogPane().lookupButton(ButtonType.OK).setDisable(false)
+    );
 
     setResultConverter(callback -> callback == ButtonType.OK ? muninReportLV.getSelectionModel().getSelectedItem() : null);
     if (con.getPassword() != null && !con.getPassword().trim().isEmpty()) {
@@ -93,7 +89,7 @@ public class MuninReportDialog extends Dialog<MuninReport> {
 
     task.setOnSucceeded(e -> {
       List<MuninReport> reports = task.getValue();
-      System.out.println("Reports are " + reports);
+      //System.out.println("Reports are " + reports);
       muninReportLV.getItems().clear();
       muninReportLV.getItems().addAll(reports);
     });
@@ -118,7 +114,7 @@ public class MuninReportDialog extends Dialog<MuninReport> {
 
     task.setOnSucceeded(e -> {
       List<String> reportGroups = task.getValue();
-      System.out.println("Report groups are " + reportGroups);
+      //System.out.println("Report groups are " + reportGroups);
       reportGroupsLV.getItems().clear();
       reportGroupsLV.getItems().addAll(reportGroups);
     });

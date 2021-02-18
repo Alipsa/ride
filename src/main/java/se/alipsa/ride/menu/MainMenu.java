@@ -118,28 +118,17 @@ public class MainMenu extends MenuBar {
   }
 
   private void createMdrReport() {
-    MuninConnection con = (MuninConnection) gui.getSessionObject(Constants.SESSION_MUNIN_CONNECTION);
-    //if (con == null) {
-    //  con = configureMuninConnection();
-    //}
     MuninReport report = new MuninReport(DEFAULT_MDR_REPORT_NAME, ReportType.MDR);
-    MuninMdrTab tab = new MuninMdrTab(gui, report, con);
-    tab.setNewReport(true);
+    MuninMdrTab tab = new MuninMdrTab(gui, report);
     gui.getCodeComponent().addTabAndActivate(tab);
   }
 
   private void createUnmanagedReport() {
-    MuninConnection con = (MuninConnection) gui.getSessionObject(Constants.SESSION_MUNIN_CONNECTION);
-    //if (con == null) {
-    //  con = configureMuninConnection();
-    //}
-
     MuninReport report = new MuninReport(DEFAULT_R_REPORT_NAME, ReportType.UNMANAGED);
     report.setDefinition("library('se.alipsa:htmlcreator')\n\n" +
         "html.clear()\n" +
         "html.add('<h1>add content like this here</h1>')");
-    MuninRTab tab = new MuninRTab(gui, report, con);
-    tab.setNewReport(true);
+    MuninRTab tab = new MuninRTab(gui, report);
     gui.getCodeComponent().addTabAndActivate(tab);
   }
 
@@ -155,7 +144,7 @@ public class MainMenu extends MenuBar {
     if (!result.isPresent()) return;
     MuninReport report = result.get();
     TextAreaTab tab;
-    tab = ReportType.MDR.equals(report.getReportType()) ? new MuninMdrTab(gui, report, con) : new MuninRTab(gui, report, con);
+    tab = ReportType.MDR.equals(report.getReportType()) ? new MuninMdrTab(gui, report) : new MuninRTab(gui, report);
     //tab.replaceContentText(0, 0, report.getDefinition());
     gui.getCodeComponent().addTabAndActivate(tab);
   }
@@ -277,10 +266,11 @@ public class MainMenu extends MenuBar {
       Path testFile = Files.createFile(testPath.resolve(camelCasedPackageName + "Test.R"));
       FileUtils.writeToFile(testFile.toFile(), "library('hamcrest')\n");
 
+      /*
       String lowercaseProjectName = camelCasedPackageName.toLowerCase();
 
       String groupPath = res.groupName.replace('.', '/');
-      /*
+
       Path loaderPath = new File(res.dir, "src/main/java/" + groupPath + "/" + lowercaseProjectName).toPath();
       Files.createDirectories(loaderPath);
       String loaderContent = FileUtils.readContent("templates/ScriptLoader.java")
@@ -963,7 +953,7 @@ public class MainMenu extends MenuBar {
     return fileChooser.showSaveDialog(gui.getStage());
   }
 
-  public File promptForFile(String fileTypeDescription, String extension) {
+  public File promptForFile(String fileTypeDescription, String extension, String suggestedName) {
     FileChooser fileChooser = new FileChooser();
     FileChooser.ExtensionFilter fileExtensions =
         new FileChooser.ExtensionFilter(
@@ -971,6 +961,7 @@ public class MainMenu extends MenuBar {
     fileChooser.getExtensionFilters().add(fileExtensions);
     fileChooser.setInitialDirectory(gui.getInoutComponent().getRootDir());
     fileChooser.setTitle("Save File");
+    fileChooser.setInitialFileName(suggestedName);
     File file = fileChooser.showSaveDialog(gui.getStage());
     if (file != null && !file.getName().endsWith(extension)) {
       file = new File(file.getParentFile(), file.getName() + extension);

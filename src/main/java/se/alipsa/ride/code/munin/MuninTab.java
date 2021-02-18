@@ -3,7 +3,7 @@ package se.alipsa.ride.code.munin;
 import static se.alipsa.ride.Constants.DEFAULT_MDR_REPORT_NAME;
 import static se.alipsa.ride.Constants.DEFAULT_R_REPORT_NAME;
 
-import javafx.concurrent.Task;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.CodeTextArea;
@@ -27,29 +28,29 @@ import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.git.GitUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 public abstract class MuninTab extends TextAreaTab implements TaskListener {
 
   private final CodeTextArea codeTextArea;
   private final MiscTab miscTab;
-  private MuninConnection muninConnection;
   private MuninReport muninReport;
   private TabPane tabPane = new TabPane();
 
   protected Button viewButton;
   protected Button publishButton;
-  private boolean isNewReport = false;
 
   private static final Logger log = LogManager.getLogger(MuninTab.class);
 
@@ -62,9 +63,9 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
         XMLStreamReader xmlReader = xmlInFact.createXMLStreamReader(reader);
         MuninReport report = context.createUnmarshaller().unmarshal(xmlReader, MuninReport.class).getValue();
         if (ReportType.MDR.equals(report.getReportType())) {
-          return new MuninMdrTab(Ride.instance(), report, null);
+          return new MuninMdrTab(Ride.instance(), report);
         } else if (ReportType.UNMANAGED.equals(report.getReportType())) {
-          return new MuninRTab(Ride.instance(), report, null);
+          return new MuninRTab(Ride.instance(), report);
         } else {
           Alerts.warn("Unknown report type", "Dont know how to process " + report.getReportType());
           throw new IllegalArgumentException("Unknown report type " + report.getReportType());
@@ -76,9 +77,8 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     return null;
   }
 
-  public MuninTab(Ride gui, MuninReport report, MuninConnection con) {
+  public MuninTab(Ride gui, MuninReport report) {
     super(gui, ReportType.MDR.equals(report.getReportType()) ? CodeType.MDR : CodeType.R);
-    muninConnection = con;
     muninReport = report;
     codeTextArea = getCodeType() == CodeType.MDR ? new MdrTextArea(this) : new RTextArea(this);
     miscTab = new MiscTab(this);
@@ -113,7 +113,9 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     muninReport = updateAndGetMuninReport();
     File file = getFile();
     if (file == null) {
-      file = gui.getMainMenu().promptForFile("Munin report file", MuninReport.FILE_EXTENSION);
+      file = gui.getMainMenu().promptForFile("Munin report file",
+          MuninReport.FILE_EXTENSION,
+          muninReport.getReportName() +  MuninReport.FILE_EXTENSION);
       if (file == null) {
         return;
       }
@@ -153,38 +155,11 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
       tabPane.getSelectionModel().select(miscTab);
       return;
     }
-    if (muninConnection == null) {
-      muninConnection = gui.getMainMenu().configureMuninConnection();
-    }
-    gui.setWaitCursor();
-    System.out.println("Publishing report...");
-    Task<Void> task = new Task<Void>() {
-      @Override
-      protected Void call() throws Exception {
-        MuninClient.publishReport(muninConnection, muninReport, isNewReport());
-        return null;
-      }
-    };
 
-    task.setOnFailed(e -> {
-      System.err.println("Update report failed!");
-      gui.setNormalCursor();
-      Throwable throwable = task.getException();
-      Throwable ex = throwable.getCause();
-      if (ex == null) {
-        ex = throwable;
-      }
-      ExceptionAlert.showAlert(ex.getMessage(), ex);
-    });
+    MuninConnection muninConnection = getOrPromptForMuninConnection();
 
-    task.setOnSucceeded(e -> {
-      log.info("Successfully published the report {}", muninReport.getReportName());
-      gui.setNormalCursor();
-      Alerts.info("Publish successful",
-          "Successfully published " + muninReport.getReportName() + " to " + muninConnection.target());
-      setNewReport(false);
-    });
-    new Thread(task).start();
+    PublishDialog dialog = new PublishDialog(gui, muninConnection, this);
+    dialog.showAndWait();
   }
 
   abstract void viewAction(ActionEvent actionEvent);
@@ -247,13 +222,21 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
     return miscTab;
   }
 
-  public void setNewReport(boolean isNewReport) {
-    this.isNewReport = isNewReport;
-    miscTab.setEditableReportName(isNewReport);
-    if (isNewReport) super.contentChanged();
+  protected MuninConnection getMuninConnection() {
+    return (MuninConnection)gui.getSessionObject(Constants.SESSION_MUNIN_CONNECTION);
   }
 
-  public boolean isNewReport() {
-    return isNewReport;
+  protected MuninConnection getOrPromptForMuninConnection() {
+    MuninConnection muninConnection = getMuninConnection();
+    if (muninConnection == null) {
+      final FutureTask<MuninConnection> query = new FutureTask<>(() ->  gui.getMainMenu().configureMuninConnection());
+      Platform.runLater(query);
+      try {
+        muninConnection = query.get();
+      } catch (InterruptedException | ExecutionException e) {
+        ExceptionAlert.showAlert("Failed to get munin connection", e);
+      }
+    }
+    return muninConnection;
   }
 }

@@ -17,7 +17,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <release.tag>1.2.3-beta</release.tag>
     <renjin.version>3.5-beta76</renjin.version>
-    <gradle.version>6.1.1</gradle.version>
     <!--jgit.version>5.9.0.202009080501-r</jgit.version-->
     <jgit.version>5.10.0.202012080955-r</jgit.version>
   </properties>
@@ -32,11 +31,6 @@
       <id>bedatadriven</id>
       <name>bedatadriven public repo</name>
       <url>https://nexus.bedatadriven.com/content/groups/public/</url>
-    </repository>
-    <repository>
-      <id>gradle</id>
-      <name>Gradle Releases</name>
-      <url>https://repo.gradle.org/gradle/libs-releases-local/</url>
     </repository>
   </repositories>
   <pluginRepositories>
@@ -256,7 +250,12 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
-      <version>[1.22,)</version>
+      <version>1.25</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-parsers</artifactId>
+      <version>1.25</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -358,42 +357,6 @@
       <artifactId>maven-core</artifactId>
       <version>3.1.1</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.gradle</groupId>
-      <artifactId>gradle-core</artifactId>
-      <version>${gradle.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.gradle</groupId>
-      <artifactId>gradle-tooling-api</artifactId>
-      <version>${gradle.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.gradle</groupId>
-      <artifactId>gradle-resources</artifactId>
-      <version>${gradle.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.gradle</groupId>
-      <artifactId>gradle-messaging</artifactId>
-      <version>${gradle.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.gradle</groupId>
-      <artifactId>gradle-base-services</artifactId>
-      <version>${gradle.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.gradle</groupId>
-      <artifactId>gradle-wrapper</artifactId>
-      <version>${gradle.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>

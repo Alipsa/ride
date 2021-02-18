@@ -20,16 +20,16 @@ import org.renjin.sexp.StringArrayVector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.inout.viewer.ViewTab;
-import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
 import se.alipsa.ride.utils.ExceptionAlert;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class MuninRTab extends MuninTab {
 
-  public MuninRTab(Ride gui, MuninReport report, MuninConnection con) {
-    super(gui, report, con);
+  public MuninRTab(Ride gui, MuninReport report) {
+    super(gui, report);
     getMiscTab().setReportType(ReportType.UNMANAGED);
     if (report.getDefinition() != null) {
       replaceContentText(0,0, report.getDefinition());
@@ -53,7 +53,13 @@ public class MuninRTab extends MuninTab {
       @Override
       protected SEXP call() throws Exception {
         try {
-          SEXP result = consoleComponent.runScript(getTextContent());
+          String muninBaseUrl;
+          if (getMuninConnection() == null) {
+            muninBaseUrl = "not configured";
+          } else {
+            muninBaseUrl = getOrPromptForMuninConnection().target();
+          }
+          SEXP result = consoleComponent.runScript(getTextContent(), Collections.singletonMap("muninBaseUrl", muninBaseUrl));
           if (!(result instanceof StringArrayVector)) {
             String varName = ".muninUnmanagedReportResult";
             consoleComponent.addVariableToSession(varName, result);

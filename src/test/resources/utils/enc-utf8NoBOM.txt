@@ -1,0 +1,3 @@
+En fil kodad som UTF-8.
+Här finns både Å, Ä och Ö.
+也有两句中文。

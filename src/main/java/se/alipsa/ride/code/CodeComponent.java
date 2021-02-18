@@ -17,8 +17,8 @@ import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
 import se.alipsa.ride.code.xmltab.XmlTab;
-import se.alipsa.ride.utils.CharsetToolkit;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.TikaUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,11 +136,8 @@ public class CodeComponent extends BorderPane {
         byte[] textBytes = FileUtils.readFileToByteArray(file);
         String content = "";
         if (textBytes.length != 0) {
-          CharsetToolkit toolkit = new CharsetToolkit(textBytes);
-          toolkit.setEnforce8Bit(true);
-          Charset charset = toolkit.guessEncoding();
-          log.debug("Charset for {} detected as {}", file.getName(), charset);
-          content = new String(textBytes, charset);
+          Charset cs = TikaUtils.instance().detectCharset(textBytes, file.getName());
+          content = new String(textBytes, cs);
         }
 
         tab.setFile(file);
