@@ -16,7 +16,6 @@ public class TableMetaData {
   private String dataType;
   private Integer characterMaximumLength;
   private Integer numericPrecision;
-  private Integer numericPrecisionRadix;
   private Integer numericScale;
   private String collationName;
 
@@ -30,14 +29,13 @@ public class TableMetaData {
     setDataType(String.valueOf(row.get(5).toString())); // On h2 this is an INT, on SQL Server it is VARCHAR
     setCharacterMaximumLength(toInt(row.get(6)));
     setNumericPrecision(toInt(row.get(7)));
-    setNumericPrecisionRadix(toInt(row.get(8)));
-    setNumericScale(toInt(row.get(9)));
-    setCollationName(String.valueOf(row.get(10)));
+    setNumericScale(toInt(row.get(8)));
+    setCollationName(String.valueOf(row.get(9)));
   }
 
   public TableMetaData(Object tableName, Object tableType, Object columnName, Object ordinalPosition,
                        Object isNullable, Object dataType, Object characterMaximumLength, Object numericPrecision,
-                       Object numericPrecisionRadix, Object numericScale, Object collationName) {
+                       Object numericScale, Object collationName) {
 
     setTableName((String) tableName);
     setTableType((String) tableType);
@@ -47,7 +45,6 @@ public class TableMetaData {
     setDataType((String) dataType);
     setCharacterMaximumLength((Integer) characterMaximumLength);
     setNumericPrecision((Integer) numericPrecision);
-    setNumericPrecisionRadix((Integer) numericPrecisionRadix);
     setNumericScale((Integer) numericScale);
     setCollationName((String) collationName);
   }
@@ -178,14 +175,6 @@ public class TableMetaData {
 
   public void setNumericPrecision(Integer numericPrecision) {
     this.numericPrecision = numericPrecision;
-  }
-
-  public Integer getNumericPrecisionRadix() {
-    return numericPrecisionRadix;
-  }
-
-  public void setNumericPrecisionRadix(Integer numericPrecisionRadix) {
-    this.numericPrecisionRadix = numericPrecisionRadix;
   }
 
   public Integer getNumericScale() {

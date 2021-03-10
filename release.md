@@ -71,6 +71,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Add view source context menu for html views
 - Switch to Tika parser for better file encoding detection.
 - Removed the unfinished gradle support, supporting maven is enough.
+- Upgrade r2jdbc version for improved mysql support
 
 ### 1.2.2
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).

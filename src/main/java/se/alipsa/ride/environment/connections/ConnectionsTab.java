@@ -162,7 +162,9 @@ public class ConnectionsTab extends Tab {
       ConnectionInfo con = new ConnectionInfo(name.getValue(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
       addConnection(con);
       saveConnection(con);
-      try(Connection connection = con.connect()) {
+      try {
+        Connection connection = con.connect();
+        connection.close();
         log.info("Connection created successfully, all good!");
       } catch (SQLException ex) {
         ExceptionAlert.showAlert("Failed to connect to database: " + ex.toString(), ex);
@@ -374,7 +376,6 @@ public class ConnectionsTab extends Tab {
            ", p.type as DATA_TYPE\n" +
            ", 0 as CHARACTER_MAXIMUM_LENGTH\n" +
            ", 0 as NUMERIC_PRECISION\n" +
-           ", 0 as NUMERIC_PRECISION_RADIX\n" +
            ", 0 as NUMERIC_SCALE\n" +
            ", '' as COLLATION_NAME\n" +
            "FROM \n" +
@@ -396,7 +397,6 @@ public class ConnectionsTab extends Tab {
          ", DATA_TYPE\n" +
          ", CHARACTER_MAXIMUM_LENGTH\n" +
          ", NUMERIC_PRECISION\n" +
-         ", NUMERIC_PRECISION_RADIX\n" +
          ", NUMERIC_SCALE\n" +
          ", COLLATION_NAME\n" +
          "from INFORMATION_SCHEMA.COLUMNS col\n" +
