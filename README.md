@@ -7,18 +7,17 @@ R scripts before creating an embedded R application in java code, or to just use
 much like you would use R Studio. 
 
 It was created to have a familiar (similar to RStudio) interface to develop R scripts that
-will later run in embedded mode on application servers such as Wildfly or Play Framework.
+will later run in embedded mode on application servers such as Spring Boot or Play Framework.
 I use it daily at work and have been doing so for almost two years now. It started as a tool to develop and test R code 
 that I created using RStudio but needed a manageable intermediary to make sure my code worked in Renjin before integrating 
 it with the java application servers I use at work - due to fact that some packages commonly used in GNU R does not yet work 
 in Renjin. Later, it evolved to the point where I now use it as my primary data analysis tool.
 
-
 It is fully functional i.e. it is possible to create, open, save and execute R scripts, 
 run selected text, ctrl + enter execution of current line or selected text, view packages loaded, 
-see variables created, syntax highlighting for R, XML, SQL  and Java files etc. but it has some way to go compared to 
-all the rich functionality of RStudio at this point. However, it has some Renjin specific features such as support for 
-the different package loaders, wizards to create Renjin projects and Renjin extensions, maven support making a very
+see variables created, syntax highlighting for R, XML, SQL  and Java files etc. 
+It also has some Renjin specific features such as support for the different package loaders, 
+wizards to create Renjin projects and Renjin extensions, maven support making a very
 convenient environment for serious R development targeted for the JVM using Renjin.
 
 ![Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Screenshot.png "Screenshot")
@@ -61,6 +60,13 @@ package development and when you aim to embed your R code in an app server as it
 that dependencies are correct prior to integration testing in embedded mode on e.g. an app server. 
 In the Packages tab you can see a list of packages loaded for the session (in case you missed a library 
 call in the script but loaded it from another script - the session is shared).
+
+#### Creating R reports in Munin
+Ride also supports developing, downloading and publishing reports for the [Munin Reports server](https://github.com/perNyfelt/munin). 
+Both formats (R based reports producing HTML i.e. mr files, and markdown with R enhancements (similar to rmd) i.e. mdr files) 
+are supported natively in Ride. When you edit an mr or mdr file a view button will apear in the button bar allowing 
+you to preview the report. Parameterized reports are also supported. 
+
 
 ### Installing and Running ride
 Go to the releases tab and expand the assets section at the bottom of the release. 
