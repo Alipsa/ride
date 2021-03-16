@@ -46,7 +46,6 @@ public class ViewTab extends Tab {
   private static final Logger log = LogManager.getLogger();
 
   private final TabPane viewPane;
-  private List<String> headerList;
 
   // The highlightJs stuff is in mdr2html
   public static final String HIGHLIGHT_JS_CSS = "<link rel='stylesheet' href='" + resourceUrlExternalForm("highlightJs/default.css") + "'>";
@@ -66,7 +65,7 @@ public class ViewTab extends Tab {
   }
 
   public void viewTable(Table table, String... title) {
-    headerList = table.getHeaderList();
+    List<String> headerList = table.getHeaderList();
     List<List<Object>> rowList = table.getRowList();
     NumberFormat numberFormatter = NumberFormat.getInstance();
     numberFormatter.setGroupingUsed(false);
@@ -77,7 +76,11 @@ public class ViewTab extends Tab {
       if (KEY_CODE_COPY.match(event)) {
         // Include header if all rows are selected
         boolean includeHeader = tableView.getSelectionModel().getSelectedCells().size() == rowList.size();
-        copySelectionToClipboard(tableView, includeHeader);
+        if (includeHeader) {
+          copySelectionToClipboard(tableView, headerList);
+        } else {
+          copySelectionToClipboard(tableView, null);
+        }
       }
     });
 
@@ -85,9 +88,10 @@ public class ViewTab extends Tab {
       final TableRow<List<String>> row = new TableRow<>();
       final ContextMenu contextMenu = new ContextMenu();
       final MenuItem copyMenuItem = new MenuItem("copy");
-      copyMenuItem.setOnAction(event -> copySelectionToClipboard(tv, false));
+      copyMenuItem.setOnAction(event -> copySelectionToClipboard(tv, null));
       final MenuItem copyWithHeaderMenuItem = new MenuItem("copy with header");
-      copyWithHeaderMenuItem.setOnAction(event -> copySelectionToClipboard(tv, true));
+
+      copyWithHeaderMenuItem.setOnAction(event -> copySelectionToClipboard(tv, headerList));
 
       contextMenu.getItems().addAll(copyMenuItem, copyWithHeaderMenuItem);
       row.contextMenuProperty().bind(
@@ -133,13 +137,13 @@ public class ViewTab extends Tab {
 
 
   @SuppressWarnings("rawtypes")
-  private void copySelectionToClipboard(final TableView<?> table, boolean includeHeader) {
+  private void copySelectionToClipboard(final TableView<?> table, List<String> headerList) {
     final Set<Integer> rows = new TreeSet<>();
     for (final TablePosition tablePosition : table.getSelectionModel().getSelectedCells()) {
       rows.add(tablePosition.getRow());
     }
     final StringBuilder strb = new StringBuilder();
-    if (includeHeader) {
+    if (headerList != null) {
       strb.append(String.join("\t", headerList)).append("\n");
     }
     boolean firstRow = true;
