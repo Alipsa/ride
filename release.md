@@ -72,6 +72,10 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Switch to Tika parser for better file encoding detection.
 - Removed the unfinished gradle support, supporting maven is enough.
 - Upgrade r2jdbc version for improved mysql support
+- Fix bug where headers was from the latest query when copying.
+- bump dependency versions
+- add title (basename of url) if not given when viewing an url and show the url as a tooltip on the tab title
+- make git status all prettier
 
 ### 1.2.2
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).
