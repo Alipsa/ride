@@ -530,40 +530,42 @@ public class DynamicContextMenu extends ContextMenu {
          Status status = statusCommand.call();
          StringBuilder str = new StringBuilder("<h2>Git Status</h2>");
 
+         final String delim = "<br />";
+
          Set<String> added = status.getAdded();
          if (added.size() > 0) {
-            str.append("<b>Added:</b> ").append(String.join(", ", added)).append("<br/>");
+            str.append("<h3>Added:</h3> ").append(String.join(delim, added)).append("<br/>");
          }
          Set<String> changed = status.getChanged();
          if (changed.size() > 0) {
-            str.append("<br/><b>Changed:</b> ").append(String.join(", ", changed)).append("<br/>");
+            str.append("<h3>Changed:</h3> ").append(String.join(delim, changed)).append("<br/>");
          }
          Set<String> conflicting = status.getConflicting();
          if (conflicting.size() > 0) {
-            str.append("<br/><b>Conflicting:</b> ").append(String.join(", ", conflicting)).append("<br/>");
+            str.append("<h3>Conflicting:</h3> ").append(String.join(delim, conflicting)).append("<br/>");
          }
          Set<String> missing = status.getMissing();
          if (missing.size() > 0) {
-            str.append("<br/><b>Missing:</b> ").append(String.join(", ", missing)).append("<br/>");
+            str.append("<h3>Missing:</h3> ").append(String.join(delim, missing)).append("<br/>");
          }
          Set<String> modified = status.getModified();
          if (modified.size() > 0) {
-            str.append("<br/><b>Modified:</b> ").append(String.join(", ", modified)).append("<br/>");
+            str.append("<h3>Modified:</h3> ").append(String.join(delim, modified)).append("<br/>");
          }
          Set<String> removed = status.getRemoved();
          if (removed.size() > 0) {
-            str.append("<br/><b>Removed:</b> ").append(String.join(", ", removed)).append("<br/>");
+            str.append("<h3>Removed:</h3> ").append(String.join(delim, removed)).append("<br/>");
          }
          Set<String> uncomittedChanges = status.getUncommittedChanges();
          if (uncomittedChanges.size() > 0) {
-            str.append("\n<b>Uncommited changes:</b> ").append(String.join(", ", uncomittedChanges)).append("<br/>");
+            str.append("<h3>Uncommited changes:</h3> ").append(String.join(delim, uncomittedChanges)).append("<br/>");
          }
          Set<String> untracked = status.getUntracked();
          if (untracked.size() > 0) {
-            str.append("<br/><b>Untracked:</b> ").append(String.join(", ", untracked)).append("<br/>");
+            str.append("<h3>Untracked:</h3> ").append(String.join(delim, untracked)).append("<br/>");
          }
-         str.append("<br/><b>hasUncommittedChanges:</b> ").append(status.hasUncommittedChanges()).append("<br/>");
-         str.append("<b>isClean:</b> ").append(status.isClean()).append("<br/>");
+         str.append("<h3>hasUncommittedChanges:</h3> ").append(status.hasUncommittedChanges()).append("<br/>");
+         str.append("<h3>isClean:</h3> ").append(status.isClean()).append("<br/>");
          Alerts.infoStyled("Status", str.toString());
       } catch (GitAPIException e) {
          log.warn("Failed to get status", e);
