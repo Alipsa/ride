@@ -301,4 +301,18 @@ public class FileUtils {
     return homeDir;
   }
 
+  public static String baseName(String url) {
+    if (url == null) return null;
+    String basename = "";
+    url = url.replace('\\', '/');
+    if (url.contains("/")) {
+      String filePart = url.substring(url.lastIndexOf('/')+1);
+      if (filePart.contains("?")) {
+        basename = filePart.substring(0, filePart.indexOf('?'));
+      } else {
+        basename = filePart;
+      }
+    }
+    return basename.length() > 0 ? basename : url;
+  }
 }

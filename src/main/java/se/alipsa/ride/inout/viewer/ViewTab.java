@@ -290,7 +290,10 @@ public class ViewTab extends Tab {
     Tab tab = new Tab();
     if (title.length > 0) {
       tab.setText(title[0]);
+    } else {
+      tab.setText(FileUtils.baseName(url));
     }
+    tab.setTooltip(new Tooltip(url));
     viewPane.getTabs().add(tab);
     WebView browser = new WebView();
     browser.setContextMenuEnabled(false);
