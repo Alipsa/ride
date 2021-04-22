@@ -80,6 +80,11 @@ s java 8 version that includes javafx. I have seen some issues running with Open
 related to not setting registry values in the same way as the Oracle JDK. The workaround to this would be to 
 bundle the entire JDK which is not something I want to do so if the exe is not working for you, use the cmd script.  
 
+If you want to run the bash script from windows git bash (msys), create a shortcut with the comment
+`D:\whatever\Git\bin\bash.exe ./ride.sh`
+Where D:\whatever is the path to your git for windows installation
+Also set the working dir in the shortcut to wherever you installed ride.
+
 If you want to override or customize startup options you can create a file called env.sh (or env.cmd) in the base directory
 where you installed (unzipped) Ride. An example would be to set the right java environment variables so the launcher works
 properly, e.g.
