@@ -45,37 +45,40 @@ BLAS=com.github.fommil.netlib.F2jBLAS
 LAPACK=com.github.fommil.netlib.F2jLAPACK
 ARPACK=com.github.fommil.netlib.F2jARPACK
 
+BLAS_PROPS=( "-Dcom.github.fommil.netlib.BLAS=${BLAS}" "-Dcom.github.fommil.netlib.LAPACK=${LAPACK}" "-Dcom.github.fommil.netlib.ARPACK=${ARPACK}" )
+
 # Allow for any kind of customization of variables or paths etc. without having to change this script
 # which would otherwise be overwritten on a subsequent install.
 if [[ -f $DIR/env.sh ]]; then
   source "$DIR/env.sh"
 fi
 
-if [[ "${OSTYPE}" == "msys" ]]; then
-  JAVA_CMD="javaw"
-  CLASSPATH="${JAR_NAME};$(winpath ${LIB_DIR})/*"
-  LD_PATH="$(winpath ${LIB_DIR})"
+function fullJavaPath {
+  JAVA_CMD=$1
+  if [[ ! -z {JAVA_HOME+x} ]] && [[ -d ${JAVA_HOME} ]]; then
+    JAVA_CMD=$(posixpath ${JAVA_HOME})bin/${JAVA_CMD}
+  fi
+  echo ${JAVA_CMD}
+}
 
-  # Fixes bug  Unable to get Charset 'cp65001' for property 'sun.stdout.encoding'
-  JAVA_OPTS="${JAVA_OPTS} -Dsun.stdout.encoding=UTF-8 -Dsun.err.encoding=UTF-8"
-else
-  JAVA_CMD="java"
-  CLASSPATH="${JAR_NAME}:${LIB_DIR}/*"
-  LD_PATH="${LIB_DIR}"
-fi
-
-if [[ ! -z {JAVA_HOME+x} ]] && [[ -d ${JAVA_HOME} ]]; then
-  JAVA_CMD=$(posixpath ${JAVA_HOME})bin/${JAVA_CMD}
-fi
-
-${JAVA_CMD} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
-
-# Note: It is possible to force the initial packageloader by adding:
+# Note: It is possible to force the initial package loader by adding:
 # -DConsoleComponent.PackageLoader=ClasspathPackageLoader
 # to the command below, but even better to add it to JAVA_OPTS variable in env.sh
 
-${JAVA_CMD} -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" \
--Dcom.github.fommil.netlib.BLAS=${BLAS} \
--Dcom.github.fommil.netlib.LAPACK=${LAPACK} \
--Dcom.github.fommil.netlib.ARPACK=${ARPACK} \
-$JAVA_OPTS se.alipsa.ride.Ride &
+if [[ "${OSTYPE}" == "msys" ]]; then
+	JAVA_CMD=$(fullJavaPath "javaw")
+	CLASSPATH="${JAR_NAME};$(winpath ${LIB_DIR})/*"
+	LD_PATH="$(winpath ${LIB_DIR})"
+
+	# Fixes bug  Unable to get Charset 'cp65001' for property 'sun.stdout.encoding'
+	JAVA_OPTS="${JAVA_OPTS} -Dsun.stdout.encoding=UTF-8 -Dsun.err.encoding=UTF-8"
+	start ${JAVA_CMD} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen
+	start ${JAVA_CMD} -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride
+
+else
+	JAVA_CMD=$(fullJavaPath "java")
+	CLASSPATH="${JAR_NAME}:${LIB_DIR}/*"
+	LD_PATH="${LIB_DIR}"
+	${JAVA_CMD} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
+	${JAVA_CMD} -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride &
+fi
