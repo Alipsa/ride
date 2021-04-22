@@ -18,6 +18,10 @@ function winpath {
   echo "${1}" | sed -e 's/^\///' -e 's/\//\\/g' -e 's/^./\0:/'
 }
 
+function posixpath {
+  echo "/${1}" | sed -e 's/\\/\//g' -e 's/://' -e '/\/$/! s|$|/|'
+}
+
 cd "${DIR}" || { notify "Failed to cd to $DIR"; exit 1; }
 
 PROPERTY_FILE=version.properties
@@ -48,23 +52,29 @@ if [[ -f $DIR/env.sh ]]; then
 fi
 
 if [[ "${OSTYPE}" == "msys" ]]; then
+  JAVA_CMD="javaw"
   CLASSPATH="${JAR_NAME};$(winpath ${LIB_DIR})/*"
   LD_PATH="$(winpath ${LIB_DIR})"
 
   # Fixes bug  Unable to get Charset 'cp65001' for property 'sun.stdout.encoding'
   JAVA_OPTS="${JAVA_OPTS} -Dsun.stdout.encoding=UTF-8 -Dsun.err.encoding=UTF-8"
 else
+  JAVA_CMD="java"
   CLASSPATH="${JAR_NAME}:${LIB_DIR}/*"
   LD_PATH="${LIB_DIR}"
 fi
 
-java -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
+if [[ ! -z {JAVA_HOME+x} ]] && [[ -d ${JAVA_HOME} ]]; then
+  JAVA_CMD=$(posixpath ${JAVA_HOME})bin/${JAVA_CMD}
+fi
+
+${JAVA_CMD} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
 
 # Note: It is possible to force the initial packageloader by adding:
 # -DConsoleComponent.PackageLoader=ClasspathPackageLoader
 # to the command below, but even better to add it to JAVA_OPTS variable in env.sh
 
-java -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" \
+${JAVA_CMD} -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" \
 -Dcom.github.fommil.netlib.BLAS=${BLAS} \
 -Dcom.github.fommil.netlib.LAPACK=${LAPACK} \
 -Dcom.github.fommil.netlib.ARPACK=${ARPACK} \
