@@ -54,6 +54,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2.4 
+(nothing yet)
+
 ### 1.2.3
 - Treat rmd like a md file
 - Support mdr files  
