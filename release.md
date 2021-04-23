@@ -54,7 +54,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
-### 1.2.3-SNAPSHOT
+### 1.2.3
 - Treat rmd like a md file
 - Support mdr files  
   - View button that renders the mdr as html and shows it in the viewer.
@@ -75,7 +75,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Fix bug where headers was from the latest query when copying.
 - bump dependency versions
 - add title (basename of url) if not given when viewing an url and show the url as a tooltip on the tab title
-- make git status all prettier
+- make git "status all" prettier
 
 ### 1.2.2
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).
