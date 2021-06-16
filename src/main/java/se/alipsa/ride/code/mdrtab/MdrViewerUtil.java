@@ -24,7 +24,9 @@ public class MdrViewerUtil {
           SEXP htmlContent = consoleComponent
               .runScript("library('se.alipsa:mdr2html')\n renderMdr(mdrContent)",
                   Collections.singletonMap("mdrContent", textContent));
-          inout.viewHtmlWithBootstrap(htmlContent, title);
+          if (htmlContent != null) {
+            inout.viewHtmlWithBootstrap(htmlContent, title);
+          }
         } catch (RuntimeException e) {
           throw new Exception(e);
         }

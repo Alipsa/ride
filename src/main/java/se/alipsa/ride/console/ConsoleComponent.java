@@ -49,6 +49,7 @@ import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.model.Repo;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.maven.DependenciesResolveException;
@@ -413,6 +414,11 @@ public class ConsoleComponent extends BorderPane {
   }
 
   public SEXP runScript(String script, Map<String, Object> additionalParams) throws Exception {
+    if (engine == null) {
+      Alerts.infoFx("Renjin engine not ready", "Renjin is still starting up, please wait");
+      return null;
+    }
+    log.info("engine is {}, gui is {}", engine, gui);
     engine.put("inout", gui.getInoutComponent());
     if (additionalParams != null) {
       for (Map.Entry<String, Object> entry : additionalParams.entrySet()) {

@@ -60,6 +60,9 @@ public class MuninRTab extends MuninTab {
             muninBaseUrl = getOrPromptForMuninConnection().target();
           }
           SEXP result = consoleComponent.runScript(getTextContent(), Collections.singletonMap("muninBaseUrl", muninBaseUrl));
+          if (result == null) {
+            return null;
+          }
           if (!(result instanceof StringArrayVector)) {
             String varName = ".muninUnmanagedReportResult";
             consoleComponent.addVariableToSession(varName, result);
@@ -77,8 +80,10 @@ public class MuninRTab extends MuninTab {
     };
     task.setOnSucceeded(e -> {
       SEXP result = task.getValue();
-      gui.getInoutComponent().viewHtmlWithBootstrap(result, getTitle());
-      gui.getConsoleComponent().updateEnvironment();
+      if (result != null) {
+        gui.getInoutComponent().viewHtmlWithBootstrap(result, getTitle());
+        gui.getConsoleComponent().updateEnvironment();
+      }
       gui.setNormalCursor();
     });
     task.setOnFailed(e -> {
