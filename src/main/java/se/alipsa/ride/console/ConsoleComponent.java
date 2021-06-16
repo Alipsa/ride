@@ -415,7 +415,7 @@ public class ConsoleComponent extends BorderPane {
 
   public SEXP runScript(String script, Map<String, Object> additionalParams) throws Exception {
     if (engine == null) {
-      Alerts.infoFx("Renjin engine not ready", "Renjin is still starting up, please wait");
+      Alerts.infoFx("Renjin engine not ready", "Renjin is still starting up, please wait a few seconds");
       return null;
     }
     log.info("engine is {}, gui is {}", engine, gui);
