@@ -53,12 +53,7 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.model.MuninConnection;
 import se.alipsa.ride.model.MuninReport;
 import se.alipsa.ride.model.Repo;
-import se.alipsa.ride.utils.Alerts;
-import se.alipsa.ride.utils.ExceptionAlert;
-import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.GuiUtils;
-import se.alipsa.ride.utils.IntField;
-import se.alipsa.ride.utils.UniqueList;
+import se.alipsa.ride.utils.*;
 import se.alipsa.ride.utils.git.GitUtils;
 
 import java.io.File;
@@ -598,10 +593,23 @@ public class MainMenu extends MenuBar {
               .append("\nYour release tag:")
               .append(releaseTag)
               .append("\n\nLatest version on github: ").append(tag);
-          if (version.equalsIgnoreCase(releaseTag)) {
-            sb.append("\nYou are running the latest version");
+
+          int versionDiff = SemanticVersion.compare(releaseTag, tag);
+          boolean identicalVersion = releaseTag.equalsIgnoreCase(tag);
+          if (versionDiff < 0) {
+            sb.append("\nA newer version is available.");
+          } else if (versionDiff > 0) {
+            sb.append("\nYou appear to be running a later version than what is released on github");
           } else {
-            sb.append("\nGet it from https://github.com/perNyfelt/ride/releases/latest");
+            sb.append("\nThe semantic version number matches with the latest release.");
+            if(!identicalVersion) {
+              sb.append("\nHowever, versions are not identical");
+            }
+          }
+          if (identicalVersion) {
+            sb.append("\nYou are running the latest version");
+          } else if (versionDiff < 1){
+            sb.append("\nGet the latest release from https://github.com/perNyfelt/ride/releases/latest");
           }
           textArea.setText(sb.toString());
           gui.setNormalCursor();

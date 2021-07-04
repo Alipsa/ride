@@ -73,6 +73,7 @@ if [[ "${OSTYPE}" == "msys" ]]; then
 	# Fixes bug  Unable to get Charset 'cp65001' for property 'sun.stdout.encoding'
 	JAVA_OPTS="${JAVA_OPTS} -Dsun.stdout.encoding=UTF-8 -Dsun.err.encoding=UTF-8"
 	start ${JAVA_CMD} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen
+	# shellcheck disable=SC2068
 	start ${JAVA_CMD} -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride
 
 else
@@ -80,5 +81,6 @@ else
 	CLASSPATH="${JAR_NAME}:${LIB_DIR}/*"
 	LD_PATH="${LIB_DIR}"
 	${JAVA_CMD} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
+	# shellcheck disable=SC2068
 	${JAVA_CMD} -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride &
 fi
