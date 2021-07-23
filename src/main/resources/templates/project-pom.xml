@@ -7,7 +7,7 @@
 
   <groupId>[groupId]</groupId>
   <artifactId>[artifactId]</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <!-- general information about your package -->
@@ -20,6 +20,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <slf4j.version>1.7.32</slf4j.version>
   </properties>
 
   <dependencies>
@@ -33,13 +34,13 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.30</version>
+      <version>${slf4j.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.30</version>
+      <version>${slf4j.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -51,13 +52,13 @@
     <dependency>
       <groupId>se.alipsa</groupId>
       <artifactId>R2JDBC</artifactId>
-      <version>10.0.20</version>
+      <version>10.0.21</version>
     </dependency>
     <!-- uncomment the appropriate jdbc driver to be able to connect to a relational db -->
     <!--dependency>
       <groupId>com.microsoft.sqlserver</groupId>
       <artifactId>mssql-jdbc</artifactId>
-      <version>8.4.1.jre8</version>
+      <version>9.2.1.jre8</version>
     </dependency-->
     <!--dependency>
       <groupId>com.h2database</groupId>
@@ -67,7 +68,7 @@
     <!--dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.2.18</version>
+      <version>42.2.23</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
@@ -78,7 +79,7 @@
     <!--dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.22</version>
+      <version>8.0.26</version>
     </dependency-->
 
     <!-- the hamcrest package is only required if you use it for unit tests -->
@@ -91,7 +92,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.7.0</version>
+      <version>5.7.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -169,12 +170,12 @@
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
           </dependency>
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
           </dependency>
         </dependencies>
       </plugin>

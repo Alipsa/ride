@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.AttributeMap;
 import org.renjin.sexp.ListVector;
@@ -399,5 +400,13 @@ public class InoutComponent extends TabPane implements InOut {
 
   public boolean isGitEnabled() {
     return enableGit;
+  }
+
+  public void cloneGitRepo(String url, File targetDir) throws GitAPIException {
+    Git.cloneRepository()
+        .setURI(url)
+        .setDirectory(targetDir)
+        .call();
+    changeRootDir(targetDir);
   }
 }

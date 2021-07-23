@@ -7,7 +7,7 @@
 
   <groupId>[groupId]</groupId>
   <artifactId>[artifactId]</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <!-- general information about your package -->
@@ -20,6 +20,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <slf4j.version>1.7.32</slf4j.version>
   </properties>
 
   <dependencies>
@@ -33,13 +34,13 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.30</version>
+      <version>${slf4j.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.30</version>
+      <version>${slf4j.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -109,24 +110,24 @@
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
           </dependency>
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
           </dependency>
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
           </dependency>
         </dependencies>
       </plugin>
       <plugin>
         <groupId>se.alipsa</groupId>
         <artifactId>renjin-test-maven-plugin</artifactId>
-        <version>1.3.3</version>
+        <version>1.3.5</version>
         <configuration>
           <testFailureIgnore>true</testFailureIgnore>
         </configuration>
@@ -174,19 +175,19 @@
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
           </dependency>
           <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.30</version>
+            <version>${slf4j.version}</version>
           </dependency>
         </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>3.0.0-M4</version>
+        <version>3.0.0-M5</version>
         <configuration>
           <title>R Tests Report</title>
           <outputName>test-report</outputName>
@@ -206,7 +207,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
-        <version>3.9.0</version>
+        <version>3.9.1</version>
         <configuration>
           <generateReports>false</generateReports>
         </configuration>

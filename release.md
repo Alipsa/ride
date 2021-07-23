@@ -55,7 +55,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.4 
-(nothing yet)
+- Update dependency versions in pom and templates
+- Add git clone project menu option
 
 ### 1.2.3
 - Treat rmd like a md file

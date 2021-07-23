@@ -34,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.appender.FileAppender;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.renjin.RenjinVersion;
 import org.renjin.eval.Session;
@@ -217,7 +218,27 @@ public class MainMenu extends MenuBar {
     createBasicPomMI.setOnAction(this::createBasicPom);
     menu.getItems().add(createBasicPomMI);
 
+    MenuItem cloneProjectMI = new MenuItem("Clone a git project");
+    cloneProjectMI.setOnAction(this::cloneProject);
+    menu.getItems().add(cloneProjectMI);
+
     return menu;
+  }
+
+  private void cloneProject(ActionEvent actionEvent) {
+    CloneProjectDialog dialog = new CloneProjectDialog(gui);
+    Optional<CloneProjectDialogResult> result = dialog.showAndWait();
+    if (!result.isPresent()) {
+      return;
+    }
+    CloneProjectDialogResult res = result.get();
+    try {
+      gui.setWaitCursor();
+      gui.getInoutComponent().cloneGitRepo(res.url, res.targetDir);
+      gui.setNormalCursor();
+    } catch (GitAPIException | RuntimeException e) {
+      ExceptionAlert.showAlert("Failed to clone repository: " + e.getMessage(), e);
+    }
   }
 
   private void createBasicPom(ActionEvent actionEvent) {

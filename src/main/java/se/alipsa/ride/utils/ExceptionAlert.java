@@ -72,13 +72,12 @@ public class ExceptionAlert extends Alert {
     alert.getDialogPane().setPrefWidth(500);
 
     Ride gui = Ride.instance();
-    if (gui != null) {
-      String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+    gui.setNormalCursor();
+    String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
 
-      URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
-      if (styleSheetUrl != null) {
-        alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
-      }
+    URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+    if (styleSheetUrl != null) {
+      alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
     }
 
     return alert.showAndWait();
