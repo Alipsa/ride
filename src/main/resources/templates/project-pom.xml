@@ -122,6 +122,11 @@
       <name>bedatadriven public repo</name>
       <url>https://nexus.bedatadriven.com/content/groups/public/</url>
     </pluginRepository>
+    <pluginRepository>
+      <id>mavencentral</id>
+      <name>central</name>
+      <url>https://repo1.maven.org/maven2/</url>
+    </pluginRepository>
   </pluginRepositories>
 
   <build>
@@ -182,8 +187,25 @@
       <!-- uncomment this to be able to run the main R script from maven with mvn runR -->
       <!--plugin>
         <groupId>se.alipsa</groupId>
-        <artifactId>renjin-run-project-maven-plugin</artifactId>
+        <artifactId>exec-renjin-maven-plugin</artifactId>
         <version>1.0.0</version>
+        <configuration>
+          <rfile>src/main/R/[mainScriptName]</rfile>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>runR</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.renjin</groupId>
+            <artifactId>renjin-script-engine</artifactId>
+            <version>${renjin.version}</version>
+          </dependency>
+        </dependencies>
       </plugin-->
     </plugins>
   </build>

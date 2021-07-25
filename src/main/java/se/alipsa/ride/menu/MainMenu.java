@@ -270,12 +270,14 @@ public class MainMenu extends MenuBar {
       String camelCasedPackageName = CaseUtils.toCamelCase(res.projectName, true,
           ' ', '_', '-', ',', '.', '/', '\\');
 
-      String pomContent = createPom("templates/project-pom.xml", res.groupName, res.projectName);
+      String mainProjectScript = camelCasedPackageName + ".R";
+
+      String pomContent = createPom("templates/project-pom.xml", res.groupName, res.projectName, mainProjectScript);
       FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
 
       Path mainPath = new File(res.dir, "R").toPath();
       Files.createDirectories(mainPath);
-      Path rFile = mainPath.resolve(camelCasedPackageName + ".R");
+      Path rFile = mainPath.resolve(mainProjectScript);
       Files.createFile(rFile);
       Path testPath = new File(res.dir, "tests").toPath();
       Files.createDirectories(testPath);
@@ -320,8 +322,12 @@ public class MainMenu extends MenuBar {
     }
   }
 
-  private String createPom(String s, String groupName, String projectName) throws IOException {
-    return FileUtils.readContent(s)
+  private String createPom(String s, String groupName, String projectName, String... mainProjectScript) throws IOException {
+    String content = FileUtils.readContent(s);
+    if (mainProjectScript.length > 0) {
+      content = content.replace("[mainScriptName]", mainProjectScript[0]);
+    }
+    return content
             .replace("[groupId]", groupName)
             .replace("[artifactId]", projectName)
             .replace("[name]", projectName)
