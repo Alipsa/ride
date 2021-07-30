@@ -153,26 +153,8 @@ public class ConsoleComponent extends BorderPane {
               ? !skipMavenClassloading[0]
               : gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false);
 
-          if (gui.getInoutComponent() != null && gui.getInoutComponent().getRoot() != null && useMavenClassloader ) {
-            File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
-            if (pomFile.exists()) {
-              log.info("Parsing pom to use maven classloader");
-              console.appendFx("* Parsing pom to create maven classloader...");
-              try {
-                cl = MavenUtils.getMavenDependenciesClassloader(pomFile, parentClassLoader);
-              } catch (Exception e) {
-                if (e instanceof DependenciesResolveException) {
-                  Platform.runLater(() -> ExceptionAlert.showAlert("Failed to resolve maven dependency: " + e.getMessage(), e));
-                  log.info("Initializing renjing without maven...");
-                } else {
-                  throw e;
-                }
-              }
-            } else {
-              log.info("Use maven class loader is set but pomfile {} does not exist", pomFile);
-            }
-          } else {
-            assert gui.getInoutComponent() != null;
+
+          if (gui.getInoutComponent() != null && gui.getInoutComponent().getRoot() != null) {
             File wd = gui.getInoutComponent().getRootDir();
             if (gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true) && wd != null && wd.exists()) {
               File classesDir = new File(wd, "target/classes");
@@ -191,6 +173,26 @@ public class ConsoleComponent extends BorderPane {
               if (urlList.size() > 0) {
                 log.info("Adding compile dirs to classloader: {}", urlList);
                 cl = new URLClassLoader(urlList.toArray(new URL[0]), cl);
+              }
+            }
+
+            if (useMavenClassloader) {
+              File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
+              if (pomFile.exists()) {
+                log.info("Parsing pom to use maven classloader");
+                console.appendFx("* Parsing pom to create maven classloader...");
+                try {
+                  cl = MavenUtils.getMavenDependenciesClassloader(pomFile, parentClassLoader);
+                } catch (Exception e) {
+                  if (e instanceof DependenciesResolveException) {
+                    Platform.runLater(() -> ExceptionAlert.showAlert("Failed to resolve maven dependency: " + e.getMessage(), e));
+                    log.info("Initializing renjing without maven...");
+                  } else {
+                    throw e;
+                  }
+                }
+              } else {
+                log.info("Use maven class loader is set but pomfile {} does not exist", pomFile);
               }
             }
           }
@@ -250,13 +252,6 @@ public class ConsoleComponent extends BorderPane {
   }
 
   private PackageLoader getPackageLoader(ClassLoader parentClassLoader) {
-    /*
-    We always want to reinitialize the package loader in case a remote repo was added
-    not sure why i cached this in the first place, so will keep it here for a while in case something unwanted happens...
-    if (packageLoader != null) {
-      return packageLoader;
-    }
-    */
     String pkgLoaderName;
     String overridePackageLoader = System.getProperty(PACKAGE_LOADER_PREF);
     if (overridePackageLoader != null) {
