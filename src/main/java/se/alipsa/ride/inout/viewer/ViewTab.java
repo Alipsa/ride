@@ -106,6 +106,11 @@ public class ViewTab extends Tab {
       final int j = i;
       String colName = headerList.get(i);
       TableColumn<List<String>, String> col = new TableColumn<>(colName);
+
+      Label colLabel = new Label(colName);
+      colLabel.setTooltip(new Tooltip(table.getColumnType(i).getRtypeName()));
+      col.setGraphic(colLabel);
+
       tableView.getColumns().add(col);
       col.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
     }
