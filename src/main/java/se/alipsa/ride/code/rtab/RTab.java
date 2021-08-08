@@ -31,7 +31,6 @@ public class RTab extends TextAreaTab implements TaskListener {
 
     setTitle(title);
 
-
     runButton = new Button("Run"); // async
     runButton.setOnAction(event -> console.runScriptAsync(rTextArea.getTextContent(), getTitle(), this));
     buttonPane.getChildren().add(runButton);

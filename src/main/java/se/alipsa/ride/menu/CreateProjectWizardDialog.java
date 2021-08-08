@@ -12,7 +12,9 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import org.apache.logging.log4j.LogManager;
@@ -55,6 +57,15 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
     grid.setHgap(10);
     grid.setVgap(10);
     grid.setPadding(insets);
+    ColumnConstraints col1 = new ColumnConstraints();
+    col1.setHgrow(Priority.NEVER);
+    ColumnConstraints col2 = new ColumnConstraints();
+    col2.setHgrow(Priority.SOMETIMES);
+    ColumnConstraints col3 = new ColumnConstraints();
+    col3.setHgrow(Priority.ALWAYS);
+    grid.getColumnConstraints().add(col1);
+    grid.getColumnConstraints().add(col2);
+    grid.getColumnConstraints().add(col3);
     getDialogPane().setContent(grid);
 
     Label groupNameLabel = new Label("Group Name");
@@ -94,16 +105,19 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
     chooseDirButton.setOnAction(this::chooseProjectDir);
     dirField = new TextField();
     dirField.setPrefColumnCount(25);
+
     dirField.setDisable(true);
     grid.add(dirField, 2,2);
 
     selectedDirectory = gui.getInoutComponent().getRootDir();
     dirField.setText(selectedDirectory.getAbsolutePath());
+    dirField.setTooltip(new Tooltip(selectedDirectory.getAbsolutePath()));
 
     if (createProject) {
       Label packageDirlabel = new Label("Project dir");
       grid.add(packageDirlabel, 0, 3);
       projectDirField.setText(selectedDirectory.getAbsolutePath());
+      projectDirField.setTooltip(new Tooltip(selectedDirectory.getAbsolutePath()));
       projectDirField.setDisable(true);
       grid.add(projectDirField, 1, 3, 2, 1);
 
@@ -122,7 +136,9 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
   }
 
   private void updateDirField(String projectName) {
-    projectDirField.setText(new File(selectedDirectory, projectName.trim()).getAbsolutePath());
+    String dir = new File(selectedDirectory, projectName.trim()).getAbsolutePath();
+    projectDirField.setText(dir);
+    projectDirField.setTooltip(new Tooltip(dir));
   }
 
   private void chooseProjectDir(ActionEvent actionEvent) {
@@ -139,7 +155,9 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
       selectedDirectory = orgSelectedDir;
     } else {
       dirField.setText(selectedDirectory.getAbsolutePath());
-      projectDirField.setText(new File(selectedDirectory, projectNameField.getText().trim()).getAbsolutePath());
+      String dir = new File(selectedDirectory, projectNameField.getText().trim()).getAbsolutePath();
+      projectDirField.setText(dir);
+      projectDirField.setTooltip(new Tooltip(dir));
       getDialogPane().lookupButton(ButtonType.OK).setDisable(false);
     }
   }

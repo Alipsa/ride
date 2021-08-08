@@ -499,7 +499,7 @@ public class ConsoleComponent extends BorderPane {
       }
 
       String msg = createMessageFromEvalException(ex);
-
+      log.warn("Error running script {}", script);
       ExceptionAlert.showAlert(msg + ex.getMessage(), ex);
       promptAndScrollToEnd();
     });

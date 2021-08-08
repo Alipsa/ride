@@ -44,7 +44,8 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
     getStyleClass().add("codeTextArea");
     setUseInitialStyleForInsertion(true);
 
-    setParagraphGraphicFactory(LineNumberFactory.get(this));
+    Platform.runLater(() -> setParagraphGraphicFactory(LineNumberFactory.get(this)));
+
     // recompute the syntax highlighting 400 ms after user stops editing area
 
     // plain changes = ignore style changes that are emitted when syntax highlighting is reapplied
