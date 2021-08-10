@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
@@ -110,6 +111,7 @@ public class ViewTab extends Tab {
       Label colLabel = new Label(colName);
       colLabel.setTooltip(new Tooltip(table.getColumnType(i).getRtypeName()));
       col.setGraphic(colLabel);
+      col.setPrefWidth(new Text(colName).getLayoutBounds().getWidth() * 1.25 + 12.0);
 
       tableView.getColumns().add(col);
       col.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
