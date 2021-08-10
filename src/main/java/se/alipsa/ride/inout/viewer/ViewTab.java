@@ -105,7 +105,7 @@ public class ViewTab extends Tab {
     for (int i = 0; i < headerList.size(); i++) {
       final int j = i;
       String colName = headerList.get(i);
-      TableColumn<List<String>, String> col = new TableColumn<>(colName);
+      TableColumn<List<String>, String> col = new TableColumn<>();
 
       Label colLabel = new Label(colName);
       colLabel.setTooltip(new Tooltip(table.getColumnType(i).getRtypeName()));
