@@ -37,25 +37,31 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
   // Will be too long for styling the textarea but useful for suggestions using ctrl + tab
   // see https://github.com/FXMisc/RichTextFX/issues/91 for some ideas
   private static final String[] FUNCTIONS = new String[]{
-      "abbreviate", "abs", "acos", "acosh", "activeBindingFunction", "addNA", "addTaskCallback", "aggregate", "agrep",
+      "abbreviate", "abline", "abs", "acos", "acosh", "activeBindingFunction", "addNA", "addTaskCallback", "aggregate", "agrep",
       "agrepl", "alist", "all", "all.equal", "all.names", "all.vars", "allowInterrupts", "any", "anyDuplicated", "anyMissing",
       "anyNA", "aperm", "append", "apply", "arccos", "arcsin", "arctan", "args", "array", "as.array", "as.call", "as.character",
       "as.complex", "as.data.frame", "as.Date", "as.difftime", "as.double", "as.environment", "as.expression", "as.factor",
       "as.function", "as.hexmode", "as.integer", "as.list", "as.logical", "as.matrix", "as.name", "as.null", "as.numeric",
       "as.ordered", "as.pairlist", "as.POSIXct", "as.POSIXlt", "as.single", "as.symbol", "as.table", "as.vector", "asin",
-      "AsIs", "asplit", "asS3", "asS4", "assign", "atan", "atan2", "attach", "attachNamespace", "attr", "attributes",
+      "AsIs", "asplit", "asS3", "asS4", "assign",
+      "atan", "atan2", "attach", "attachNamespace", "attr", "attributes",
       "autoload", "autoloader",
+      "axis",
 
-      "backsolve", "baseenv", "basename", "beta", "besselI", "besselK", "besselJ", "besselY", "bindtextdomain", "bitwAnd",
-      "bitwNot", "bitwOr", "bitwShiftL", "bitwShiftR", "bitwXor", "body", "bquote", "browser", "browserCondition",
-      "browserSetDebug", "browserText", "builtins", "by", "bzfile",
+      "backsolve", "barplot", "baseenv", "basename", "beta", "besselI", "besselK", "besselJ", "besselY",
+      "bindtextdomain", "bitwAnd", "bitwNot", "bitwOr", "bitwShiftL", "bitwShiftR", "bitwXor",
+      "body", "boxplot", "bquote",
+      "browser", "browserCondition", "browserSetDebug", "browserText", "builtins", "by", "bzfile",
 
       "c", "call", "casefold", "cat", "cbind", "ceiling", "charmatch", "chartr", "chol", "chol2inv", "choose", "class",
-      "close", "col", "colMeans", "colnames", "colSums", "comment", "complex", "conflicts", "cos", "cospi", "cummax",
-      "cummin", "cumsum", "cumprod", "curlGetHeaders", "cut",
+      "close", "col", "colMeans", "colnames", "colSums", "comment", "complete.cases", "complex", "conflicts", "cos", "cospi",
+      "cummax", "cummin", "cumsum", "cumprod", "curlGetHeaders", "cut",
 
-      "data.class", "data.frame", "deparse", "date", "det", "determinant", "detach", "dget", "dbinom", "diag", "diff",
-      "difftime", "digamma", "dim", "dimnames", "dnorm", "dir.create", "dir.exists", "dirname", "do.call", "dontCheck",
+      "data.class", "data.frame", "date", "dbeta", "dbinom", "dcauchy", "dchisq",
+      "density", "deparse", "det", "dexp", "detach", "determinant",
+      "df", "dgamma", "dget",
+      "diag", "diff", "difftime", "digamma", "dim", "dimnames", "dnorm", "dir.create", "dir.exists", "dirname",
+      "do.call", "dontCheck",
       "dpois", "dput", "drop", "dunif", "duplicated",
 
       "emptyenv", "enc2native", "enc2utf8", "Encoding", "encodeString", "env.profile", "environment", "environmentName",
@@ -77,7 +83,8 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
 
       "lapply", "lbeta", "lchoose", "lfactorial", "lgamma", "library", "list", "local", "log", "log10",
 
-      "Map", "mapply", "margin.table", "match", "matrix", "max", "mean", "median", "memCompress", "memDecompress", "merge", "min", "mostattributes",
+      "Map", "mapply", "margin.table", "match", "matrix", "max", "mean", "median", "memCompress", "memDecompress",
+      "merge", "message", "min", "mostattributes",
 
       "names", "Negate", "new", "new.env", "NextMethod", "ngettext", "nrow", "ncol",
 
@@ -102,7 +109,7 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
 
       "Vectorize",
 
-      "which", "with", "writeLines", "write.dcf",
+      "warning", "which", "with", "writeLines", "write.dcf",
 
       "xzfile"
   };

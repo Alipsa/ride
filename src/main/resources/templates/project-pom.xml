@@ -184,11 +184,11 @@
           </dependency>
         </dependencies>
       </plugin>
-      <!-- uncomment this to be able to run the main R script from maven with mvn runR -->
+      <!-- uncomment this to be able to run the main R script from maven with mvn exec:runR -->
       <!--plugin>
         <groupId>se.alipsa</groupId>
         <artifactId>exec-renjin-maven-plugin</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <configuration>
           <rfile>src/main/R/[mainScriptName]</rfile>
         </configuration>
