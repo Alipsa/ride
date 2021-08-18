@@ -157,6 +157,7 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
     addEventHandler(KeyEvent.KEY_TYPED, e -> {
       String character = e.getCharacter();
       String line = getText(getCurrentParagraph());
+      // TODO add option to disable this
       if ("(".equals(character)) {
         if (line.length() == getCaretColumn()) {
           insertTextAndMoveBack(")");

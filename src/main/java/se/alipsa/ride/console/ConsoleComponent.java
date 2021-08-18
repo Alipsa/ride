@@ -703,6 +703,16 @@ public class ConsoleComponent extends BorderPane {
   }
 
   private void runHamcrestTests(String script, String title, TaskListener taskListener) {
+
+    try {
+      runScriptSilent("for(func in ls(pattern='test.', envir = .GlobalEnv)) {\n" +
+          "  if(exists(func, mode='function') && length(formals(func)) == 0) {\n" +
+          "    rm(list=func, envir = .GlobalEnv)\n" +
+          "  } \n" +
+          "}");
+    } catch (Exception e) {
+      log.warn("Failed to remove existing test functions", e);
+    }
     console.append("");
     console.append("Running hamcrest tests");
     console.append("----------------------");

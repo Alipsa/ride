@@ -72,14 +72,14 @@ I like to save these kind of queries with the extension psql (parameterized sql)
 </div>
 
 <h2 id="reusing_code">Reusing code</h2>
-The, perhaps, simplest way to reuse code is to put utility functions or other code that you want to reuse multiple times
-in a separate file and then load it using source. Perhaps you want to make sure to only load it once; one way is to look for something unique such as a
+Perhaps the simplest way to reuse code is to put utility functions or other code that you want to reuse multiple times
+in a separate file and then load them using source. If you do this, then you may want to make sure to only load it once; one way is to look for something unique such as a
 variable or function with exists. E.g:
 <div class="codeblock">
     <span class="keyword">if</span>(<span class="keyword">!</span>exists(<span class="string">"repairDf"</span>)) source(<span class="string">"R/repairEvents.R"</span>)<br/>
     <br/>
     <span class="comment"># same thing but for a function</span><br/>
-    <span class="keyword">if</span>(<span class="keyword">!</span>exists(<span class="string">"readParamSql"</span> mode=<span class="string">"function"</span>)) source(<span class="string">"some/path/utils.R"</span>)<br/>
+    <span class="keyword">if</span>(<span class="keyword">!</span>exists(<span class="string">"readParamSql"</span>, mode=<span class="string">"function"</span>)) source(<span class="string">"some/path/utils.R"</span>)<br/>
 </div>
 
 A more proper way to reuse code is to create a package. How to do that is described in <a href="http://docs.renjin.org/en/latest/writing-renjin-extensions.html">the documentation</a>.<br/>
