@@ -66,80 +66,83 @@ public class ViewTab extends Tab {
   }
 
   public void viewTable(Table table, String... title) {
-    List<String> headerList = table.getHeaderList();
-    List<List<Object>> rowList = table.getRowList();
-    NumberFormat numberFormatter = NumberFormat.getInstance();
-    numberFormatter.setGroupingUsed(false);
+    try {
+      List<String> headerList = table.getHeaderList();
+      List<List<Object>> rowList = table.getRowList();
+      NumberFormat numberFormatter = NumberFormat.getInstance();
+      numberFormatter.setGroupingUsed(false);
 
-    TableView<List<String>> tableView = new TableView<>();
-    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    tableView.setOnKeyPressed(event -> {
-      if (KEY_CODE_COPY.match(event)) {
-        // Include header if all rows are selected
-        boolean includeHeader = tableView.getSelectionModel().getSelectedCells().size() == rowList.size();
-        if (includeHeader) {
-          copySelectionToClipboard(tableView, headerList);
-        } else {
-          copySelectionToClipboard(tableView, null);
+      TableView<List<String>> tableView = new TableView<>();
+      tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+      tableView.setOnKeyPressed(event -> {
+        if (KEY_CODE_COPY.match(event)) {
+          // Include header if all rows are selected
+          boolean includeHeader = tableView.getSelectionModel().getSelectedCells().size() == rowList.size();
+          if (includeHeader) {
+            copySelectionToClipboard(tableView, headerList);
+          } else {
+            copySelectionToClipboard(tableView, null);
+          }
         }
+      });
+
+      tableView.setRowFactory(tv -> {
+        final TableRow<List<String>> row = new TableRow<>();
+        final ContextMenu contextMenu = new ContextMenu();
+        final MenuItem copyMenuItem = new MenuItem("copy");
+        copyMenuItem.setOnAction(event -> copySelectionToClipboard(tv, null));
+        final MenuItem copyWithHeaderMenuItem = new MenuItem("copy with header");
+
+        copyWithHeaderMenuItem.setOnAction(event -> copySelectionToClipboard(tv, headerList));
+
+        contextMenu.getItems().addAll(copyMenuItem, copyWithHeaderMenuItem);
+        row.contextMenuProperty().bind(
+            Bindings.when(row.emptyProperty())
+                .then((ContextMenu) null)
+                .otherwise(contextMenu)
+        );
+        return row;
+      });
+
+      for (int i = 0; i < headerList.size(); i++) {
+        final int j = i;
+        String colName = headerList.get(i);
+        TableColumn<List<String>, String> col = new TableColumn<>();
+
+        Label colLabel = new Label(colName);
+        colLabel.setTooltip(new Tooltip(table.getColumnType(i).getRtypeName()));
+        col.setGraphic(colLabel);
+        col.setPrefWidth(new Text(colName).getLayoutBounds().getWidth() * 1.25 + 12.0);
+
+        tableView.getColumns().add(col);
+        col.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
       }
-    });
-
-    tableView.setRowFactory(tv -> {
-      final TableRow<List<String>> row = new TableRow<>();
-      final ContextMenu contextMenu = new ContextMenu();
-      final MenuItem copyMenuItem = new MenuItem("copy");
-      copyMenuItem.setOnAction(event -> copySelectionToClipboard(tv, null));
-      final MenuItem copyWithHeaderMenuItem = new MenuItem("copy with header");
-
-      copyWithHeaderMenuItem.setOnAction(event -> copySelectionToClipboard(tv, headerList));
-
-      contextMenu.getItems().addAll(copyMenuItem, copyWithHeaderMenuItem);
-      row.contextMenuProperty().bind(
-          Bindings.when(row.emptyProperty())
-              .then((ContextMenu) null)
-              .otherwise(contextMenu)
-      );
-      return row;
-    });
-
-    for (int i = 0; i < headerList.size(); i++) {
-      final int j = i;
-      String colName = headerList.get(i);
-      TableColumn<List<String>, String> col = new TableColumn<>();
-
-      Label colLabel = new Label(colName);
-      colLabel.setTooltip(new Tooltip(table.getColumnType(i).getRtypeName()));
-      col.setGraphic(colLabel);
-      col.setPrefWidth(new Text(colName).getLayoutBounds().getWidth() * 1.25 + 12.0);
-
-      tableView.getColumns().add(col);
-      col.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
-    }
-    ObservableList<List<String>> data = FXCollections.observableArrayList();
-    for (List<Object> row : rowList) {
-      List<String> obsRow = new ArrayList<>();
-      for (Object obj : row) {
-        if (obj instanceof Number) {
-          obsRow.add(numberFormatter.format(obj));
-        } else {
-          obsRow.add(obj + "");
+      ObservableList<List<String>> data = FXCollections.observableArrayList();
+      for (List<Object> row : rowList) {
+        List<String> obsRow = new ArrayList<>();
+        for (Object obj : row) {
+          if (obj instanceof Number) {
+            obsRow.add(numberFormatter.format(obj));
+          } else {
+            obsRow.add(obj + "");
+          }
         }
+        data.add(obsRow);
       }
-      data.add(obsRow);
+      tableView.setItems(data);
+      Tab tab = new Tab();
+      String tabTitle = " (" + rowList.size() + " rows)";
+      if (title.length > 0) {
+        tabTitle = title[0] + tabTitle;
+      }
+      tab.setText(tabTitle);
+      tab.setContent(tableView);
+      viewPane.getTabs().add(tab);
+      SingleSelectionModel<Tab> selectionModel = viewPane.getSelectionModel();
+      selectionModel.select(tab);
+    } catch (RuntimeException e) {
+      ExceptionAlert.showAlert("Failed to view table", e);
     }
-    tableView.setItems(data);
-    Tab tab = new Tab();
-    String tabTitle = " (" + rowList.size() + " rows)";
-    if (title.length > 0) {
-      tabTitle = title[0] + tabTitle;
-    }
-    tab.setText(tabTitle);
-    viewPane.getTabs().add(tab);
-    tab.setContent(tableView);
-
-    SingleSelectionModel<Tab> selectionModel = viewPane.getSelectionModel();
-    selectionModel.select(tab);
   }
 
 

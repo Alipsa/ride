@@ -61,7 +61,7 @@
     <dependency>
       <groupId>se.alipsa</groupId>
       <artifactId>renjin-client-data-utils</artifactId>
-      <version>1.4</version>
+      <version>1.4.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>se.alipsa</groupId>

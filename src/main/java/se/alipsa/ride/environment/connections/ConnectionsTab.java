@@ -621,29 +621,15 @@ public class ConnectionsTab extends Tab {
       MenuItem sampleContent = new MenuItem("View 200 rows");
       tableRightClickMenu.getItems().add(sampleContent);
       sampleContent.setOnAction(event -> {
-
+        String tableName = getTreeItem().getValue();
         try (Connection connection = con.connect();
              Statement stm = connection.createStatement()) {
           stm.setMaxRows(200);
-          String tableName = getTreeItem().getValue();
-          List<String> columnList = new ArrayList<>();
-          List<List<Object>> rowList = new ArrayList<>();
+          Table table;
           try(ResultSet rs = stm.executeQuery("SELECT * from " + tableName)){
             rs.setFetchSize(200);
-            ResultSetMetaData rsMeta = rs.getMetaData();
-            int numColumns = rsMeta.getColumnCount();
-            for (int i = 1; i <= numColumns; i++) {
-              columnList.add(rsMeta.getColumnName(i));
-            }
-            while (rs.next()) {
-              List<Object> row = new ArrayList<>();
-              for (int i = 1; i <= numColumns; i++) {
-                row.add(rs.getObject(i));
-              }
-              rowList.add(row);
-            }
+            table = new Table(rs);
           }
-          Table table = new Table(columnList, rowList);
           gui.getInoutComponent().showInViewer(table, tableName);
 
         } catch (SQLException e) {
@@ -651,6 +637,7 @@ public class ConnectionsTab extends Tab {
         }
       });
     }
+
 
     @Override
     public void updateItem(String item, boolean empty) {
