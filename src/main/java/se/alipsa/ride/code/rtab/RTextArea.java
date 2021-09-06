@@ -109,7 +109,7 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
 
       "Vectorize",
 
-      "warning", "which", "with", "writeLines", "write.dcf",
+      "warning", "which", "with", "writeLines", "write.csv", "write.csv2", "write.dcf", "write.table",
 
       "xzfile"
   };

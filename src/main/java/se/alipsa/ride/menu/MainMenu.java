@@ -36,6 +36,7 @@ import org.apache.logging.log4j.core.appender.FileAppender;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.jetbrains.annotations.NotNull;
 import org.renjin.RenjinVersion;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
@@ -249,12 +250,19 @@ public class MainMenu extends MenuBar {
     }
     CreateProjectWizardResult res = result.get();
     try {
-      String pomContent = createPom("templates/project-pom.xml", res.groupName, res.projectName);
+      String mainProjectScript = camelCasedPackageName(res) + ".R";
+      String pomContent = createPom("templates/project-pom.xml", res.groupName, res.projectName, mainProjectScript);
       FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
       gui.getInoutComponent().refreshFileTree();
     } catch (IOException e) {
       ExceptionAlert.showAlert("Failed to create basic pom", e);
     }
+  }
+
+
+  private String camelCasedPackageName(CreateProjectWizardResult res) {
+    return CaseUtils.toCamelCase(res.projectName, true,
+        ' ', '_', '-', ',', '.', '/', '\\');
   }
 
   private void showProjectWizard(ActionEvent actionEvent) {
@@ -267,11 +275,8 @@ public class MainMenu extends MenuBar {
     try {
       Files.createDirectories(res.dir.toPath());
 
-      String camelCasedPackageName = CaseUtils.toCamelCase(res.projectName, true,
-          ' ', '_', '-', ',', '.', '/', '\\');
-
+      String camelCasedPackageName = camelCasedPackageName(res);
       String mainProjectScript = camelCasedPackageName + ".R";
-
       String pomContent = createPom("templates/project-pom.xml", res.groupName, res.projectName, mainProjectScript);
       FileUtils.writeToFile(new File(res.dir, "pom.xml"), pomContent);
 
