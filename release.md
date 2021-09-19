@@ -59,7 +59,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Add git clone project menu option
 - add datatype tooltip for each column in View
 - Fix bug where "view 200 rows" did not add data types properly and hence failed to display
-
+- Improve "console" output by removing the extra line feeds for each line that made things like 
+  str(), and writeLines() to look ugly
+- 
 ### 1.2.3
 - Treat rmd like a md file
 - Support mdr files  

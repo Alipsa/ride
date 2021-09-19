@@ -180,7 +180,7 @@ public class ConsoleComponent extends BorderPane {
               File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
               if (pomFile.exists()) {
                 log.info("Parsing pom to use maven classloader");
-                console.appendFx("* Parsing pom to create maven classloader...");
+                console.appendFx("* Parsing pom to create maven classloader...", true);
                 try {
                   cl = MavenUtils.getMavenDependenciesClassloader(pomFile, parentClassLoader);
                 } catch (Exception e) {
@@ -234,7 +234,7 @@ public class ConsoleComponent extends BorderPane {
       String surround = getStars(greeting.length());
       console.append(surround);
       console.append(greeting);
-      console.append(surround + "\n>", true);
+      console.append(surround + "\n>", false);
     });
     initTask.setOnFailed(e -> {
       Throwable throwable = initTask.getException();
@@ -413,7 +413,7 @@ public class ConsoleComponent extends BorderPane {
       Alerts.infoFx("Renjin engine not ready", "Renjin is still starting up, please wait a few seconds");
       return null;
     }
-    log.info("engine is {}, gui is {}", engine, gui);
+    //log.info("engine is {}, gui is {}", engine, gui);
     engine.put("inout", gui.getInoutComponent());
     if (additionalParams != null) {
       for (Map.Entry<String, Object> entry : additionalParams.entrySet()) {
@@ -918,7 +918,7 @@ public class ConsoleComponent extends BorderPane {
       engine.put("inout", gui.getInoutComponent());
 
       Platform.runLater(() -> {
-        console.append(title);
+        console.append(title, true);
         env.addInputHistory(script);
       });
 

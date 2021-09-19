@@ -69,38 +69,38 @@ public class ConsoleTextArea extends UnStyledCodeArea {
     sizeWWarningPrinted = true;
   }
 
-  public void append(String text, boolean... skipNewline) {
-    boolean skip = skipNewline.length > 0 ? skipNewline[0] : false;
-    if (skip) {
-      appendText(text);
-    } else {
+  public void append(String text, boolean... addNewline) {
+    boolean addLf = addNewline.length > 0 ? addNewline[0] : false;
+    if (addLf) {
       appendText(text + "\n");
+    } else {
+      appendText(text);
     }
   }
 
-  public void appendFx(String text, boolean... skipNewline) {
+  public void appendFx(String text, boolean... addNewline) {
     Platform.runLater(() -> {
-      append(text, skipNewline);
+      append(text, addNewline);
     });
   }
 
-  public void appendWarning(String text, boolean... skipNewline) {
+  public void appendWarning(String text, boolean... addNewline) {
     if (text != null && text.trim().length() != 0) {
-      appendWithStyle(text, "warning", skipNewline);
+      appendWithStyle(text, "warning", addNewline);
     }
   }
 
-  public void appendError(String text, boolean... skipNewline) {
+  public void appendError(String text, boolean... addNewline) {
     if (text != null && text.trim().length() != 0) {
-      appendWithStyle(text, "error", skipNewline);
+      appendWithStyle(text, "error", addNewline);
     }
   }
 
-  private void appendWithStyle(String text, String styleClass, boolean... skipNewline) {
+  private void appendWithStyle(String text, String styleClass, boolean... addNewline) {
     //log.info("Appending warning lenght = {} for {}", text.length(), text);
     int start = getCaretPosition();
     int end = getCaretPosition() + text.length();
-    append(text, skipNewline);
+    append(text, addNewline);
     //log.info("start was {}, end was {}, now at {}", start, end, getCaretPosition());
     setStyleClass(start, end, styleClass);
   }
@@ -119,7 +119,7 @@ public class ConsoleTextArea extends UnStyledCodeArea {
     buffer.append(b);
     if ("\n".equals(String.valueOf(b))) {
       String text = buffer.toString();
-      appendFx(text);
+      appendFx(text, true);
       buffer.setLength(0);
     }
   }
