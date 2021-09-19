@@ -139,16 +139,16 @@ public class XmlTab extends TextAreaTab {
   }
 
   private class ConsoleOutputHandler implements InvocationOutputHandler {
-    private ConsoleComponent consoleComponent = getGui().getConsoleComponent();
-    private ConsoleTextArea console = consoleComponent.getConsole();
+    private final ConsoleComponent consoleComponent = getGui().getConsoleComponent();
+    private final ConsoleTextArea console = consoleComponent.getConsole();
     @Override
     public void consumeLine(String line) {
       //System.out.println(line);
       Platform.runLater(() -> {
         if (line.startsWith("[ERROR]") || line.startsWith("[WARN")) {
-          console.appendWarning(line);
+          console.appendWarning(line, true);
         } else {
-          console.append(line);
+          console.append(line, true);
         }
         consoleComponent.scrollToEnd();
       });

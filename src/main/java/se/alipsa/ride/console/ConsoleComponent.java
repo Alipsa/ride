@@ -373,11 +373,11 @@ public class ConsoleComponent extends BorderPane {
     log.info("Interrupting runnning process");
     // This is a nasty piece of code but a brutal stop() is the only thing that will break out of the script engine
     if (runningThread != null && runningThread.isAlive()) {
-      console.appendFx("\nInterrupting process...");
+      console.appendFx("\nInterrupting process...", true);
       runningThread.interrupt();
       // allow two seconds for graceful shutdown
       sleep(2000);
-      console.appendFx("\nStopping process...");
+      console.appendFx("Stopping process...", true);
       runningThread.stop();
       threadMap.remove(runningThread);
       console.appendText("\n>");
