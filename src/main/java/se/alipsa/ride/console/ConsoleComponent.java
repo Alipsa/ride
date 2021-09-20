@@ -614,12 +614,12 @@ public class ConsoleComponent extends BorderPane {
     String title = rTab.getTitle();
     TaskListener taskListener = rTab;
     File file = rTab.getFile();
-    console.append("");
-    console.append("Running testthat tests");
-    console.append("----------------------");
+    console.append("", true);
+    console.append("Running testthat tests", true);
+    console.append("----------------------", true);
 
     if (file == null || !file.exists()) {
-      console.append("Unable to determine script location, you must save the R script first.");
+      console.append("Unable to determine script location, you must save the R script first.", true);
       return;
     }
 
@@ -643,11 +643,11 @@ public class ConsoleComponent extends BorderPane {
           session.setStdErr(errWriter);
           FileObject orgWd = session.getWorkingDirectory();
           File scriptDir = file.getParentFile();
-          console.appendFx(DOUBLE_INDENT  + "- Setting working directory to " + scriptDir);
+          console.appendFx(DOUBLE_INDENT  + "- Setting working directory to " + scriptDir, true);
           session.setWorkingDirectory(scriptDir);
 
           TestResult result = runTest(script, title);
-          console.appendFx(DOUBLE_INDENT + "- Setting working directory back to " + orgWd);
+          console.appendFx(DOUBLE_INDENT + "- Setting working directory back to " + orgWd, true);
           session.setWorkingDirectory(orgWd);
           results.add(result);
           Platform.runLater(() -> printResult(title, out, err, result, DOUBLE_INDENT));
@@ -664,11 +664,11 @@ public class ConsoleComponent extends BorderPane {
           long errorCount = errorResults == null ? 0 : errorResults.size();
 
           String duration = DurationFormatUtils.formatDuration(end - start, "mm 'minutes, 'ss' seconds, 'SSS' millis '");
-          console.appendFx("\nR tests summary:");
-          console.appendFx("----------------");
+          console.appendFx("\nR tests summary:", true);
+          console.appendFx("----------------", true);
           console.appendFx(format("Tests run: {}, Successes: {}, Failures: {}, Errors: {}",
-             results.size(), successCount, failCount, errorCount));
-          console.appendFx("Time: " + duration + "\n");
+             results.size(), successCount, failCount, errorCount), true);
+          console.appendFx("Time: " + duration + "\n", true);
         } catch (IOException e) {
           console.appendWarningFx("Failed to run test");
           ExceptionAlert.showAlert("Failed to run test", e);
@@ -713,9 +713,9 @@ public class ConsoleComponent extends BorderPane {
     } catch (Exception e) {
       log.warn("Failed to remove existing test functions", e);
     }
-    console.append("");
-    console.append("Running hamcrest tests");
-    console.append("----------------------");
+    console.append(title, true);
+    console.append("Running hamcrest tests", true);
+    console.append("----------------------", true);
 
     Task<Void> task = new Task<Void>() {
 
@@ -765,11 +765,11 @@ public class ConsoleComponent extends BorderPane {
           long errorCount = errorResults == null ? 0 : errorResults.size();
 
           String duration = DurationFormatUtils.formatDuration(end - start, "mm 'minutes, 'ss' seconds, 'SSS' millis '");
-          console.appendFx("\nR tests summary:");
-          console.appendFx("----------------");
+          console.appendFx("\nR tests summary:", true);
+          console.appendFx("----------------", true);
           console.appendFx(format("Tests run: {}, Successes: {}, Failures: {}, Errors: {}",
-              results.size(), successCount, failCount, errorCount));
-          console.appendFx("Time: " + duration + "\n");
+              results.size(), successCount, failCount, errorCount), true);
+          console.appendFx("Time: " + duration + "\n", true);
         } catch (IOException e) {
           console.appendWarningFx("Failed to run test");
           ExceptionAlert.showAlert("Failed to run test", e);
@@ -806,16 +806,16 @@ public class ConsoleComponent extends BorderPane {
   private void printResult(String title, StringWriter out, StringWriter err, TestResult result, String indent) {
     String lines = prefixLines(out, indent);
     if (!"".equals(lines.trim())) {
-      console.append(lines);
+      console.append(lines, true);
     }
     out.getBuffer().setLength(0);
     lines = prefixLines(err, indent);
     if (!"".equals(lines.trim())) {
-      console.append(lines);
+      console.append(lines, true);
     }
     err.getBuffer().setLength(0);
     if (TestResult.OutCome.SUCCESS.equals(result.getResult())) {
-      console.append(indent + format("# {}: Success", title));
+      console.append(indent + format("# {}: Success", title), true);
     } else {
       console.appendWarning(indent + format("# {}: Failure detected: {}", title, formatMessage(result.getError())));
     }
@@ -840,7 +840,7 @@ public class ConsoleComponent extends BorderPane {
     String issue;
     Exception exception;
     String testName = title;
-    console.appendFx(indent + format("# Running test {}", title).trim());
+    console.appendFx(indent + format("# Running test {}", title).trim(), true);
     try {
       engine.eval(script);
       result.setResult(TestResult.OutCome.SUCCESS);
@@ -879,7 +879,7 @@ public class ConsoleComponent extends BorderPane {
   private TestResult runTestFunction(final Context context, final String title, final Symbol name) {
     String methodName = name.getPrintName().trim() + "()";
     String testName = title + ": " + methodName;
-    console.appendFx(INDENT + format("# Running test function {} in {}", methodName, title).trim());
+    console.appendFx(INDENT + format("# Running test function {} in {}", methodName, title).trim(), true);
     String issue;
     Exception exception;
     TestResult result = new TestResult(testName);
