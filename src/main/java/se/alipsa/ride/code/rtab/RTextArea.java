@@ -58,7 +58,7 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
       "cummax", "cummin", "cumsum", "cumprod", "curlGetHeaders", "cut",
 
       "data.class", "data.frame", "date", "dbeta", "dbinom", "dcauchy", "dchisq",
-      "density", "deparse", "det", "dexp", "detach", "determinant",
+      "density", "deparse", "det", "dexp", "detach", "determinant", "dev.off",
       "df", "dgamma", "dget",
       "diag", "diff", "difftime", "digamma", "dim", "dimnames", "dnorm", "dir.create", "dir.exists", "dirname",
       "do.call", "dontCheck",
@@ -90,8 +90,8 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
 
       "oldClass", "open", "option", "order", "ordered",
 
-      "parent.env", "pairlist", "paste", "paste0", "path.package", "pbinom", "pipe", "pmax", "pmin", "pnorm", "Position",
-      "ppois", "prettyNum", "print", "provideDimnames", "psigamma", "punif",
+      "par", "parent.env", "pairlist", "paste", "paste0", "path.package", "pbinom", "pie", "pipe", "plot", "pmax",
+      "pmin", "png", "pnorm", "polygon", "Position", "ppois", "prettyNum", "print", "provideDimnames", "psigamma", "punif",
 
       "qbinom", "qpois", "qnorm", "quantile", "qunif",
 
@@ -99,7 +99,8 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
       "rownames", "rowSums", "rpois", "rnorm", "R.home", "Recall", "Reduce", "RNGkind", "RNGversion", "runif",
 
       "sapply", "scale", "sd", "seq", "set.seed", "setClass", "setRefClass", "setwd", "signif", "sin", "single", "sinpi",
-      "socketConnection", "sqrt", "stop", "stopifnot", "str", "strsplit", "sub", "subset", "substr", "sum", "summary",
+      "socketConnection", "sqrt", "stop", "stopifnot", "str", "strsplit",
+      "sub", "subset", "substitute", "substr", "sum", "summary", "svg",
       "switch", "Sys.chmod", "Sys.Date", "Sys.getenv", "Sys.getpid", "Sys.junction", "Sys.localeconv", "Sys.setFileTime",
       "Sys.sleep", "Sys.time", "Sys.umask", "Sys.which",
 
