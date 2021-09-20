@@ -232,8 +232,8 @@ public class ConsoleComponent extends BorderPane {
       version.set(RenjinVersion.getVersionName());
       String greeting = "* Renjin " + version + " *";
       String surround = getStars(greeting.length());
-      console.append(surround);
-      console.append(greeting);
+      console.append(surround, true);
+      console.append(greeting, true);
       console.append(surround + "\n>", false);
     });
     initTask.setOnFailed(e -> {
