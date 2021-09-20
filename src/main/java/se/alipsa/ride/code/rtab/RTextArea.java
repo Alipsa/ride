@@ -61,7 +61,7 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
       "density", "deparse", "det", "dexp", "detach", "determinant", "dev.off",
       "df", "dgamma", "dget",
       "diag", "diff", "difftime", "digamma", "dim", "dimnames", "dnorm", "dir.create", "dir.exists", "dirname",
-      "do.call", "dontCheck",
+      "do.call", "dontCheck", "dotchart",
       "dpois", "dput", "drop", "dunif", "duplicated",
 
       "emptyenv", "enc2native", "enc2utf8", "Encoding", "encodeString", "env.profile", "environment", "environmentName",
@@ -90,7 +90,7 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
 
       "oldClass", "open", "option", "order", "ordered",
 
-      "par", "parent.env", "pairlist", "paste", "paste0", "path.package", "pbinom", "pie", "pipe", "plot", "pmax",
+      "par", "parent.env", "pairlist", "pairs", "paste", "paste0", "path.package", "pbinom", "pie", "pipe", "plot", "pmax",
       "pmin", "png", "pnorm", "polygon", "Position", "ppois", "prettyNum", "print", "provideDimnames", "psigamma", "punif",
 
       "qbinom", "qpois", "qnorm", "quantile", "qunif",
@@ -99,7 +99,7 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
       "rownames", "rowSums", "rpois", "rnorm", "R.home", "Recall", "Reduce", "RNGkind", "RNGversion", "runif",
 
       "sapply", "scale", "sd", "seq", "set.seed", "setClass", "setRefClass", "setwd", "signif", "sin", "single", "sinpi",
-      "socketConnection", "sqrt", "stop", "stopifnot", "str", "strsplit",
+      "socketConnection", "sqrt", "stop", "stopifnot", "str", "stripchart", "strsplit",
       "sub", "subset", "substitute", "substr", "sum", "summary", "svg",
       "switch", "Sys.chmod", "Sys.Date", "Sys.getenv", "Sys.getpid", "Sys.junction", "Sys.localeconv", "Sys.setFileTime",
       "Sys.sleep", "Sys.time", "Sys.umask", "Sys.which",
