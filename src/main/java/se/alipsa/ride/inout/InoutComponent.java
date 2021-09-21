@@ -54,6 +54,7 @@ public class InoutComponent extends TabPane implements InOut {
   private final PlotsTab plotsTab;
   private final Tab packages;
   private final ViewTab viewer;
+  private final HelpTab helpTab;
   private final Ride gui;
   private final Label branchLabel;
   private final TextField statusField;
@@ -116,10 +117,10 @@ public class InoutComponent extends TabPane implements InOut {
 
     getTabs().add(packages);
 
-    Tab help = new Tab();
-    help.setText("Help");
+    helpTab = new HelpTab();
+    helpTab.setText("Help");
 
-    getTabs().add(help);
+    getTabs().add(helpTab);
 
     viewer = new ViewTab();
 
@@ -272,6 +273,14 @@ public class InoutComponent extends TabPane implements InOut {
     Platform.runLater(() -> {
       viewer.viewer(sexp.asString(), title);
       getSelectionModel().select(viewer);
+    });
+  }
+
+  @Override
+  public void viewHelp(SEXP sexp, String... title) {
+    Platform.runLater(() -> {
+      helpTab.display(sexp.asString(), title);
+      getSelectionModel().select(helpTab);
     });
   }
 
