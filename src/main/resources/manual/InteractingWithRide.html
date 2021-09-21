@@ -55,6 +55,13 @@ Example:
     <span class="comment"># viewPlot returns the path to the svg file created so you can interact with it later, e.g.</span><br/>
     pressurePlot <- viewPlot(plot(pressure))
 </div>
+if you have a more complex plot you need to wrap all your plot commands in a code block e.g.
+<div class="codeblock">
+<pre>viewPlot({
+    plot(mtcars$mpg ~ mtcars$hp)
+    abline(h = mean(mtcars$mpg))
+}, "mpg")</pre>
+</div>
 
 <h4>Display tabular data in the View tab</h4>
 <div class="codeblock">
@@ -104,6 +111,15 @@ Note: viewer is an alternative. You can pass a url, file or html content to the 
     viewer(<span class="string">"http://www.alipsa.se"</span>, <span class="string">"view url"</span>)<br/>
     viewer(paste0(getwd(), <span class="string">"/tests/resources/hello.html"</span>), <span class="string">"view url"</span>)
 </div>
+
+<h4>Show help</h4>
+If you have rideutils loaded, the help() function is replaced with one that displays the online web documentation for
+the function, e.g.
+<div class="codeblock">
+    <span class="keyword">library</span>(<span class="string">"se.alipsa:rideutils"</span>)<br/>
+    help(plot)
+</div>
+Currently this only works for packages listed on https://www.rdocumentation.org i.e. CRAN packages.
 
 <h4>File and dir contexts</h4>
 <div class="codeblock">
