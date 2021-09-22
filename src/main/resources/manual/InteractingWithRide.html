@@ -119,7 +119,12 @@ the function, e.g.
     <span class="keyword">library</span>(<span class="string">"se.alipsa:rideutils"</span>)<br/>
     help(plot)
 </div>
-Currently this only works for packages listed on https://www.rdocumentation.org i.e. CRAN packages.
+.. or if you need to be more precise:
+<div class="codeblock">
+    <span class="keyword">library</span>(<span class="string">"se.alipsa:rideutils"</span>)<br/>
+    help(<span class="string">"qplot"</span>, package=<span class="string">"ggplot2"</span>, version=<span class="string">"3.3.5"</span>)
+</div>
+Not that currently, this only works for packages listed on https://www.rdocumentation.org i.e. CRAN packages.
 
 <h4>File and dir contexts</h4>
 <div class="codeblock">

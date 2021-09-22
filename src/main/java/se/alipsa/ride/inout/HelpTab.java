@@ -36,10 +36,11 @@ public class HelpTab extends Tab {
     tab.setTooltip(new Tooltip(url));
     helpPane.getTabs().add(tab);
     WebView browser = new WebView();
-    browser.setContextMenuEnabled(false);
+    browser.setContextMenuEnabled(true);
     WebEngine webEngine = browser.getEngine();
+    webEngine.setJavaScriptEnabled(true);
 
-    log.info("Opening {} in view tab", url);
+    log.debug("Opening {} in view tab", url);
     webEngine.load(url);
 
     tab.setContent(browser);
