@@ -12,9 +12,9 @@ import java.io.File;
 
 public class JavaTab extends TextAreaTab {
 
-  private JavaTextArea javaTextArea;
+  private final JavaTextArea javaTextArea;
 
-  private static Logger log = LogManager.getLogger(JavaTab.class);
+  private static final Logger log = LogManager.getLogger(JavaTab.class);
 
   public JavaTab(String title, Ride gui) {
     super(gui, CodeType.JAVA);

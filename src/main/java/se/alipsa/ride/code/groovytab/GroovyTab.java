@@ -74,13 +74,13 @@ public class GroovyTab extends TextAreaTab {
                 PrintWriter outputWriter = new PrintWriter(out);
                 PrintWriter errWriter = new PrintWriter(err)
         ) {
-          Platform.runLater(() -> console.append(title));
+          Platform.runLater(() -> console.append(title, true));
           groovyShell.setProperty("out", outputWriter);
           groovyShell.setProperty("err", errWriter);
 
           Object result = groovyShell.evaluate(content);
           if (result != null) {
-            gui.getConsoleComponent().getConsole().appendFx("[result] " + result);
+            gui.getConsoleComponent().getConsole().appendFx("[result] " + result, true);
           }
         } catch (RuntimeException e) {
           throw new Exception(e);
