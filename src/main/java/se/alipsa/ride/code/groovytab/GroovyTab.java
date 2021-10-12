@@ -74,7 +74,7 @@ public class GroovyTab extends TextAreaTab {
                 PrintWriter outputWriter = new PrintWriter(out);
                 PrintWriter errWriter = new PrintWriter(err)
         ) {
-          Platform.runLater(() -> console.append(title));
+          Platform.runLater(() -> console.append(title, true));
           groovyShell.setProperty("out", outputWriter);
           groovyShell.setProperty("err", errWriter);
 

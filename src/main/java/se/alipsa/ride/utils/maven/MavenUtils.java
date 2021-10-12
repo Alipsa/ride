@@ -10,7 +10,6 @@ import org.apache.maven.model.building.DefaultModelBuildingRequest;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.model.building.ModelBuildingException;
 import org.apache.maven.model.building.ModelBuildingResult;
-import org.apache.maven.model.resolution.ModelResolver;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilder;
@@ -20,13 +19,7 @@ import org.apache.maven.settings.building.SettingsBuildingResult;
 import org.apache.maven.settings.io.DefaultSettingsReader;
 import org.apache.maven.settings.io.DefaultSettingsWriter;
 import org.apache.maven.settings.validation.DefaultSettingsValidator;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationOutputHandler;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.apache.maven.shared.invoker.*;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -126,6 +119,9 @@ public class MavenUtils {
     Invoker invoker = new DefaultInvoker();
     String mavenDefaultHome = System.getProperty("MAVEN_HOME", System.getenv("MAVEN_HOME"));
     String mavenHome = Ride.instance().getPrefs().get(MAVEN_HOME, mavenDefaultHome);
+    if (mavenHome == null) {
+      mavenHome = locateMaven();
+    }
     File mavenHomeDir = new File(mavenHome);
     if (mavenHomeDir.exists()) {
       log.debug("MAVEN_HOME used is {}", mavenHome);
@@ -137,6 +133,24 @@ public class MavenUtils {
     invoker.setOutputHandler(consoleOutputHandler);
     invoker.setErrorHandler(warningOutputHandler);
     return invoker.execute( request );
+  }
+
+  private static String locateMaven() {
+    String path = System.getenv("PATH");
+    String[] pathElements = path.split(System.getProperty("path.separator"));
+    for (String elem : pathElements) {
+      File dir = new File(elem);
+      if (dir.exists()) {
+        String [] files = dir.list();
+        if (files != null) {
+          boolean foundMvn = Arrays.asList(files).contains("mvn");
+          if (foundMvn) {
+            return dir.getParentFile().getAbsolutePath();
+          }
+        }
+      }
+    }
+    return "";
   }
 
 

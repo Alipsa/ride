@@ -55,7 +55,7 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
     if (second.startsWith("v")) {
       second = second.substring(1);
     }
-    LOG.info("Comparing " + first + " with " + second);
+    LOG.trace("Comparing {} with {}" , first,  second);
     return new SemanticVersion(first).compareTo(new SemanticVersion(second));
   }
 }
