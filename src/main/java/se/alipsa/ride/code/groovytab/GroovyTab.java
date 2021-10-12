@@ -80,7 +80,7 @@ public class GroovyTab extends TextAreaTab {
 
           Object result = groovyShell.evaluate(content);
           if (result != null) {
-            gui.getConsoleComponent().getConsole().appendFx("[result] " + result);
+            gui.getConsoleComponent().getConsole().appendFx("[result] " + result, true);
           }
         } catch (RuntimeException e) {
           throw new Exception(e);
