@@ -129,7 +129,7 @@ public class SqlTab extends TextAreaTab {
                               .append(queryCapture)
                               .append("...], Rows affected: ")
                               .append(queryResult).toString()
-                          , false, true)
+                          , false, false)
                   );
                 }
                 hasMoreResultSets = stm.getMoreResults();
@@ -142,7 +142,7 @@ public class SqlTab extends TextAreaTab {
     };
     updateTask.setOnSucceeded(e -> {
       setNormalCursor();
-      consoleComponent.addOutput("", "Success", true, false);
+      consoleComponent.addOutput("", "Success", true, true);
     });
 
     updateTask.setOnFailed(e -> {

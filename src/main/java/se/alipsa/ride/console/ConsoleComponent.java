@@ -1,8 +1,6 @@
 package se.alipsa.ride.console;
 
-import static se.alipsa.ride.Constants.ICON_HEIGHT;
-import static se.alipsa.ride.Constants.ICON_WIDTH;
-import static se.alipsa.ride.Constants.INDENT;
+import static se.alipsa.ride.Constants.*;
 import static se.alipsa.ride.menu.GlobalOptions.ADD_BUILDDIR_TO_CLASSPATH;
 import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 import static se.alipsa.ride.utils.StringUtils.format;
@@ -55,6 +53,7 @@ import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.maven.DependenciesResolveException;
 import se.alipsa.ride.utils.maven.MavenUtils;
 
+import javax.script.ScriptException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -65,7 +64,6 @@ import java.net.URLClassLoader;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import javax.script.ScriptException;
 
 public class ConsoleComponent extends BorderPane {
 
@@ -946,9 +944,11 @@ public class ConsoleComponent extends BorderPane {
     }
   }
 
-  public void addOutput(String title, String content, boolean addPrompt, boolean skipNewLine) {
-    console.append(title);
-    console.append(content, skipNewLine);
+  public void addOutput(String title, String content, boolean addPrompt, boolean addNewLine) {
+    if (title != null && title.length() != 0) {
+      console.append(title, true);
+    }
+    console.append(content, addNewLine);
     if (addPrompt) {
       promptAndScrollToEnd();
     } else {

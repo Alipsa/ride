@@ -17,8 +17,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <release.tag>1.2.4-beta</release.tag>
     <renjin.version>3.5-beta76</renjin.version>
-    <!--jgit.version>5.11.0.202103091610-r</jgit.version-->
-    <jgit.version>5.12.0.202106070339-r</jgit.version>
+    <!--jgit.version>5.12.0.202106070339-r</jgit.version-->
+    <jgit.version>5.13.0.202109080827-r</jgit.version>
   </properties>
 
   <repositories>
@@ -89,17 +89,17 @@
     <dependency>
       <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-client</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.inject</groupId>
       <artifactId>jersey-hk2</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.media</groupId>
       <artifactId>jersey-media-json-jackson</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
     </dependency>
     <dependency>
       <groupId>jakarta.activation</groupId>
@@ -115,7 +115,8 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>2.3.3</version>
+      <!--version>2.3.3</version-->
+      <version>3.0.2</version>
     </dependency>
     <!-- for some reason it will not run in intellij without but release version works -->
     <dependency>
@@ -214,7 +215,7 @@
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>2.10.10</version>
+      <version>2.10.12</version>
     </dependency>
 
     <dependency>
@@ -241,17 +242,17 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.12.4</version>
+      <version>2.13.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.12.4</version>
+      <version>2.13.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.12.4</version>
+      <version>2.13.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
     <dependency>
@@ -283,7 +284,7 @@
     <dependency>
       <groupId>com.github.jsqlparser</groupId>
       <artifactId>jsqlparser</artifactId>
-      <version>4.1</version>
+      <version>4.2</version>
     </dependency>
     <!-- Git integration Core Library -->
     <dependency>
@@ -300,7 +301,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>3.0.8</version>
+      <version>3.0.9</version>
       <type>pom</type>
     </dependency>
     <!-- enable @Grab to work in groovy -->
@@ -309,33 +310,6 @@
       <artifactId>ivy</artifactId>
       <version>2.5.0</version>
     </dependency>
-
-    <!--dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>1.4.200</version>
-    </dependency-->
-    <!--dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>42.2.16</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-simple</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency-->
-    <!--dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.21</version>
-    </dependency-->
-    <!--dependency>
-      <groupId>com.microsoft.sqlserver</groupId>
-      <artifactId>mssql-jdbc</artifactId>
-      <version>8.4.1.jre8</version>
-    </dependency-->
 
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
@@ -354,11 +328,6 @@
       <artifactId>maven-model</artifactId>
       <version>3.1.1</version>
     </dependency>
-    <!--dependency>
-       <groupId>org.codehaus.plexus</groupId>
-       <artifactId>plexus-utils</artifactId>
-       <version>3.3.0</version>
-    </dependency-->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
@@ -366,9 +335,15 @@
     </dependency>
 
     <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <version>4.4.2</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.7.2</version>
+      <version>5.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -435,7 +410,7 @@
           <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.2</version>
+            <version>5.8.1</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -479,7 +454,7 @@
       <plugin>
         <groupId>com.akathist.maven.plugins.launch4j</groupId>
         <artifactId>launch4j-maven-plugin</artifactId>
-        <version>2.1.1</version>
+        <version>2.1.2</version>
         <executions>
           <execution>
             <id>l4j-ride</id>
@@ -597,7 +572,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.3.0</version>
+        <version>4.4.1</version>
       </plugin>
     </plugins>
   </reporting>
