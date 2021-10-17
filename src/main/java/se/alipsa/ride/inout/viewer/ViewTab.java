@@ -51,7 +51,7 @@ public class ViewTab extends Tab {
   // The highlightJs stuff is in mdr2html
   public static final String HIGHLIGHT_JS_CSS = "<link rel='stylesheet' href='" + resourceUrlExternalForm("highlightJs/default.css") + "'>";
   public static final String HIGHLIGHT_JS_SCRIPT = "<script src='" + resourceUrlExternalForm("highlightJs/highlight.pack.js") + "'></script>";
-  public static final String BOOTSTRAP_CSS = resourceUrlExternalForm("META-INF/resources/webjars/bootstrap/4.6.0/css/bootstrap.css");
+  public static final String BOOTSTRAP_CSS = resourceUrlExternalForm("META-INF/resources/webjars/bootstrap/5.1.2/css/bootstrap.css");
 
   public ViewTab() {
     setText("Viewer");
