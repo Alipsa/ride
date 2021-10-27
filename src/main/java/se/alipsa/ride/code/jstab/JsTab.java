@@ -20,7 +20,6 @@ import se.alipsa.ride.utils.ExceptionAlert;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.io.File;
 import java.io.PrintWriter;
 
@@ -55,7 +54,7 @@ public class JsTab extends TextAreaTab {
     //ScriptEngineManager factory = new ScriptEngineManager();
     //engine = factory.getEngineByName("nashorn");
     NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
-    String[] options = new String[] {"--language=es6"};
+    String[] options = new String[] {"--language=es6", "--no-deprecation-warning"};
     engine = nashornScriptEngineFactory.getScriptEngine(options);
 
     engine.put("inout", gui.getInoutComponent());

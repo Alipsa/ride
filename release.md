@@ -62,7 +62,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Improve "console" output by removing the extra line feeds for each line that made things like 
   str(), and writeLines() to look ugly
 - Align bootstrap version with munin 1.1.5
-- 
+- Add support for javascript (using Nashorn with limited es6 support enabled)
+
 ### 1.2.3
 - Treat rmd like a md file
 - Support mdr files  
