@@ -55,6 +55,10 @@ public class FileOpener {
       if (strEquals(type, "text/x-sql", "application/sql") || strEndsWith(fileNameLower, "sql")) {
         return codeComponent.addTab(file, CodeType.SQL);
       }
+      if (strEndsWith(fileNameLower, ".js")
+          || strEquals(type, "application/javascript", "application/ecmascript", "text/javascript", "text/ecmascript")) {
+        return codeComponent.addTab(file, CodeType.JAVA_SCRIPT);
+      }
       if (strEndsWith(fileNameLower, ".md") || strEndsWith(fileNameLower, ".rmd")) {
         return codeComponent.addTab(file, CodeType.MD);
       }

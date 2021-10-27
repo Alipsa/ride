@@ -8,7 +8,8 @@ public enum CodeType {
   MDR("mdr file"),
   MR("Munin report"),
   JAVA("Java code"),
-  GROOVY("Groovy code");
+  GROOVY("Groovy code"),
+  JAVA_SCRIPT("Javascript code");
 
   CodeType(String displayValue) {
     this.displayValue = displayValue;

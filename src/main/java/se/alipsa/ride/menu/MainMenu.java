@@ -914,6 +914,10 @@ public class MainMenu extends MenuBar {
     nJava.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.JAVA));
     fileMenu.getItems().add(nJava);
 
+    MenuItem nJs = new MenuItem("Javascript file");
+    nJs.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.JAVA_SCRIPT));
+    fileMenu.getItems().add(nJs);
+
     MenuItem nGroovy = new MenuItem("Groovy file");
     nGroovy.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.GROOVY));
     fileMenu.getItems().add(nGroovy);

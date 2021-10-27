@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.groovytab.GroovyTab;
 import se.alipsa.ride.code.javatab.JavaTab;
+import se.alipsa.ride.code.jstab.JsTab;
 import se.alipsa.ride.code.mdrtab.MdrTab;
 import se.alipsa.ride.code.mdtab.MdTab;
 import se.alipsa.ride.code.munin.MuninTab;
@@ -66,6 +67,9 @@ public class CodeComponent extends BorderPane {
         break;
       case GROOVY:
         tab = new GroovyTab(type.getDisplayValue(), gui);
+        break;
+      case JAVA_SCRIPT:
+        tab = new JsTab(type.getDisplayValue(), gui);
         break;
       default:
         throw new RuntimeException("Unknown filetype " + type);
@@ -126,6 +130,9 @@ public class CodeComponent extends BorderPane {
         break;
       case GROOVY:
         tab = new GroovyTab(title, gui);
+        break;
+      case JAVA_SCRIPT:
+        tab = new JsTab(title, gui);
         break;
       case TXT:
       default:
