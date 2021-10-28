@@ -8,13 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -23,16 +17,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import jdk.nashorn.internal.objects.NativeArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.renjin.primitives.matrix.Matrix;
-import org.renjin.sexp.AttributeMap;
-import org.renjin.sexp.ListVector;
-import org.renjin.sexp.SEXP;
-import org.renjin.sexp.StringVector;
-import org.renjin.sexp.Vector;
+import org.renjin.sexp.*;
 import se.alipsa.renjin.client.datautils.Table;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
@@ -213,6 +204,15 @@ public class InoutComponent extends TabPane implements InOut {
   public void display(String fileName, String... title) {
     // We use ReadImage from Rideutils here as it understands svg images
     display(ReadImage.read(fileName), title);
+  }
+
+  public void View(Object matrix, String... title) {
+    if (matrix instanceof NativeArray) {
+      NativeArray jsArray = (NativeArray)matrix;
+      Object[] arr = jsArray.asObjectArray();
+
+    }
+
   }
 
   public void View(SEXP sexp, String... title) {

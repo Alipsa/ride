@@ -5,7 +5,6 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +34,7 @@ public class GroovyTab extends TextAreaTab {
     super(gui, CodeType.GROOVY);
     setTitle(title);
     executeButton = new Button("Run");
-    executeButton.setOnAction(this::runGroovy);
+    executeButton.setOnAction(a -> runGroovy());
     buttonPane.getChildren().add(executeButton);
     groovyTextArea = new GroovyTextArea(this);
     VirtualizedScrollPane<GroovyTextArea> javaPane = new VirtualizedScrollPane<>(groovyTextArea);
@@ -48,10 +47,6 @@ public class GroovyTab extends TextAreaTab {
     sharedData.setProperty("inout", gui.getInoutComponent());
     GroovyClassLoader gcl = new GroovyClassLoader();
     groovyShell = new GroovyShell(gcl, sharedData);
-  }
-
-  private void runGroovy(ActionEvent actionEvent) {
-    runGroovy();
   }
 
   public void runGroovy() {

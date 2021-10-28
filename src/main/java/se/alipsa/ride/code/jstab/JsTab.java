@@ -2,7 +2,6 @@ package se.alipsa.ride.code.jstab;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.apache.logging.log4j.LogManager;
@@ -35,7 +34,7 @@ public class JsTab extends TextAreaTab {
     super(gui, CodeType.JAVA_SCRIPT);
     setTitle(title);
     executeButton = new Button("Run");
-    executeButton.setOnAction(this::runJavascript);
+    executeButton.setOnAction(a -> runJavascript());
     buttonPane.getChildren().add(executeButton);
     Button resetButton = new Button("Restart session");
     resetButton.setOnAction(a -> {
@@ -51,17 +50,11 @@ public class JsTab extends TextAreaTab {
   }
 
   public void initSession() {
-    //ScriptEngineManager factory = new ScriptEngineManager();
-    //engine = factory.getEngineByName("nashorn");
     NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
     String[] options = new String[] {"--language=es6", "--no-deprecation-warning"};
     engine = nashornScriptEngineFactory.getScriptEngine(options);
 
     engine.put("inout", gui.getInoutComponent());
-  }
-
-  private void runJavascript(ActionEvent actionEvent) {
-    runJavascript();
   }
 
   public void runJavascript() {
