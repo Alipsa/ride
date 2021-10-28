@@ -17,16 +17,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+import jdk.nashorn.api.scripting.ScriptUtils;
 import jdk.nashorn.internal.objects.NativeArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.jetbrains.annotations.NotNull;
 import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.*;
+import org.renjin.sexp.Vector;
 import se.alipsa.renjin.client.datautils.Table;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
+import se.alipsa.ride.console.ConsoleTextArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.inout.plot.PlotsTab;
 import se.alipsa.ride.inout.viewer.ViewTab;
@@ -36,6 +41,7 @@ import se.alipsa.rideutils.ReadImage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -75,7 +81,7 @@ public class InoutComponent extends TabPane implements InOut {
     filesButtonPane.getChildren().add(changeDirButton);
 
     branchLabel = new Label("");
-    branchLabel.setPadding(new Insets(0,0,0,10));
+    branchLabel.setPadding(new Insets(0, 0, 0, 10));
     filesButtonPane.getChildren().add(branchLabel);
 
 
@@ -84,7 +90,7 @@ public class InoutComponent extends TabPane implements InOut {
     //statusLabel.setPadding(new Insets(0,5,0,10));
     //hbox.getChildren().add(statusLabel);
     statusField = new TextField();
-    statusField.setPadding(new Insets(1,10,1,10));
+    statusField.setPadding(new Insets(1, 10, 1, 10));
     statusField.setDisable(true);
 
     HBox.setHgrow(statusField, Priority.ALWAYS);
@@ -148,7 +154,7 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void changeRootDir(File dir) {
-    if(!dir.equals(getRootDir())) {
+    if (!dir.equals(getRootDir())) {
       fileTree.refresh(dir);
       if (gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false)) {
         gui.getConsoleComponent().initRenjin(gui.getClass().getClassLoader());
@@ -169,10 +175,10 @@ public class InoutComponent extends TabPane implements InOut {
     expandTreeNodes(fileTree.getRoot());
   }
 
-  public void expandTreeNodes(TreeItem<?> item){
-    if(item != null && !item.isLeaf()){
+  public void expandTreeNodes(TreeItem<?> item) {
+    if (item != null && !item.isLeaf()) {
       item.setExpanded(true);
-      for(TreeItem<?> child:item.getChildren()){
+      for (TreeItem<?> child : item.getChildren()) {
         expandTreeNodes(child);
       }
     }
@@ -207,15 +213,101 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void View(Object matrix, String... title) {
-    if (matrix instanceof NativeArray) {
-      NativeArray jsArray = (NativeArray)matrix;
-      Object[] arr = jsArray.asObjectArray();
-
+    if (matrix == null) {
+      Alerts.warnFx("View", "matrix is null, cannot View");
+      return;
     }
+    ConsoleTextArea console = gui.getConsoleComponent().getConsole();
+    if (matrix instanceof NativeArray || matrix instanceof ScriptObjectMirror) {
+      viewJavaScriptMatrix(matrix, title);
+    } else {
+      console.appendWarningFx("Unknown matrix type " + matrix.getClass().getName());
+      console.appendFx(String.valueOf(matrix), true);
+    }
+  }
 
+  private void viewJavaScriptMatrix(Object matrix, String... title) {
+    ConsoleTextArea console = gui.getConsoleComponent().getConsole();
+    Object obj = toJava(matrix);
+    if (obj instanceof List) {
+      List<List<Object>> rowList = new ArrayList<>();
+      if (((List) obj).get(0) instanceof List) {
+        List<List<Object>> rows = (List<List<Object>>) obj;
+
+        for (List<Object> row : rows) {
+          List<Object> cols = new ArrayList<>();
+          for (Object col : row) {
+            cols.add(String.valueOf(col));
+          }
+          rowList.add(cols);
+        }
+        List<String> header = createAnonymousHeader(rows.get(0).size());
+        Table table = new Table(header, rowList);
+        showInViewer(table, title);
+      } else {
+        List<Object> objList = (List<Object>)obj;
+        List<Object> cols = new ArrayList<>();
+        for (Object col : objList) {
+          cols.add(String.valueOf(col));
+        }
+        rowList.add(cols);
+        List<String> header = createAnonymousHeader(objList.size());
+        Table table = new Table(header, rowList);
+        showInViewer(table, title);
+      }
+    } else {
+      console.appendWarningFx("This does not look like a matrix, not sure how to render a "
+          + obj.getClass().getName() + ",\n  js class is " + matrix.getClass().getName()
+          + "\n  unwrapped as " + ScriptUtils.unwrap(matrix).getClass().getName());
+      console.appendFx( String.valueOf(obj), true);
+    }
+  }
+
+  private Object toJava(Object jsObj) {
+    if (jsObj instanceof ScriptObjectMirror) {
+      ScriptObjectMirror jsObjectMirror = (ScriptObjectMirror) jsObj;
+      if (jsObjectMirror.isArray()) {
+        List<Object> list = new ArrayList<>();
+        for (Map.Entry<String, Object> entry : jsObjectMirror.entrySet()) {
+          list.add(toJava(entry.getValue()));
+        }
+        return list;
+      } else {
+        Map<String, Object> map = new HashMap<>();
+        for (Map.Entry<String, Object> entry : jsObjectMirror.entrySet()) {
+          map.put(entry.getKey(), toJava(entry.getValue()));
+        }
+        return map;
+      }
+    } else {
+      return jsObj;
+    }
+  }
+
+  public void View(List<List<Object>> matrix, String... title) {
+    if (matrix == null) {
+      Alerts.warnFx("View", "matrix is null, cannot View");
+      return;
+    }
+    List<String> header = createAnonymousHeader(matrix.size());
+    Table table = new Table(header, matrix);
+    showInViewer(table, title);
+  }
+
+  @NotNull
+  private List<String> createAnonymousHeader(int size) {
+    List<String> header = new ArrayList<>();
+    for (int i = 0; i < size; i++) {
+      header.add("V" + i);
+    }
+    return header;
   }
 
   public void View(SEXP sexp, String... title) {
+    if (sexp == null) {
+      Alerts.warnFx("View", "sexp is null, cannot View");
+      return;
+    }
     // For some reason polymorfism of Vector, StringVector and Matrix does not work (everything is treated as Vector)
     // so need to differentiate explicitly
     String type = sexp.getTypeName();
@@ -238,8 +330,8 @@ public class InoutComponent extends TabPane implements InOut {
             view(mat, title);
           } else {
             Platform.runLater(() ->
-            Alerts.warn("Array of type, " + sexp.getTypeName() + " cannot be shown",
-                "Result is an array with " + dim.length() + " dimensions. Convert this object to a data.frame to view it!")
+                Alerts.warn("Array of type, " + sexp.getTypeName() + " cannot be shown",
+                    "Result is an array with " + dim.length() + " dimensions. Convert this object to a data.frame to view it!")
             );
           }
         }
@@ -288,6 +380,7 @@ public class InoutComponent extends TabPane implements InOut {
    * As this is called from the script engine which runs on a separate thread
    * any gui interaction must be performed in a Platform.runLater (not sure if this qualifies as gui interaction though)
    * TODO: If the error is not printed after extensive testing then remove the catch IllegalStateException block
+   *
    * @return the file from the active tab or null if the active tab has never been saved
    */
   @Override
@@ -321,7 +414,7 @@ public class InoutComponent extends TabPane implements InOut {
 
   @Override
   public ConnectionInfo connection(String name) {
-    return  gui.getEnvironmentComponent().getConnections().stream()
+    return gui.getEnvironmentComponent().getConnections().stream()
         .filter(ci -> ci.getName().equals(name)).findAny().orElse(null);
   }
 
@@ -383,7 +476,8 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void setStatus(String status) {
-    Platform.runLater(() -> statusField.setText(status));;
+    Platform.runLater(() -> statusField.setText(status));
+    ;
   }
 
   public void clearStatus() {

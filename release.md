@@ -63,6 +63,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
   str(), and writeLines() to look ugly
 - Align bootstrap version with munin 1.1.5
 - Add support for javascript (using Nashorn with limited es6 support enabled)
+  - js tab to execute javascript
+  - View support for two-dimensional arrays
 
 ### 1.2.3
 - Treat rmd like a md file
