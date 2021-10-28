@@ -1,8 +1,5 @@
 # Todo / Roadmap
 
-create a file format for munin reports (.mr files) - xml or json. 
-Saving a munin report should save as reportName.mr
-
 ### Minor fixes
 Add support for parent poms, currently this throws exceptions due to a missing ModelBuilder which
 is an interface with no DefaultImplementations available to use (they are package private).
@@ -80,3 +77,5 @@ ideally by AetherPackageLoader
 
 ### Maybe Further out 
 - Support fastR in addition to Renjin, maybe also GNU R.
+- Once Renjin moves to Java 11 we should use the [standalone Nashorn](https://mvnrepository.com/artifact/org.openjdk.nashorn/nashorn-core) 
+instead of the built-in one so that Javascript will work also for Java >= 15.
