@@ -212,6 +212,10 @@ public class InoutComponent extends TabPane implements InOut {
     display(ReadImage.read(fileName), title);
   }
 
+  public void view(Object matrix, String... title) {
+   View(matrix,title);
+  }
+
   public void View(Object matrix, String... title) {
     if (matrix == null) {
       Alerts.warnFx("View", "matrix is null, cannot View");
@@ -282,6 +286,10 @@ public class InoutComponent extends TabPane implements InOut {
     } else {
       return jsObj;
     }
+  }
+
+  public void view(List<List<Object>> matrix, String... title) {
+    View(matrix, title);
   }
 
   public void View(List<List<Object>> matrix, String... title) {
