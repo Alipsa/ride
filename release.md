@@ -1,6 +1,6 @@
 # This is version 1.2.3 of Ride.
 
-Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine but
+Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine, but
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
 packages can be developed, built and tested. Ride supports maven build files as well as git.
   
@@ -10,7 +10,7 @@ If you use open JDK on Linux then you might need to do something like `sudo apt-
 Ride is started using the start script appropriate for your environment (see ride.sh/ride.cmd for details). 
 
 Since you probably want to run the ScriptEngine with the ClassPathPackageLoader when embedding your R app, 
-you can set Ride to use this to resolve packages. You then need to include those dependencies to the maven.pom 
+you can set Ride to use this to resolve packages. You then need to include those dependencies to the maven pom file 
 of your project and hence test that you got all dependencies right before attempting to run the R scripts from the 
 java application (server). 
 
@@ -24,7 +24,7 @@ Unzip ride-1.2.3-final-dist.zip to a directory of choice
 
 `> ./ride.sh`
 
-or on windows
+or on Windows
 
 `$ .\ride.cmd`
 
@@ -124,7 +124,7 @@ to understand what went wrong.
 
 ### 1.2 Beta 4
 - Add support for env customizations (env.sh/env.cmd called from start scripts if it exists)
-- Test and make adjustments so it also works in Java 11 (with bundled javafx)
+- Test and make adjustments, so it also works in Java 11 (with bundled javafx)
 - Open a Browser if the artifact lookup comes back empty
 - Bump dependency versions, notably rideutils which now 
 provides additional gui interactive abilities (prompt, chooseFile and chooseDir)
@@ -178,7 +178,7 @@ that might take forever to parse, instead we just do not initialize the file tre
     
 - Add dependency on R2JDBC (forked from rjdbc)
     - Since there are several bugfixes to RJDBC (sql server datatypes, postgres datatypes, proper handling of datetime etc.) 
-    that i submitted but have yet to be accepted into upstream i decided to bundle a forked version with ride. 
+    that I submitted but have yet to be accepted into upstream I decided to bundle a forked version with ride. 
     If you want the old ones just edit the version in the pom file. 
     
 - Improved hamcrest testing
@@ -192,7 +192,7 @@ that might take forever to parse, instead we just do not initialize the file tre
 - Improved connections tab
     - add separate username and password fields as putting username and password in the url does not always work for all databases
     - Add "view databases" right click menu option
-        - Add view top 200 rows option when right clicking a table.
+        - Add view top 200 rows option when right-clicking a table.
     - Add "view R code" i.e. generate R code to set up the connection
     
 - All code editors now have a button bar
@@ -200,10 +200,10 @@ that might take forever to parse, instead we just do not initialize the file tre
         
 - Quite few minor bug fixes
     - Since Ride is now good enough for me to use as my primary data analysis tool at work, I use it for several hours daily. 
-    Hence there were quite a few minor quirks that I could spot and fix.      
+    Hence, there were quite a few minor quirks that I could spot and fix.      
     
 - User manual
-    - Ride short cuts
+    - Ride shortcuts
     - Ride interaction
     - examples     
            
@@ -214,10 +214,10 @@ that might take forever to parse, instead we just do not initialize the file tre
     
 - Enable execution of SQL queries
     - Support for select and update queries in the SQL code tab 
-    - multi row selects of query results are supported for easy copy paste to a spreadsheet app or similar.    
+    - multi row selects of query results are supported for easy copy and paste to a spreadsheet app or similar.    
     
 - Create a database browser
-  - Tree structure based on INFORMATION_SCHEMA activated when right clicking on the connection and choosing view connection. 
+  - Tree structure based on INFORMATION_SCHEMA activated when right-clicking on the connection and choosing view connection. 
   - ctrl+c will copy the name of the table or column   
 
 - Edit menu
@@ -231,7 +231,7 @@ that might take forever to parse, instead we just do not initialize the file tre
     - use ant to launch instead of maven
     - start with ClasspathPackageLoader instead of AetherPackageLoader regardless of user pref    
 
-- Add suggestions when pressing ctrl+space (a.k.a autocomplete)
+- Add suggestions when pressing ctrl+space (a.k.a. autocomplete)
   - For R: base on R keywords + all base R methods (done)
   - For SQL: use SQL keywords
   
