@@ -30,7 +30,7 @@ library(grDevices)
 library(graphics)
 
 # plot a svg image to a file
-fileName <- paste0(tempdir(), "svgplot.svg")
+fileName <- file.path(tempdir(), "svgplot.svg")
 svg(fileName)
 plot(sin, -pi, 2*pi)
 

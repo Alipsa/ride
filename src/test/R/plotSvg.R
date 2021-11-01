@@ -1,7 +1,7 @@
 library(grDevices)
 library(graphics)
 
-fileName <- paste0(tempdir(), "svgplot.svg")
+fileName <- file.path(tempdir(), "svgplot.svg")
 
 # First plot
 svg(fileName)
