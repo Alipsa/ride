@@ -30,7 +30,7 @@ library(grDevices)
 library(graphics)
 
 # plot a svg image to a file
-fileName <- "/tmp/svgplot.svg"
+fileName <- paste0(tempdir(), "svgplot.svg")
 svg(fileName)
 plot(sin, -pi, 2*pi)
 
@@ -39,7 +39,7 @@ dev.off()
 # rideutils provides ways to bridge over from R to Java to be able to interact with the IDE
 library("se.alipsa:rideutils")
 # convert the image to a a javafx Image and display it in ride
-inout$display(readImage(fileName), "svgplot")
+display(fileName, "svgplot")
 ```
 
 

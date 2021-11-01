@@ -15,6 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
@@ -27,7 +28,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jetbrains.annotations.NotNull;
 import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.*;
-import org.renjin.sexp.Vector;
 import se.alipsa.renjin.client.datautils.Table;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
@@ -37,11 +37,16 @@ import se.alipsa.ride.inout.plot.PlotsTab;
 import se.alipsa.ride.inout.viewer.ViewTab;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
-import se.alipsa.rideutils.ReadImage;
+import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.TikaUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -208,8 +213,30 @@ public class InoutComponent extends TabPane implements InOut {
 
   @Override
   public void display(String fileName, String... title) {
-    // We use ReadImage from Rideutils here as it understands svg images
-    display(ReadImage.read(fileName), title);
+    URL url = FileUtils.getResourceUrl(fileName);
+    log.info("Reading image from " + url);
+    if (url == null) {
+      Alerts.warn("Cannot display image", "Failed to find " + fileName);
+      return;
+    }
+    File file = new File(fileName);
+    if (file.exists()) {
+      try {
+        String contentType = TikaUtils.instance().detectContentType(file);
+        if ("image/svg+xml".equals(contentType)) {
+          Platform.runLater(() -> {
+            final WebView browser = new WebView();
+            browser.getEngine().load(url.toExternalForm());
+            display(browser, title);
+          });
+          return;
+        }
+      } catch (IOException e) {
+        ExceptionAlert.showAlert("Failed to detect image content type", e);
+      }
+    }
+    Image img = new Image(url.toExternalForm());
+    display(img, title);
   }
 
   public void view(Object matrix, String... title) {
@@ -485,7 +512,6 @@ public class InoutComponent extends TabPane implements InOut {
 
   public void setStatus(String status) {
     Platform.runLater(() -> statusField.setText(status));
-    ;
   }
 
   public void clearStatus() {

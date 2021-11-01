@@ -1,12 +1,7 @@
 library(grDevices)
 library(graphics)
 
-sysname <- tolower(Sys.info()["sysname"])
-if(startsWith(sysname, "windows")) {
-	fileName <- "c:/tmp/svgplot.svg"
-} else {
-	fileName <- "/tmp/svgplot.svg"
-}
+fileName <- paste0(tempdir(), "svgplot.svg")
 
 # First plot
 svg(fileName)

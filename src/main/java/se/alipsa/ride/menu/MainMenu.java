@@ -1,17 +1,7 @@
 package se.alipsa.ride.menu;
 
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.DEFAULT_MDR_REPORT_NAME;
-import static se.alipsa.ride.Constants.DEFAULT_R_REPORT_NAME;
-import static se.alipsa.ride.Constants.PREF_MUNIN_PORT;
-import static se.alipsa.ride.Constants.PREF_MUNIN_SERVER;
-import static se.alipsa.ride.Constants.PREF_MUNIN_USERNAME;
-import static se.alipsa.ride.Constants.SESSION_MUNIN_CONNECTION;
-import static se.alipsa.ride.Constants.THEME;
-import static se.alipsa.ride.menu.GlobalOptions.ADD_BUILDDIR_TO_CLASSPATH;
-import static se.alipsa.ride.menu.GlobalOptions.CONSOLE_MAX_LENGTH_PREF;
-import static se.alipsa.ride.menu.GlobalOptions.ENABLE_GIT;
-import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
+import static se.alipsa.ride.Constants.*;
+import static se.alipsa.ride.menu.GlobalOptions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +9,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -27,6 +18,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.commons.text.CaseUtils;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +28,6 @@ import org.apache.logging.log4j.core.appender.FileAppender;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.jetbrains.annotations.NotNull;
 import org.renjin.RenjinVersion;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
@@ -65,13 +56,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.prefs.Preferences;
 
 public class MainMenu extends MenuBar {
@@ -578,7 +563,9 @@ public class MainMenu extends MenuBar {
       }
       try {
         String content = FileUtils.readContent(logFile);
-        showInfoAlert(logFile.getAbsolutePath(), content, 1200, 900);
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+
+        showInfoAlert(logFile.getAbsolutePath(), content,  Math.min(screenBounds.getWidth(), 1200.0), Math.min(screenBounds.getHeight(), 830.0));
       } catch (IOException e) {
         ExceptionAlert.showAlert("Failed to read log file content", e);
       }

@@ -34,8 +34,7 @@ Here is an example; also showing the use of rideutils (readImage) which is alway
     library(<span class="string">"se.alipsa:rideutils"</span>)
     <br/>
     <span class="comment"># plot a svg image to a file</span><br/>
-    <span class="comment"># This would be something like c:\\temp\\svgplot.svg on windows</span><br/>
-    fileName <- <span class="string">"/tmp/svgplot.svg"</span><br/>
+    fileName <- paste0(tempdir(), <span class="string">"svgplot.svg"</span>)<br/>
     svg(fileName)<br/>
     plot(sin, -pi, 2*pi)<br/>
     <br/>

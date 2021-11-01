@@ -56,7 +56,7 @@ public class FileUtils {
    * absolute path of the file system (not only the classpath's).
    */
   public static URL getResourceUrl(String resource) {
-    final List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();
+    final List<ClassLoader> classLoaders = new ArrayList<>();
     classLoaders.add(Thread.currentThread().getContextClassLoader());
     classLoaders.add(FileUtils.class.getClassLoader());
 
@@ -91,7 +91,7 @@ public class FileUtils {
    * fetch a list of files for the dir specified and the extension specified
    * extension in not case sensitive
    */
-  public static List<File> findFilesWithExt(File dir, String ext) throws IOException {
+  public static List<File> findFilesWithExt(File dir, String ext) {
     if (dir == null || ext == null) {
       return null;
     }

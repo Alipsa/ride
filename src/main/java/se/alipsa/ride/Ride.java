@@ -124,10 +124,11 @@ public class Ride extends Application {
 
     primaryStage.setOnCloseRequest(t -> {
       if (getCodeComponent().hasUnsavedFiles()) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        String contentText = "Are you sure you want to exit \n -even though you have unsaved files?";
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, contentText, ButtonType.YES, ButtonType.NO);
         alert.setTitle("Are you sure you want to exit?");
         alert.setHeaderText("There are unsaved files");
-        alert.setContentText("Are you sure you want to exit \n -even though you have unsaved files?");
+
         alert.initOwner(getStage());
         String styleSheetPath = getPrefs().get(THEME, BRIGHT_THEME);
 
@@ -141,7 +142,7 @@ public class Ride extends Application {
           t.consume();
           return;
         }
-        if (result.get() != ButtonType.OK) {
+        if (result.get() != ButtonType.YES) {
           t.consume();
           return;
         }
@@ -150,7 +151,9 @@ public class Ride extends Application {
     });
 
     primaryStage.setTitle("Ride, a Renjin IDE");
-    primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
+    primaryStage.getIcons().add(
+        new Image(Objects.requireNonNull(FileUtils.getResourceUrl("image/logo.png")).toExternalForm())
+    );
     primaryStage.setScene(scene);
     enableDragDrop(scene);
     consoleComponent.initRenjin(Ride.this.getClass().getClassLoader());
@@ -185,7 +188,7 @@ public class Ride extends Application {
   }
 
   public void addStyleSheet(String styleSheetPath) {
-    scene.getStylesheets().add(FileUtils.getResourceUrl(styleSheetPath).toExternalForm());
+    scene.getStylesheets().add(Objects.requireNonNull(FileUtils.getResourceUrl(styleSheetPath)).toExternalForm());
   }
 
   public ObservableList<String> getStyleSheets() {
