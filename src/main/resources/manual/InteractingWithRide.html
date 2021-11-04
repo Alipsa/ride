@@ -41,12 +41,25 @@ Here is an example; also showing the use of rideutils (readImage) which is alway
     dev.off()<br/>
     <br/>
     <span class="comment"># convert the image to a a javafx Image and display it in ride, the second argument is the title of the window (optional)</span><br/>
-    display(fileName, <span class="string">"svgplot"</span>)<br/>
-</div>
+    display(fileName, <span class="string">"svgplot"</span>)<br/><br/>
 
-Note: rideutils also provides a convenience method to view a plot:
+</div>
+Note on SVG files: when you are using display(file name, title) Ride will use a webview to render the svg image.
+This is consistent with how the svg file will look in chrome and firefox but not 100% spec compliant.
+E.g. sometimes Y-axis and/or Y-axis label on a plot are not shown.
+An alternative is to use readImage() to convert the svg to a bitmap first e.g. <br/>
 <div class="codeblock">
-viewPlot(func, title = "")
+display(readImage(fileName), <span class="string">"svgplot"</span>)
+</div>
+readImage is using the fxsvgimage library to convert the svg file. In many cases this will produce a better
+result than the web view but not always. The fxsvgimage is in pretty early stages of development so
+in the future Ride will switch to using it always but for now, you have these two ways of displaying the image
+that you can use depending on what gives the best result.
+<br/>
+<br/>
+Rideutils also provides a convenience method to view a plot:
+<div class="codeblock">
+    viewPlot(func, title = <span class="string">"some tab name/title text"</span>)
 </div>
 Example:
 <div class="codeblock">
@@ -59,7 +72,7 @@ if you have a more complex plot you need to wrap all your plot commands in a cod
 <pre>viewPlot({
     plot(mtcars$mpg ~ mtcars$hp)
     abline(h = mean(mtcars$mpg))
-}, "mpg")</pre>
+    }, <span class="string">"mpg"</span>)</pre>
 </div>
 
 <h4>Display tabular data in the View tab</h4>
