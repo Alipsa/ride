@@ -25,28 +25,13 @@ public class TikaUtils {
 
   private static final TikaUtils INSTANCE = new TikaUtils();
 
-  private org.apache.tika.Tika apacheTika;
+  private final org.apache.tika.Tika apacheTika;
 
-  TikaConfig config;
+  public static TikaUtils instance() {
+    return INSTANCE;
+  }
 
   private TikaUtils() {
-    /*
-    <properties>
-      <service-loader initializableProblemHandler="ignore"/>
-    </properties>
-     */
-    Document doc = new DocumentImpl();
-    Element root = doc.createElement("properties");
-    Element serviceLoader = doc.createElement("service-loader");
-    serviceLoader.setAttribute("initializableProblemHandler", "ignore");
-    root.appendChild(serviceLoader);
-
-    try {
-      config = new TikaConfig(root);
-    } catch (TikaException | IOException e) {
-      throw new RuntimeException("Failed to configure Tika", e);
-    }
-
     apacheTika = new org.apache.tika.Tika();
   }
 
@@ -74,9 +59,5 @@ public class TikaUtils {
 
   public String detectContentType(File file) throws IOException {
     return apacheTika.detect(file);
-  }
-
-  public static TikaUtils instance() {
-    return INSTANCE;
   }
 }

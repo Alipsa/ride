@@ -136,8 +136,12 @@ Copyright (c) 2013-2017, Tomas Mikula and contributors under BSD 2-Clause "Simpl
 
 ### org.jfree:fxgraphics2d
 A bridge between awt and javafx so we can use the awt graphics devices in renjin
-
 Copyright (c) 2014-2018, Object Refinery Limited. Licensed under a BSD-style license
+
+### org.girod:fxsvgimage
+Indirect dependency from rideutils. Allows conversion of svg files to javafx Image nodes.
+Since this is not available on maven central (yet) a snapshot version is built and used based on the latest
+code at the time of the Ride release. Licensed under a MIT license. 
 
 ### org.apache:log4j
 The logging framework used.
