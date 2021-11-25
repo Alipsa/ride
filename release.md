@@ -66,7 +66,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
   - js tab to execute javascript
   - View support for two-dimensional arrays
 - Change to a more robust way to viewing svg files using WebView instead of relying on batik to convert the svg image 
-(some features of svg are not supported). Remove dependcy on javafxsvg as a result 
+(some features of svg are not supported). Remove dependency on javafxsvg as a result 
+- update environment after initializing the renjin script engine (make all methods available for code completion from all standard packages)
 
 ### 1.2.3
 - Treat rmd like a md file

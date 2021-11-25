@@ -233,6 +233,7 @@ public class ConsoleComponent extends BorderPane {
       console.append(surround, true);
       console.append(greeting, true);
       console.append(surround + "\n>", false);
+      updateEnvironment();
     });
     initTask.setOnFailed(e -> {
       Throwable throwable = initTask.getException();
