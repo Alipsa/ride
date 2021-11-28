@@ -9,13 +9,36 @@
     <version>1.2.4</version>
     <packaging>jar</packaging>
 
+    <name>Ride</name>
+    <description>Java FX GUI for developing Renjin applications</description>
+    <url>https://github.com/perNyfelt/ride</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://raw.githubusercontent.com/perNyfelt/ride/master/LICENSE</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Per Nyfelt</name>
+            <email>per.nyfelt@alipsa.se</email>
+            <organization>Alipsa HB</organization>
+            <organizationUrl>http://www.alipsa.se</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:https://github.com/perNyfelt/ride.git</connection>
+        <developerConnection>scm:git:https://github.com/perNyfelt/ride.git</developerConnection>
+        <url>https://github.com/perNyfelt/ride/tree/master</url>
+    </scm>
+
     <properties>
         <exe.version>1.2.4.0</exe.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <release.tag>1.2.4-beta</release.tag>
+        <release.tag>1.2.4-GA</release.tag>
         <renjin.version>3.5-beta76</renjin.version>
         <!--jgit.version>5.12.0.202106070339-r</jgit.version-->
         <jgit.version>5.13.0.202109080827-r</jgit.version>
@@ -31,6 +54,10 @@
             <id>bedatadriven</id>
             <name>bedatadriven public repo</name>
             <url>https://nexus.bedatadriven.com/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
     <pluginRepositories>
