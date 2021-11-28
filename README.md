@@ -70,7 +70,7 @@ you to preview the report. Parameterized reports are also supported.
 
 ### Installing and Running ride
 Go to the releases tab and expand the assets section at the bottom of the release. 
-Unzip the zip file ride-<version>-dist.zip e.g. ride-1.2.3-GA-dist.zip to a directory of choice.
+Unzip the zip file ride-<version>-dist.zip e.g. ride-1.2.4-GA-dist.zip to a directory of choice.
 
 There are icons for windows and Linux in the base folder of the unpacked zip that can be used to create a desktop shortcut/launcher.
 

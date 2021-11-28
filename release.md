@@ -1,4 +1,4 @@
-# This is version 1.2.3 of Ride.
+# This is version 1.2.4 of Ride.
 
 Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine, but
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
@@ -18,7 +18,7 @@ java application (server).
 Pre requisites:
 - Java 8 or higher with java fx
 
-Unzip ride-1.2.3-final-dist.zip to a directory of choice
+Unzip ride-1.2.4-GA-dist.zip to a directory of choice
 
 ## How to run:
 

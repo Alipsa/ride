@@ -6,7 +6,7 @@
 
     <groupId>se.alipsa</groupId>
     <artifactId>ride</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.2.4</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -407,9 +407,9 @@
                         <configuration>
                             <target>
                                 <echo file="version.properties">
-                                    version=${project.version}
-                                    jar.name=${project.artifactId}-${project.version}.jar
-                                    release.tag=${release.tag}
+version=${project.version}
+jar.name=${project.artifactId}-${project.version}.jar
+release.tag=${release.tag}
                                 </echo>
                                 <copy file="version.properties" toDir="${project.build.outputDirectory}"/>
                             </target>
@@ -488,7 +488,7 @@
                             <errTitle>${project.artifactId}</errTitle>
                             <icon>${project.basedir}/src/bin/ride-icon.ico</icon>
                             <downloadUrl>
-                                https://download.bell-sw.com/java/8u252+9/bellsoft-jdk8u252+9-windows-amd64-full.msi
+                                https://download.bell-sw.com/java/8u312+7/bellsoft-jdk8u312+7-windows-amd64-full.msi
                             </downloadUrl>
                             <classPath>
                                 <mainClass>se.alipsa.ride.Ride</mainClass>
