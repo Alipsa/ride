@@ -54,6 +54,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2.5
+- Bugfix: downgrade jaxb runtime so that save of munin files works
+
 ### 1.2.4 
 - Update dependency versions in pom and templates
 - Add git clone project menu option
