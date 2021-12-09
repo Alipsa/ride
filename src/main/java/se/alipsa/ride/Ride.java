@@ -10,8 +10,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Control;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.Image;
@@ -29,10 +27,10 @@ import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.inout.FileOpener;
 import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.MainMenu;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
-import java.net.URL;
 import java.util.*;
 import java.util.prefs.Preferences;
 
@@ -124,25 +122,12 @@ public class Ride extends Application {
 
     primaryStage.setOnCloseRequest(t -> {
       if (getCodeComponent().hasUnsavedFiles()) {
-        String contentText = "Are you sure you want to exit \n -even though you have unsaved files?";
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, contentText, ButtonType.YES, ButtonType.NO);
-        alert.setTitle("Are you sure you want to exit?");
-        alert.setHeaderText("There are unsaved files");
-
-        alert.initOwner(getStage());
-        String styleSheetPath = getPrefs().get(THEME, BRIGHT_THEME);
-
-        URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
-        if (styleSheetUrl != null) {
-          alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
-        }
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (!result.isPresent()) {
-          t.consume();
-          return;
-        }
-        if (result.get() != ButtonType.YES) {
+        boolean exitAnyway = Alerts.confirm(
+            "Are you sure you want to exit?",
+            "There are unsaved files",
+            "Are you sure you want to exit \n -even though you have unsaved files?"
+        );
+        if (!exitAnyway) {
           t.consume();
           return;
         }

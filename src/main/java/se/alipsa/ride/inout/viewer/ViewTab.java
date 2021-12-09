@@ -14,6 +14,9 @@ import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
@@ -21,10 +24,18 @@ import se.alipsa.renjin.client.datautils.Table;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.xmltab.XmlTextArea;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.GuiUtils;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -35,12 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 public class ViewTab extends Tab {
 
@@ -92,10 +97,11 @@ public class ViewTab extends Tab {
         final MenuItem copyMenuItem = new MenuItem("copy");
         copyMenuItem.setOnAction(event -> copySelectionToClipboard(tv, null));
         final MenuItem copyWithHeaderMenuItem = new MenuItem("copy with header");
-
         copyWithHeaderMenuItem.setOnAction(event -> copySelectionToClipboard(tv, headerList));
+        final MenuItem exportToCsvMenuItem = new MenuItem("export to csv");
+        exportToCsvMenuItem.setOnAction(event -> exportToCsv(tv, headerList, title));
 
-        contextMenu.getItems().addAll(copyMenuItem, copyWithHeaderMenuItem);
+        contextMenu.getItems().addAll(copyMenuItem, copyWithHeaderMenuItem, exportToCsvMenuItem);
         row.contextMenuProperty().bind(
             Bindings.when(row.emptyProperty())
                 .then((ContextMenu) null)
@@ -175,6 +181,52 @@ public class ViewTab extends Tab {
     final ClipboardContent clipboardContent = new ClipboardContent();
     clipboardContent.putString(strb.toString());
     Clipboard.getSystemClipboard().setContent(clipboardContent);
+  }
+
+  private void exportToCsv(final TableView<?> table, List<String> headerList, String... title) {
+    final Set<Integer> rows = new TreeSet<>();
+    for (final TablePosition<?, ?> tablePosition : table.getSelectionModel().getSelectedCells()) {
+      rows.add(tablePosition.getRow());
+    }
+    try {
+      StringWriter sw = new StringWriter();
+      CSVFormat format = CSVFormat.DEFAULT.builder()
+          .setHeader(headerList.toArray(new String[0]))
+          .build();
+      CSVPrinter prn = new CSVPrinter(sw, format);
+      List<String> rowValues = new ArrayList<>(headerList.size());
+      for (final Integer row : rows) {
+        for (final TableColumn<?, ?> column : table.getColumns()) {
+          final Object cellData = column.getCellData(row);
+          rowValues.add(cellData == null ? null : String.valueOf(cellData).trim());
+        }
+        prn.printRecord(rowValues);
+        rowValues.clear();
+      }
+      FileChooser fc = new FileChooser();
+      fc.setTitle("Save CSV File");
+      String initialFileName = title.length == 0 ? "rideExport" : title[0];
+      if (initialFileName.endsWith(".")) {
+        initialFileName = initialFileName + "csv";
+      } else {
+        initialFileName = initialFileName + ".csv";
+      }
+      fc.setInitialFileName(initialFileName);
+      fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("CSV", "*.csv"));
+      File outFile = fc.showSaveDialog(Ride.instance().getStage());
+      if (outFile == null ) {
+        // Clicking cancel and still have an action performed is not very good UX
+        // TODO: Consider changing this to an explicit action (export csv -> to clipboard) instead
+        final ClipboardContent clipboardContent = new ClipboardContent();
+        clipboardContent.putString(sw.toString());
+        Clipboard.getSystemClipboard().setContent(clipboardContent);
+        Alerts.info("Export to CSV", "File export cancelled, CSV copied to clipboard!");
+      } else {
+        FileUtils.writeToFile(outFile, sw.toString());
+      }
+    } catch (IOException e) {
+      ExceptionAlert.showAlert("Failed to create csv", e);
+    }
   }
 
   public void viewHtmlWithBootstrap(String content, String... title) {

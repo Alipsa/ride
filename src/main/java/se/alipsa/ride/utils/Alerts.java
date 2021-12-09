@@ -1,5 +1,8 @@
 package se.alipsa.ride.utils;
 
+import static se.alipsa.ride.Constants.BRIGHT_THEME;
+import static se.alipsa.ride.Constants.THEME;
+
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -11,10 +14,6 @@ import se.alipsa.ride.Ride;
 
 import java.net.URL;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
 
 public class Alerts {
 
@@ -35,6 +34,26 @@ public class Alerts {
     showAlertFx(title, content, Alert.AlertType.WARNING);
   }
 
+  public static boolean confirm(String title, String headerText, String contentText) {
+    Alert alert = new Alert(Alert.AlertType.CONFIRMATION, contentText, ButtonType.YES, ButtonType.NO);
+    Ride gui = Ride.instance();
+    alert.setTitle(title);
+    alert.setHeaderText(headerText);
+
+    alert.initOwner(gui.getStage());
+    String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
+
+    URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
+    if (styleSheetUrl != null) {
+      alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
+    }
+
+    Optional<ButtonType> result = alert.showAndWait();
+    if (result.isPresent() && result.get() == ButtonType.YES) {
+      return true;
+    }
+    return false;
+  }
   public static Optional<ButtonType> showAlert(String title, String content, Alert.AlertType information) {
 
       TextArea textArea = new TextArea(content);
