@@ -56,8 +56,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 ### 1.2.5
 - Bugfix: downgrade jaxb runtime so that save of munin files works
-- Bump mdr2html and htmlcreator versions
+- Bump mdr2html and htmlcreator, log4j, jsqlparser, spotbugs annotations versions
 - Add right click option to export a table view to a csv. 
+- bump r2jdbc version to support CHARACTER VARYING data type
 
 ### 1.2.4 
 - Update dependency versions in pom and templates
