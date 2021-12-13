@@ -54,6 +54,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2.6
+
 ### 1.2.5
 - Bugfix: downgrade jaxb runtime so that save of munin files works
 - Bump mdr2html and htmlcreator, log4j, jsqlparser, spotbugs annotations versions
