@@ -103,8 +103,8 @@
         </dependency>
         <dependency>
             <groupId>se.alipsa</groupId>
-            <artifactId>mdr2html</artifactId>
-            <version>1.4.1-SNAPSHOT</version>
+            <artifactId>mdr</artifactId>
+            <version>1.5.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>

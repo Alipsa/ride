@@ -1,6 +1,7 @@
 package se.alipsa.ride.inout.viewer;
 
 import static se.alipsa.ride.Constants.KEY_CODE_COPY;
+import static se.alipsa.ride.code.mdrtab.MdrUtil.*;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
@@ -39,7 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -53,21 +53,11 @@ public class ViewTab extends Tab {
 
   private final TabPane viewPane;
 
-  // The highlightJs stuff is in mdr2html
-  public static final String HIGHLIGHT_JS_CSS = "<link rel='stylesheet' href='" + resourceUrlExternalForm("highlightJs/default.css") + "'>";
-  public static final String HIGHLIGHT_JS_SCRIPT = "<script src='" + resourceUrlExternalForm("highlightJs/highlight.pack.js") + "'></script>";
-  public static final String BOOTSTRAP_CSS = resourceUrlExternalForm("META-INF/resources/webjars/bootstrap/5.1.3/css/bootstrap.css");
-
   public ViewTab() {
     setText("Viewer");
     viewPane = new TabPane();
     setContent(viewPane);
     viewPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-  }
-
-  private static String resourceUrlExternalForm(String resource) {
-    URL url = FileUtils.getResourceUrl(resource);
-    return url == null ? "" : url.toExternalForm();
   }
 
   public void viewTable(Table table, String... title) {
@@ -240,10 +230,18 @@ public class ViewTab extends Tab {
 
     WebEngine webEngine = browser.getEngine();
     webEngine.setUserStyleSheetLocation(BOOTSTRAP_CSS);
+    String html = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">\n"
+        + getHighlightStyle(false)
+        + getHighlightCustomStyle()
+        + "</head> <body>"
+        + content
+        + "\n</body>\n"
+        + getHighlightJs(false)
+        + getHighlightInitScript()
+        + "</html>";
 
-    content = HIGHLIGHT_JS_CSS + "\n" + HIGHLIGHT_JS_SCRIPT + "\n<script>hljs.initHighlightingOnLoad();</script>\n" + content;
-    webEngine.loadContent(content);
-    createContextMenu(browser, content);
+    webEngine.loadContent(html);
+    createContextMenu(browser, html);
     tab.setContent(browser);
     viewPane.getSelectionModel().select(tab);
   }

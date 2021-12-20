@@ -61,6 +61,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Bump mdr2html and htmlcreator, log4j, jsqlparser, spotbugs annotations versions
 - Add right click option to export a table view to a csv. 
 - bump r2jdbc version to support CHARACTER VARYING data type
+- add export MDR to html and PDF
 
 ### 1.2.4 
 - Update dependency versions in pom and templates

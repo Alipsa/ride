@@ -1,5 +1,6 @@
 package se.alipsa.ride.code.munin;
 
+import static se.alipsa.ride.code.mdrtab.MdrUtil.BOOTSTRAP_CSS;
 import static se.alipsa.ride.inout.viewer.ViewTab.viewSource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,7 +20,6 @@ import org.renjin.sexp.SEXP;
 import org.renjin.sexp.StringArrayVector;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleComponent;
-import se.alipsa.ride.inout.viewer.ViewTab;
 import se.alipsa.ride.model.MuninReport;
 import se.alipsa.ride.utils.ExceptionAlert;
 
@@ -108,7 +108,7 @@ public class MuninRTab extends MuninTab {
     Stage stage = new Stage();
     WebView browser = new WebView();
     WebEngine webEngine = browser.getEngine();
-    webEngine.setUserStyleSheetLocation(ViewTab.BOOTSTRAP_CSS);
+    webEngine.setUserStyleSheetLocation(BOOTSTRAP_CSS);
     ReportInputResponse reportInput = new ReportInputResponse(stage);
     browser.setContextMenuEnabled(false);
     createContextMenu(browser);
