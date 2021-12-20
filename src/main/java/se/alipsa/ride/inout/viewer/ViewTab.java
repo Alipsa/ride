@@ -233,7 +233,7 @@ public class ViewTab extends Tab {
     String html = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">\n"
         + getHighlightStyle(false)
         + getHighlightCustomStyle()
-        + "</head> <body>"
+        + "</head> <body style='margin-left: 15px; margin-right: 15px'>\n"
         + content
         + "\n</body>\n"
         + getHighlightJs(false)

@@ -118,7 +118,7 @@ public class MdrUtil {
     consoleComponent.startThreadWhenOthersAreFinished(thread, "viewMdr");
   }
 
-  public static String convertMdrToHtml(Ride gui, String textContent) {
+  private static String convertMdrToHtml(Ride gui, String textContent, boolean withMargin) {
     ConsoleComponent consoleComponent = gui.getConsoleComponent();
     consoleComponent.running();
 
@@ -130,17 +130,16 @@ public class MdrUtil {
               .runScript("library('se.alipsa:mdr')\n renderMdr(mdrContent)",
                   Collections.singletonMap("mdrContent", textContent));
           if (htmlContent != null) {
-            String html = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">\n"
+            return "<!DOCTYPE html><html><head><meta charset=\"UTF-8\">\n"
                 + getHighlightStyle(true)
                 + getBootstrapStyle(true)
                 + getHighlightCustomStyle()
-                + "</head> <body>\n"
+                + (withMargin ? "</head> <body style='margin-left: 15px; margin-right: 15px'>\n" : "</head> <body>\n")
                 + htmlContent.asString()
                 + "\n</body>\n"
                 + getHighlightJs(true)
                 + getHighlightInitScript()
                 + "</html>";
-            return html;
           }
         } catch (RuntimeException e) {
           throw new Exception(e);
@@ -174,12 +173,12 @@ public class MdrUtil {
   }
 
   public static void saveMdrAsPdf(Ride gui, File target, String textContent) {
-    se.alipsa.r2md.Md2Pdf.render(convertMdrToHtml(gui, textContent), target.getAbsolutePath());
+    se.alipsa.r2md.Md2Pdf.render(convertMdrToHtml(gui, textContent, false), target.getAbsolutePath());
   }
 
   public static void saveMdrAsHtml(Ride gui, File target, String textContent) {
     try {
-      FileUtils.writeToFile(target, convertMdrToHtml(gui, textContent));
+      FileUtils.writeToFile(target, convertMdrToHtml(gui, textContent, true));
     } catch (FileNotFoundException e) {
       ExceptionAlert.showAlert(e.getMessage(), e);
     }
