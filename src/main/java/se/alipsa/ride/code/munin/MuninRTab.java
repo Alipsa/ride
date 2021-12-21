@@ -81,7 +81,7 @@ public class MuninRTab extends MuninTab {
     task.setOnSucceeded(e -> {
       SEXP result = task.getValue();
       if (result != null) {
-        gui.getInoutComponent().viewHtmlWithBootstrap(result, getTitle());
+        gui.getInoutComponent().viewHtmlWithBootstrap(result.asString(), getTitle());
         gui.getConsoleComponent().updateEnvironment();
       }
       gui.setNormalCursor();
