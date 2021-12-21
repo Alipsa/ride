@@ -39,7 +39,7 @@ public class MdrUtil {
   private static final String HIGHLIGHT_JS_SCRIPT_PATH = "highlightJs/highlight.pack.js";
   private static final String BOOTSTRAP_CSS_PATH = "META-INF/resources/webjars/bootstrap/5.1.3/css/bootstrap.css";
   private static final String HIGHLIGHT_JS_INIT = "\n<script>hljs.initHighlightingOnLoad();</script>\n";
-  // The highlightJs stuff is in mdr
+  // The highlightJs stuff is in the mdr package
   public static final String HIGHLIGHT_JS_CSS = "\n<link rel='stylesheet' href='" + resourceUrlExternalForm(HIGHLIGHT_JS_CSS_PATH) + "'>\n";
   public static final String HIGHLIGHT_JS_SCRIPT = "\n<script src='" + resourceUrlExternalForm(HIGHLIGHT_JS_SCRIPT_PATH) + "'></script>\n";
   public static final String BOOTSTRAP_CSS = resourceUrlExternalForm(BOOTSTRAP_CSS_PATH);
@@ -140,7 +140,7 @@ public class MdrUtil {
     }
   }
 
-  private static String decorate(String html, boolean withMargin) {
+  public static String decorate(String html, boolean withMargin, boolean embed) {
     return "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n"
         + getHighlightStyle(true)
         + getBootstrapStyle(true)
@@ -154,7 +154,7 @@ public class MdrUtil {
   }
 
   public static void saveMdrAsPdf2(Ride gui, File target, String textContent) {
-    String html = decorate(convertMdrToHtml(gui, textContent), false);
+    String html = decorate(convertMdrToHtml(gui, textContent), false, true);
     se.alipsa.r2md.Md2Pdf.render(html, target.getAbsolutePath());
     try {
       FileUtils.writeToFile(new File(target.getParent(), target.getName() + ".html"), html);
@@ -165,16 +165,7 @@ public class MdrUtil {
   }
 
   public static void saveMdrAsPdf(Ride gui, File target, String textContent) {
-    String html = "<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"UTF-8\">\n"
-        + getBootstrapStyle(true)
-        + getHighlightStyle(true)
-        + getHighlightCustomStyle()
-        + "\n</head>\n<body style='margin-left: 15px; margin-right: 15px;'>\n"
-        + convertMdrToHtml(gui, textContent)
-        + "\n</body>\n"
-        + getHighlightJs(true)
-        + getHighlightInitScript()
-        + "\n</html>";
+    String html = decorate(convertMdrToHtml(gui, textContent), true, true);
 
     // We load the html into a web view so that the highlight javascript properly add classes to code parts
     // then we extract the DOM from the web view and use that to produce the PDF
@@ -230,7 +221,7 @@ public class MdrUtil {
   public static void saveMdrAsHtml(Ride gui, File target, String textContent) {
     try {
       String html = convertMdrToHtml(gui, textContent);
-      FileUtils.writeToFile(target, decorate(html, true));
+      FileUtils.writeToFile(target, decorate(html, true, true));
     } catch (FileNotFoundException e) {
       ExceptionAlert.showAlert(e.getMessage(), e);
     }

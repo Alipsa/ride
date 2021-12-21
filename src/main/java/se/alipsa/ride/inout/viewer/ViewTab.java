@@ -229,17 +229,7 @@ public class ViewTab extends Tab {
     browser.setContextMenuEnabled(false);
 
     WebEngine webEngine = browser.getEngine();
-    webEngine.setUserStyleSheetLocation(BOOTSTRAP_CSS);
-    String html = "<!DOCTYPE html>\n<html><head>\n<meta charset=\"UTF-8\">\n"
-        + getHighlightStyle(false)
-        + getHighlightCustomStyle()
-        + "\n</head>\n<body style='margin-left: 15px; margin-right: 15px'>\n"
-        + content
-        + "\n</body>\n"
-        + getHighlightJs(false)
-        + getHighlightInitScript()
-        + "\n</html>";
-
+    String html = decorate(content, true, false);
     webEngine.loadContent(html);
     createContextMenu(browser, html);
     tab.setContent(browser);
