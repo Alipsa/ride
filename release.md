@@ -55,6 +55,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.6
+- Fixed maven support to be able to parse bom dependencies and poms with a parent.
+- improve PDF export of mdr files
 
 ### 1.2.5
 - Bugfix: downgrade jaxb runtime so that save of munin files works

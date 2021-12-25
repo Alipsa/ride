@@ -47,6 +47,7 @@ import se.alipsa.ride.utils.ConsoleRepositoryEventListener;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -75,8 +76,7 @@ public class MavenUtils {
   public static ClassLoader getMavenClassLoader(Model project, Collection<File> dependencies, ClassLoader parent) throws Exception {
     List<String> classpathElements = getClassPathElements(project);
     List<URL> urls = new ArrayList<>();
-    for (int i = 0; i < classpathElements.size(); ++i) {
-      String elem = classpathElements.get(i);
+    for (String elem : classpathElements) {
       if (elem == null) {
         continue;
       }
@@ -155,7 +155,7 @@ public class MavenUtils {
 
 
   public static Set<File> resolveDependencies(File pomFile) throws SettingsBuildingException, ModelBuildingException,
-      DependenciesResolveException {
+      DependenciesResolveException, IOException {
     RepositorySystem repositorySystem = getRepositorySystem();
     RepositorySystemSession repositorySystemSession = getRepositorySystemSession(repositorySystem);
 
@@ -173,7 +173,7 @@ public class MavenUtils {
       DependencyFilter filter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE);
       DependencyRequest request = new DependencyRequest(collectRequest, filter);
 
-      DependencyResult result = null;
+      DependencyResult result;
       try {
         result = repositorySystem.resolveDependencies(repositorySystemSession, request);
       } catch (DependencyResolutionException | RuntimeException e) {
@@ -187,21 +187,24 @@ public class MavenUtils {
         dependencies.add(art.getFile());
       }
     }
-    /////
     return dependencies;
   }
 
-  public static Model parsePom(File pomFile) throws ModelBuildingException {
+  public static Model parsePom(File pomFile) throws SettingsBuildingException, ModelBuildingException {
     final DefaultModelBuildingRequest modelBuildingRequest = new DefaultModelBuildingRequest()
        .setPomFile(pomFile);
+    RepositorySystem repositorySystem = getRepositorySystem();
+    RepositorySystemSession repositorySystemSession = getRepositorySystemSession(repositorySystem);
+    modelBuildingRequest.setModelResolver(new ModelResolver(
+        // TODO: we need a model to get the real remote repositories but we dont have that yet
+        //  cheating by adding the mavenCentral and beDataDriven repos for now...
+        Arrays.asList(getCentralMavenRepository(), getBeDataDrivenMavenRepository()),
+        repositorySystemSession,
+        repositorySystem
+        )
+    );
+    modelBuildingRequest.setSystemProperties(System.getProperties());
 
-    //ModelResolver modelResolver = modelBuildingRequest.getModelResolver();
-    //System.out.println("modelResolver = " + modelResolver);
-    // This is null which will cause problems if the pom has a parent pom
-    // to fix this we need a custom ModelResolver
-    //modelBuildingRequest.setModelResolver();
-
-    //ModelBuilder modelBuilder = new DefaultModelBuilderFactory().newInstance();
     ModelBuilder modelBuilder = new ParentPomsAsDependencyModelBuilder();
     ModelBuildingResult modelBuildingResult = modelBuilder.build(modelBuildingRequest);
 
@@ -299,8 +302,14 @@ public class MavenUtils {
     return repos;
   }
 
-  private static RemoteRepository getCentralMavenRepository() {
-    return new RemoteRepository.Builder("central", "default", "https://central.maven.org/maven2/")
+  public static RemoteRepository getCentralMavenRepository() {
+    return new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/")
        .build();
   }
+
+  public static RemoteRepository getBeDataDrivenMavenRepository() {
+    return new RemoteRepository.Builder("bedatadriven", "default", "https://nexus.bedatadriven.com/content/groups/public/")
+        .build();
+  }
+
 }
