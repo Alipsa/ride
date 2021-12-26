@@ -165,4 +165,11 @@ public class ConsoleTextArea extends UnStyledCodeArea {
   public int getConsoleMaxSize() {
     return consoleMaxLength;
   }
+
+  public void appendNewlineIfNeeded() {
+    String lastLine = getText(getCurrentParagraph());
+    if (!lastLine.trim().isEmpty()) {
+      appendText("\n");
+    }
+  }
 }

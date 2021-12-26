@@ -3,6 +3,7 @@ package se.alipsa.ride.code.jstab;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,8 +25,9 @@ import java.io.PrintWriter;
 
 public class JsTab extends TextAreaTab {
 
+  public static final String RESTART_JS_SESSION_AFTER_RUN = "JsTab.RestartJsSessionAfterRun";
   private final JsTextArea jsTextArea;
-  private final Button executeButton;
+  private final CheckBox restartAfterRun;
 
   private static Logger log = LogManager.getLogger(JsTab.class);
   private ScriptEngine engine;
@@ -33,7 +35,7 @@ public class JsTab extends TextAreaTab {
   public JsTab(String title, Ride gui) {
     super(gui, CodeType.JAVA_SCRIPT);
     setTitle(title);
-    executeButton = new Button("Run");
+    Button executeButton = new Button("Run");
     executeButton.setOnAction(a -> runJavascript());
     buttonPane.getChildren().add(executeButton);
     Button resetButton = new Button("Restart session");
@@ -43,6 +45,12 @@ public class JsTab extends TextAreaTab {
       gui.getConsoleComponent().promptAndScrollToEnd();
     });
     buttonPane.getChildren().add(resetButton);
+    restartAfterRun = new CheckBox("Restart Session after each run");
+    restartAfterRun.setSelected(gui.getPrefs().getBoolean(RESTART_JS_SESSION_AFTER_RUN, false));
+    restartAfterRun.setOnAction(a -> {
+      gui.getPrefs().putBoolean(RESTART_JS_SESSION_AFTER_RUN, restartAfterRun.isSelected());
+    });
+    buttonPane.getChildren().add(restartAfterRun);
     jsTextArea = new JsTextArea(this);
     VirtualizedScrollPane<JsTextArea> scrollPane = new VirtualizedScrollPane<>(jsTextArea);
     pane.setCenter(scrollPane);
@@ -95,6 +103,9 @@ public class JsTab extends TextAreaTab {
 
     task.setOnSucceeded(e -> {
       console.flush();
+      if (restartAfterRun.isSelected()) {
+        initSession();
+      }
       gui.getConsoleComponent().promptAndScrollToEnd();
       consoleComponent.waiting();
     });

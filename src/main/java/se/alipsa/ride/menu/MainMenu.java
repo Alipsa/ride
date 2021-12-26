@@ -877,37 +877,37 @@ public class MainMenu extends MenuBar {
     nRScript.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.R));
     fileMenu.getItems().add(nRScript);
 
-    MenuItem nText = new MenuItem("Text file");
-    nText.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.TXT));
-    fileMenu.getItems().add(nText);
+    MenuItem nGroovy = new MenuItem("Groovy");
+    nGroovy.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.GROOVY));
+    fileMenu.getItems().add(nGroovy);
 
-    MenuItem nSql = new MenuItem("SQL file");
-    nSql.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.SQL));
-    fileMenu.getItems().add(nSql);
-
-    MenuItem nMarkdown = new MenuItem("Markdown file");
-    nMarkdown.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.MD));
-    fileMenu.getItems().add(nMarkdown);
-
-    MenuItem nMdr = new MenuItem("Mdr file");
-    nMdr.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.MDR));
-    fileMenu.getItems().add(nMdr);
-
-    MenuItem nXml = new MenuItem("Xml file");
-    nXml.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.XML));
-    fileMenu.getItems().add(nXml);
-
-    MenuItem nJava = new MenuItem("Java file");
+    MenuItem nJava = new MenuItem("Java");
     nJava.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.JAVA));
     fileMenu.getItems().add(nJava);
 
-    MenuItem nJs = new MenuItem("Javascript file");
+    MenuItem nJs = new MenuItem("Javascript");
     nJs.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.JAVA_SCRIPT));
     fileMenu.getItems().add(nJs);
 
-    MenuItem nGroovy = new MenuItem("Groovy file");
-    nGroovy.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.GROOVY));
-    fileMenu.getItems().add(nGroovy);
+    MenuItem nMarkdown = new MenuItem("Markdown");
+    nMarkdown.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.MD));
+    fileMenu.getItems().add(nMarkdown);
+
+    MenuItem nMdr = new MenuItem("Mdr");
+    nMdr.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.MDR));
+    fileMenu.getItems().add(nMdr);
+
+    MenuItem nSql = new MenuItem("SQL");
+    nSql.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.SQL));
+    fileMenu.getItems().add(nSql);
+
+    MenuItem nText = new MenuItem("Text");
+    nText.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.TXT));
+    fileMenu.getItems().add(nText);
+
+    MenuItem nXml = new MenuItem("Xml");
+    nXml.setOnAction(a -> gui.getCodeComponent().addCodeTab(CodeType.XML));
+    fileMenu.getItems().add(nXml);
 
     MenuItem save = new MenuItem("Save  ctrl+S");
     save.setOnAction(this::saveContent);

@@ -25,7 +25,6 @@ import java.io.PrintWriter;
 public class GroovyTab extends TextAreaTab {
 
   private final GroovyTextArea groovyTextArea;
-  private final Button executeButton;
 
   private static Logger log = LogManager.getLogger(GroovyTab.class);
   private GroovyShell groovyShell;
@@ -33,9 +32,18 @@ public class GroovyTab extends TextAreaTab {
   public GroovyTab(String title, Ride gui) {
     super(gui, CodeType.GROOVY);
     setTitle(title);
-    executeButton = new Button("Run");
+    Button executeButton = new Button("Run");
     executeButton.setOnAction(a -> runGroovy());
     buttonPane.getChildren().add(executeButton);
+
+    Button resetButton = new Button("Restart session");
+    resetButton.setOnAction(a -> {
+      initSession();
+      gui.getConsoleComponent().getConsole().append("[Session restarted]", true);
+      gui.getConsoleComponent().promptAndScrollToEnd();
+    });
+    buttonPane.getChildren().add(resetButton);
+
     groovyTextArea = new GroovyTextArea(this);
     VirtualizedScrollPane<GroovyTextArea> javaPane = new VirtualizedScrollPane<>(groovyTextArea);
     pane.setCenter(javaPane);
@@ -85,6 +93,7 @@ public class GroovyTab extends TextAreaTab {
     };
 
     task.setOnSucceeded(e -> {
+      console.appendNewlineIfNeeded();
       console.flush();
       gui.getConsoleComponent().promptAndScrollToEnd();
       consoleComponent.waiting();
