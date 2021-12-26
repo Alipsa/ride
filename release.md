@@ -59,6 +59,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - improve PDF export of mdr files
 - add restart groovy session button, fix prompt after run
 - add checkbox to restart session after run if selected.
+- upgrade tika to version 2.2.1
 
 ### 1.2.5
 - Bugfix: downgrade jaxb runtime so that save of munin files works
