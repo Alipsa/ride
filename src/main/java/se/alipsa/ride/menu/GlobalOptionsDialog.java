@@ -33,6 +33,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
   private final ComboBox<String> themes;
   private final CheckBox useMavenFileClasspath;
   private TextField mavenHome;
+  private CheckBox restartSessionAfterMvnRun;
   private final CheckBox addBuildDirToClasspath;
   private final CheckBox enableGit;
 
@@ -173,6 +174,15 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     addBuildDirToClasspath.setSelected(gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true));
     cpPane.getChildren().add(addBuildDirToClasspath);
 
+    // When developing packages we need to reload the session after mvn has been run
+    // so that new definitions can be picked up from target/classes.
+    Label restartSessionAfterMvnRunLabel = new Label("Restart session after mvn build");
+    restartSessionAfterMvnRunLabel.setPadding(new Insets(0, 27, 0, 27));
+    restartSessionAfterMvnRunLabel.setTooltip(new Tooltip("When developing packages we need to reload the session after mvn has been run\nso that new definitions can be picked up from target/classes"));
+    cpPane.getChildren().add(restartSessionAfterMvnRunLabel);
+    restartSessionAfterMvnRun = new CheckBox();
+    restartSessionAfterMvnRun.setSelected(gui.getPrefs().getBoolean(RESTART_SESSION_AFTER_MVN_RUN, true));
+    cpPane.getChildren().add(restartSessionAfterMvnRun);
 
     Label mavenHomeLabel = new Label("MAVEN_HOME");
     mavenHomeLabel.setTooltip(new Tooltip("The location of your maven installation directory"));
@@ -234,6 +244,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     result.put(THEME, themes.getValue());
     result.put(USE_MAVEN_CLASSLOADER, useMavenFileClasspath.isSelected());
     result.put(ADD_BUILDDIR_TO_CLASSPATH, addBuildDirToClasspath.isSelected());
+    result.put(RESTART_SESSION_AFTER_MVN_RUN, restartSessionAfterMvnRun.isSelected());
     result.put(ENABLE_GIT, enableGit.isSelected());
     return result;
   }

@@ -1,5 +1,6 @@
 package se.alipsa.ride.code.xmltab;
 
+import static se.alipsa.ride.menu.GlobalOptions.RESTART_SESSION_AFTER_MVN_RUN;
 import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
 
 import javafx.application.Platform;
@@ -12,6 +13,9 @@ import javafx.scene.control.Tooltip;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.building.ModelBuildingException;
+import org.apache.maven.settings.building.SettingsBuildingException;
 import org.apache.maven.shared.invoker.InvocationOutputHandler;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.MavenInvocationException;
@@ -116,9 +120,20 @@ public class XmlTab extends TextAreaTab {
     };
 
     task.setOnSucceeded(e -> {
-      getGui().getConsoleComponent().waiting();
+      boolean hasRenjinPlugin = false;
+      try {
+        Model model = MavenUtils.parsePom(getFile());
+        hasRenjinPlugin = model.getBuild().getPlugins().stream().anyMatch(p -> "org.renjin".equals(p.getGroupId()) && "renjin-maven-plugin".equals(p.getArtifactId()));
+      } catch (SettingsBuildingException | ModelBuildingException ex) {
+        ExceptionAlert.showAlert("Failed to parse pom file", ex);
+      }
+      if (getGui().getPrefs().getBoolean(RESTART_SESSION_AFTER_MVN_RUN, false) && hasRenjinPlugin &&
+          (args.contains("compile") || args.contains("package") || args.contains("install") || args.contains("site"))) {
+        getGui().getConsoleComponent().restartR();
+      }
       getGui().getConsoleComponent().promptAndScrollToEnd();
       getGui().getInoutComponent().refreshFileTree();
+      getGui().getConsoleComponent().waiting();
     });
 
     task.setOnFailed(e -> {

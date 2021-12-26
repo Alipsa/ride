@@ -799,6 +799,9 @@ public class MainMenu extends MenuBar {
       shouldRestartR = true;
     }
 
+    boolean restartSessionAfterMaven = result.getBoolean(RESTART_SESSION_AFTER_MVN_RUN);
+    gui.getPrefs().putBoolean(RESTART_SESSION_AFTER_MVN_RUN, restartSessionAfterMaven);
+
     boolean addBuildDirToClasspath = result.getBoolean(ADD_BUILDDIR_TO_CLASSPATH);
     if (addBuildDirToClasspath != gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, !addBuildDirToClasspath)) {
       log.info("addBuildDirToClasspath changed, restarting R session");
