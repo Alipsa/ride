@@ -33,12 +33,12 @@
     </scm>
 
     <properties>
-        <exe.version>1.2.6.0</exe.version>
+        <exe.version>1.2.7.0</exe.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <release.tag>1.2.6-beta</release.tag>
+        <release.tag>1.2.7-beta</release.tag>
         <renjin.version>3.5-beta76</renjin.version>
         <!--jgit 6 and up requires java 11-->
         <jgit.version>5.13.0.202109080827-r</jgit.version>
