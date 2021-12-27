@@ -15,7 +15,7 @@ in Renjin. Later, it evolved to the point where I now use it as my primary data 
 
 It is fully functional i.e. it is possible to create, open, save and execute R scripts, 
 run selected text, ctrl + enter execution of current line or selected text, view packages loaded, 
-see variables created, syntax highlighting for R, XML, SQL  and Java files etc. 
+see variables created, syntax highlighting for R, XML, SQL, Java, Groovy, Javascript etc. 
 It also has some Renjin specific features such as support for the different package loaders, 
 wizards to create Renjin projects and Renjin extensions, maven support making a very
 convenient environment for serious R development targeted for the JVM using Renjin.
@@ -42,10 +42,18 @@ library("se.alipsa:rideutils")
 display(fileName, "svgplot")
 ```
 
-
 ![Plot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Plot.png "Plot")
 
+An alternative way when you just want to view the plot in Ride is to use viewPlot e.g:
+```r
+library("se.alipsa:rideutils")
+viewPlot({
+  plot(mtcars$mpg)
+  abline(h=mean(mtcars$mpg))
+})
+```
 
+#### Package and class loading
 The AetherPackageLoader is used per default so libraries will be fetched automatically from 
 bedatadriven or maven central repos. This can be modified in the Global Options menu.
 
@@ -70,7 +78,7 @@ you to preview the report. Parameterized reports are also supported.
 
 ### Installing and Running ride
 Go to the releases tab and expand the assets section at the bottom of the release. 
-Unzip the zip file ride-<version>-dist.zip e.g. ride-1.2.5-GA-dist.zip to a directory of choice.
+Unzip the zip file ride-<version>-dist.zip e.g. ride-1.2.6-GA-dist.zip to a directory of choice.
 
 There are icons for windows and Linux in the base folder of the unpacked zip that can be used to create a desktop shortcut/launcher.
 
@@ -145,7 +153,6 @@ code at the time of the Ride release. Licensed under a MIT license.
 
 ### org.apache:log4j
 The logging framework used.
-
 Apache 2.0 license
 
 ### com.fasterxml.jackson.core:jackson-core and jackson-databind
@@ -195,5 +202,5 @@ are all warmly welcome. See also [todo](todo.md) for roadmap.
 There is some problem with using the AetherPackageLoader when developing packages and running tests.
 The issue is that renjin will report "failed to find package" even though you have run `mvn package` or even 
 `mvn install`. The same problem exists for the Renjin CLI as well so this is not due to Ride.
-What DOES work is to use the classpathpackage loader with the option for "include build dirs in classpath" enabled.
+What DOES work is to use the classpathPackageLoader with the option for "include build dirs in classpath" enabled.
 

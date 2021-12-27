@@ -1,11 +1,11 @@
-# This is version 1.2.5 of Ride.
+# This is version 1.2.6 of Ride.
 
 Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine, but
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
 packages can be developed, built and tested. Ride supports maven build files as well as git.
   
-To run Ride you need to have maven and Java 1.8 or higher installed (preferably with bundled javafx). 
-If you use open JDK on Linux then you might need to do something like `sudo apt-get install openjfx` depending on your distro.
+To run Ride you need to have maven and Java 1.8 or higher installed (preferably with bundled javafx, I personally use
+11.0.13.fx-librca from bellsoft). If you use open JDK on Linux then you might need to do something like `sudo apt-get install openjfx` depending on your distro.
 
 Ride is started using the start script appropriate for your environment (see ride.sh/ride.cmd for details). 
 
@@ -18,7 +18,7 @@ java application (server).
 Pre requisites:
 - Java 8 or higher with java fx
 
-Unzip ride-1.2.5-GA-dist.zip to a directory of choice
+Unzip ride-1.2.6-GA-dist.zip to a directory of choice
 
 ## How to run:
 
@@ -33,7 +33,7 @@ This way you will not need to worry about upgrading to a later version of Ride l
 The special variable JAVA_OPTS can be used to add system properties (-D key/values) to java. 
 Some reasons why you want to do this are
 - You do not have javafx in you jdk and need to wire it in
-- You have a high DPI display and need to customize (scale) the screen
+- You have a high DPI display and need to customize (scale) the screen (you need java 11 for this to really work)
 - You want to add more available memory to Ride than the default
 
 If possible, create a project and use the pom file to manage dependencies. Ride has wizards for
@@ -42,7 +42,7 @@ If that does not work, you might need to manually add / override jars in the lib
 making ride unable to start. The only reason I can think of where the latter is needed is if there is
 a Ride dependency that you must override. Older versions of Ride tried to include as many commonly used
 dependencies as possible to make it simple to write R code without having to think of dependency management
-but since Ride now has built in support for Maven (and soon also Gradle) we are moving away from this idea
+but since Ride now has built in support for Maven we are moving away from this idea
 and will instead remove any dependency that Ride is not using itself, so they can be managed by the build file 
 in your project instead.
 
@@ -54,7 +54,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
-### 1.2.6
+### 1.2.6, 2021-12-26
 - Fixed maven support to be able to parse bom dependencies and poms with a parent.
 - improve PDF export of mdr files
 - add restart groovy session button, fix prompt after run
