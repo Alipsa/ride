@@ -581,7 +581,7 @@ release.tag=${release.tag}
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.1</version>
+                <version>3.10.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -626,7 +626,7 @@ release.tag=${release.tag}
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.4.2.2</version>
+                <version>4.5.2.0</version>
             </plugin>
         </plugins>
     </reporting>

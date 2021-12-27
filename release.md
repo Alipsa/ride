@@ -60,6 +60,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - add restart groovy session button, fix prompt after run
 - add checkbox to restart session after run if selected.
 - upgrade tika to version 2.2.1
+- fix bug when initializing nashorn on jdk8
 
 ### 1.2.5
 - Bugfix: downgrade jaxb runtime so that save of munin files works

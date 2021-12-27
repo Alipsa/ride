@@ -59,7 +59,14 @@ public class JsTab extends TextAreaTab {
 
   public void initSession() {
     NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
-    String[] options = new String[] {"--language=es6", "--no-deprecation-warning"};
+    double jvmVersion = Double.parseDouble(System.getProperty("java.specification.version"));
+    String[] options;
+    // Nashorn is part of the JDK until Java 14 but anything above 11 is not tested (it became deprecated in java 11)
+    if (jvmVersion >= 11) {
+      options = new String[]{"--language=es6", "--no-deprecation-warning"};
+    } else {
+      options = new String[]{"--language=es6"};
+    }
     engine = nashornScriptEngineFactory.getScriptEngine(options);
 
     engine.put("inout", gui.getInoutComponent());
