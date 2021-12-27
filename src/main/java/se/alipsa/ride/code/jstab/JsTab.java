@@ -17,6 +17,7 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.console.ConsoleTextArea;
 import se.alipsa.ride.console.WarningAppenderWriter;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.JavaVersion;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -59,7 +60,7 @@ public class JsTab extends TextAreaTab {
 
   public void initSession() {
     NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
-    double jvmVersion = Double.parseDouble(System.getProperty("java.specification.version"));
+    int jvmVersion = JavaVersion.specVersion();
     String[] options;
     // Nashorn is part of the JDK until Java 14 but anything above 11 is not tested (it became deprecated in java 11)
     if (jvmVersion >= 11) {
