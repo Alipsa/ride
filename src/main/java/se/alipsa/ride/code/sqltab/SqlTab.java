@@ -129,7 +129,7 @@ public class SqlTab extends TextAreaTab {
                               .append(queryCapture)
                               .append("...], Rows affected: ")
                               .append(queryResult).toString()
-                          , false, false)
+                          , false, true)
                   );
                 }
                 hasMoreResultSets = stm.getMoreResults();
