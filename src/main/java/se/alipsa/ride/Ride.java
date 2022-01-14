@@ -137,7 +137,7 @@ public class Ride extends Application {
 
     primaryStage.setTitle("Ride, a Renjin IDE");
     primaryStage.getIcons().add(
-        new Image(Objects.requireNonNull(FileUtils.getResourceUrl("image/logo.png")).toExternalForm())
+        new Image(Objects.requireNonNull(getClass().getResourceAsStream("/image/logo.png")))
     );
     primaryStage.setScene(scene);
     enableDragDrop(scene);
