@@ -7,42 +7,50 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.console.ConsoleComponent;
 
 import java.io.File;
 
-public class MdrTab extends TextAreaTab {
+public class MdrTab extends TextAreaTab implements TaskListener {
 
   private final MdrTextArea mdrTextArea;
+  Button viewButton;
+  Button htmlButton;
+  Button pdfButton;
 
   public MdrTab(String title, Ride gui) {
     super(gui, CodeType.MDR);
     setTitle(title);
-    Button viewButton = new Button();
+    ConsoleComponent console = gui.getConsoleComponent();
+
+    mdrTextArea = new MdrTextArea(this);
+    VirtualizedScrollPane<MdrTextArea> txtPane = new VirtualizedScrollPane<>(mdrTextArea);
+    pane.setCenter(txtPane);
+
+    viewButton = new Button();
     viewButton.setGraphic(new ImageView(IMG_VIEW));
     viewButton.setTooltip(new Tooltip("Render and view"));
     viewButton.setOnAction(this::viewMdr);
     buttonPane.getChildren().add(viewButton);
 
-    Button htmlButton = new Button();
+    htmlButton = new Button();
     htmlButton.setGraphic(new ImageView(IMG_PUBLISH));
     htmlButton.setStyle("-fx-border-color: darkgreen");
     htmlButton.setTooltip(new Tooltip("Export to html"));
     htmlButton.setOnAction(this::exportToHtml);
     buttonPane.getChildren().add(htmlButton);
 
-    Button pdfButton = new Button();
+    pdfButton = new Button();
     pdfButton.setGraphic(new ImageView(IMG_PUBLISH));
     pdfButton.setStyle("-fx-border-color: #70503B");
     pdfButton.setTooltip(new Tooltip("Export to pdf"));
     pdfButton.setOnAction(this::exportToPdf);
     buttonPane.getChildren().add(pdfButton);
 
-    mdrTextArea = new MdrTextArea(this);
-    VirtualizedScrollPane<MdrTextArea> txtPane = new VirtualizedScrollPane<>(mdrTextArea);
-    pane.setCenter(txtPane);
   }
 
   private void viewMdr(ActionEvent actionEvent) {
@@ -115,5 +123,19 @@ public class MdrTab extends TextAreaTab {
   @Override
   public void replaceContentText(int start, int end, String content) {
     mdrTextArea.replaceContentText(start, end, content);
+  }
+
+  @Override
+  public void taskStarted() {
+    viewButton.setDisable(true);
+    htmlButton.setDisable(true);
+    pdfButton.setDisable(true);
+  }
+
+  @Override
+  public void taskEnded() {
+    viewButton.setDisable(false);
+    htmlButton.setDisable(false);
+    pdfButton.setDisable(false);
   }
 }

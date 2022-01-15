@@ -77,7 +77,7 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
     this.parentTab = parent;
 
     plainTextChanges().subscribe(ptc -> {
-      if (parentTab != null && parentTab.isChanged() == false && !blockChange) {
+      if (parentTab != null && !parentTab.isChanged() && !blockChange) {
         parentTab.contentChanged();
       }
     });

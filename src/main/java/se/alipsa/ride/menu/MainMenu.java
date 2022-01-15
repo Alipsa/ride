@@ -691,6 +691,9 @@ public class MainMenu extends MenuBar {
       alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
     }
 
+    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+    stage.getIcons().addAll(gui.getStage().getIcons());
+
     alert.showAndWait();
   }
 

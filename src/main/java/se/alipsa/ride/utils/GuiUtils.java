@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.control.Dialog;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
@@ -25,6 +26,8 @@ public final class GuiUtils {
   public static void addStyle(Ride gui, Dialog<?> dialog) {
     if (validateDialogNotNull(gui, dialog)) return;
     addStyle(gui, dialog.getDialogPane(), 4);
+    Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+    stage.getIcons().addAll(gui.getStage().getIcons());
   }
 
   private static boolean validateDialogNotNull(Ride gui, Object dialog) {

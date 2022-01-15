@@ -9,6 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 
@@ -48,6 +49,9 @@ public class Alerts {
       alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
     }
 
+    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+    stage.getIcons().addAll(gui.getStage().getIcons());
+
     Optional<ButtonType> result = alert.showAndWait();
     if (result.isPresent() && result.get() == ButtonType.YES) {
       return true;
@@ -77,6 +81,9 @@ public class Alerts {
          if (styleSheetUrl != null) {
             alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
          }
+
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.getIcons().addAll(gui.getStage().getIcons());
       }
 
       return alert.showAndWait();
@@ -106,6 +113,8 @@ public class Alerts {
       if (styleSheetUrl != null) {
          alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
       }
+      Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+      stage.getIcons().addAll(gui.getStage().getIcons());
       alert.setResizable(true);
       alert.showAndWait();
     });

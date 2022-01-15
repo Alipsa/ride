@@ -1,10 +1,16 @@
 package se.alipsa.ride.code.mdrtab;
 
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
+import se.alipsa.ride.Ride;
+import se.alipsa.ride.TaskListener;
+import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.TabTextArea;
 import se.alipsa.ride.code.TextAreaTab;
+import se.alipsa.ride.console.ConsoleComponent;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -64,6 +70,37 @@ public class MdrTextArea extends CodeTextArea implements TabTextArea {
 
    public MdrTextArea(TextAreaTab parent) {
       super(parent);
+      Ride gui = parent.getGui();
+      ConsoleComponent console = gui.getConsoleComponent();
+      addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+         if (e.isControlDown()) {
+            if (KeyCode.ENTER.equals(e.getCode())) {
+               CodeComponent codeComponent = gui.getCodeComponent();
+               String rCode = getText(getCurrentParagraph()); // current line
+
+               String selected = selectedTextProperty().getValue();
+               // if text is selected then go with that instead
+               if (selected != null && !"".equals(selected)) {
+                  rCode = codeComponent.getTextFromActiveTab();
+               }
+               if (parent instanceof TaskListener) {
+                  console.runScriptAsync("library('se.alipsa:r2md')\n" + rCode, codeComponent.getActiveScriptName(), (TaskListener)parent);
+               } else {
+                  console.runScriptAsync("library('se.alipsa:r2md')\n" + rCode, codeComponent.getActiveScriptName(), new TaskListener() {
+                     @Override public void taskStarted() { }
+                     @Override public void taskEnded() { }
+                  });
+               }
+               moveTo(getCurrentParagraph() + 1, 0);
+               int totalLength = getAllTextContent().length();
+               if (getCaretPosition() > totalLength) {
+                  moveTo(totalLength);
+               }
+            } else if (KeyCode.SPACE.equals(e.getCode())) {
+               autoComplete();
+            }
+         }
+      });
    }
 
    @Override

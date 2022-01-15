@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
@@ -79,6 +80,8 @@ public class ExceptionAlert extends Alert {
     if (styleSheetUrl != null) {
       alert.getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
     }
+    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+    stage.getIcons().addAll(gui.getStage().getIcons());
 
     return alert.showAndWait();
   }
