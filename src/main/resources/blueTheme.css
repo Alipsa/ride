@@ -114,6 +114,30 @@
     -fx-background-color: -fx-base-bgcolor;
 }
 
+.packagesView .column-header-background {
+    -fx-background-color: linear-gradient(rgba(0, 51, 102, 255)  0%, rgb(0, 35, 55) 100%);
+}
+
+.packagesView .table-row-cell {
+    -fx-table-cell-border-color: rgb(0, 0, 30);
+    -fx-background-color: rgba(0, 35, 55, 255);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.packagesView .table-row-cell:selected, .packagesView .table-row-cell:odd:selected {
+    -fx-background-color: -fx-selected-bgcolor;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
+.packagesView .table-row-cell:odd {
+    -fx-table-cell-border-color: rgb(0, 0, 30) ;
+    -fx-background-color: rgba(0, 35, 55, 1);
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
 .styled-text-area {
     -fx-background-color: -fx-base-bgcolor;
 }

@@ -24,6 +24,7 @@ public class PackagesTab extends Tab {
 
   public PackagesTab() {
     setText("Packages");
+    view.getStyleClass().add("packagesView");
     final ObservableList<TableColumn<AvailablePackage, ?>> columns = view.getColumns();
 
     SortedList<AvailablePackage> sortedData = new SortedList<>(data);
