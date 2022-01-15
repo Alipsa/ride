@@ -30,7 +30,6 @@ import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.*;
 import se.alipsa.renjin.client.datautils.Table;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.console.ConsoleTextArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.inout.plot.PlotsTab;
@@ -54,7 +53,7 @@ public class InoutComponent extends TabPane implements InOut {
 
   private final FileTree fileTree;
   private final PlotsTab plotsTab;
-  private final Tab packages;
+  private final PackagesTab packages;
   private final ViewTab viewer;
   private final HelpTab helpTab;
   private final Ride gui;
@@ -111,11 +110,7 @@ public class InoutComponent extends TabPane implements InOut {
 
     getTabs().add(plotsTab);
 
-    packages = new Tab();
-    packages.setText("Packages");
-    UnStyledCodeArea ta = new UnStyledCodeArea();
-    ta.getStyleClass().add("txtarea");
-    packages.setContent(ta);
+    packages = new PackagesTab();
 
     getTabs().add(packages);
 
@@ -483,14 +478,7 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void setPackages(StringVector pkgs) {
-    UnStyledCodeArea ta = (UnStyledCodeArea) packages.getContent();
-    ta.clear();
-    if (pkgs == null) {
-      return;
-    }
-    for (String pkg : pkgs) {
-      ta.appendText(pkg + "\n");
-    }
+   packages.setLoadedPackages(pkgs);
   }
 
   @Override

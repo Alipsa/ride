@@ -83,10 +83,12 @@ public class MdrTextArea extends CodeTextArea implements TabTextArea {
                if (selected != null && !"".equals(selected)) {
                   rCode = codeComponent.getTextFromActiveTab();
                }
+               String r2mdPreCode = ".r2mdLoaded <- 'r2md' %in% (.packages()); if (!.r2mdLoaded) library('se.alipsa:r2md')\n";
+               String r2mdPostCode = "\nif (!.r2mdLoaded) detach('package:r2md'); rm(.r2mdLoaded)";
                if (parent instanceof TaskListener) {
-                  console.runScriptAsync("library('se.alipsa:r2md')\n" + rCode, codeComponent.getActiveScriptName(), (TaskListener)parent);
+                  console.runScriptAsync( r2mdPreCode + rCode, codeComponent.getActiveScriptName() + r2mdPostCode, (TaskListener)parent);
                } else {
-                  console.runScriptAsync("library('se.alipsa:r2md')\n" + rCode, codeComponent.getActiveScriptName(), new TaskListener() {
+                  console.runScriptAsync(r2mdPreCode + rCode, codeComponent.getActiveScriptName() + r2mdPostCode, new TaskListener() {
                      @Override public void taskStarted() { }
                      @Override public void taskEnded() { }
                   });

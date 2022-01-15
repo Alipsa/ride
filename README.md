@@ -194,6 +194,10 @@ There is no direct dependency on any jdbc driver in Ride.
 ### org.codehaus.groovy:groovy-all
 Makes it possible to run Groovy scripts. Apache Software License, Version 2.0.
 
+### io.github.classgraph:classgraph
+Makes it possible to scan for available libraries (Renjin extensions) i.e. libraries on the classpath which
+are not necessarily loaded with library("x.y.z:abc"). MIT License
+
 # Contributing
 If you are interested in helping out, reporting issues, creating tests or implementing new features
 are all warmly welcome. See also [todo](todo.md) for roadmap.
