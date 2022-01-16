@@ -11,19 +11,28 @@ import javafx.collections.transformation.SortedList;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.renjin.sexp.StringVector;
+import se.alipsa.ride.Ride;
 import se.alipsa.ride.model.RenjinLibrary;
+import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.LibraryUtils;
 
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 
 public class PackagesTab extends Tab {
 
-  final TableView<AvailablePackage> view = new TableView<>();
-  ObservableList<AvailablePackage> data = FXCollections.observableArrayList();
+  private static final Logger LOG = LogManager.getLogger();
+  private final Ride gui;
+  private final ObservableList<AvailablePackage> data = FXCollections.observableArrayList();
 
-  public PackagesTab() {
+  public PackagesTab(Ride gui) {
+    this.gui = gui;
     setText("Packages");
+    TableView<AvailablePackage> view = new TableView<>();
     view.getStyleClass().add("packagesView");
     final ObservableList<TableColumn<AvailablePackage, ?>> columns = view.getColumns();
 
@@ -35,18 +44,22 @@ public class PackagesTab extends Tab {
     loadedColumn.setCellValueFactory( new PropertyValueFactory<>( "loaded" ));
     loadedColumn.setCellFactory( tc -> new CheckBoxTableCell<>());
     loadedColumn.prefWidthProperty().bind(view.widthProperty().multiply(0.1));
+    loadedColumn.setEditable(true);
 
     final TableColumn<AvailablePackage, String> versionColumn = new TableColumn<>( "Version" );
     versionColumn.setCellValueFactory( new PropertyValueFactory<>( "version" ));
     versionColumn.prefWidthProperty().bind(view.widthProperty().multiply(0.12));
+    versionColumn.setEditable(false);
 
     final TableColumn<AvailablePackage, String> descriptionColumn = new TableColumn<>( "   Description   " );
     descriptionColumn.setCellValueFactory( new PropertyValueFactory<>( "description" ));
     descriptionColumn.prefWidthProperty().bind(view.widthProperty().multiply(0.52));
+    descriptionColumn.setEditable(false);
 
     final TableColumn<AvailablePackage, String> nameColumn = new TableColumn<>( "Library" );
     nameColumn.setCellValueFactory( new PropertyValueFactory<>( "name" ));
     nameColumn.prefWidthProperty().bind(view.widthProperty().multiply(0.26));
+    nameColumn.setEditable(false);
     /*
     nameColumn.prefWidthProperty().bind(view.widthProperty()
         .subtract(loadedColumn.widthProperty().get())
@@ -61,14 +74,21 @@ public class PackagesTab extends Tab {
     nameColumn.setSortType(TableColumn.SortType.ASCENDING);
     view.getSortOrder().setAll(nameColumn);
     view.setPlaceholder(new Label("No libraries (Renjin extensions) loaded"));
-    view.setEditable( false );
+    view.setEditable( true );
     setContent(view);
   }
 
   public void setLoadedPackages(StringVector loadedPackages) {
     // LibraryUtils.getAvailableLibraries() is very fast, but maybe it would make more sense to run this in a separate thread
     Platform.runLater(() -> {
-      Set<RenjinLibrary> availablePackages = LibraryUtils.getAvailableLibraries();
+      // AetherPackageLoader might have picked up new packages, so we need to do this each time
+      Set<RenjinLibrary> availablePackages = null;
+      try {
+        availablePackages = LibraryUtils.getAvailableLibraries(Ride.instance().getConsoleComponent().getRenjinClassLoader());
+      } catch (IOException e) {
+        ExceptionAlert.showAlert("Failed to scan for available libraries", e);
+        return;
+      }
       //view.getItems().clear();
       data.clear();
       availablePackages.forEach(p -> {
@@ -78,7 +98,7 @@ public class PackagesTab extends Tab {
     });
   }
 
-  public static class AvailablePackage {
+  public class AvailablePackage {
 
     private final StringProperty name = new SimpleStringProperty();
     private final BooleanProperty loaded = new SimpleBooleanProperty();
@@ -92,6 +112,17 @@ public class PackagesTab extends Tab {
       this.version.set(renjinLibrary.getVersion());
       this.loaded.set( loaded );
       this.description.set(renjinLibrary.getTitle());
+
+      loadedProperty().addListener(
+          (observableValue, oldVal, newVal) -> {
+            LOG.trace(name.get() + " changed from " + oldVal + " to " + newVal);
+            try {
+              LibraryUtils.loadOrUnloadLibrary(gui.getConsoleComponent(), this, newVal);
+            } catch (Exception e) {
+              ExceptionAlert.showAlert(e.getMessage(), e);
+            }
+          }
+      );
     }
 
     public StringProperty nameProperty() { return name; }
@@ -103,6 +134,19 @@ public class PackagesTab extends Tab {
     @Override
     public String toString() {
       return renjinLibrary.getFullName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      AvailablePackage that = (AvailablePackage) o;
+      return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name);
     }
   }
 }

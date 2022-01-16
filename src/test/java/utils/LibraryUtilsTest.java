@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import se.alipsa.ride.model.RenjinLibrary;
 import se.alipsa.ride.utils.LibraryUtils;
 
+import java.io.IOException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,8 +24,8 @@ public class LibraryUtilsTest {
   }
 
   @Test
-  public void testAvailableLibraries() {
-    Set<RenjinLibrary> packages = LibraryUtils.getAvailableLibraries();
+  public void testAvailableLibraries() throws IOException {
+    Set<RenjinLibrary> packages = LibraryUtils.getAvailableLibraries(getClass().getClassLoader());
     assertNotNull(packages, "Available libraries was unexpectedly null");
     assertTrue(packages.size() > 0, "Expected available libraries to contain at least one library");
 

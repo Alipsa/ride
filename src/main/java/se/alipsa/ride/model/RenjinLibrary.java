@@ -2,6 +2,8 @@ package se.alipsa.ride.model;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class RenjinLibrary implements Comparable<RenjinLibrary>{
   private String title;
   private String group;
@@ -68,8 +70,19 @@ public class RenjinLibrary implements Comparable<RenjinLibrary>{
 
   @Override
   public int compareTo(@NotNull RenjinLibrary o) {
-    return packageName.compareTo(o.getPackageName());
+    return getFullName().compareTo(o.getFullName());
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null || getClass() != obj.getClass()) return false;
+    RenjinLibrary that = (RenjinLibrary) obj;
+    return Objects.equals(group, that.group) && Objects.equals(version, that.version) && Objects.equals(packageName, that.packageName);
+  }
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(group, version, packageName);
+  }
 }

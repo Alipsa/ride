@@ -180,7 +180,7 @@ public class ConsoleComponent extends BorderPane {
                 log.info("Parsing pom to use maven classloader");
                 console.appendFx("* Parsing pom to create maven classloader...", true);
                 try {
-                  cl = MavenUtils.getMavenDependenciesClassloader(pomFile, parentClassLoader);
+                  cl = MavenUtils.getMavenDependenciesClassloader(pomFile, cl);
                 } catch (Exception e) {
                   if (e instanceof DependenciesResolveException) {
                     Platform.runLater(() -> ExceptionAlert.showAlert("Failed to resolve maven dependency: " + e.getMessage(), e));
@@ -197,6 +197,7 @@ public class ConsoleComponent extends BorderPane {
 
           PackageLoader loader = getPackageLoader(cl);
 
+          // AetherPackageLoader add its own magic on top so if we use that, we need to update cl
           if (loader instanceof AetherPackageLoader) {
             cl = ((AetherPackageLoader) loader).getClassLoader();
           }
@@ -211,8 +212,8 @@ public class ConsoleComponent extends BorderPane {
           if (workingDir != null && workingDir.exists()) {
             session.setWorkingDirectory(workingDir);
           }
-          // TODO: after implementing a javafx grafics device do session.getOptions().set("device", theGraphicsDevice);
-          //GrDevice grDevice = new GrDevice();
+          // TODO: after implementing a javafx graphics device do session.getOptions().set("device", theGraphicsDevice);
+          //GrDevice grDevice = new JfxGrDevice();
           //session.getOptions().set("device", grDevice);
 
           RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
@@ -1097,4 +1098,10 @@ public class ConsoleComponent extends BorderPane {
     console.setCursor(Cursor.DEFAULT);
   }
 
+  public ClassLoader getRenjinClassLoader() {
+    if (session == null || session.getClassLoader() == null) {
+      return gui.getClass().getClassLoader();
+    }
+    return session.getClassLoader();
+  }
 }

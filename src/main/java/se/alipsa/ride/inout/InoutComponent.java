@@ -110,7 +110,7 @@ public class InoutComponent extends TabPane implements InOut {
 
     getTabs().add(plotsTab);
 
-    packages = new PackagesTab();
+    packages = new PackagesTab(gui);
 
     getTabs().add(packages);
 
