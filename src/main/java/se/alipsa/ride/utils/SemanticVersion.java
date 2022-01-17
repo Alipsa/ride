@@ -1,61 +1,32 @@
 package se.alipsa.ride.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.maven.artifact.versioning.ComparableVersion;
+import org.jetbrains.annotations.NotNull;
 
 public class SemanticVersion implements Comparable<SemanticVersion> {
 
-  private static final Logger LOG = LogManager.getLogger();
+  //private static final Logger LOG = LogManager.getLogger();
 
-  public final int[] numbers;
-  public final String tail;
+  private final String versionString;
 
   public SemanticVersion(String version) {
-    String[] parts = version.split("-");
-    String versionPart = parts[0];
-    if (parts.length > 1) {
-      tail = parts[1];
-    } else {
-      tail = "";
-    }
-
-    final String[] split = versionPart.split("\\.");
-    numbers = new int[split.length];
-    for (int i = 0; i < split.length; i++) {
-      numbers[i] = Integer.parseInt(split[i]);
-    }
+   this.versionString = version;
   }
 
   @Override
-  public int compareTo(SemanticVersion another) {
-    final int maxLength = Math.max(numbers.length, another.numbers.length);
-    for (int i = 0; i < maxLength; i++) {
-      final int left = i < numbers.length ? numbers[i] : 0;
-      final int right = i < another.numbers.length ? another.numbers[i] : 0;
-      if (left != right) {
-        return left < right ? -1 : 1;
-      }
-    }
-    if (tail.equals(another.tail)) {
-      return 0;
-    }
-    if ("GA".equals(tail)) {
-      return 1;
-    }
-    if ("GA".equals(another.tail)) {
-      return -1;
-    }
-    return tail.compareTo(another.tail);
+  public int compareTo(@NotNull SemanticVersion another) {
+    return new ComparableVersion(versionString).compareTo(new ComparableVersion(another.versionString));
   }
 
-  public static int compare(String first, String second) {
+  public static int compare(@NotNull String first, String second) {
     if (first.startsWith("v")) {
       first = first.substring(1);
     }
     if (second.startsWith("v")) {
       second = second.substring(1);
     }
-    LOG.trace("Comparing {} with {}" , first,  second);
-    return new SemanticVersion(first).compareTo(new SemanticVersion(second));
+    //LOG.info("Comparing {} with {}" , first,  second);
+    //return new SemanticVersion(first).compareTo(new SemanticVersion(second));
+    return new ComparableVersion(first).compareTo(new ComparableVersion(second));
   }
 }

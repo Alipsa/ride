@@ -1,13 +1,13 @@
 package utils;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 import se.alipsa.ride.model.RenjinLibrary;
 import se.alipsa.ride.utils.LibraryUtils;
 
 import java.io.IOException;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class LibraryUtilsTest {
 
@@ -30,6 +30,7 @@ public class LibraryUtilsTest {
     assertTrue(packages.size() > 0, "Expected available libraries to contain at least one library");
 
     packages.forEach(p -> {
+      //System.out.println(p);
       if (p.getFullName().contains(":")) {
         assertEquals(p.getFullName(), LibraryUtils.getGroup(p.getFullName()) + ":" + LibraryUtils.getPackage(p.getFullName()));
       } else {

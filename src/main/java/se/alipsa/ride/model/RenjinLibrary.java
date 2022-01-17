@@ -65,7 +65,7 @@ public class RenjinLibrary implements Comparable<RenjinLibrary>{
   }
 
   public String toString() {
-    return (group == null ? "" : group + ":") + packageName + (version == null ? "" : ":" + version);
+    return (group == null || group.isEmpty() ? "" : group + ":") + packageName + (version == null ? "" : ":" + version);
   }
 
   @Override

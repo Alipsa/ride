@@ -85,7 +85,7 @@ public class PackagesTab extends Tab {
       Set<RenjinLibrary> availablePackages = null;
       try {
         availablePackages = LibraryUtils.getAvailableLibraries(Ride.instance().getConsoleComponent().getRenjinClassLoader());
-      } catch (IOException e) {
+      } catch (IOException | RuntimeException e) {
         ExceptionAlert.showAlert("Failed to scan for available libraries", e);
         return;
       }

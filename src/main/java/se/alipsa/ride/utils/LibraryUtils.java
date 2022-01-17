@@ -18,6 +18,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LibraryUtils {
 
@@ -29,19 +30,29 @@ public class LibraryUtils {
    * @return a set of RenjinLibraries (which is an Object equivalent of the DESCRIPTION file in a package)
    */
   public static Set<RenjinLibrary> getAvailableLibraries(ClassLoader renjinClassLoader) throws IOException {
-    Set<RenjinLibrary> packageNames = new HashSet<>();
+    Map<String, RenjinLibrary> packageNames = new HashMap<>();
+    AtomicInteger count = new AtomicInteger();
     try (ScanResult scanResult = new ClassGraph().addClassLoader(renjinClassLoader).scan()) {
       scanResult.getResourcesWithLeafName("DESCRIPTION")
           .forEachByteArrayThrowingIOException((Resource res, byte[] fileContent) -> {
+            count.incrementAndGet();
             RenjinLibrary renjinLibrary = parseDescription(res.getPath(), new String(fileContent, StandardCharsets.UTF_8));
             if (renjinLibrary != null) {
-              packageNames.add(renjinLibrary);
+              RenjinLibrary existing = packageNames.get(renjinLibrary.getFullName());
+              if (existing == null || SemanticVersion.compare(existing.getVersion(), renjinLibrary.getVersion()) < 0) {
+                packageNames.put(renjinLibrary.getFullName(), renjinLibrary);
+              }
             }
       });
+      if (count.intValue() != packageNames.size()) {
+        LOG.info("Parsed {} DESCRIPTION files, returning {} unique packages " +
+            "(you likely have different versions of the same package in your classpath)",
+            count.intValue(), packageNames.size());
+      }
     } catch (IOException e) {
       throw new IOException("Failed to read DESCRIPTION file", e);
     }
-    return packageNames;
+    return new HashSet<>(packageNames.values());
   }
 
   public static RenjinLibrary parseDescription(String path, String content) throws IOException {
