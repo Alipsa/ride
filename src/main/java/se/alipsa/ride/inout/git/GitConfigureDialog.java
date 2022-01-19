@@ -12,6 +12,7 @@ import org.eclipse.jgit.lib.CoreConfig;
 import org.eclipse.jgit.lib.StoredConfig;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.GuiUtils;
 
 import java.net.URL;
 
@@ -46,14 +47,7 @@ public class GitConfigureDialog extends Dialog<ConfigResult> {
     grid.add(autoCrLfCombo, 1,0);
 
     Ride gui = Ride.instance();
-    if (gui != null) {
-      String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
-
-      URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
-      if (styleSheetUrl != null) {
-        getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
-      }
-    }
+    GuiUtils.addStyle(gui, this);
 
     setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
   }

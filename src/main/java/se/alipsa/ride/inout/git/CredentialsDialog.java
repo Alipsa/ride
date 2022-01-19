@@ -18,6 +18,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.GuiUtils;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -89,14 +90,7 @@ public class CredentialsDialog extends Dialog<Map<CredentialsDialog.KEY, String>
       setResizable(true);
 
       Ride gui = Ride.instance();
-      if (gui != null) {
-         String styleSheetPath = gui.getPrefs().get(THEME, BRIGHT_THEME);
-
-         URL styleSheetUrl = FileUtils.getResourceUrl(styleSheetPath);
-         if (styleSheetUrl != null) {
-            getDialogPane().getStylesheets().add(styleSheetUrl.toExternalForm());
-         }
-      }
+      GuiUtils.addStyle(gui, this);
 
       setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
    }

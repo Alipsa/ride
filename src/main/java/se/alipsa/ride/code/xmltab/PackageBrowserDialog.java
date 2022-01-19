@@ -26,6 +26,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import se.alipsa.ride.Ride;
+import se.alipsa.ride.utils.GuiUtils;
 
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
@@ -61,6 +62,7 @@ public class PackageBrowserDialog extends Dialog<Void> {
       this.gui = gui;
       setTitle("Search for package info");
       getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
+      GuiUtils.addStyle(gui, this);
       BorderPane borderPane = new BorderPane();
       getDialogPane().setContent(borderPane);
 

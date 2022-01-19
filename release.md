@@ -59,6 +59,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Make it possible to run R code parts in a mdr document separately (evaluated as standard R, although with the r2md library loaded)
 - change PackagesTab to contain a TableView of available packages with additional info and the currently loaded ones checked
 - make "loaded" in Packages tab editable and load or unload a package based on the selection.
+- upgrade rideutils to support View of table directly
 
 ### 1.2.6, 2021-12-26
 - Fixed maven support to be able to parse bom dependencies and poms with a parent.

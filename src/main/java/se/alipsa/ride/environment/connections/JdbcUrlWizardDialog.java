@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.GuiUtils;
 import se.alipsa.ride.utils.IntField;
 
 import java.net.URL;
@@ -33,6 +34,7 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
       this.gui = gui;
 
       setTitle("Create Connection URL Wizard");
+      GuiUtils.addStyle(gui, this);
 
       GridPane grid = new GridPane();
       grid.setHgap(10);

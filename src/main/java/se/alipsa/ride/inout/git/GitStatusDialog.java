@@ -41,7 +41,7 @@ public class GitStatusDialog extends Dialog<Status> {
     System.out.println("---------------- /Status -----------------------");
 
     setTitle("Git status for " + path);
-
+    GuiUtils.addStyle(Ride.instance(), this);
     getDialogPane().getButtonTypes().addAll(ButtonType.CLOSE);
 
     GridPane grid = new GridPane();
