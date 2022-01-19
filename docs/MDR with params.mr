@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<muninReport>
+    <definition># Parameterized MDR report
+
+Parameters in mdr reports works just like unmanaged reports: you specify some input
+where the name attribute of the html control corresponds to the variable name in R.
+
+First we show the unmodied barchart (R code section is declared as `{r}` which means only the resulting chart will be shown, not the 
+code producing it).
+
+## Car, average hp per cylinder 
+```{r}
+md.new()
+data &lt;- aggregate(hp ~ cyl, data=mtcars, FUN=mean)
+md.add(
+  barplot,
+  height=data$hp, 
+  names.arg = data$cyl,
+  xlab="cyl",
+  ylab="hp",
+  col=rainbow(nrow(data)) 
+)
+```
+
+Now we show the same chart but with the avg hp values multiplied with the parameter. 
+The R code section is declared as `{r echo=TRUE}` so both the code and the result will be shown.
+
+## Car, average hp per cylinder; with multiplier (value = `r multiplier`)
+```{r echo=TRUE}
+md.new()
+# the multiplier parameter comes in as text (character) so we must convert it to numeric first
+multiplier &lt;- as.numeric(multiplier)
+data &lt;- aggregate(hp ~ cyl, data=mtcars, FUN=mean)
+md.add(
+  barplot,
+  height=data$hp * multiplier, 
+  names.arg = data$cyl,
+  xlab="cyl",
+  ylab="hp",
+  col=rainbow(nrow(data)) 
+)
+```
+
+</definition>
+    <description></description>
+    <inputContent>&lt;div class="form-group"&gt;
+&lt;label for="multiplier"&gt;Multiplier&lt;/label&gt;
+&lt;input id="multiplier" type="number" name="multiplier" value="1" step="0.3" min="0.1" max="12"/&gt;
+&lt;/div&gt;</inputContent>
+    <reportGroup>MDR</reportGroup>
+    <reportName>MDR with params</reportName>
+    <reportType>MDR</reportType>
+</muninReport>
