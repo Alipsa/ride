@@ -18,6 +18,7 @@ import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.SqlParser;
 import se.alipsa.ride.utils.StringUtils;
@@ -31,9 +32,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SqlTab extends TextAreaTab {
 
-  private SqlTextArea sqlTextArea;
-  private Button executeButton;
-  private ComboBox<ConnectionInfo> connectionCombo;
+  private final SqlTextArea sqlTextArea;
+  private final Button executeButton;
+  private final ComboBox<ConnectionInfo> connectionCombo;
 
   private Logger log = LogManager.getLogger(SqlTab.class);
 
@@ -45,7 +46,7 @@ public class SqlTab extends TextAreaTab {
 
     executeButton = new Button("Run");
     executeButton.setDisable(true);
-    executeButton.setOnAction(this::executeQuery);
+    executeButton.setOnAction(e -> executeQuery());
     buttonPane.getChildren().add(executeButton);
 
     connectionCombo = new ComboBox<>();
@@ -80,7 +81,11 @@ public class SqlTab extends TextAreaTab {
     sqlTextArea.setCursor(Cursor.WAIT);
   }
 
-  private void executeQuery(ActionEvent actionEvent) {
+  void executeQuery() {
+    if (executeButton.isDisabled()) {
+      Alerts.info("Cannot run SQL", "You  must select a database connection first!");
+      return;
+    }
     setWaitCursor();
     final ConsoleComponent consoleComponent = getGui().getConsoleComponent();
     StringBuilder parseMessage = new StringBuilder();
@@ -148,7 +153,7 @@ public class SqlTab extends TextAreaTab {
     updateTask.setOnFailed(e -> {
       setNormalCursor();
       Throwable exc = updateTask.getException();
-      consoleComponent.addWarning("","\nFailed to execute query", true);
+      consoleComponent.addWarning("","\nFailed to execute query\n" + exc, true);
       String clazz = exc.getClass().getName();
       String message = exc.getMessage() == null ? "" : "\n" + exc.getMessage();
       ExceptionAlert.showAlert("Query failed: " + clazz + message, exc );

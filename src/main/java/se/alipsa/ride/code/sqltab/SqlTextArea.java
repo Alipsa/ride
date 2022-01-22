@@ -106,6 +106,8 @@ public class SqlTextArea extends CodeTextArea {
       if (e.isControlDown()) {
         if (KeyCode.SPACE.equals(e.getCode())) {
           autoComplete();
+        } else if (KeyCode.ENTER.equals(e.getCode())) {
+          parent.executeQuery();
         }
       } else if (KeyCode.PERIOD.equals(e.getCode())) {
         suggestMetaData();

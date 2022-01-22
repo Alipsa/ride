@@ -7,6 +7,7 @@ import static se.alipsa.ride.Constants.THEME;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,14 @@ public final class GuiUtils {
     addStyle(gui, dialog.getDialogPane(), 4);
     Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
     stage.getIcons().addAll(gui.getStage().getIcons());
+  }
+
+  public static void addStyle(Ride gui, Stage stage) {
+    stage.getIcons().addAll(gui.getStage().getIcons());
+    if (stage.getScene() == null) {
+      throw new RuntimeException("You must assign the scene to the stage before calling addStyle");
+    }
+    stage.getScene().getStylesheets().addAll(gui.getStyleSheets());
   }
 
   private static boolean validateDialogNotNull(Ride gui, Object dialog) {
@@ -71,4 +80,6 @@ public final class GuiUtils {
       }
     }
   }
+
+
 }

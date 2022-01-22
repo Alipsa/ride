@@ -25,7 +25,6 @@ public class MdrTab extends TextAreaTab implements TaskListener {
   public MdrTab(String title, Ride gui) {
     super(gui, CodeType.MDR);
     setTitle(title);
-    ConsoleComponent console = gui.getConsoleComponent();
 
     mdrTextArea = new MdrTextArea(this);
     VirtualizedScrollPane<MdrTextArea> txtPane = new VirtualizedScrollPane<>(mdrTextArea);

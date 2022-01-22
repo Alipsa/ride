@@ -52,7 +52,7 @@
     <dependency>
       <groupId>se.alipsa</groupId>
       <artifactId>R2JDBC</artifactId>
-      <version>10.0.22</version>
+      <version>10.0.23</version>
     </dependency>
     <!-- uncomment the appropriate jdbc driver to be able to connect to a relational db -->
     <!--dependency>
@@ -63,7 +63,7 @@
     <!--dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <version>2.0.202</version>
+      <version>2.0.210</version>
     </dependency-->
     <!--dependency>
       <groupId>org.postgresql</groupId>
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.7.2</version>
+      <version>5.8.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>

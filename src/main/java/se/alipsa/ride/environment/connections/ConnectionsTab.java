@@ -527,7 +527,6 @@ public class ConnectionsTab extends Tab {
 
   private void createAndShowWindow(String title, Parent view) {
     Scene dialog = new Scene(view);
-    dialog.getStylesheets().addAll(gui.getStyleSheets());
     Stage stage = new Stage();
     stage.initStyle(StageStyle.DECORATED);
     stage.initModality(Modality.NONE);
@@ -535,6 +534,7 @@ public class ConnectionsTab extends Tab {
     stage.setScene(dialog);
     stage.setAlwaysOnTop(true);
     stage.setResizable(true);
+    GuiUtils.addStyle(gui, stage);
     stage.show();
     stage.requestFocus();
     stage.toFront();
