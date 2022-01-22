@@ -72,14 +72,14 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - upgrade tika to version 2.2.1
 - fix bug when initializing nashorn on jdk8
 
-### 1.2.5
+### 1.2.5, 2021-12-13
 - Bugfix: downgrade jaxb runtime so that save of munin files works
 - Bump mdr2html and htmlcreator, log4j, jsqlparser, spotbugs annotations versions
 - Add right click option to export a table view to a csv. 
 - bump r2jdbc version to support CHARACTER VARYING data type
 - add export MDR to html and PDF
 
-### 1.2.4 
+### 1.2.4, 2021-11-28
 - Update dependency versions in pom and templates
 - Add git clone project menu option
 - add datatype tooltip for each column in View
@@ -94,7 +94,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 (some features of svg are not supported). Remove dependency on javafxsvg as a result 
 - update environment after initializing the renjin script engine (make all methods available for code completion from all standard packages)
 
-### 1.2.3
+### 1.2.3, 2021-04-23
 - Treat rmd like a md file
 - Support mdr files  
   - View button that renders the mdr as html and shows it in the viewer.
@@ -117,7 +117,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - add title (basename of url) if not given when viewing an url and show the url as a tooltip on the tab title
 - make git "status all" prettier
 
-### 1.2.2
+### 1.2.2, 2020-12-23
 - Autocomplete: Enhance autocomplete by taking in functions and objects from everything loaded (executed).
   Also fixed the shortcoming of . being regarded as a word boundary (. is just a character in R).
 - Run Tests: Fixed bug in testRunner that did not capture errors properly in the summary
@@ -133,7 +133,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
   Present a useful exception alert when the driver is missing.
 - make TableMetaData more robust (able to handle more databases)  
 
-### 1.2.1
+### 1.2.1, 2020-08-16
 - Add support for Groovy (see [Groovy.md](/Groovy.md) for details).
 - Do Renjin initialization in a separate thread to reduce GUI freezes
 - Add right click option to copy Viewer tables including headers, include headers if (ctrl + a) + (ctrl + c)
@@ -145,10 +145,10 @@ to understand what went wrong.
 - Add styling to confirmation dialogs (on exit and on not saved)
 - bump up versions plugin version and postgres jdbc driver version
 
-### 1.2 Final
+### 1.2 Final, 2020-08-05
 - add ability to create a basic pom.xml in "any" directory
 
-### 1.2 Beta 4
+### 1.2 Beta 4, Jul 25, 2020
 - Add support for env customizations (env.sh/env.cmd called from start scripts if it exists)
 - Test and make adjustments, so it also works in Java 11 (with bundled javafx)
 - Open a Browser if the artifact lookup comes back empty
@@ -156,7 +156,7 @@ to understand what went wrong.
 provides additional gui interactive abilities (prompt, chooseFile and chooseDir)
 - doc improvements, fixes to wait cursor, revert to an older (working) version of jgit
 
-### 1.2 Beta 3
+### 1.2 Beta 3, Jun 14, 2020
 - Create a package browser to easily find the latest version of an artifact
 - Removed the maven based execution to make things simpler
 - Removed ant based startup and just rely on scripts
@@ -168,7 +168,7 @@ provides additional gui interactive abilities (prompt, chooseFile and chooseDir)
     - bump dependency versions
     - change central url to use https
 
-### 1.2 Beta 2
+### 1.2 Beta 2, May 01, 2020
 - Enhanced connection functionality (auto save, jdbc url wizard)
 - If the previous working dir has been removed we no longer move to parent as 
 that might take forever to parse, instead we just do not initialize the file tree.
@@ -177,7 +177,7 @@ that might take forever to parse, instead we just do not initialize the file tre
 - Only insert right side of brackets if we are on the end of the line (feels more intuitive this way).
 - Make git integration optional (configurable)
 
-### 1.2 Beta 1
+### 1.2 Beta 1, Dec 14, 2019
 - Add maven build support
 - Add a maven classloader that uses the dependencies in the pom
 - Add git support
@@ -188,7 +188,7 @@ that might take forever to parse, instead we just do not initialize the file tre
 - Add support for java files 
 - many small improvement, both cosmetic and functional
 
-### 1.1 final
+### 1.1 final, Jul 14, 2019
 - Removed empty menus (View, plots, Build, Profile) 
 - Add drag and drop support
 - Connections: Handle urls containing username and password
@@ -198,7 +198,7 @@ that might take forever to parse, instead we just do not initialize the file tre
 - Fixed links in the user manual when selecting "open link in new window"
 - Fixed several minor quirks
 
-### 1.1 beta 2
+### 1.1 beta 2, May 15, 2019
 - Theme support
     - There is now a dark theme in addition to the default theme (now called bright theme). Change theme in global options
     
@@ -233,7 +233,7 @@ that might take forever to parse, instead we just do not initialize the file tre
     - Ride interaction
     - examples     
            
-### 1.1 beta
+### 1.1 beta, Feb 20, 2019
 - Create a new runbutton when hamcrest tests are detected
     - Will run hamcrest tests similar to the renjin-hamcrest-maven-plugin i.e. producing nice output, error messages and
     summary 
@@ -267,7 +267,7 @@ that might take forever to parse, instead we just do not initialize the file tre
     - tab anywhere on the line indents the line
     - handles selected text to indent/unindent whole area
     
-### 1.0 Final
+### 1.0 Final, Jan 12, 2019
 - Run scriptEngine in a separate thread but still make it possible to interact with the gui
     - Enables console output as the R script is executed rather than outputting content at the end as before.
 - Syntax highlighting for SQL files as well
@@ -275,7 +275,7 @@ that might take forever to parse, instead we just do not initialize the file tre
 - Opening unknown files in default associated program
 - Various refactoring and minor bugfixes     
 
-### 1.0 beta 4
+### 1.0 beta 4, Jan 03, 2019
 - Add support for text, xml and java files
 - Add context menu to file tree (add and remove dir/file)
 - Track if files are modified and prompts to save when closing if unsaved
@@ -285,12 +285,12 @@ that might take forever to parse, instead we just do not initialize the file tre
 - Add "save as" menu option
 - Add "new -> text file" menu option
  
-### 1.0 beta3
+### 1.0 beta3, Jan 01, 2019
 - Add support for running on Windows.
 - Add support for switching package loaders
 - Various minor improvements.
 
-### 1.0 beta2
+### 1.0 beta2, Dec 30, 2018
 - Will now honor ctrl + enter to execute current row or selection
 
 - Run button will now execute selected text (if any is selected) or execute the whole script.
@@ -299,5 +299,5 @@ that might take forever to parse, instead we just do not initialize the file tre
 
 - Tested with Renjin 0.9.2717
 
-### 1.0 beta
+### 1.0 beta. Dec 29, 2018
 - Initial release
