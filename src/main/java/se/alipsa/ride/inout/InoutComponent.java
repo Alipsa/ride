@@ -20,7 +20,6 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import jdk.nashorn.api.scripting.ScriptUtils;
-import jdk.nashorn.internal.objects.NativeArray;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
@@ -28,6 +27,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jetbrains.annotations.NotNull;
 import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.*;
+import org.renjin.sexp.Vector;
 import se.alipsa.renjin.client.datautils.Table;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleTextArea;
@@ -42,10 +42,7 @@ import se.alipsa.ride.utils.TikaUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -239,79 +236,23 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void View(Object matrix, String... title) {
+    log.info("Viewing {}", matrix);
     if (matrix == null) {
       Alerts.warnFx("View", "matrix is null, cannot View");
       return;
     }
     ConsoleTextArea console = gui.getConsoleComponent().getConsole();
-    if (matrix instanceof NativeArray || matrix instanceof ScriptObjectMirror) {
-      viewJavaScriptMatrix(matrix, title);
+    //if (matrix instanceof NativeArray || matrix instanceof ScriptObjectMirror) {
+    if (matrix instanceof ScriptObjectMirror) {
+      Alerts.warnFx("Cannot View native javascript objects", "Use the View function or convert the matrix to a java 2d array before calling inout.View()");
+      return;
+    }
+    if (matrix instanceof Object[][]) {
+      view2dArray((Object[][])matrix, title);
     } else {
       console.appendWarningFx("Unknown matrix type " + matrix.getClass().getName());
       console.appendFx(String.valueOf(matrix), true);
     }
-  }
-
-  private void viewJavaScriptMatrix(Object matrix, String... title) {
-    ConsoleTextArea console = gui.getConsoleComponent().getConsole();
-    Object obj = toJava(matrix);
-    if (obj instanceof List) {
-      List<List<Object>> rowList = new ArrayList<>();
-      if (((List) obj).get(0) instanceof List) {
-        List<List<Object>> rows = (List<List<Object>>) obj;
-
-        for (List<Object> row : rows) {
-          List<Object> cols = new ArrayList<>();
-          for (Object col : row) {
-            cols.add(String.valueOf(col));
-          }
-          rowList.add(cols);
-        }
-        List<String> header = createAnonymousHeader(rows.get(0).size());
-        Table table = new Table(header, rowList);
-        showInViewer(table, title);
-      } else {
-        List<Object> objList = (List<Object>)obj;
-        List<Object> cols = new ArrayList<>();
-        for (Object col : objList) {
-          cols.add(String.valueOf(col));
-        }
-        rowList.add(cols);
-        List<String> header = createAnonymousHeader(objList.size());
-        Table table = new Table(header, rowList);
-        showInViewer(table, title);
-      }
-    } else {
-      console.appendWarningFx("This does not look like a matrix, not sure how to render a "
-          + obj.getClass().getName() + ",\n  js class is " + matrix.getClass().getName()
-          + "\n  unwrapped as " + ScriptUtils.unwrap(matrix).getClass().getName());
-      console.appendFx( String.valueOf(obj), true);
-    }
-  }
-
-  private Object toJava(Object jsObj) {
-    if (jsObj instanceof ScriptObjectMirror) {
-      ScriptObjectMirror jsObjectMirror = (ScriptObjectMirror) jsObj;
-      if (jsObjectMirror.isArray()) {
-        List<Object> list = new ArrayList<>();
-        for (Map.Entry<String, Object> entry : jsObjectMirror.entrySet()) {
-          list.add(toJava(entry.getValue()));
-        }
-        return list;
-      } else {
-        Map<String, Object> map = new HashMap<>();
-        for (Map.Entry<String, Object> entry : jsObjectMirror.entrySet()) {
-          map.put(entry.getKey(), toJava(entry.getValue()));
-        }
-        return map;
-      }
-    } else {
-      return jsObj;
-    }
-  }
-
-  public void view(List<List<Object>> matrix, String... title) {
-    View(matrix, title);
   }
 
   public void View(List<List<Object>> matrix, String... title) {
@@ -320,17 +261,14 @@ public class InoutComponent extends TabPane implements InOut {
       return;
     }
     List<String> header = createAnonymousHeader(matrix.size());
+    // Instanceof check does not work
+    if ("jdk.nashorn.internal.runtime.ListAdapter".equals(matrix.getClass().getName())) {
+      // Due to erasure and whatever other strange reasons, in java 11 Nashorn return a List<ScriptObjectMirror> and still end up here
+      Alerts.warnFx("Cannot view a ListAdapter directly", "Convert this to a java 2s array before viewing using Java.to(data,'java.lang.Object[][]')");
+      return;
+    }
     Table table = new Table(header, matrix);
     showInViewer(table, title);
-  }
-
-  @NotNull
-  private List<String> createAnonymousHeader(int size) {
-    List<String> header = new ArrayList<>();
-    for (int i = 0; i < size; i++) {
-      header.add("V" + i);
-    }
-    return header;
   }
 
   public void View(SEXP sexp, String... title) {
@@ -373,6 +311,29 @@ public class InoutComponent extends TabPane implements InOut {
           Alerts.warn("Unknown type, " + sexp.getTypeName(), ", convert this object to a data.frame or vector to view it")
       );
     }
+  }
+
+  private void view2dArray(Object[][] matrix, String... title) {
+      List<List<Object>> objList = new ArrayList<>();
+      for (Object[] row : matrix) {
+        objList.add(Arrays.asList(row));
+      }
+      List<String> header = createAnonymousHeader(matrix[0].length);
+      Table table = new Table(header, objList);
+      showInViewer(table, title);
+  }
+
+  public void view(List<List<Object>> matrix, String... title) {
+    View(matrix, title);
+  }
+
+  @NotNull
+  private List<String> createAnonymousHeader(int size) {
+    List<String> header = new ArrayList<>();
+    for (int i = 0; i < size; i++) {
+      header.add("V" + i);
+    }
+    return header;
   }
 
   @Override
@@ -464,6 +425,9 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void showInViewer(Table table, String... title) {
+    log.info("showInViewer: {}", table);
+    log.info(table.getHeaderList());
+    log.info(table.getRowList());
     Platform.runLater(() -> {
           viewer.viewTable(table, title);
           SingleSelectionModel<Tab> selectionModel = getSelectionModel();

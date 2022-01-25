@@ -36,6 +36,7 @@ dataset.setValue("Nokia", new Double(16.8))
 dataset.setValue("Apple", new Double(17.1))
 
 chart = ChartFactory.createPieChart("Smart Phones Manufactured / Q3 2011", dataset)
+chart.setBackgroundPaint(Color.BLACK)
 // customise the title position and font
 def title = chart.getTitle()
 title.setHorizontalAlignment(HorizontalAlignment.LEFT)
@@ -43,7 +44,7 @@ title.setPaint(new Color(240, 240, 240))
 title.setFont(new Font("Arial", Font.BOLD, 26))
 
 def plot = chart.getPlot()
-plot.setBackgroundPaint(null)
+plot.setBackgroundPaint(Color.BLACK)
 plot.setInteriorGap(0.04)
 plot.setOutlineVisible(false)
 
@@ -66,13 +67,13 @@ plot.setLabelBackgroundPaint(null)
 
 // add a subtitle giving the data source
 def source = new TextTitle("Source: http://www.bbc.co.uk/news/business-15489523",
-    new Font("Courier New", Font.PLAIN, 12))
+        new Font("Courier New", Font.PLAIN, 12))
 source.setPaint(Color.WHITE)
 source.setPosition(RectangleEdge.BOTTOM)
 source.setHorizontalAlignment(HorizontalAlignment.RIGHT)
 chart.addSubtitle(source)
 viewer = new ChartViewer(chart)
-inout.display(viewer)     
+inout.display(viewer)    
 ```
 ![Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/GroovyPieChart.png)
 
