@@ -50,8 +50,8 @@ import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.maven.DependenciesResolveException;
-import se.alipsa.ride.utils.maven.MavenUtils;
+import se.alipsa.maven.DependenciesResolveException;
+import se.alipsa.maven.MavenUtils;
 
 import javax.script.ScriptException;
 import java.io.File;
@@ -87,10 +87,12 @@ public class ConsoleComponent extends BorderPane {
   private PackageLoader packageLoader;
   private Thread runningThread;
   private File workingDir;
-  private Map<Thread, String> threadMap = new HashMap<>();
+  private final Map<Thread, String> threadMap = new HashMap<>();
+  private final MavenUtils mavenUtils;
 
   public ConsoleComponent(Ride gui) {
     this.gui = gui;
+    mavenUtils = new MavenUtils();
     console = new ConsoleTextArea(gui);
     console.setEditable(false);
 
@@ -180,7 +182,7 @@ public class ConsoleComponent extends BorderPane {
                 log.info("Parsing pom to use maven classloader");
                 console.appendFx("* Parsing pom to create maven classloader...", true);
                 try {
-                  cl = MavenUtils.getMavenDependenciesClassloader(pomFile, cl);
+                  cl = mavenUtils.getMavenDependenciesClassloader(pomFile, cl);
                 } catch (Exception e) {
                   if (e instanceof DependenciesResolveException) {
                     Platform.runLater(() -> ExceptionAlert.showAlert("Failed to resolve maven dependency: " + e.getMessage(), e));

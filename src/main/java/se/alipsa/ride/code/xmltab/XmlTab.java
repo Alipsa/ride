@@ -28,7 +28,7 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.console.ConsoleTextArea;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
-import se.alipsa.ride.utils.maven.MavenUtils;
+import se.alipsa.maven.MavenUtils;
 
 import java.io.File;
 
@@ -39,11 +39,11 @@ public class XmlTab extends TextAreaTab {
   private final Button executeButton;
   private final TextField targetsField;
   private final Label goalLabel;
-  private final Button packageBrowserButton;
 
 
   private final InvocationOutputHandler consoleOutputHandler;
   private final InvocationOutputHandler warningOutputHandler;
+  private final MavenUtils mavenUtils;
 
   private static final Logger log = LogManager.getLogger(XmlTab.class);
 
@@ -51,6 +51,7 @@ public class XmlTab extends TextAreaTab {
     super(gui, CodeType.XML);
     setTitle(title);
 
+    mavenUtils = new MavenUtils();
     executeButton = new Button("Run");
     executeButton.setOnAction(this::runMaven);
     buttonPane.getChildren().add(executeButton);
@@ -60,7 +61,7 @@ public class XmlTab extends TextAreaTab {
     targetsField.setPrefColumnCount(30);
     goalLabel = new Label("Goals:");
 
-    packageBrowserButton = new Button("Lookup");
+    Button packageBrowserButton = new Button("Lookup");
     packageBrowserButton.setTooltip(new Tooltip("Search for package on Renjin CRAN"));
     packageBrowserButton.setOnAction(this::lockupPackage);
     buttonPane.getChildren().addAll(goalLabel, targetsField, packageBrowserButton);
@@ -122,7 +123,7 @@ public class XmlTab extends TextAreaTab {
     task.setOnSucceeded(e -> {
       boolean hasRenjinPlugin = false;
       try {
-        Model model = MavenUtils.parsePom(getFile());
+        Model model = mavenUtils.parsePom(getFile());
         hasRenjinPlugin = model.getBuild().getPlugins().stream().anyMatch(p -> "org.renjin".equals(p.getGroupId()) && "renjin-maven-plugin".equals(p.getArtifactId()));
       } catch (SettingsBuildingException | ModelBuildingException ex) {
         ExceptionAlert.showAlert("Failed to parse pom file", ex);
