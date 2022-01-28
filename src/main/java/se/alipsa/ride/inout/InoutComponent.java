@@ -28,6 +28,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jetbrains.annotations.NotNull;
 import org.renjin.primitives.matrix.Matrix;
 import org.renjin.sexp.*;
+import org.renjin.sexp.Vector;
 import se.alipsa.renjin.client.datautils.Table;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.console.ConsoleTextArea;
@@ -42,10 +43,7 @@ import se.alipsa.ride.utils.TikaUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -246,6 +244,8 @@ public class InoutComponent extends TabPane implements InOut {
     ConsoleTextArea console = gui.getConsoleComponent().getConsole();
     if (matrix instanceof NativeArray || matrix instanceof ScriptObjectMirror) {
       viewJavaScriptMatrix(matrix, title);
+    } if (matrix instanceof Object[][]) {
+      view2dArray((Object[][])matrix, title);
     } else {
       console.appendWarningFx("Unknown matrix type " + matrix.getClass().getName());
       console.appendFx(String.valueOf(matrix), true);
@@ -373,6 +373,16 @@ public class InoutComponent extends TabPane implements InOut {
           Alerts.warn("Unknown type, " + sexp.getTypeName(), ", convert this object to a data.frame or vector to view it")
       );
     }
+  }
+
+  private void view2dArray(Object[][] matrix, String... title) {
+    List<List<Object>> objList = new ArrayList<>();
+    for (Object[] row : matrix) {
+      objList.add(Arrays.asList(row));
+    }
+    List<String> header = createAnonymousHeader(matrix[0].length);
+    Table table = new Table(header, objList);
+    showInViewer(table, title);
   }
 
   @Override

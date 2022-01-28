@@ -17,11 +17,14 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.console.ConsoleTextArea;
 import se.alipsa.ride.console.WarningAppenderWriter;
 import se.alipsa.ride.utils.ExceptionAlert;
+import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.JavaVersion;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptException;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 public class JsTab extends TextAreaTab {
@@ -32,6 +35,15 @@ public class JsTab extends TextAreaTab {
 
   private static Logger log = LogManager.getLogger(JsTab.class);
   private ScriptEngine engine;
+  private static String initScript;
+
+  static {
+    try {
+      initScript = FileUtils.readContent("js/init.js");
+    } catch (IOException e) {
+      log.error("Failed to read init js script", e);
+    }
+  }
 
   public JsTab(String title, Ride gui) {
     super(gui, CodeType.JAVA_SCRIPT);
@@ -71,6 +83,11 @@ public class JsTab extends TextAreaTab {
     engine = nashornScriptEngineFactory.getScriptEngine(options);
 
     engine.put("inout", gui.getInoutComponent());
+    try {
+      engine.eval(initScript);
+    } catch (ScriptException e) {
+      ExceptionAlert.showAlert("Failed to add View function", e);
+    }
   }
 
   public void runJavascript() {

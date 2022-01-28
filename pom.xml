@@ -491,7 +491,7 @@ release.tag=${release.tag}
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <version>1.8.0</version>
-                                    <level>WARN</level>
+                                    <level>ERROR</level>
                                     <message>Please use Java 8</message>
                                 </requireJavaVersion>
                             </rules>

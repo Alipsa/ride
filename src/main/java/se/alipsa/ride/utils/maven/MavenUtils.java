@@ -117,11 +117,7 @@ public class MavenUtils {
     request.setBaseDirectory(dir);
     log.info("Running maven from dir {} with args {}", dir, String.join(" ", mvnArgs));
     Invoker invoker = new DefaultInvoker();
-    String mavenDefaultHome = System.getProperty("MAVEN_HOME", System.getenv("MAVEN_HOME"));
-    String mavenHome = Ride.instance().getPrefs().get(MAVEN_HOME, mavenDefaultHome);
-    if (mavenHome == null) {
-      mavenHome = locateMaven();
-    }
+    String mavenHome = locateMavenHome();
     File mavenHomeDir = new File(mavenHome);
     if (mavenHomeDir.exists()) {
       log.debug("MAVEN_HOME used is {}", mavenHome);
@@ -133,6 +129,15 @@ public class MavenUtils {
     invoker.setOutputHandler(consoleOutputHandler);
     invoker.setErrorHandler(warningOutputHandler);
     return invoker.execute( request );
+  }
+
+  public static String locateMavenHome() {
+    String mavenDefaultHome = System.getProperty("MAVEN_HOME", System.getenv("MAVEN_HOME"));
+    String mavenHome = Ride.instance().getPrefs().get(MAVEN_HOME, mavenDefaultHome);
+    if (mavenHome == null) {
+      mavenHome = locateMaven();
+    }
+    return mavenHome;
   }
 
   private static String locateMaven() {

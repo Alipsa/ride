@@ -2,6 +2,7 @@ package se.alipsa.ride;
 
 import static se.alipsa.ride.Constants.BRIGHT_THEME;
 import static se.alipsa.ride.Constants.THEME;
+import static se.alipsa.ride.menu.GlobalOptions.MAVEN_HOME;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -29,6 +30,7 @@ import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.MainMenu;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.maven.MavenUtils;
 
 import java.io.File;
 import java.util.*;
@@ -76,6 +78,11 @@ public class Ride extends Application {
     preferences = Preferences.userRoot().node(Ride.class.getName());
     this.primaryStage = primaryStage;
 
+    // Allow global option for MAVEN_HOME to override system settings.
+    String mavenHome = getPrefs().get(MAVEN_HOME, MavenUtils.locateMavenHome());
+    if (mavenHome != null && !mavenHome.trim().isEmpty()) {
+      System.setProperty("MAVEN_HOME", mavenHome);
+    }
     BorderPane root = new BorderPane();
     VBox main = new VBox();
     main.setAlignment(Pos.CENTER);
