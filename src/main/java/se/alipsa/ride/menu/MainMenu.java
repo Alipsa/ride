@@ -754,6 +754,12 @@ public class MainMenu extends MenuBar {
     gui.setWaitCursor();
     GlobalOptions result = res.get();
 
+    String mavenHome = (String) result.get(MAVEN_HOME);
+    if (mavenHome != null && !mavenHome.isBlank()) {
+      System.setProperty("MAVEN_HOME", mavenHome);
+      gui.getPrefs().put(MAVEN_HOME, mavenHome);
+    }
+
     @SuppressWarnings("rawtypes")
     Class<?> selectedPkgLoader = (Class) result.get(GlobalOptions.PKG_LOADER);
     if (!selectedPkgLoader.isInstance(gui.getConsoleComponent().getPackageLoader())) {
@@ -775,11 +781,6 @@ public class MainMenu extends MenuBar {
          selectedRepos,
          gui.getClass().getClassLoader()
       );
-      /* use gui classloader to be consistent
-      gui.getConsoleComponent().setRemoteRepositories(selectedRepos,
-         Thread.currentThread().getContextClassLoader()
-      );
-       */
     }
 
     int consoleMaxLength = result.getInt(CONSOLE_MAX_LENGTH_PREF);

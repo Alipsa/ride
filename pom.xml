@@ -360,7 +360,7 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>maven-3.3.9-utils</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
