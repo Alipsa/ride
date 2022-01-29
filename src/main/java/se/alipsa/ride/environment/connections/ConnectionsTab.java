@@ -42,6 +42,7 @@ import se.alipsa.ride.model.TableMetaData;
 import se.alipsa.ride.utils.*;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.sql.*;
 import java.util.*;
 import java.util.prefs.BackingStoreException;
@@ -145,14 +146,47 @@ public class ConnectionsTab extends Tab {
     HBox.setHgrow(urlBox, Priority.ALWAYS);
     middleInputPane.getChildren().add(urlBox);
 
+    Button newButton = new Button("New");
+    newButton.setPadding(new Insets(7, 10, 7, 10));
+    newButton.setOnAction(a -> {
+      name.setValue("");
+      userText.clear();
+      passwordField.clear();
+      driverText.clear();
+      urlText.clear();
+    });
+
+    Button deleteButton = new Button("Delete");
+    deleteButton.setPadding(new Insets(7, 10, 7, 10));
+    deleteButton.setOnAction(a -> {
+      String connectionName = name.getValue();
+      Preferences pref = gui.getPrefs().node(CONNECTIONS_PREF).node(connectionName);
+      try {
+        pref.removeNode();
+      } catch (BackingStoreException e) {
+        ExceptionAlert.showAlert("Failed to remove the connection from preferences", e);
+      }
+      gui.getCodeComponent().removeConnectionFromTabs(connectionName);
+      connectionsTable.getItems().removeIf(c -> c.getName().equals(connectionName));
+      name.getItems().remove(connectionName);
+      name.setValue("");
+      userText.clear();
+      passwordField.clear();
+      driverText.clear();
+      urlText.clear();
+      name.requestFocus();
+    });
+
     Button addButton = new Button("Add / Update Connection");
     addButton.setPadding(new Insets(7, 10, 7, 10));
     createConnectionTableView();
     contentPane.setCenter(connectionsTable);
-
     connectionsTable.setPlaceholder(new Label("No connections defined"));
 
     addButton.setOnAction(e -> {
+      if (name.getValue() == null || name.getValue().isBlank()) {
+        return;
+      }
       String urlString = urlText.getText().toLowerCase();
       if (urlString.contains("mysql") && !urlString.contains("allowmultiqueries=true")) {
         String msg = "In MySQL you should set allowMultiQueries=true in the connection string to be able to execute multiple queries";
@@ -167,7 +201,13 @@ public class ConnectionsTab extends Tab {
         connection.close();
         log.info("Connection created successfully, all good!");
       } catch (SQLException ex) {
-        ExceptionAlert.showAlert("Failed to connect to database: " + ex.toString(), ex);
+        Exception exceptionToShow = ex;
+        try {
+          JdbcUrlParser.validate(driverText.getText(), urlText.getText());
+        } catch (MalformedURLException exc) {
+          exceptionToShow = exc;
+        }
+        ExceptionAlert.showAlert("Failed to connect to database: " + exceptionToShow, ex);
       }
     });
     /*VBox buttonBox = new VBox();
@@ -184,7 +224,7 @@ public class ConnectionsTab extends Tab {
     Insets btnInsets = new Insets(5, 10, 5, 10);
     wizardButton.setPadding(btnInsets);
     bottomInputPane.setSpacing(10);
-    bottomInputPane.getChildren().addAll(addButton, wizardButton);
+    bottomInputPane.getChildren().addAll(newButton, addButton, wizardButton, deleteButton);
   }
 
   private void addConnection(ConnectionInfo con) {
@@ -204,6 +244,13 @@ public class ConnectionsTab extends Tab {
       existing.setDriver(con.getDriver());
       existing.setUrl(con.getUrl());
 
+    }
+    if (name.getItems().stream().filter(c -> c.equals(con.getName())).findAny().orElse(null) == null) {
+      name.getItems().add(con.getName());
+      userText.setText(con.getUser());
+      passwordField.setText(con.getPassword());
+      driverText.setText(con.getDriver());
+      urlText.setText(con.getUrl());
     }
     connectionsTable.refresh();
   }

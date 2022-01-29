@@ -184,4 +184,13 @@ public class CodeComponent extends BorderPane {
   public void activateTab(TextAreaTab tab) {
     pane.getSelectionModel().select(tab);
   }
+
+  public void removeConnectionFromTabs(String value) {
+    for (Tab tab : pane.getTabs()) {
+      if (tab instanceof SqlTab) {
+        SqlTab sqlTab = (SqlTab) tab;
+        sqlTab.removeConnection(value);
+      }
+    }
+  }
 }
