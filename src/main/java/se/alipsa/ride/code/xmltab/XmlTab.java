@@ -39,7 +39,6 @@ public class XmlTab extends TextAreaTab {
   private final Button executeButton;
   private final TextField targetsField;
   private final Label goalLabel;
-  private final Button packageBrowserButton;
 
 
   private final InvocationOutputHandler consoleOutputHandler;
@@ -60,7 +59,7 @@ public class XmlTab extends TextAreaTab {
     targetsField.setPrefColumnCount(30);
     goalLabel = new Label("Goals:");
 
-    packageBrowserButton = new Button("Lookup");
+    Button packageBrowserButton = new Button("Lookup");
     packageBrowserButton.setTooltip(new Tooltip("Search for package on Renjin CRAN"));
     packageBrowserButton.setOnAction(this::lockupPackage);
     buttonPane.getChildren().addAll(goalLabel, targetsField, packageBrowserButton);
