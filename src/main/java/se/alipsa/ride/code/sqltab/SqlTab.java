@@ -71,6 +71,10 @@ public class SqlTab extends TextAreaTab {
     pane.setCenter(scrollPane);
   }
 
+  public void removeConnection(String connectionName) {
+    connectionCombo.getItems().removeIf(c -> c.getName().equals(connectionName));
+  }
+
   private void setNormalCursor() {
     gui.setNormalCursor();
     sqlTextArea.setCursor(Cursor.DEFAULT);

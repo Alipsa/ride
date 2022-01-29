@@ -32,6 +32,6 @@ print(fileName)
 
 
 #############
-fileName <- file.path(tempdir(), "dashed.svg")
+fileName <- file.path(tempdir(), "dotline.svg")
 display(fileName, "svg webview")
 display(readImage(fileName), "svg fxsvimage")
