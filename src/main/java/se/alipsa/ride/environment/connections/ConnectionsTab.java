@@ -113,6 +113,7 @@ public class ConnectionsTab extends Tab {
       urlText.setText(ci.getUrl());
       passwordField.clear();
       passwordField.requestFocus();
+      connectionsTable.getSelectionModel().select(connectionsTable.getItems().indexOf(ci));
     });
     nameBox.getChildren().addAll(nameLabel, name);
     topInputPane.getChildren().add(nameBox);
@@ -196,6 +197,7 @@ public class ConnectionsTab extends Tab {
       ConnectionInfo con = new ConnectionInfo(name.getValue(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
       addConnection(con);
       saveConnection(con);
+      connectionsTable.getSelectionModel().select(connectionsTable.getItems().indexOf(con));
       try {
         Connection connection = con.connect();
         connection.close();
