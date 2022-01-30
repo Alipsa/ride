@@ -5,7 +5,7 @@
   <ignoreVersions>
     <ignoreVersion type="regex">.*-preview</ignoreVersion>
     <ignoreVersion type="regex">.*[-_\.](alpha|Alpha|ALPHA|b|beta|Beta|BETA|rc|RC|M|EA|pr)[-_\.]?[0-9]*</ignoreVersion>
-    <ignoreVersion type="regex">.*jre11</ignoreVersion>
+    <ignoreVersion type="regex">.*jre8</ignoreVersion>
     <ignoreVersion type="regex">.*jre12</ignoreVersion>
     <ignoreVersion type="regex">.*jre14</ignoreVersion>
     <ignoreVersion type="regex">.*jre7</ignoreVersion>
