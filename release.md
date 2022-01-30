@@ -62,7 +62,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Upgrade rideutils to support View of table directly
 - Enable execution of selected content (or current row) through ctrl+enter (same as for R code)
   - Add alert if a connection is not selected
-
+- add "new" and "delete" buttons to connections, improve navigation
+- Add View and transpose functions to javascript code
 
 ### 1.2.6, 2021-12-26
 - Fixed maven support to be able to parse bom dependencies and poms with a parent.
