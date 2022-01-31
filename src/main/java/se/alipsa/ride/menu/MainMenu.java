@@ -755,7 +755,7 @@ public class MainMenu extends MenuBar {
     GlobalOptions result = res.get();
 
     String mavenHome = (String) result.get(MAVEN_HOME);
-    if (mavenHome != null && !mavenHome.isBlank()) {
+    if (mavenHome != null && !mavenHome.trim().isEmpty()) {
       System.setProperty("MAVEN_HOME", mavenHome);
       gui.getPrefs().put(MAVEN_HOME, mavenHome);
     }
