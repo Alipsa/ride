@@ -31,3 +31,4 @@ hs_err_pid*
 /deployLocal.sh
 /.gradle/
 /env.sh
+/dependencies.txt
