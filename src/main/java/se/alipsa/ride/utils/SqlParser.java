@@ -26,7 +26,7 @@ public class SqlParser {
     } catch (JSQLParserException e) {
       log.warn("Failed to parse sql", e);
       int numlines = org.apache.commons.lang3.StringUtils.countMatches(sql,"\n") + 1;
-      warnings.append("Failed to parse statement(s), will try the whole string (" + numlines + " lines, " + sql.length() + " chars)");
+      warnings.append("Failed to parse statement(s), will try the whole string (" + numlines + " lines, " + sql.length() + " chars)\n");
       return new String[] {sql};
     }
   }
