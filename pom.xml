@@ -258,13 +258,7 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>R2JDBC</artifactId>
-            <version>10.0.24</version>
-        </dependency>
-        <!-- joda-time dependency removed in 10.0.25 -->
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.10.13</version>
+            <version>10.0.25</version>
         </dependency>
 
         <dependency>
