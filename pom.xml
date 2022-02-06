@@ -44,6 +44,7 @@
         <!--jgit 6 and up requires java 11-->
         <jgit.version>6.0.0.202111291000-r</jgit.version>
         <tika.version>2.2.1</tika.version>
+        <javafx.version>17.0.2</javafx.version>
     </properties>
 
     <repositories>
@@ -87,6 +88,29 @@
         </pluginRepository>
     </pluginRepositories>
     <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics </artifactId>
+            <version>${javafx.version}</version>
+            <classifier>win</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics </artifactId>
+            <version>${javafx.version}</version>
+            <classifier>linux</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics </artifactId>
+            <version>${javafx.version}</version>
+            <classifier>mac</classifier>
+        </dependency>
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>renjin-client-data-utils</artifactId>
