@@ -911,7 +911,7 @@ public class ConsoleComponent extends BorderPane {
 
     EnvironmentComponent env = gui.getEnvironmentComponent();
     try (
-         AppenderPrintWriter out = new AppenderPrintWriter(console);
+         AppenderPrintWriter out = new AppenderPrintWriter(console, true);
          WarningAppenderWriter err = new WarningAppenderWriter(console);
          PrintWriter outputWriter = new PrintWriter(out);
          PrintWriter errWriter = new PrintWriter(err)
@@ -928,7 +928,7 @@ public class ConsoleComponent extends BorderPane {
       session.setStdErr(errWriter);
 
       engine.eval(script);
-      Platform.runLater(() -> env.addOutputHistory(out.toString()));
+      Platform.runLater(() -> env.addOutputHistory(out.getCachedText()));
       postEvalOutput();
 
     } catch (ScriptException | RuntimeException e) {
