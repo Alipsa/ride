@@ -4,6 +4,9 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.alipsa.ride.Ride;
@@ -11,7 +14,10 @@ import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.GuiUtils;
 import se.alipsa.ride.utils.IntField;
 
+import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static se.alipsa.ride.Constants.*;
 
@@ -24,7 +30,11 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
    private final TextField server = new TextField();
    private final IntField port = new IntField(0, 65535, 5432);
    private final TextField database = new TextField();
-   private final TextField url = new TextField();
+   private final TextArea url = new TextArea();
+   private final HBox connectionMethodsBox = new HBox();
+   private final ComboBox<String> connectMethods = new ComboBox<>();
+   private final VBox optionsBox = new VBox();
+   private final List<String> options = new ArrayList<>();
 
    private static final int TF_LENGTH = 250;
 
@@ -50,12 +60,14 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
       driver.getItems().addAll(
          DRV_POSTGRES,
          DRV_MYSQL,
+         DRV_MARIADB,
          DRV_H2,
          DRV_SQLSERVER,
          DRV_SQLLITE,
          DRV_FIREBIRD,
          DRV_DERBY
       );
+
       driver.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
          if (! isNowFocused) {
             driver.setValue(driver.getEditor().getText());
@@ -65,6 +77,11 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
 
       grid.add(new Label("Driver: "), 0, ++rowIndex);
       grid.add(driver, 1, rowIndex);
+
+      grid.add(new Label("Connection type"), 0, ++rowIndex);
+      connectionMethodsBox.getChildren().add(connectMethods);
+      grid.add(connectionMethodsBox,1, rowIndex);
+      connectMethods.setDisable(true);
 
       server.setPrefWidth(TF_LENGTH);
       grid.add(new Label("Server: "), 0,++rowIndex);
@@ -92,8 +109,13 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
          }
       });
 
+      grid.add(new Label("Options: "), 0, ++rowIndex);
+      optionsBox.setSpacing(5);
+      grid.add(optionsBox, 1, rowIndex);
+
       grid.add(new Label("Url: "), 0, ++rowIndex);
       grid.add(url, 1, rowIndex);
+      url.setPrefRowCount(2);
       url.setEditable(false);
 
 
@@ -107,39 +129,158 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
       setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
    }
 
+   private void addMariaDbSpecifics() {
+      port.setValue(3306);
+   }
+
+   private void addMysqlSpecifics() {
+      port.setValue(3306);
+      urlTemplate = "jdbc:mysql://{server}:{port}/{database}";
+   }
+
+   private void addDerbySpecifics() {
+      port.setValue(1527);
+      urlTemplate = "jdbc:derby://{server}:{port}/{database}";
+   }
+
+   private void addFirebirdSpecifics() {
+      port.setValue(3050);
+      urlTemplate = "jdbc:firebirdsql://{server}:{port}/{database}";
+   }
+
+   private void addSqlServerSpecifics() {
+      port.setValue(1433);
+      urlTemplate = "jdbc:sqlserver://{server}:{port};databaseName={database}";
+   }
+
+   private void addPostgresSpecifics() {
+      port.setValue(5432);
+      urlTemplate = "jdbc:postgresql://{server}:{port}/{database}";
+      CheckboxOption readOnlyCbo = new CheckboxOption("Read-only");
+      readOnlyCbo.setOnAction(a -> {
+         if(readOnlyCbo.isSelected()) {
+            options.add("readOnly=true");
+         } else {
+            options.remove("readOnly=true");
+         }
+         updateUrl();
+      });
+      optionsBox.getChildren().add(readOnlyCbo);
+      ComboboxOption sslMode = new ComboboxOption("sslmode", "", "disable", "allow", "prefer", "require", "verify-ca ", "verify-full");
+      sslMode.setOnAction(a -> {
+         options.removeIf(p -> p.startsWith("sslmode="));
+         if (!"".equals(sslMode.getValue())) {
+            options.add("sslmode=" + sslMode.getValue());
+         }
+         updateUrl();
+      });
+      optionsBox.getChildren().add(sslMode);
+   }
+
+   private void addH2Specifics() {
+      urlTemplate = "jdbc:h2:{connectMethod}://{server}:{port}/{database}";
+      connectMethods.setDisable(false);
+      connectMethods.getItems().add("tcp");
+      connectMethods.getItems().add("mem");
+      connectMethods.getItems().add("file");
+      connectMethods.setOnAction(a -> {
+         String value = connectMethods.getValue();
+         if ("tcp".equals(value)) {
+            urlTemplate = "jdbc:h2:{connectMethod}://{server}:{port}/{database}";
+            port.setDisable(false);
+            port.setValue(9092);
+            server.setText("localhost");
+            server.setDisable(false);
+         } else {
+            if ("mem".equals(value)) {
+               urlTemplate = "jdbc:h2:{connectMethod}:{database}";
+            } else if ("file".equals(value)) {
+               urlTemplate = "jdbc:h2:{connectMethod}:{path}/{database}";
+               Button browseButton = new Button("...");
+               connectionMethodsBox.getChildren().add(browseButton);
+               browseButton.setOnAction(action -> {
+                  FileChooser fc = new FileChooser();
+                  fc.setTitle("Choose H2 database file");
+                  fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("h2 database file", "*.mv.db", "*.h2.db"));
+                  File dbFile = fc.showOpenDialog(gui.getStage());
+                  if (dbFile != null && dbFile.exists()) {
+                     String path = dbFile.getParent();
+                     String dbName = dbFile.getName();
+                     database.setText(dbName.substring(0, dbName.length() - ".mv.db".length()));
+                     urlTemplate = urlTemplate.replace("{path}", path);
+                     updateUrl();
+                  }
+               });
+            }
+            port.setText("");
+            port.setDisable(true);
+            server.setText("");
+            server.setDisable(true);
+         }
+         if (urlTemplate != null && value != null) {
+            urlTemplate = urlTemplate.replace("{connectMethod}", value);
+            updateUrl();
+         }
+      });
+      connectMethods.setValue("tcp");
+      Label readOnly = new Label("Read-only");
+      CheckBox cb = new CheckBox();
+      cb.setOnAction(a -> {
+         if(cb.isSelected()) {
+            options.add("ACCESS_MODE_DATA=r");
+         } else {
+            options.remove("ACCESS_MODE_DATA=r");
+         }
+         updateUrl();
+      });
+      HBox hBox = new HBox(cb, readOnly);
+      hBox.setSpacing(5);
+      optionsBox.getChildren().add(hBox);
+   }
+
+   private void addSqlLiteSpecifics() {
+      port.clear();
+      server.clear();
+      urlTemplate = "jdbc:sqlite:{database}";
+   }
+
    private void addDefaultsForDriver(ActionEvent actionEvent) {
+      options.clear();
+      optionsBox.getChildren().clear();
+      connectionMethodsBox.getChildren().clear();
+      connectionMethodsBox.getChildren().add(connectMethods);
+      connectMethods.setDisable(true);
+      connectMethods.getItems().clear();
+      port.setDisable(false);
+      server.setDisable(false);
+
       String driverName = driver.getValue();
       server.setText("localhost");
       database.setText("mydatabase");
       switch (driverName) {
          case DRV_POSTGRES:
-            port.setValue(5432);
-            urlTemplate = "jdbc:postgresql://{server}:{port}/{database}";
+            addPostgresSpecifics();
             break;
          case DRV_SQLSERVER:
-            port.setValue(1433);
-            urlTemplate = "jdbc:sqlserver://{server}:{port};databaseName={database}";
+            addSqlServerSpecifics();
+            break;
+         case DRV_MARIADB:
+            addMariaDbSpecifics();
             break;
          case DRV_MYSQL:
-            port.setValue(3306);
-            urlTemplate = "jdbc:mysql://{server}:{port}/{database}";
+            addMysqlSpecifics();
             break;
          case DRV_DERBY:
-            port.setValue(1527);
-            urlTemplate = "jdbc:derby://{server}:{port}/{database}";
+            addDerbySpecifics();
             break;
          case DRV_FIREBIRD:
-            port.setValue(3050);
-            urlTemplate = "jdbc:firebirdsql://{server}:{port}/{database}";
+            addFirebirdSpecifics();
             break;
          case DRV_H2:
-            port.setValue(9092);
-            urlTemplate = "jdbc:h2:tcp://{server}:{port}/{database}";
+            addH2Specifics();
             break;
          case DRV_SQLLITE:
-            port.clear();
-            server.clear();
-            urlTemplate = "jdbc:sqlite:{database}";
+            addSqlLiteSpecifics();
             break;
          default:
             server.setText("unknown");
@@ -147,13 +288,18 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
             database.setText("");
       }
       updateUrl();
+      getDialogPane().getScene().getWindow().sizeToScene();
    }
+
 
    private void updateUrl() {
       String urlString = urlTemplate
          .replace("{server}", server.getText())
          .replace("{port}", port.getText())
          .replace("{database}", database.getText());
+      if (options.size() > 0) {
+         urlString += "?" + String.join("&", options);
+      }
       url.setText(urlString);
    }
 

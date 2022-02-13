@@ -57,6 +57,9 @@ public class SqlTab extends TextAreaTab {
       connectionCombo.setItems(FXCollections.observableArrayList(connectionInfos));
       int rows = Math.min(5, connectionInfos.size());
       connectionCombo.setVisibleRowCount(rows);
+      if (connectionCombo.getItems().size() == 1) {
+        connectionCombo.getSelectionModel().select(0);
+      }
       connectionCombo.show();
     });
     connectionCombo.getSelectionModel().selectedItemProperty().addListener(
