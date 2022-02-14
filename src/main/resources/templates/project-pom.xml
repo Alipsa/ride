@@ -81,6 +81,11 @@
       <artifactId>mysql-connector-java</artifactId>
       <version>8.0.27</version>
     </dependency-->
+    <!--dependency>
+      <groupId>com.oracle.database.jdbc</groupId>
+      <artifactId>ojdbc8</artifactId>
+      <version>21.5.0.0</version>
+    </dependency-->
 
     <!-- the hamcrest package is only required if you use it for unit tests -->
     <dependency>

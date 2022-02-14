@@ -39,6 +39,7 @@ public class Constants {
   public static final String DRV_SQLLITE = "org.sqlite.JDBC";
   public static final String DRV_FIREBIRD = "org.firebirdsql.jdbc.FBDriver";
   public static final String DRV_DERBY = "org.apache.derby.jdbc.ClientDriver";
+  public static final String DRV_ORACLE = "oracle.jdbc.OracleDriver";
 
   public enum GitStatus {
     GIT_ADDED("-fx-text-fill: #629755;"),
