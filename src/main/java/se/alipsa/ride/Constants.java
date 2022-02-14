@@ -33,11 +33,13 @@ public class Constants {
 
   public static final String DRV_POSTGRES = "org.postgresql.Driver";
   public static final String DRV_MYSQL = "com.mysql.jdbc.Driver";
+  public static final String DRV_MARIADB = "org.mariadb.jdbc.Driver";
   public static final String DRV_H2 = "org.h2.Driver";
   public static final String DRV_SQLSERVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
   public static final String DRV_SQLLITE = "org.sqlite.JDBC";
   public static final String DRV_FIREBIRD = "org.firebirdsql.jdbc.FBDriver";
   public static final String DRV_DERBY = "org.apache.derby.jdbc.ClientDriver";
+  public static final String DRV_ORACLE = "oracle.jdbc.OracleDriver";
 
   public enum GitStatus {
     GIT_ADDED("-fx-text-fill: #629755;"),
