@@ -1,13 +1,11 @@
 package se.alipsa.ride.code.groovytab;
 
-import groovy.lang.Binding;
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyShell;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Button;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.groovy.jsr223.GroovyScriptEngineFactory;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
@@ -19,6 +17,7 @@ import se.alipsa.ride.console.ConsoleTextArea;
 import se.alipsa.ride.console.WarningAppenderWriter;
 import se.alipsa.ride.utils.ExceptionAlert;
 
+import javax.script.ScriptEngine;
 import java.io.File;
 import java.io.PrintWriter;
 
@@ -27,7 +26,8 @@ public class GroovyTab extends TextAreaTab {
   private final GroovyTextArea groovyTextArea;
 
   private static Logger log = LogManager.getLogger(GroovyTab.class);
-  private GroovyShell groovyShell;
+  private final GroovyScriptEngineFactory factory = new GroovyScriptEngineFactory();
+  private ScriptEngine engine;
 
   public GroovyTab(String title, Ride gui) {
     super(gui, CodeType.GROOVY);
@@ -51,10 +51,8 @@ public class GroovyTab extends TextAreaTab {
   }
 
   public void initSession() {
-    Binding sharedData = new Binding();
-    sharedData.setProperty("inout", gui.getInoutComponent());
-    GroovyClassLoader gcl = new GroovyClassLoader();
-    groovyShell = new GroovyShell(gcl, sharedData);
+    engine = factory.getScriptEngine();
+    engine.put("inout", gui.getInoutComponent());
   }
 
   public void runGroovy() {
@@ -78,10 +76,9 @@ public class GroovyTab extends TextAreaTab {
                 PrintWriter errWriter = new PrintWriter(err)
         ) {
           Platform.runLater(() -> console.append(title, true));
-          groovyShell.setProperty("out", outputWriter);
-          groovyShell.setProperty("err", errWriter);
-
-          Object result = groovyShell.evaluate(content);
+          engine.getContext().setWriter(outputWriter);
+          engine.getContext().setErrorWriter(errWriter);
+          Object result = engine.eval(content);
           if (result != null) {
             gui.getConsoleComponent().getConsole().appendFx("[result] " + result, true);
           }
