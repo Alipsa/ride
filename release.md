@@ -1,4 +1,4 @@
-# This is version 1.2.6 of Ride.
+# This is version 1.2.7 of Ride.
 
 Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine, but
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
@@ -18,7 +18,8 @@ java application (server).
 Pre requisites:
 - Java 8 or higher with java fx
 
-Unzip ride-1.2.6-GA-dist.zip to a directory of choice
+Unzip ride-1.2.7-dist.zip to a directory of choice, note that there is no directory "inside" the zip so create the destination
+directory and unzip into that directory.
 
 ## How to run:
 
@@ -32,7 +33,7 @@ If you need to customize things, I suggest that you add those things in an env.s
 This way you will not need to worry about upgrading to a later version of Ride later. 
 The special variable JAVA_OPTS can be used to add system properties (-D key/values) to java. 
 Some reasons why you want to do this are
-- You do not have javafx in you jdk and need to wire it in
+- You do not have javafx in your jdk and need to wire it in
 - You have a high DPI display and need to customize (scale) the screen (you need java 11 for this to really work)
 - You want to add more available memory to Ride than the default
 
@@ -54,7 +55,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
-### 1.2.7
+### 1.2.7, 2022-02-19
 - Add ride logo as icon on all dialogs (in Linux Mint, no icon on a dialog changes the logo of the main application)
 - Make it possible to run R code parts in a mdr document separately (evaluated as standard R, although with the r2md library loaded)
 - Change PackagesTab to contain a TableView of available packages with additional info and the currently loaded ones checked
