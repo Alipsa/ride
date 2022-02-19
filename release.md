@@ -53,7 +53,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
-### 1.2.7
+### 1.2.8
+
+### 1.2.7, 2022-02-19
 - Add ride logo as icon on all dialogs (in Linux Mint, no icon on a dialog changes the logo of the main application)
 - Make it possible to run R code parts in a mdr document separately (evaluated as standard R, although with the r2md library loaded)
 - Change PackagesTab to contain a TableView of available packages with additional info and the currently loaded ones checked
