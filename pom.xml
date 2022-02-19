@@ -6,7 +6,7 @@
 
     <groupId>se.alipsa</groupId>
     <artifactId>ride</artifactId>
-    <version>1.2.7-SNAPSHOT</version>
+    <version>1.2.7-jdk11</version>
     <packaging>jar</packaging>
 
     <name>Ride</name>
@@ -38,13 +38,14 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <release.tag>1.2.7-java11-beta</release.tag>
+        <release.tag>1.2.7-jdk11</release.tag>
         <!--renjin.version>3.5-beta76</renjin.version-->
         <renjin.version>3.5-dev</renjin.version>
         <!--jgit 6 and up requires java 11-->
         <jgit.version>6.0.0.202111291000-r</jgit.version>
-        <tika.version>2.2.1</tika.version>
+        <tika.version>2.3.0</tika.version>
         <javafx.version>17.0.2</javafx.version>
+        <jersey.version>3.0.4</jersey.version>
     </properties>
 
     <repositories>
@@ -153,17 +154,17 @@
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>3.0.3</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
-            <version>3.0.3</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
-            <version>3.0.3</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.activation</groupId>
@@ -383,7 +384,7 @@
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.138</version>
+            <version>4.8.139</version>
         </dependency>
 
         <dependency>
@@ -497,7 +498,7 @@ release.tag=${release.tag}
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.9.0</version>
+                <version>3.10.0</version>
                 <configuration>
                     <compilerArgument>-Xlint:all</compilerArgument>
                     <showDeprecation>true</showDeprecation>
@@ -582,7 +583,7 @@ release.tag=${release.tag}
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.10.0</version>
+                <version>3.11.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

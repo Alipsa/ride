@@ -1,11 +1,10 @@
-# This is version 1.2.6 of Ride.
+# This is version 1.2.7-jdk11 of Ride.
 
 Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine, but
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
 packages can be developed, built and tested. Ride supports maven build files as well as git.
   
-To run Ride you need to have maven and Java 1.8 or higher installed (preferably with bundled javafx, I personally use
-11.0.13.fx-librca from bellsoft). If you use open JDK on Linux then you might need to do something like `sudo apt-get install openjfx` depending on your distro.
+To run Ride you need to have maven and Java 11 or higher installed. 
 
 Ride is started using the start script appropriate for your environment (see ride.sh/ride.cmd for details). 
 
@@ -16,9 +15,9 @@ java application (server).
 
 ## How to install:
 Pre requisites:
-- Java 8 or higher with java fx
+- Java JDK 11 or higher
 
-Unzip ride-1.2.6-GA-dist.zip to a directory of choice
+Unzip ride-1.2.7-jdk11-dist.zip to a directory of choice
 
 ## How to run:
 
@@ -60,11 +59,17 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Change PackagesTab to contain a TableView of available packages with additional info and the currently loaded ones checked
 - Make "loaded" in Packages tab editable and load or unload a package based on the selection.
 - Upgrade rideutils to support View of table directly
-- Enable execution of selected content (or current row) through ctrl+enter (same as for R code)
+- SQL: Enable execution of selected content (or current row) through ctrl+enter (same as for R code)
   - Add alert if a connection is not selected
 - add "new" and "delete" buttons to connections, improve navigation
 - Add View and transpose functions to javascript code
 - Use Groovy script engine instead of GroovyShell for session support
+#### JDK 11 Specific changes
+- Using Renjin j11-beta1 branch (will show up as Renjin 3.5-dev)
+- Take advantage of some Java 11 syntactic improvements such as string.isBlank() instead of string.trim().isEmpty().
+- Use se.alipsa:maven-utils to interact with Maven instead of internal implementation
+- Upgrade jgit to the latest 6.x version that requires java 11 or higher
+- Use javafx 17 and remove need to install javafx with the jvm
 
 ### 1.2.6, 2021-12-26
 - Fixed maven support to be able to parse bom dependencies and poms with a parent.
