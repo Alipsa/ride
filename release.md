@@ -53,6 +53,11 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2.8
+
+#### JDK 11 Specific changes
+- Use openjdk standalone Nashorn instead of the deprecated, built-in, one.
+
 ### 1.2.7
 - Add ride logo as icon on all dialogs (in Linux Mint, no icon on a dialog changes the logo of the main application)
 - Make it possible to run R code parts in a mdr document separately (evaluated as standard R, although with the r2md library loaded)
