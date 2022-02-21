@@ -1,8 +1,4 @@
 # Todo / Roadmap
-
-### Minor fixes
-Add support for parent poms, currently this throws exceptions due to a missing ModelBuilder which
-is an interface with no DefaultImplementations available to use (they are package private).
  
 ### Git integration
 Perhaps not all variations of authentication works
@@ -17,7 +13,6 @@ Add support for project settings file which will override globals settings e.g.
     - classloading settings
 Move the two generators from the code section (package and maven project)
 Add support for "classic R project layout"
-Add "clone from git repository" option
 
 ### Code menu improvements
 - Format code, support https://bioconductor.org/developers/how-to/coding-style/
@@ -26,7 +21,7 @@ Add "clone from git repository" option
 ### Tools -> Options menu
 Make it possible to customize tab as \t or number of spaces
 
-### Add suggestions when pressing . for SQL
+### Add suggestions when pressing ctrl+space or . for SQL
 use metadata to determine suggestion 
 
 ### Add object variables to code completion
@@ -61,10 +56,6 @@ NAMESPACE, SAS, SPSS
 ### Parse and report on issues in R code
 - misspelled objects / vars
 - syntax errors
-
-### Enhance packages section
-add checkbox and tick off is loaded into session, available packages should be listed from current classpath
-(probably only useful for ClasspathPackageLoader, available packages would not relevant for Aether as everything is available)
 
 ### add Rmd support
 
