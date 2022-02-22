@@ -1,7 +1,7 @@
 # Javascript support in Ride
 
 Ride uses Nashorn to execute javascript code. Nashorn is initiated with:
-1. "--language=es6", "--no-deprecation-warning" meaning there is some support for ES 6 (though not 100%)
+1. "--language=es6" meaning there is some support for ES 6 (though not 100%)
 2. Adding two functions ta make it easier to handle tabular (2d array) data
    1. transpose which transposes all columns of a 2d array into rows
    2. View which allows you to view the content of a 2d array in the Ride "View" tab.
