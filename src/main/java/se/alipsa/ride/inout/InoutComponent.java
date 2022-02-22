@@ -18,8 +18,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.web.WebView;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
-import jdk.nashorn.api.scripting.ScriptUtils;
+import org.openjdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
@@ -261,10 +260,10 @@ public class InoutComponent extends TabPane implements InOut {
       return;
     }
     List<String> header = createAnonymousHeader(matrix.size());
-    // Instanceof check does not work
-    if ("jdk.nashorn.internal.runtime.ListAdapter".equals(matrix.getClass().getName())) {
+    // Instanceof check does not work due to module restrictions
+    if (matrix.getClass().getName().contains(".ListAdapter")) {
       // Due to erasure and whatever other strange reasons, in java 11 Nashorn return a List<ScriptObjectMirror> and still end up here
-      Alerts.warnFx("Cannot view a ListAdapter directly", "Convert this to a java 2s array before viewing using Java.to(data,'java.lang.Object[][]')");
+      Alerts.warnFx("Cannot view a ListAdapter directly", "Convert " + matrix.getClass().getName() + " to a java 2D array before viewing using Java.to(data,'java.lang.Object[][]')");
       return;
     }
     Table table = new Table(header, matrix);
