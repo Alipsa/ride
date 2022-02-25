@@ -195,9 +195,6 @@ public class ConnectionsTab extends Tab {
         Alerts.info("MySQL and multiple query statements", msg);
       }
       ConnectionInfo con = new ConnectionInfo(name.getValue(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
-      addConnection(con);
-      saveConnection(con);
-      connectionsTable.getSelectionModel().select(connectionsTable.getItems().indexOf(con));
       try {
         Connection connection = con.connect();
         connection.close();
@@ -210,7 +207,11 @@ public class ConnectionsTab extends Tab {
           exceptionToShow = exc;
         }
         ExceptionAlert.showAlert("Failed to connect to database: " + exceptionToShow, ex);
+        return;
       }
+      addConnection(con);
+      saveConnection(con);
+      connectionsTable.getSelectionModel().select(connectionsTable.getItems().indexOf(con));
     });
     /*VBox buttonBox = new VBox();
     buttonBox.setPadding(new Insets(10, 10, 0, 10));
@@ -255,6 +256,7 @@ public class ConnectionsTab extends Tab {
       urlText.setText(con.getUrl());
     }
     connectionsTable.refresh();
+    gui.getCodeComponent().updateConnections();
   }
 
   private void openUrlWizard(ActionEvent actionEvent) {
