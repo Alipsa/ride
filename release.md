@@ -54,6 +54,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.8
+- change how we update connection combo in sql tabs when adding a connection, select if only one is available
 
 #### JDK 11 Specific changes
 - Use openjdk standalone Nashorn instead of the deprecated, built-in, one.
