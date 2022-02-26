@@ -2,7 +2,6 @@
 
 ### Minor fixes
 - Update file tree when a file in code component is saved (add if new, git colored if updated)
-- Right click option to save an image in the plots tab to a file.
 
 ### Git integration
 Perhaps not all variations of authentication works
