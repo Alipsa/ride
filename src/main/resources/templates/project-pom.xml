@@ -20,7 +20,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <slf4j.version>1.7.35</slf4j.version>
+    <slf4j.version>1.7.36</slf4j.version>
   </properties>
 
   <dependencies>
@@ -52,7 +52,7 @@
     <dependency>
       <groupId>se.alipsa</groupId>
       <artifactId>R2JDBC</artifactId>
-      <version>10.0.23</version>
+      <version>10.0.25</version>
     </dependency>
     <!-- uncomment the appropriate jdbc driver to be able to connect to a relational db -->
     <!--dependency>
