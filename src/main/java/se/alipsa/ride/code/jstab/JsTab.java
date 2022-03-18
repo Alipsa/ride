@@ -33,7 +33,7 @@ public class JsTab extends TextAreaTab {
   private final JsTextArea jsTextArea;
   private final CheckBox restartAfterRun;
 
-  private static Logger log = LogManager.getLogger(JsTab.class);
+  private static final Logger log = LogManager.getLogger(JsTab.class);
   private ScriptEngine engine;
   private static String initScript;
 

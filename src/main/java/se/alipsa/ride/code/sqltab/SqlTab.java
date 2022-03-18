@@ -51,27 +51,30 @@ public class SqlTab extends TextAreaTab {
 
     connectionCombo = new ComboBox<>();
     connectionCombo.setTooltip(new Tooltip("Create connections in the Connections tab \nand select the name here"));
-    connectionCombo.setOnMouseClicked(e -> {
-      connectionCombo.hide();
-      Set<ConnectionInfo> connectionInfos = gui.getEnvironmentComponent().getConnections();
-      connectionCombo.setItems(FXCollections.observableArrayList(connectionInfos));
-      int rows = Math.min(5, connectionInfos.size());
-      connectionCombo.setVisibleRowCount(rows);
-      if (connectionCombo.getItems().size() == 1) {
-        connectionCombo.getSelectionModel().select(0);
-      }
-      connectionCombo.show();
-    });
     connectionCombo.getSelectionModel().selectedItemProperty().addListener(
         (options, oldValue, newValue) -> {
           executeButton.setDisable(false);
         }
     );
     buttonPane.getChildren().add(connectionCombo);
+    updateConnections();
 
     sqlTextArea = new SqlTextArea(this);
     VirtualizedScrollPane<SqlTextArea> scrollPane = new VirtualizedScrollPane<>(sqlTextArea);
     pane.setCenter(scrollPane);
+  }
+
+  public void updateConnections() {
+    ConnectionInfo current = connectionCombo.getValue();
+    Set<ConnectionInfo> connectionInfos = gui.getEnvironmentComponent().getConnections();
+    connectionCombo.setItems(FXCollections.observableArrayList(connectionInfos));
+    int rows = Math.min(5, connectionInfos.size());
+    connectionCombo.setVisibleRowCount(rows);
+    if (current != null && connectionCombo.getItems().contains(current)) {
+      connectionCombo.setValue(current);
+    } else if (connectionCombo.getItems().size() == 1) {
+      connectionCombo.getSelectionModel().select(0);
+    }
   }
 
   public void removeConnection(String connectionName) {

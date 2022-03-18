@@ -1,5 +1,8 @@
 # Todo / Roadmap
- 
+
+### Minor fixes
+- Update file tree when a file in code component is saved (add if new, git colored if updated)
+
 ### Git integration
 Perhaps not all variations of authentication works
 [This article](https://www.codeaffine.com/2014/12/09/jgit-authentication/) is old but useful 
@@ -66,7 +69,5 @@ NAMESPACE, SAS, SPSS
 - The maven Settings class created by AetherFactory must be publicly exposed,
 ideally by AetherPackageLoader  
 
-### Maybe Further out 
+### _Maybe_ Further out 
 - Support fastR in addition to Renjin, maybe also GNU R.
-- Once Renjin moves to Java 11 we should use the [standalone Nashorn](https://mvnrepository.com/artifact/org.openjdk.nashorn/nashorn-core) 
-instead of the built-in one so that Javascript will work also for Java >= 15.

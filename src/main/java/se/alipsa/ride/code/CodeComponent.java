@@ -95,6 +95,13 @@ public class CodeComponent extends BorderPane {
     return ta.getTextContent();
   }
 
+  public void updateConnections() {
+    for(Tab tab : pane.getTabs()) {
+      if (tab instanceof SqlTab) {
+        ((SqlTab) tab).updateConnections();
+      }
+    }
+  }
 
   public TextAreaTab getActiveTab() {
     SingleSelectionModel<Tab> selectionModel = pane.getSelectionModel();

@@ -186,6 +186,7 @@ public class ConnectionsTab extends Tab {
 
     addButton.setOnAction(e -> {
       if (name.getValue() == null || name.getValue().isEmpty()) {
+        log.info("No connection name provided, cannot add it");
         return;
       }
       String urlString = urlText.getText().toLowerCase();
@@ -195,11 +196,12 @@ public class ConnectionsTab extends Tab {
         Alerts.info("MySQL and multiple query statements", msg);
       }
       ConnectionInfo con = new ConnectionInfo(name.getValue(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
-      addConnection(con);
-      saveConnection(con);
-      connectionsTable.getSelectionModel().select(connectionsTable.getItems().indexOf(con));
       try {
         Connection connection = con.connect();
+        if (connection == null) {
+          Alerts.warn("Failed to connect to database", "Failed to connect to database: " + con + ", probably something in the url that the Driver could not understand since connect() returned null.");
+          return;
+        }
         connection.close();
         log.info("Connection created successfully, all good!");
       } catch (SQLException ex) {
@@ -210,7 +212,11 @@ public class ConnectionsTab extends Tab {
           exceptionToShow = exc;
         }
         ExceptionAlert.showAlert("Failed to connect to database: " + exceptionToShow, ex);
+        return;
       }
+      addConnection(con);
+      saveConnection(con);
+      connectionsTable.getSelectionModel().select(connectionsTable.getItems().indexOf(con));
     });
     /*VBox buttonBox = new VBox();
     buttonBox.setPadding(new Insets(10, 10, 0, 10));
@@ -231,10 +237,6 @@ public class ConnectionsTab extends Tab {
 
   private void addConnection(ConnectionInfo con) {
     log.debug("Add or update connection for {}", con.asJson());
-    setPref(NAME_PREF, name.getValue());
-    setPref(DRIVER_PREF, driverText.getText());
-    setPref(URL_PREF, urlText.getText());
-    setPref(USER_PREF, userText.getText());
     ConnectionInfo existing = connectionsTable.getItems().stream()
        .filter(c -> con.getName().equals(c.getName()))
        .findAny().orElse(null);
@@ -255,6 +257,7 @@ public class ConnectionsTab extends Tab {
       urlText.setText(con.getUrl());
     }
     connectionsTable.refresh();
+    gui.getCodeComponent().updateConnections();
   }
 
   private void openUrlWizard(ActionEvent actionEvent) {
@@ -373,6 +376,12 @@ public class ConnectionsTab extends Tab {
   }
 
   private void saveConnection(ConnectionInfo c) {
+    // Save current
+    setPref(NAME_PREF, name.getValue());
+    setPref(DRIVER_PREF, driverText.getText());
+    setPref(URL_PREF, urlText.getText());
+    setPref(USER_PREF, userText.getText());
+    // Save to list of defined connections
     Preferences pref = gui.getPrefs().node(CONNECTIONS_PREF).node(c.getName());
     pref.put(DRIVER_PREF, c.getDriver());
     pref.put(URL_PREF, c.getUrl());

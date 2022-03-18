@@ -7,7 +7,7 @@ Just as with R code, the inout component in injected into the Groovy session all
 with Ride in a simple way. E.g:
 (sample adopted from [PieChartFXDemo1](https://github.com/jfree/jfree-fxdemos/blob/master/src/main/java/org/jfree/chart/fx/demo/PieChartFXDemo1.java))
 ```groovy
-@Grab('org.jfree:jfreechart:1.5.0')
+@Grab('org.jfree:jfreechart:1.5.3')
 @Grab(group='org.jfree', module='jfreechart-fx', version='1.0.1')
 import java.awt.BasicStroke
 import java.awt.Color

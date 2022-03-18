@@ -56,6 +56,11 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.8
+- Change how we update connection combo in sql tabs when adding a connection, select if only one is available
+- Add right click option to save an image in the plots tab to a file.
+
+#### JDK 11 Specific changes
+- Use openjdk standalone Nashorn instead of the deprecated, built-in, one.
 
 ### 1.2.7, 2022-02-19
 - Add ride logo as icon on all dialogs (in Linux Mint, no icon on a dialog changes the logo of the main application)
@@ -63,11 +68,17 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Change PackagesTab to contain a TableView of available packages with additional info and the currently loaded ones checked
 - Make "loaded" in Packages tab editable and load or unload a package based on the selection.
 - Upgrade rideutils to support View of table directly
-- Enable execution of selected content (or current row) through ctrl+enter (same as for R code)
+- SQL: Enable execution of selected content (or current row) through ctrl+enter (same as for R code)
   - Add alert if a connection is not selected
 - add "new" and "delete" buttons to connections, improve navigation
 - Add View and transpose functions to javascript code
 - Use Groovy script engine instead of GroovyShell for session support
+#### JDK 11 Specific changes
+- Using Renjin j11-beta1 branch (will show up as Renjin 3.5-dev)
+- Take advantage of some Java 11 syntactic improvements such as string.isBlank() instead of string.trim().isEmpty().
+- Use se.alipsa:maven-utils to interact with Maven instead of internal implementation
+- Upgrade jgit to the latest 6.x version that requires java 11 or higher
+- Use javafx 17 and remove need to install javafx with the jvm
 
 ### 1.2.6, 2021-12-26
 - Fixed maven support to be able to parse bom dependencies and poms with a parent.

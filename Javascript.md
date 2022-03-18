@@ -45,5 +45,25 @@ Which will look similar to this:
 | 4   | efg | null      | 
 | 5   | åäö | undefined | 
 
+## Interacting with Ride
+Since Ride is a javafx application you can take advantage of the javafx integration with Nashorn.
+Here is an example of creating a Pie chart and showing it in the plots tab:
+```javascript
+load("fx:controls.js")
+
+pie=new PieChart();
+pie.getData().clear();
+pieData=FXCollections.observableArrayList();
+pieData.add(new PieChart.Data("Sandwiches", 150));
+pieData.add(new PieChart.Data("Salad", 90));
+pieData.add(new PieChart.Data("Soup", 155));
+pieData.add(new PieChart.Data("Beverages", 210));
+pieData.add(new PieChart.Data("Desserts", 400));
+pie.setData(pieData);
+pie.setAnimated(true);
+pie.setTitle("Lunch Sales");
+ 
+inout.display(pie, "pie chart");
+```
 See https://docs.oracle.com/en/java/javase/11/scripting/index.html for details of what you can do with the Nashorn 
 Javascript engine.
