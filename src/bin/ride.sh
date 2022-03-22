@@ -55,7 +55,9 @@ fi
 
 function fullJavaPath {
   JAVA_CMD=$1
-  if [[ ! -z {JAVA_HOME+x} ]] && [[ -d ${JAVA_HOME} ]]; then
+  if [[ -f ${JAVA_HOME}/bin/${JAVA_CMD} ]]; then
+  	JAVA_CMD=${JAVA_HOME}/bin/${JAVA_CMD}
+  elif [[ ! -z {JAVA_HOME+x} ]] && [[ -d ${JAVA_HOME} ]]; then
     JAVA_CMD=$(posixpath ${JAVA_HOME})bin/${JAVA_CMD}
   fi
   echo ${JAVA_CMD}
