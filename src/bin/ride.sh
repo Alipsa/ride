@@ -78,7 +78,7 @@ fi
 # to the command below, but even better to add it to JAVA_OPTS variable in env.sh
 MODULES=javafx.controls,javafx.media,javafx.web,javafx.swing
 
-if [[ "${OSTYPE}" == "msys" ]]; then
+if [[ "${OS}" == "win" ]]; then
 	JAVA_CMD=$(fullJavaPath "javaw")
 	CLASSPATH="${JAR_NAME};$(winpath ${LIB_DIR})/*"
 	LD_PATH="$(winpath ${LIB_DIR})"
