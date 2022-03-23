@@ -19,7 +19,11 @@ function winpath {
 }
 
 function posixpath {
-  echo "/${1}" | sed -e 's/\\/\//g' -e 's/://' -e '/\/$/! s|$|/|'
+  if [[ "${OSTYPE}" == "msys" ]]; then
+    echo "${1}" | sed -e 's/\\/\//g' -e 's/://' -e '/\/$/! s|$|/|'
+  else
+    echo "/${1}" | sed -e 's/\\/\//g' -e 's/://' -e '/\/$/! s|$|/|'
+  fi
 }
 
 cd "${DIR}" || { notify "Failed to cd to $DIR"; exit 1; }
