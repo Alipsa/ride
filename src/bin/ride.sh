@@ -19,7 +19,11 @@ function winpath {
 }
 
 function posixpath {
-  echo "/${1}" | sed -e 's/\\/\//g' -e 's/://' -e '/\/$/! s|$|/|'
+  if [[ "${OSTYPE}" == "msys" ]]; then
+    echo "${1}" | sed -e 's/\\/\//g' -e 's/://' -e '/\/$/! s|$|/|'
+  else
+    echo "/${1}" | sed -e 's/\\/\//g' -e 's/://' -e '/\/$/! s|$|/|'
+  fi
 }
 
 cd "${DIR}" || { notify "Failed to cd to $DIR"; exit 1; }
@@ -55,12 +59,16 @@ fi
 
 function fullJavaPath {
   JAVA_CMD=$1
-  if [[ -f ${JAVA_HOME}/bin/${JAVA_CMD} ]]; then
-  	JAVA_CMD=${JAVA_HOME}/bin/${JAVA_CMD}
-  elif [[ ! -z {JAVA_HOME+x} ]] && [[ -d ${JAVA_HOME} ]]; then
-    JAVA_CMD=$(posixpath ${JAVA_HOME})bin/${JAVA_CMD}
+  if [[ -n "${JAVA_HOME}" ]] && [[ -d ${JAVA_HOME} ]]; then
+    JAVA_CMD=$(posixpath "${JAVA_HOME}")bin/${JAVA_CMD}
+  elif [[ $(command -v "${JAVA_CMD}") ]]; then
+    JAVA_CMD=$(command -v "${JAVA_CMD}")
   fi
-  echo ${JAVA_CMD}
+  if [[ ! -f ${JAVA_CMD} ]]; then
+    echo "Failed to find $1 as $JAVA_CMD, set JAVA_HOME and/or PATH to $1 in env.sh and try again"
+    exit 1
+  fi
+  echo "${JAVA_CMD}"
 }
 
 # freebsd and similar not supported with this construct, there are no javafx platform jars for those anyway
@@ -85,9 +93,9 @@ if [[ "${OS}" == "win" ]]; then
 
 	# Fixes bug  Unable to get Charset 'cp65001' for property 'sun.stdout.encoding'
 	JAVA_OPTS="${JAVA_OPTS} -Dsun.stdout.encoding=UTF-8 -Dsun.err.encoding=UTF-8"
-	start ${JAVA_CMD} --module-path ${LIB_DIR}/${OS} --add-modules ${MODULES} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen
+	start "${JAVA_CMD}" --module-path ${LIB_DIR}/${OS} --add-modules ${MODULES} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen
 	# shellcheck disable=SC2068
-	start ${JAVA_CMD} --module-path ${LIB_DIR}/${OS} --add-modules ${MODULES}  -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride
+	start "${JAVA_CMD}" --module-path ${LIB_DIR}/${OS} --add-modules ${MODULES}  -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride
 
 else
 	JAVA_CMD=$(fullJavaPath "java")

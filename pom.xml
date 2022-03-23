@@ -39,8 +39,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <release.tag>1.2.8-jdk11-beta</release.tag>
-        <!--renjin.version>3.5-beta76</renjin.version-->
-        <renjin.version>3.5-dev</renjin.version>
+        <renjin.version>3.5-beta76</renjin.version>
+        <!--renjin.version>3.5-dev</renjin.version-->
         <!--jgit 6 and up requires java 11-->
         <jgit.version>6.0.0.202111291000-r</jgit.version>
         <tika.version>2.3.0</tika.version>
@@ -400,7 +400,7 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.10.7</version>
+            <version>0.10.8</version>
         </dependency>
         <dependency>
             <groupId>org.jfree</groupId>

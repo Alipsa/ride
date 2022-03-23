@@ -3,7 +3,7 @@
 # build and run Ride
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd "${DIR}"
+cd "${DIR}" || exit 1
 
 mvn -DskipTests clean package
 status=$?
@@ -34,6 +34,7 @@ if [[ -f $DIR/env.sh ]]; then
 fi
 
 
-java -cp ${TARGET} $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
+# java -cp ${TARGET} $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
 #mvn initialize -Dride.jar=${TARGET} -Drelease.tag=${RELEASE_TAG}
 mvn $JAVA_OPTS exec:java
+# mvn $JAVA_OPTS javafx:run

@@ -7,9 +7,13 @@ set PROPERTY_FILE=version.properties
 FOR /F "tokens=1,2 delims==" %%G IN (%PROPERTY_FILE%) DO (set %%G=%%H)
 
 set VERSION=%version%
+
 set JAR_NAME=%jar.name%
+
 set RELEASE_TAG=%release.tag%
+
 set "LIB_DIR=%DIR%\lib"
+
 set "PATH=%PATH%;%LIB_DIR%"
 
 :: This is just to avoid warnings about missing native BLAS libs when running the REPL
