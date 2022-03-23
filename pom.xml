@@ -168,7 +168,6 @@
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -265,7 +264,7 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.10.7</version>
+            <version>0.10.8</version>
         </dependency>
         <dependency>
             <groupId>org.jfree</groupId>
