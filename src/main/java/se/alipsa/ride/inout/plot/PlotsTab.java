@@ -39,7 +39,7 @@ public class PlotsTab extends Tab {
     contextMenu.getItems().add(item);
 
     if (node instanceof ImageView) {
-      ImageView view = (ImageView)node;
+      var view = (ImageView)node;
       item.setOnAction(a -> {
         promptAndWriteImage(tab.getText(), view.getImage());
       });
@@ -47,7 +47,7 @@ public class PlotsTab extends Tab {
       view.setOnContextMenuRequested(e ->
           contextMenu.show(view, e.getScreenX(), e.getScreenY()));
     } else if (node instanceof WebView) {
-      WebView view = (WebView) node;
+      var view = (WebView) node;
       SnapshotParameters param = new SnapshotParameters();
       param.setDepthBuffer(true);
       item.setOnAction(a -> {

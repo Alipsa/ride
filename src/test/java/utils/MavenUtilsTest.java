@@ -23,7 +23,7 @@ import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.SEXP;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.maven.MavenUtils;
+import se.alipsa.maven.MavenUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,12 +33,12 @@ public class MavenUtilsTest {
    static Logger log = LogManager.getLogger();
 
    File projectPomFile = new File(getClass().getResource("/utils/pom.xml").getFile());
+   MavenUtils mavenUtils = new MavenUtils();
 
    @Test
    public void testPomParsing() throws Exception {
       log.info("pom file is {}", projectPomFile);
-
-      Model project = MavenUtils.parsePom(projectPomFile);
+      Model project = mavenUtils.parsePom(projectPomFile);
       assertThat(project.getArtifactId(), equalTo("phone-number"));
       assertThat(project.getProperties().getProperty("maven.compiler.source"), equalTo("1.8"));
 
@@ -52,7 +52,7 @@ public class MavenUtilsTest {
    @Test
    public void testBomDependency() throws IOException, SettingsBuildingException, ModelBuildingException, XmlPullParserException {
       File pomFile = FileUtils.getResource("utils/pom_bom.xml");
-      Model project = MavenUtils.parsePom(pomFile);
+      Model project = mavenUtils.parsePom(pomFile);
       Dependency dep = project.getDependencies().stream().filter(
           a -> "org.junit.jupiter".equals(a.getGroupId()) && "junit-jupiter".equals(a.getArtifactId()))
           .findAny()
@@ -64,7 +64,7 @@ public class MavenUtilsTest {
    @Test
    public void testPomWithParent() throws IOException, SettingsBuildingException, ModelBuildingException, XmlPullParserException {
       File pomFile = FileUtils.getResource("utils/pom_parent.xml");
-      Model project = MavenUtils.parsePom(pomFile);
+      Model project = mavenUtils.parsePom(pomFile);
       Dependency dep = project.getDependencies().stream().filter(
               a -> "org.junit.jupiter".equals(a.getGroupId()) && "junit-jupiter-api".equals(a.getArtifactId()))
           .findAny()
@@ -89,14 +89,14 @@ public class MavenUtilsTest {
       } catch (Exception e) {
          assertThat(e, instanceOf(ClassNotFoundException.class));
       }
-      ClassLoader cl = MavenUtils.getMavenDependenciesClassloader(projectPomFile, getClass().getClassLoader());
+      ClassLoader cl = mavenUtils.getMavenDependenciesClassloader(projectPomFile, getClass().getClassLoader());
       Class<?> clazz = cl.loadClass(className);
       log.info("Class resolved to {}", clazz);
    }
 
    @Test
    public void testSessionWithMavenClassLoader() throws Exception {
-      ClassLoader cl = MavenUtils.getMavenDependenciesClassloader(projectPomFile, getClass().getClassLoader());
+      ClassLoader cl = mavenUtils.getMavenDependenciesClassloader(projectPomFile, getClass().getClassLoader());
       ClasspathPackageLoader loader = new ClasspathPackageLoader(cl);
       SessionBuilder builder = new SessionBuilder();
       Session session = builder

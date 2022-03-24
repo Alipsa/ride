@@ -14,12 +14,88 @@
       <scope>runtime</scope>
       <outputDirectory>lib</outputDirectory>
       <useProjectArtifact>false</useProjectArtifact>
+      <excludes>
+        <exclude>org.openjfx</exclude>
+      </excludes>
+    </dependencySet>
+
+    <dependencySet>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <outputDirectory>lib/mac</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>org.openjfx:javafx-base</include>
+        <include>org.openjfx:javafx-controls</include>
+        <include>org.openjfx:javafx-media</include>
+        <include>org.openjfx:javafx-web</include>
+        <include>org.openjfx:javafx-swing</include>
+        <include>org.openjfx:javafx-graphics:jar:mac</include>
+      </includes>
+      <excludes>
+        <exclude>org.openjfx:javafx-base:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-base:jar:win</exclude>
+        <exclude>org.openjfx:javafx-controls:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-controls:jar:win</exclude>
+        <exclude>org.openjfx:javafx-media:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-media:jar:win</exclude>
+        <exclude>org.openjfx:javafx-web:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-web:jar:win</exclude>
+        <exclude>org.openjfx:javafx-swing:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-swing:jar:win</exclude>
+      </excludes>
     </dependencySet>
     <dependencySet>
       <unpack>false</unpack>
-      <scope>provided</scope>
-      <outputDirectory>lib</outputDirectory>
+      <scope>runtime</scope>
+      <outputDirectory>lib/linux</outputDirectory>
       <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>org.openjfx:javafx-base</include>
+        <include>org.openjfx:javafx-controls</include>
+        <include>org.openjfx:javafx-media</include>
+        <include>org.openjfx:javafx-web</include>
+        <include>org.openjfx:javafx-swing</include>
+        <include>org.openjfx:javafx-graphics:jar:linux</include>
+      </includes>
+      <excludes>
+        <exclude>org.openjfx:javafx-base:jar:mac</exclude>
+        <exclude>org.openjfx:javafx-base:jar:win</exclude>
+        <exclude>org.openjfx:javafx-controls:jar:mac</exclude>
+        <exclude>org.openjfx:javafx-controls:jar:win</exclude>
+        <exclude>org.openjfx:javafx-media:jar:mac</exclude>
+        <exclude>org.openjfx:javafx-media:jar:win</exclude>
+        <exclude>org.openjfx:javafx-web:jar:mac</exclude>
+        <exclude>org.openjfx:javafx-web:jar:win</exclude>
+        <exclude>org.openjfx:javafx-swing:jar:mac</exclude>
+        <exclude>org.openjfx:javafx-swing:jar:win</exclude>
+      </excludes>
+    </dependencySet>
+    <dependencySet>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <outputDirectory>lib/win</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <includes>
+        <include>org.openjfx:javafx-base</include>
+        <include>org.openjfx:javafx-controls</include>
+        <include>org.openjfx:javafx-media</include>
+        <include>org.openjfx:javafx-web</include>
+        <include>org.openjfx:javafx-swing</include>
+        <include>org.openjfx:javafx-graphics:jar:win</include>
+      </includes>
+      <excludes>
+        <exclude>org.openjfx:javafx-base:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-base:jar:mac</exclude>
+        <exclude>org.openjfx:javafx-controls:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-controls:jar:mac</exclude>
+        <exclude>org.openjfx:javafx-media:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-media:jar:mac</exclude>
+        <exclude>org.openjfx:javafx-web:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-web:jar:mac</exclude>
+        <exclude>org.openjfx:javafx-swing:jar:linux</exclude>
+        <exclude>org.openjfx:javafx-swing:jar:mac</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
 

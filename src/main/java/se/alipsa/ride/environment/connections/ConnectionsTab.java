@@ -185,7 +185,7 @@ public class ConnectionsTab extends Tab {
     connectionsTable.setPlaceholder(new Label("No connections defined"));
 
     addButton.setOnAction(e -> {
-      if (name.getValue() == null || name.getValue().isEmpty()) {
+      if (name.getValue() == null || name.getValue().isBlank()) {
         log.info("No connection name provided, cannot add it");
         return;
       }

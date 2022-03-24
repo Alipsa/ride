@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import se.alipsa.maven.MavenUtils;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.EnvironmentComponent;
@@ -30,7 +31,6 @@ import se.alipsa.ride.inout.InoutComponent;
 import se.alipsa.ride.menu.MainMenu;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.maven.MavenUtils;
 
 import java.io.File;
 import java.util.*;
@@ -80,7 +80,7 @@ public class Ride extends Application {
 
     // Allow global option for MAVEN_HOME to override system settings.
     String mavenHome = getPrefs().get(MAVEN_HOME, MavenUtils.locateMavenHome());
-    if (mavenHome != null && !mavenHome.trim().isEmpty()) {
+    if (mavenHome != null && !mavenHome.isBlank()) {
       System.setProperty("MAVEN_HOME", mavenHome);
     }
     BorderPane root = new BorderPane();

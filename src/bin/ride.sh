@@ -71,26 +71,37 @@ function fullJavaPath {
   echo "${JAVA_CMD}"
 }
 
+# freebsd and similar not supported with this construct, there are no javafx platform jars for those anyway
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  OS=linux
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  OS=mac
+else
+  # msys, cygwin, win32
+  OS=win
+fi
+
 # Note: It is possible to force the initial package loader by adding:
 # -DConsoleComponent.PackageLoader=ClasspathPackageLoader
 # to the command below, but even better to add it to JAVA_OPTS variable in env.sh
+MODULES=javafx.controls,javafx.media,javafx.web,javafx.swing
 
-if [[ "${OSTYPE}" == "msys" ]]; then
+if [[ "${OS}" == "win" ]]; then
 	JAVA_CMD=$(fullJavaPath "javaw")
 	CLASSPATH="${JAR_NAME};$(winpath "${LIB_DIR}")/*"
 	LD_PATH=$(winpath "${LIB_DIR}")
 
 	# Fixes bug  Unable to get Charset 'cp65001' for property 'sun.stdout.encoding'
 	JAVA_OPTS="${JAVA_OPTS} -Dsun.stdout.encoding=UTF-8 -Dsun.err.encoding=UTF-8"
-	start "${JAVA_CMD}" -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen
+	start ${JAVA_CMD} --module-path ${LIB_DIR}/${OS} --add-modules ${MODULES} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen
 	# shellcheck disable=SC2068
-	start "${JAVA_CMD}" -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride
+	start ${JAVA_CMD} --module-path ${LIB_DIR}/${OS} --add-modules ${MODULES}  -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride
 
 else
 	JAVA_CMD=$(fullJavaPath "java")
 	CLASSPATH="${JAR_NAME}:${LIB_DIR}/*"
 	LD_PATH="${LIB_DIR}"
-	${JAVA_CMD} -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
+	${JAVA_CMD} --module-path ${LIB_DIR}/${OS} --add-modules ${MODULES}  -cp "${JAR_NAME}" $JAVA_OPTS se.alipsa.ride.splash.SplashScreen &
 	# shellcheck disable=SC2068
-	${JAVA_CMD} -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride &
+	${JAVA_CMD} --module-path ${LIB_DIR}/${OS} --add-modules ${MODULES}  -Djava.library.path="${LD_PATH}" -cp "${CLASSPATH}" ${BLAS_PROPS[@]} $JAVA_OPTS se.alipsa.ride.Ride &
 fi

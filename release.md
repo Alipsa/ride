@@ -1,11 +1,10 @@
-# This is version 1.2.7 of Ride.
+# This is version 1.2.7-jdk11 of Ride.
 
 Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine, but
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
 packages can be developed, built and tested. Ride supports maven build files as well as git.
   
-To run Ride you need to have maven and Java 1.8 or higher installed (preferably with bundled javafx, I personally use
-11.0.13.fx-librca from bellsoft). If you use open JDK on Linux then you might need to do something like `sudo apt-get install openjfx` depending on your distro.
+To run Ride you need to have maven and Java 11 or higher installed. 
 
 Ride is started using the start script appropriate for your environment (see ride.sh/ride.cmd for details). 
 
@@ -16,9 +15,10 @@ java application (server).
 
 ## How to install:
 Pre requisites:
-- Java 8 or higher with java fx
+- Java JDK 11 or higher
 
-Unzip ride-1.2.7-dist.zip to a directory of choice, note that there is no directory "inside" the zip so create the destination
+Unzip ride-1.2.7-jdk11-dist.zip to a directory of choice, 
+note that there is no directory "inside" the zip so create the destination
 directory and unzip into that directory.
 
 ## How to run:
@@ -33,7 +33,7 @@ If you need to customize things, I suggest that you add those things in an env.s
 This way you will not need to worry about upgrading to a later version of Ride later. 
 The special variable JAVA_OPTS can be used to add system properties (-D key/values) to java. 
 Some reasons why you want to do this are
-- You do not have javafx in your jdk and need to wire it in
+- You do not have java in your path or JAVA_HOME set  
 - You have a high DPI display and need to customize (scale) the screen (you need java 11 for this to really work)
 - You want to add more available memory to Ride than the default
 

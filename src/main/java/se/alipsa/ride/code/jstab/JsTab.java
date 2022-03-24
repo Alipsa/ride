@@ -4,10 +4,10 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
@@ -18,7 +18,6 @@ import se.alipsa.ride.console.ConsoleTextArea;
 import se.alipsa.ride.console.WarningAppenderWriter;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.ride.utils.JavaVersion;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -72,14 +71,7 @@ public class JsTab extends TextAreaTab {
 
   public void initSession() {
     NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
-    int jvmVersion = JavaVersion.specVersion();
-    String[] options;
-    // Nashorn is part of the JDK until Java 14 but anything above 11 is not tested (it became deprecated in java 11)
-    if (jvmVersion >= 11) {
-      options = new String[]{"--language=es6", "--no-deprecation-warning"};
-    } else {
-      options = new String[]{"--language=es6"};
-    }
+    String[] options = new String[]{"--language=es6"};
     engine = nashornScriptEngineFactory.getScriptEngine(options);
 
     engine.put("inout", gui.getInoutComponent());
