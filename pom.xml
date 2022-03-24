@@ -42,9 +42,9 @@
         <renjin.version>3.5-beta76</renjin.version>
         <!--renjin.version>3.5-dev</renjin.version-->
         <!--jgit 6 and up requires java 11-->
-        <jgit.version>6.0.0.202111291000-r</jgit.version>
+        <jgit.version>6.1.0.202203080745-r</jgit.version>
         <tika.version>2.3.0</tika.version>
-        <javafx.version>17.0.2</javafx.version>
+        <javafx.version>18</javafx.version>
         <jersey.version>3.0.4</jersey.version>
     </properties>
 
@@ -400,7 +400,7 @@
         <dependency>
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
-            <version>0.10.8</version>
+            <version>0.10.9</version>
         </dependency>
         <dependency>
             <groupId>org.jfree</groupId>
@@ -411,28 +411,28 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.17.1</version>
+            <version>2.17.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.17.1</version>
+            <version>2.17.2</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.13.1</version>
+            <version>2.13.2</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.13.1</version>
+            <version>2.13.2</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.13.1</version>
+            <version>2.13.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
@@ -485,7 +485,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>3.0.9</version>
+            <version>3.0.10</version>
             <type>pom</type>
         </dependency>
         <!-- enable @Grab to work in groovy -->
@@ -504,19 +504,19 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>maven-3.3.9-utils</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.139</version>
+            <version>4.8.141</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>4.5.3</version>
+            <version>4.6.0</version>
         </dependency>
 
         <dependency>
@@ -624,7 +624,7 @@ release.tag=${release.tag}
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.0</version>
+                <version>3.10.1</version>
                 <configuration>
                     <compilerArgument>-Xlint:all</compilerArgument>
                     <showDeprecation>true</showDeprecation>
@@ -722,12 +722,12 @@ release.tag=${release.tag}
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.2</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.9.0</version>
+                <version>2.10.0</version>
                 <configuration>
                     <rulesUri>file://${basedir}/version-plugin-rules.xml</rulesUri>
                 </configuration>

@@ -58,6 +58,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 ### 1.2.8
 - Change how we update connection combo in sql tabs when adding a connection, select if only one is available
 - Add right click option to save an image in the plots tab to a file.
+- Switch to java 11 as the main stream, merge java 11 branch into master. 1.2.8 will no longer support Java 8
+- upgrade dependencies for jgit, richtextfx, spotbugs, classgraph, groovy, jackson, log4j
 
 #### JDK 11 Specific changes
 - Use openjdk standalone Nashorn instead of the deprecated, built-in, one.
