@@ -655,10 +655,14 @@ public class MainMenu extends MenuBar {
       ExceptionAlert.showAlert("Failed to load properties file", e);
     }
     StringBuilder content = new StringBuilder();
-    content.append("Version: ");
-    content.append(version);
-    content.append("\nRelease tag: ");
-    content.append(releaseTag);
+    content.append("Version: ")
+        .append(version)
+        .append("\nRelease tag: ")
+        .append(releaseTag)
+        .append("\nJava Runtime Version: ")
+        .append(System.getProperty("java.runtime.version"))
+        .append(" (").append(System.getProperty("os.arch")).append(")");
+
     content.append("\n\n See https://github.com/perNyfelt/ride/ for more info or to report issues");
     showInfoAlert("About Ride", content,500, 200);
 
