@@ -34,8 +34,7 @@
 
     <properties>
         <exe.version>1.2.8.0</exe.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <release.tag>1.2.8-jdk11-beta</release.tag>
@@ -235,12 +234,12 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>renjin-client-data-utils</artifactId>
-            <version>1.4.3</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>rideutils</artifactId>
-            <version>1.8.2</version>
+            <version>1.8.4</version>
         </dependency>
 
         <dependency>
