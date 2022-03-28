@@ -60,5 +60,5 @@ public class Constants {
     }
   }
 
-  public static final String REPORT_BUG = "Please report this bug to https://github.com/perNyfelt/ride/issues!";
+  public static final String REPORT_BUG = "Please report this bug to https://github.com/Alipsa/ride/issues!";
 }

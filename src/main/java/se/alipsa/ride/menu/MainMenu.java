@@ -592,7 +592,7 @@ public class MainMenu extends MenuBar {
 
       Platform.runLater(() -> {
         try {
-          URL url = new URL("https://api.github.com/repos/perNyfelt/ride/releases/latest");
+          URL url = new URL("https://api.github.com/repos/ALipsa/ride/releases/latest");
           ObjectMapper mapper = new ObjectMapper();
           JsonNode rootNode = mapper.readTree(url);
           JsonNode tagNode = rootNode.findValue("tag_name");
@@ -628,7 +628,7 @@ public class MainMenu extends MenuBar {
           if (identicalVersion) {
             sb.append("\nYou are running the latest version");
           } else if (versionDiff < 1){
-            sb.append("\nGet the latest release from https://github.com/perNyfelt/ride/releases/latest");
+            sb.append("\nGet the latest release from https://github.com/Alipsa/ride/releases/latest");
           }
           textArea.setText(sb.toString());
           gui.setNormalCursor();
@@ -663,7 +663,7 @@ public class MainMenu extends MenuBar {
         .append(System.getProperty("java.runtime.version"))
         .append(" (").append(System.getProperty("os.arch")).append(")");
 
-    content.append("\n\n See https://github.com/perNyfelt/ride/ for more info or to report issues");
+    content.append("\n\n See https://github.com/Alipsa/ride/ for more info or to report issues");
     showInfoAlert("About Ride", content,500, 200);
 
   }

@@ -12,7 +12,7 @@ public class FileUtilsTest {
   @Test
   public void testBaseName() {
     assertEquals("Foo.bat", FileUtils.baseName("C:\\jabaa\\dabba\\Foo.bat"));
-    assertEquals("README.md", FileUtils.baseName("https://github.com/perNyfelt/r2md/blob/main/README.md"));
+    assertEquals("README.md", FileUtils.baseName("https://github.com/Alipsa/r2md/blob/main/README.md"));
     assertEquals("xing-yi-quan", FileUtils.baseName("https://sancai.se/?incsub_wiki=wikipages/xing-yi-quan"));
     assertEquals("https://sancai.se/?incsub_wiki=xing-yi-quan", FileUtils.baseName("https://sancai.se/?incsub_wiki=xing-yi-quan"));
   }

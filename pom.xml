@@ -11,11 +11,11 @@
 
     <name>Ride</name>
     <description>Java FX GUI for developing Renjin applications</description>
-    <url>https://github.com/perNyfelt/ride</url>
+    <url>https://github.com/Alipsa/ride</url>
     <licenses>
         <license>
             <name>MIT License</name>
-            <url>https://raw.githubusercontent.com/perNyfelt/ride/master/LICENSE</url>
+            <url>https://raw.githubusercontent.com/Alipsa/ride/master/LICENSE</url>
         </license>
     </licenses>
     <developers>
@@ -27,9 +27,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/perNyfelt/ride.git</connection>
-        <developerConnection>scm:git:https://github.com/perNyfelt/ride.git</developerConnection>
-        <url>https://github.com/perNyfelt/ride/tree/master</url>
+        <connection>scm:git:https://github.com/Alipsa/ride.git</connection>
+        <developerConnection>scm:git:https://github.com/Alipsa/ride.git</developerConnection>
+        <url>https://github.com/Alipsa/ride/tree/master</url>
     </scm>
 
     <properties>
