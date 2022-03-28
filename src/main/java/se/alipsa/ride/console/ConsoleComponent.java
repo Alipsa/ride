@@ -50,8 +50,8 @@ import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
-import se.alipsa.maven.DependenciesResolveException;
-import se.alipsa.maven.MavenUtils;
+import se.alipsa.mavenutils.DependenciesResolveException;
+import se.alipsa.mavenutils.MavenUtils;
 
 import javax.script.ScriptException;
 import java.io.File;

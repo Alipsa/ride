@@ -28,7 +28,7 @@ import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.console.ConsoleTextArea;
 import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
-import se.alipsa.maven.MavenUtils;
+import se.alipsa.mavenutils.MavenUtils;
 
 import java.io.File;
 

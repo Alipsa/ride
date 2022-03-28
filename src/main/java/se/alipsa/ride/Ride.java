@@ -22,7 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import se.alipsa.maven.MavenUtils;
+import se.alipsa.mavenutils.MavenUtils;
 import se.alipsa.ride.code.CodeComponent;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.EnvironmentComponent;

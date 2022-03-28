@@ -38,8 +38,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <release.tag>1.2.8-jdk11-beta</release.tag>
-        <renjin.version>3.5-beta76</renjin.version>
-        <!--renjin.version>3.5-dev</renjin.version-->
+        <!--renjin.version>3.5-beta76</renjin.version-->
+        <renjin.version>3.5-dev</renjin.version>
         <!--jgit 6 and up requires java 11-->
         <jgit.version>6.1.0.202203080745-r</jgit.version>
         <tika.version>2.3.0</tika.version>
@@ -234,7 +234,7 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>renjin-client-data-utils</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>se.alipsa</groupId>
@@ -250,7 +250,7 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>mdr</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.openhtmltopdf</groupId>
@@ -503,7 +503,7 @@
         <dependency>
             <groupId>se.alipsa</groupId>
             <artifactId>maven-3.3.9-utils</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3-SNAPSHOT</version>
         </dependency>
 
         <dependency>
