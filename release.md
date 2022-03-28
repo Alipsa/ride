@@ -4,7 +4,7 @@ Ride is a nice IDE for developing and testing R scripts aimed to run in the Renj
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
 packages can be developed, built and tested. Ride supports maven build files as well as git.
   
-To run Ride you need to have maven and Java 11 or higher installed. 
+To run Ride you need Java 11 or higher installed and preferably also maven. 
 
 Ride is started using the start script appropriate for your environment (see ride.sh/ride.cmd for details). 
 
@@ -16,12 +16,36 @@ java application (server).
 ## How to install:
 Pre requisites:
 - Java JDK 11 or higher
+Optional but recommended:
+- Maven 3.3.9 or higher with either MAVEN_HOME set or mvn available in your path
 
 Unzip ride-1.2.7-jdk11-dist.zip to a directory of choice, 
 note that there is no directory "inside" the zip so create the destination
 directory and unzip into that directory.
 
+If java is not in your path and JAVA_HOME is not set you can create a file called env.cmd on windows and
+env.sh on Linux and set those there e.g.
+in env.cmd:
+```shell
+SET JAVA_HOME=C:\Programs\jdk-11.0.14
+SET PATH=%JAVA_HOME%\bin;$PATH
+```
+in env.sh
+```shell
+export JAVA_HOME=/usr/local/jdk-11.0.14
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
+Windows: Create a shortcut to Ride on your desktop 
+Right click ride.cmd -> Send To -> Desktop (create shortcut)
+Right click the shortcut on your desktop and choose properties, change the icon to [ride installation dir]\ride-icon.ico
+
+Linux: Create a launcher to Ride on your desktop
+Run the createLauncher.sh script
+
+
 ## How to run:
+Doubleclick your desktop icon if you created one or:
 
 `> ./ride.sh`
 
@@ -34,7 +58,7 @@ This way you will not need to worry about upgrading to a later version of Ride l
 The special variable JAVA_OPTS can be used to add system properties (-D key/values) to java. 
 Some reasons why you want to do this are
 - You do not have java in your path or JAVA_HOME set  
-- You have a high DPI display and need to customize (scale) the screen (you need java 11 for this to really work)
+- You have a high DPI display and need to customize (scale) the screen 
 - You want to add more available memory to Ride than the default
 
 If possible, create a project and use the pom file to manage dependencies. Ride has wizards for
