@@ -11,9 +11,10 @@ import java.util.Map;
 public class ReportInputResponse {
 
   private String params;
-  private Stage stage;
+  private final Stage stage;
 
-  public static final TypeReference<HashMap<String, Object>> TYPE_REF = new TypeReference<HashMap<String, Object>>() {};
+  public static final TypeReference<HashMap<String, Object>> TYPE_REF = new TypeReference<>() {
+  };
 
   public ReportInputResponse(Stage stage) {
     this.stage = stage;

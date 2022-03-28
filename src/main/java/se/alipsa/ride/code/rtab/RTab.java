@@ -17,10 +17,10 @@ public class RTab extends TextAreaTab implements TaskListener {
 
   private RTextArea rTextArea;
 
-  private ConsoleComponent console;
+  private final ConsoleComponent console;
 
   Button runButton;
-  private Button runTestsButton;
+  private final Button runTestsButton;
   private boolean isRunTestButtonDisabled = false;
 
   private static Logger log = LogManager.getLogger(RTab.class);

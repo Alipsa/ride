@@ -98,12 +98,12 @@ public class XmlTab extends TextAreaTab {
     final String[] mvnArgs = args.split(" ");
     getGui().getConsoleComponent().addOutput("Running 'mvn " + String.join(" ", mvnArgs) + "'", "", false, true);
 
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
       @Override
       public Void call() throws Exception {
         try {
           InvocationResult result = MavenUtils.runMaven(getFile(), mvnArgs, consoleOutputHandler, warningOutputHandler);
-          if ( result.getExitCode() != 0 ) {
+          if (result.getExitCode() != 0) {
             if (result.getExecutionException() != null) {
               throw result.getExecutionException();
             } else {
@@ -172,8 +172,8 @@ public class XmlTab extends TextAreaTab {
   }
 
   private class ConsoleWarningOutputHandler implements InvocationOutputHandler {
-    private ConsoleComponent consoleComponent = getGui().getConsoleComponent();
-    private ConsoleTextArea console = consoleComponent.getConsole();
+    private final ConsoleComponent consoleComponent = getGui().getConsoleComponent();
+    private final ConsoleTextArea console = consoleComponent.getConsole();
     @Override
     public void consumeLine(String line) {
       //System.err.println(line);

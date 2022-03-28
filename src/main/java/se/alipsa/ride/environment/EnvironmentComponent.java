@@ -16,9 +16,7 @@ import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
 import se.alipsa.ride.environment.connections.ConnectionInfo;
 import se.alipsa.ride.environment.connections.ConnectionsTab;
-import se.alipsa.ride.utils.UniqueList;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +26,7 @@ public class EnvironmentComponent extends TabPane {
 
   private static final Logger LOG = LogManager.getLogger();
 
-  private UnStyledCodeArea envTa;
+  private final UnStyledCodeArea envTa;
 
   ConnectionsTab connectionsTab;
   HistoryTab historyTab;

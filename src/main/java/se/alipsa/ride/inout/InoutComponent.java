@@ -466,10 +466,7 @@ public class InoutComponent extends TabPane implements InOut {
   }
 
   public void setEnableGit(boolean enableGit) {
-    boolean doRefresh = false;
-    if (this.enableGit != enableGit) {
-      doRefresh = true;
-    }
+    boolean doRefresh = this.enableGit != enableGit;
     this.enableGit = enableGit;
 
     if (!enableGit) {

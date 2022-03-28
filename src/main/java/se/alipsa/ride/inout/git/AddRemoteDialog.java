@@ -12,25 +12,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.GuiUtils;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
 
 public class AddRemoteDialog extends Dialog<Map<AddRemoteDialog.KEY, String>> {
 
    public enum KEY {
       NAME,
       URI
-   };
+   }
 
-   private TextField nameField;
-   private TextField urlField;
+   private final TextField nameField;
+   private final TextField urlField;
 
    public AddRemoteDialog() {
       setTitle("Add remote");

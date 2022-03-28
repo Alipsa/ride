@@ -24,18 +24,16 @@ public class UserManual {
   private static final String NORMAL_BUTTON = "usermanual-normal-button";
   private static final String CLICKED_BUTTON = "usermanual-clicked-button";
 
-  private final Ride gui;
   private final WebEngine webEngine;
   private final Button featuresButton;
-  private Button rideShortCuts;
-  private Button interactingWithRideButton;
-  private Button examplesButton;
-  private Button packagesButton;
-  private Stage stage;
-  private URL featuresUrl;
+  private final Button rideShortCuts;
+  private final Button interactingWithRideButton;
+  private final Button examplesButton;
+  private final Button packagesButton;
+  private final Stage stage;
+  private final URL featuresUrl;
 
   public UserManual(Ride gui) {
-    this.gui = gui;
     WebView browser = new WebView();
     webEngine = browser.getEngine();
     BorderPane borderPane = new BorderPane();

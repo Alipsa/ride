@@ -1,8 +1,5 @@
 package se.alipsa.ride.menu;
 
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
-
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -35,7 +32,7 @@ public class CreateProjectWizardDialog extends Dialog<CreateProjectWizardResult>
   private final TextField dirField;
   private CheckBox changeToDir;
   private final TextField projectDirField = new TextField();
-  private boolean createProject;
+  private final boolean createProject;
 
   // Used to create a new project
   CreateProjectWizardDialog(Ride gui) {

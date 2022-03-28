@@ -50,9 +50,7 @@ public class MuninReportDialog extends Dialog<MuninReport> {
       passwdOpt.ifPresent(con::setPassword);
     }
 
-    reportGroupsLV.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      populateReportsView(con, newValue);
-    });
+    reportGroupsLV.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> populateReportsView(con, newValue));
 
     muninReportLV.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
         getDialogPane().lookupButton(ButtonType.OK).setDisable(false)
@@ -71,7 +69,7 @@ public class MuninReportDialog extends Dialog<MuninReport> {
   private void populateReportsView(MuninConnection con, String groupName) {
     if (groupName == null) return;
 
-    Task<List<MuninReport>> task = new Task<List<MuninReport>>() {
+    Task<List<MuninReport>> task = new Task<>() {
       @Override
       protected List<MuninReport> call() throws Exception {
         return MuninClient.fetchReports(con, groupName);
@@ -97,7 +95,7 @@ public class MuninReportDialog extends Dialog<MuninReport> {
   }
 
   private void populateGroups(MuninConnection con) {
-    Task<List<String>> task = new Task<List<String>>() {
+    Task<List<String>> task = new Task<>() {
       @Override
       protected List<String> call() throws Exception {
         return MuninClient.fetchReportGroups(con);

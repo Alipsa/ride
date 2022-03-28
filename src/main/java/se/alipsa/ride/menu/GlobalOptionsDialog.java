@@ -32,8 +32,8 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
   private final IntField intField;
   private final ComboBox<String> themes;
   private final CheckBox useMavenFileClasspath;
-  private TextField mavenHome;
-  private CheckBox restartSessionAfterMvnRun;
+  private final TextField mavenHome;
+  private final CheckBox restartSessionAfterMvnRun;
   private final CheckBox addBuildDirToClasspath;
   private final CheckBox enableGit;
 
@@ -136,11 +136,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     grid.add(reposTable, 1, 1);
 
     pkgLoaderCb.valueProperty().addListener(e -> {
-      if (ClasspathPackageLoader.class.equals(pkgLoaderCb.getValue())) {
-        reposTable.setDisable(true);
-      } else {
-        reposTable.setDisable(false);
-      }
+      reposTable.setDisable(ClasspathPackageLoader.class.equals(pkgLoaderCb.getValue()));
     });
 
     Label consoleMaxSizeLabel = new Label("Console max size");

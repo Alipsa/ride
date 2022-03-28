@@ -7,7 +7,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
-import org.reactfx.util.LL;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.UnStyledCodeArea;
 
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 
 public class HistoryTab extends Tab {
 
-  private UnStyledCodeArea historyTa;
+  private final UnStyledCodeArea historyTa;
 
   public HistoryTab() {
     setText("History");

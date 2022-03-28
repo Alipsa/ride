@@ -22,7 +22,7 @@ public class CloneProjectDialog extends Dialog<CloneProjectDialogResult> {
   Button chooseDirButton = new Button("Browse...");
 
   File selectedDirectory;
-  private Ride gui;
+  private final Ride gui;
 
   public CloneProjectDialog(Ride gui) {
     this.gui = gui;

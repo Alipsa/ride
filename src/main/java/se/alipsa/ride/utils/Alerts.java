@@ -14,6 +14,7 @@ import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Alerts {
@@ -53,10 +54,7 @@ public class Alerts {
     stage.getIcons().addAll(gui.getStage().getIcons());
 
     Optional<ButtonType> result = alert.showAndWait();
-    if (result.isPresent() && result.get() == ButtonType.YES) {
-      return true;
-    }
-    return false;
+    return result.isPresent() && result.get() == ButtonType.YES;
   }
   public static Optional<ButtonType> showAlert(String title, String content, Alert.AlertType information) {
 
@@ -97,7 +95,7 @@ public class Alerts {
     Platform.runLater(() -> {
 
       WebView view = new WebView();
-      view.getEngine().setUserStyleSheetLocation(FileUtils.getResourceUrl(Constants.BRIGHT_THEME).toExternalForm());
+      view.getEngine().setUserStyleSheetLocation(Objects.requireNonNull(FileUtils.getResourceUrl(BRIGHT_THEME)).toExternalForm());
       view.getEngine().loadContent(content);
 
       BorderPane pane = new BorderPane();

@@ -46,10 +46,10 @@ public class FileTree extends TreeView<FileItem> {
   private final String folderUrl = Objects.requireNonNull(FileUtils.getResourceUrl("image/folder.png")).toExternalForm();
   private final String fileUrl = Objects.requireNonNull(FileUtils.getResourceUrl("image/file.png")).toExternalForm();
   private final String WORKING_DIR_PREF = "FileTree.WorkingDir";
-  private TreeItemComparator treeItemComparator = new TreeItemComparator();
-  private Ride gui;
-  private static Logger log = LogManager.getLogger(FileTree.class);
-  private FileOpener fileOpener;
+  private final TreeItemComparator treeItemComparator = new TreeItemComparator();
+  private final Ride gui;
+  private static final Logger log = LogManager.getLogger(FileTree.class);
+  private final FileOpener fileOpener;
   private DynamicContextMenu menu;
   private Git git;
   private final InoutComponent inoutComponent;
@@ -62,7 +62,6 @@ public class FileTree extends TreeView<FileItem> {
     this.getStyleClass().add("fileTree");
 
     File current = new File(getWorkingDirPref());
-    String prefPath = current.getAbsolutePath();
     boolean workDirExist = current.exists();
     if (!workDirExist) {
       if (current.getParentFile().exists()) {
@@ -84,7 +83,7 @@ public class FileTree extends TreeView<FileItem> {
       sortTree(getRoot());
       getRoot().setExpanded(true);
     }
-    setCellFactory(treeView -> new TreeCell<FileItem>() {
+    setCellFactory(treeView -> new TreeCell<>() {
 
       @Override
       protected void updateItem(FileItem item, boolean empty) {
@@ -175,7 +174,7 @@ public class FileTree extends TreeView<FileItem> {
   }
 
   private void gitColorTree(TreeItem<FileItem> root) {
-    File rootDir = getRoot().getValue().getFile();
+    File rootDir = root.getValue().getFile();
     if (rootDir != null && rootDir.exists() && Objects.requireNonNull(rootDir.list((dir, name) -> name.equalsIgnoreCase(".git"))).length > 0) {
       log.debug("adding git coloring...");
     } else {

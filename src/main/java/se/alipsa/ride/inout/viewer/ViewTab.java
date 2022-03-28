@@ -237,7 +237,7 @@ public class ViewTab extends Tab {
   }
 
   private void createContextMenu(WebView browser, String content, boolean... useLoadOpt) {
-    boolean useLoad = useLoadOpt.length > 0 ? useLoadOpt[0] : false;
+    boolean useLoad = useLoadOpt.length > 0 && useLoadOpt[0];
     ContextMenu contextMenu = new ContextMenu();
     WebEngine webEngine = browser.getEngine();
 

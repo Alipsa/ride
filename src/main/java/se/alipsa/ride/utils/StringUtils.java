@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class StringUtils {
   private static final Pattern LEADING_SPACES = Pattern.compile("^\\s+");
 
-  private static FormattedMessageFactory factory = new FormattedMessageFactory();
+  private static final FormattedMessageFactory factory = new FormattedMessageFactory();
 
   public static String format(String text, Object... args) {
     //return org.slf4j.helpers.MessageFormatter.arrayFormat(text, args).getMessage();

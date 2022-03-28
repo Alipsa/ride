@@ -11,18 +11,12 @@ import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.CoreConfig;
 import org.eclipse.jgit.lib.StoredConfig;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.GuiUtils;
-
-import java.net.URL;
-
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
 
 public class GitConfigureDialog extends Dialog<ConfigResult> {
 
-  private Git git;
-  private ComboBox<CoreConfig.AutoCRLF> autoCrLfCombo;
+  private final Git git;
+  private final ComboBox<CoreConfig.AutoCRLF> autoCrLfCombo;
 
   public GitConfigureDialog(Git git) {
     this.git = git;

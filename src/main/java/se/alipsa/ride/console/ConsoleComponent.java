@@ -132,7 +132,7 @@ public class ConsoleComponent extends BorderPane {
   private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader, boolean... skipMavenClassloading) {
     AtomicReference<String> version = new AtomicReference<>("unknown");
 
-    Task<Void> initTask = new Task<Void>() {
+    Task<Void> initTask = new Task<>() {
 
       @Override
       protected Void call() throws Exception {
@@ -206,10 +206,10 @@ public class ConsoleComponent extends BorderPane {
 
           SessionBuilder builder = new SessionBuilder();
           session = builder
-                  .withDefaultPackages()
-                  .setPackageLoader(loader) // allows library to work without having to include in the pom
-                  .setClassLoader(cl) //allows imports in r code to work
-                  .build();
+              .withDefaultPackages()
+              .setPackageLoader(loader) // allows library to work without having to include in the pom
+              .setClassLoader(cl) //allows imports in r code to work
+              .build();
 
           if (workingDir != null && workingDir.exists()) {
             session.setWorkingDirectory(workingDir);
@@ -221,7 +221,7 @@ public class ConsoleComponent extends BorderPane {
           RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
           engine = factory.getScriptEngine(session);
           return null;
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
           // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
           // this way we can get to the original one by extracting the cause from the thrown exception
           System.out.println("Exception caught, rethrowing as wrapped Exception");
@@ -327,7 +327,7 @@ public class ConsoleComponent extends BorderPane {
     }
     ObjectMapper mapper = new ObjectMapper();
     try {
-      list = mapper.readValue(remotes, new TypeReference<List<Repo>>() {
+      list = mapper.readValue(remotes, new TypeReference<>() {
       });
     } catch (InvalidDefinitionException e) {
       e.printStackTrace();
@@ -353,11 +353,7 @@ public class ConsoleComponent extends BorderPane {
   }
 
   private String getStars(int length) {
-    StringBuilder buf = new StringBuilder(length);
-    for (int i = 0; i < length; i++) {
-      buf.append("*");
-    }
-    return buf.toString();
+    return "*".repeat(Math.max(0, length));
   }
 
   public void restartR() {
@@ -468,7 +464,7 @@ public class ConsoleComponent extends BorderPane {
 
     running();
 
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
       @Override
       public Void call() throws Exception {
         try {
@@ -542,7 +538,7 @@ public class ConsoleComponent extends BorderPane {
   public void updateEnvironment() {
     Environment global = session.getGlobalEnvironment();
     Context topContext = session.getTopLevelContext();
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
       @Override
       protected Void call() throws Exception {
         try {
@@ -550,18 +546,18 @@ public class ConsoleComponent extends BorderPane {
           Platform.runLater(() -> gui.getInoutComponent().setPackages(pkgs));
 
           String script = ".ride_funcList <- c()\n" +
-                  ".ride_objList <- c()\n" +
-                  "for (.ride_pkg in paste0('package:',.packages())) {\n" +
-                  "   .ride_funcList <- c(.ride_funcList,  ls(.ride_pkg)[(ls(.ride_pkg) %in% c(lsf.str(.ride_pkg)))]) \n" +
-                  "   .ride_objList <- c(.ride_objList, ls(.ride_pkg)[!(ls(.ride_pkg) %in% c(lsf.str(.ride_pkg)))]) \n" +
-                  "}\n" +
-                  ".ride_funcList <- c(.ride_funcList, ls()[(ls() %in% c(lsf.str()))]) \n" +
-                  ".ride_objList <- c(.ride_objList, ls()[!(ls() %in% c(lsf.str()))]) \n" +
-                  "list('functions' = .ride_funcList, 'objects' = .ride_objList)";
+              ".ride_objList <- c()\n" +
+              "for (.ride_pkg in paste0('package:',.packages())) {\n" +
+              "   .ride_funcList <- c(.ride_funcList,  ls(.ride_pkg)[(ls(.ride_pkg) %in% c(lsf.str(.ride_pkg)))]) \n" +
+              "   .ride_objList <- c(.ride_objList, ls(.ride_pkg)[!(ls(.ride_pkg) %in% c(lsf.str(.ride_pkg)))]) \n" +
+              "}\n" +
+              ".ride_funcList <- c(.ride_funcList, ls()[(ls() %in% c(lsf.str()))]) \n" +
+              ".ride_objList <- c(.ride_objList, ls()[!(ls() %in% c(lsf.str()))]) \n" +
+              "list('functions' = .ride_funcList, 'objects' = .ride_objList)";
 
           ListVector funcObj = (ListVector) engine.eval(script);
-          StringVector functions = (StringVector)funcObj.get("functions");
-          StringVector objects = (StringVector)funcObj.get("objects");
+          StringVector functions = (StringVector) funcObj.get("functions");
+          StringVector objects = (StringVector) funcObj.get("objects");
 
           engine.eval("rm(.ride_funcList, .ride_objList, .ride_pkg)");
           Platform.runLater(() -> {
@@ -603,18 +599,16 @@ public class ConsoleComponent extends BorderPane {
     running();
     String script = rTab.getTextContent();
     String title = rTab.getTitle();
-    TaskListener taskListener = rTab;
     if (script.contains("testthat")) {
       runTestthatTests(rTab);
     } else {
-      runHamcrestTests(script, title, taskListener);
+      runHamcrestTests(script, title, rTab);
     }
   }
 
   private void runTestthatTests(RTab rTab) {
     String script = rTab.getTextContent();
     String title = rTab.getTitle();
-    TaskListener taskListener = rTab;
     File file = rTab.getFile();
     console.append("", true);
     console.append("Running testthat tests", true);
@@ -625,14 +619,14 @@ public class ConsoleComponent extends BorderPane {
       return;
     }
 
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
 
       long start;
       long end;
 
       @Override
       public Void call() {
-        taskListener.taskStarted();
+        ((TaskListener) rTab).taskStarted();
         start = System.currentTimeMillis();
         engine.put("inout", gui.getInoutComponent());
         List<TestResult> results = new ArrayList<>();
@@ -645,7 +639,7 @@ public class ConsoleComponent extends BorderPane {
           session.setStdErr(errWriter);
           FileObject orgWd = session.getWorkingDirectory();
           File scriptDir = file.getParentFile();
-          console.appendFx(DOUBLE_INDENT  + "- Setting working directory to " + scriptDir, true);
+          console.appendFx(DOUBLE_INDENT + "- Setting working directory to " + scriptDir, true);
           session.setWorkingDirectory(scriptDir);
 
           TestResult result = runTest(script, title);
@@ -656,7 +650,7 @@ public class ConsoleComponent extends BorderPane {
 
           end = System.currentTimeMillis();
           Map<TestResult.OutCome, List<TestResult>> resultMap = results.stream()
-             .collect(Collectors.groupingBy(TestResult::getResult));
+              .collect(Collectors.groupingBy(TestResult::getResult));
 
           List<TestResult> successResults = resultMap.get(TestResult.OutCome.SUCCESS);
           List<TestResult> failureResults = resultMap.get(TestResult.OutCome.FAILURE);
@@ -669,7 +663,7 @@ public class ConsoleComponent extends BorderPane {
           console.appendFx("\nR tests summary:", true);
           console.appendFx("----------------", true);
           console.appendFx(format("Tests run: {}, Successes: {}, Failures: {}, Errors: {}",
-             results.size(), successCount, failCount, errorCount), true);
+              results.size(), successCount, failCount, errorCount), true);
           console.appendFx("Time: " + duration + "\n", true);
         } catch (IOException e) {
           console.appendWarningFx("Failed to run test");
@@ -679,13 +673,13 @@ public class ConsoleComponent extends BorderPane {
       }
     };
     task.setOnSucceeded(e -> {
-      taskListener.taskEnded();
+      ((TaskListener) rTab).taskEnded();
       waiting();
       updateEnvironment();
       promptAndScrollToEnd();
     });
     task.setOnFailed(e -> {
-      taskListener.taskEnded();
+      ((TaskListener) rTab).taskEnded();
       waiting();
       updateEnvironment();
       Throwable throwable = task.getException();
@@ -719,7 +713,7 @@ public class ConsoleComponent extends BorderPane {
     console.append("Running hamcrest tests", true);
     console.append("----------------------", true);
 
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
 
       long start;
       long end;
@@ -841,7 +835,6 @@ public class ConsoleComponent extends BorderPane {
     TestResult result = new TestResult(title);
     String issue;
     Exception exception;
-    String testName = title;
     console.appendFx(indent + format("# Running test {}", title).trim(), true);
     try {
       engine.eval(script);
@@ -849,16 +842,16 @@ public class ConsoleComponent extends BorderPane {
       return result;
     } catch (org.renjin.parser.ParseException e) {
       exception = e;
-      issue = e.getClass().getSimpleName() + " parsing R script " + testName;
+      issue = e.getClass().getSimpleName() + " parsing R script " + title;
     } catch (ScriptException | EvalException e) {
       exception = e;
-      issue = e.getClass().getSimpleName() + " executing test " + testName;
+      issue = e.getClass().getSimpleName() + " executing test " + title;
     } catch (RuntimeException e) {
       exception = e;
-      issue = e.getClass().getSimpleName() + " occurred running R script " + testName;
+      issue = e.getClass().getSimpleName() + " occurred running R script " + title;
     } catch (Exception e) {
       exception = e;
-      issue = e.getClass().getSimpleName() + " thrown when running script " + testName;
+      issue = e.getClass().getSimpleName() + " thrown when running script " + title;
     }
     result.setResult(TestResult.OutCome.FAILURE);
     result.setError(exception);

@@ -49,7 +49,7 @@ public class MuninRTab extends MuninTab {
       }
     }
     gui.setWaitCursor();
-    Task<SEXP> task = new Task<SEXP>() {
+    Task<SEXP> task = new Task<>() {
       @Override
       protected SEXP call() throws Exception {
         try {
@@ -171,7 +171,7 @@ public class MuninRTab extends MuninTab {
     });
   }
 
-  public class Console {
+  public static class Console {
     public void log(String text) {
       System.out.println(text);
     }

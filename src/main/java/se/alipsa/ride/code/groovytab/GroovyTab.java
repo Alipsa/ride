@@ -25,7 +25,7 @@ public class GroovyTab extends TextAreaTab {
 
   private final GroovyTextArea groovyTextArea;
 
-  private static Logger log = LogManager.getLogger(GroovyTab.class);
+  private static final Logger log = LogManager.getLogger(GroovyTab.class);
   private final GroovyScriptEngineFactory factory = new GroovyScriptEngineFactory();
   private ScriptEngine engine;
 
@@ -66,14 +66,14 @@ public class GroovyTab extends TextAreaTab {
     final ConsoleTextArea console = consoleComponent.getConsole();
     final String title = getTitle();
 
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
       @Override
       public Void call() throws Exception {
         try (
-                AppenderPrintWriter out = new AppenderPrintWriter(console);
-                WarningAppenderWriter err = new WarningAppenderWriter(console);
-                PrintWriter outputWriter = new PrintWriter(out);
-                PrintWriter errWriter = new PrintWriter(err)
+            AppenderPrintWriter out = new AppenderPrintWriter(console);
+            WarningAppenderWriter err = new WarningAppenderWriter(console);
+            PrintWriter outputWriter = new PrintWriter(out);
+            PrintWriter errWriter = new PrintWriter(err)
         ) {
           Platform.runLater(() -> console.append(title, true));
           engine.getContext().setWriter(outputWriter);

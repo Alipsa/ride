@@ -17,7 +17,6 @@ import java.io.File;
  * <code>
  * SshSessionFactory sshSessionFactory = new RideSshSessionFactory();
  *       pullCommand.setTransportConfigCallback( new TransportConfigCallback() {
- *         @Override
  *         public void configure( Transport transport ) {
  *           SshTransport sshTransport = ( SshTransport )transport;
  *           sshTransport.setSshSessionFactory( sshSessionFactory );

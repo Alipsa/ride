@@ -98,7 +98,7 @@ public class SqlTextArea extends CodeTextArea {
           + "|(?<COMMENT>" + COMMENT_PATTERN + ")"
   );
 
-  private ContextMenu suggestionsPopup = new ContextMenu();
+  private final ContextMenu suggestionsPopup = new ContextMenu();
 
   public SqlTextArea(SqlTab parent) {
     super(parent);

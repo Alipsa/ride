@@ -15,8 +15,8 @@ public class ConsoleTextArea extends UnStyledCodeArea {
   public static final int CONSOLE_MAX_LENGTH_DEFAULT = 1_500_000;
   private int consoleMaxLength = CONSOLE_MAX_LENGTH_DEFAULT;
   static Logger log = LogManager.getLogger(ConsoleTextArea.class);
-  private StringBuilder buffer = new StringBuilder();
-  private StringBuilder warnBuffer = new StringBuilder();
+  private final StringBuilder buffer = new StringBuilder();
+  private final StringBuilder warnBuffer = new StringBuilder();
 
   private boolean sizeWWarningPrinted = false;
 
@@ -70,7 +70,7 @@ public class ConsoleTextArea extends UnStyledCodeArea {
   }
 
   public void append(String text, boolean... addNewline) {
-    boolean addLf = addNewline.length > 0 ? addNewline[0] : false;
+    boolean addLf = addNewline.length > 0 && addNewline[0];
     if (addLf) {
       appendText(text + "\n");
     } else {
@@ -79,9 +79,7 @@ public class ConsoleTextArea extends UnStyledCodeArea {
   }
 
   public void appendFx(String text, boolean... addNewline) {
-    Platform.runLater(() -> {
-      append(text, addNewline);
-    });
+    Platform.runLater(() -> append(text, addNewline));
   }
 
   public void appendWarning(String text, boolean... addNewline) {
@@ -126,9 +124,7 @@ public class ConsoleTextArea extends UnStyledCodeArea {
 
 
   public void appendWarningFx(String text) {
-    Platform.runLater(() -> {
-      appendWarning(text, true);
-    });
+    Platform.runLater(() -> appendWarning(text, true));
   }
 
   public void appendWarnChar(char b) {

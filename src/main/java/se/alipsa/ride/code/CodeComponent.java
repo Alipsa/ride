@@ -27,10 +27,10 @@ import java.nio.charset.Charset;
 
 public class CodeComponent extends BorderPane {
 
-  private TabPane pane;
-  private Ride gui;
+  private final TabPane pane;
+  private final Ride gui;
 
-  private Logger log = LogManager.getLogger(CodeComponent.class);
+  private static final Logger log = LogManager.getLogger(CodeComponent.class);
 
   public CodeComponent(Ride gui) {
     this.gui = gui;

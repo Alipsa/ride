@@ -38,17 +38,13 @@ public class MiscTab extends Tab {
 
     descriptionTA = new TextArea(muninReport.getDescription());
     descriptionTA.setPrefRowCount(2);
-    descriptionTA.textProperty().addListener((observable, oldValue, newValue) -> {
-      parentTab.contentChanged();
-    });
+    descriptionTA.textProperty().addListener((observable, oldValue, newValue) -> parentTab.contentChanged());
     vBox.getChildren().addAll(new Label("Description"), descriptionTA);
 
     HBox groupAndTypeBox = new HBox(5);
     vBox.getChildren().add(groupAndTypeBox);
     groupTF = new TextField(muninReport.getReportGroup());
-    groupTF.textProperty().addListener((observable, oldValue, newValue) -> {
-      parentTab.contentChanged();
-    });
+    groupTF.textProperty().addListener((observable, oldValue, newValue) -> parentTab.contentChanged());
     groupAndTypeBox.getChildren().addAll(new Label("Group"), groupTF);
     typeCB = new ComboBox<>();
     typeCB.getItems().addAll(ReportType.UNMANAGED, ReportType.MDR);
@@ -61,9 +57,7 @@ public class MiscTab extends Tab {
     if (muninReport.getInputContent() != null) {
       inputTA.replaceContentText(0, 0, muninReport.getInputContent());
     }
-    inputTA.textProperty().addListener((observable, oldValue, newValue) -> {
-      parentTab.contentChanged();
-    });
+    inputTA.textProperty().addListener((observable, oldValue, newValue) -> parentTab.contentChanged());
     VBox.setVgrow(inputTA, Priority.ALWAYS);
     vBox.getChildren().addAll(new Label("Input parameters"), inputTA);
 

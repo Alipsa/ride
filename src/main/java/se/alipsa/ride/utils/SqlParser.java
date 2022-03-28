@@ -12,7 +12,7 @@ import java.util.List;
 
 public class SqlParser {
 
-  private static Logger log = LogManager.getLogger(SqlParser.class);
+  private static final Logger log = LogManager.getLogger(SqlParser.class);
 
   public static String[] split(String sql, StringBuilder warnings) {
     try {
@@ -26,7 +26,8 @@ public class SqlParser {
     } catch (JSQLParserException e) {
       log.warn("Failed to parse sql", e);
       int numlines = org.apache.commons.lang3.StringUtils.countMatches(sql,"\n") + 1;
-      warnings.append("Failed to parse statement(s), will try the whole string (" + numlines + " lines, " + sql.length() + " chars)\n");
+      warnings.append("Failed to parse statement(s), will try the whole string (")
+          .append(numlines).append(" lines, ").append(sql.length()).append(" chars)\n");
       return new String[] {sql};
     }
   }

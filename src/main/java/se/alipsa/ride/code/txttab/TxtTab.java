@@ -10,7 +10,7 @@ import java.io.File;
 
 public class TxtTab extends TextAreaTab {
 
-  private TxtTextArea txtTextArea;
+  private final TxtTextArea txtTextArea;
 
   public TxtTab(String title, Ride gui) {
     super(gui, CodeType.TXT);
