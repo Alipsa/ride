@@ -15,7 +15,6 @@ import se.alipsa.ride.model.MuninReport;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MuninClient {
 
@@ -40,7 +39,8 @@ public class MuninClient {
       throw new Exception("Failed to fetch report info on Munin server: " + con.target()
           + ". The response code was " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
     }
-    return response.readEntity(new GenericType<Map<String, List<String>>>() {});
+    return response.readEntity(new GenericType<>() {
+    });
   }
 
   public static List<String> fetchReportGroups(MuninConnection con) throws Exception {
@@ -56,7 +56,8 @@ public class MuninClient {
       throw new Exception("Failed to fetch report groups on Munin server: " + con.target()
                           + ". The response code was " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
     }
-    return response.readEntity(new GenericType<List<String>>() {});
+    return response.readEntity(new GenericType<>() {
+    });
   }
 
   public static List<MuninReport> fetchReports(MuninConnection con, String groupName) throws Exception {
@@ -73,7 +74,8 @@ public class MuninClient {
                           + ". The response code was " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase()
       );
     }
-    return response.readEntity(new GenericType<List<MuninReport>>() {});
+    return response.readEntity(new GenericType<>() {
+    });
   }
 
   public static void publishReport(MuninConnection muninConnection, MuninReport muninReport, boolean newReport) throws Exception {
@@ -110,9 +112,10 @@ public class MuninClient {
       throw new Exception("Failed to update report on Munin server: " + con.target(), e);
     }
     if (response.getStatus() != 200) {
-      String headers = response.getHeaders().entrySet().stream()
+      /* String headers = response.getHeaders().entrySet().stream()
           .map(e -> e.getKey() + "=" + e.getValue())
           .collect(Collectors.joining(", ", "{", "}"));
+       */
       throw new Exception("Failed to publish report to Munin server: " + con.target()
                           + ". The response code was " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase()
                           + "\n, Error message was '" + response.readEntity(String.class) + "'"

@@ -47,7 +47,7 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   private final CodeTextArea codeTextArea;
   private final MiscTab miscTab;
   private MuninReport muninReport;
-  private TabPane tabPane = new TabPane();
+  private final TabPane tabPane = new TabPane();
 
   protected Button viewButton;
   protected Button publishButton;

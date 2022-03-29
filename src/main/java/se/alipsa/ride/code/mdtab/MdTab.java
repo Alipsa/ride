@@ -10,7 +10,7 @@ import java.io.File;
 
 public class MdTab extends TextAreaTab  {
 
-  private MdTextArea mdTextArea;
+  private final MdTextArea mdTextArea;
 
   public MdTab(String title, Ride gui) {
     super(gui, CodeType.TXT);

@@ -61,7 +61,7 @@ public class ParentLastURLClassLoader extends ClassLoader {
    * We need this because findClass is protected in URLClassLoader
    */
   private static class ChildURLClassLoader extends URLClassLoader {
-    private FindClassClassLoader realParent;
+    private final FindClassClassLoader realParent;
 
     public ChildURLClassLoader(URL[] urls, FindClassClassLoader realParent) {
       super(urls, null);

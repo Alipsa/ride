@@ -11,7 +11,6 @@ import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.CodeType;
 import se.alipsa.ride.code.TextAreaTab;
-import se.alipsa.ride.console.ConsoleComponent;
 
 import java.io.File;
 

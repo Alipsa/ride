@@ -15,7 +15,7 @@ public enum CodeType {
     this.displayValue = displayValue;
   }
 
-  private String displayValue;
+  private final String displayValue;
 
   public String getDisplayValue() {
     return displayValue;

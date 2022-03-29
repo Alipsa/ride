@@ -113,7 +113,7 @@ public class FileOpener {
   }
 
   private void openApplicationExternal(File file) {
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
       @Override
       protected Void call() throws Exception {
         Desktop.getDesktop().open(file);

@@ -82,7 +82,7 @@ public class PackagesTab extends Tab {
     // LibraryUtils.getAvailableLibraries() is very fast, but maybe it would make more sense to run this in a separate thread
     Platform.runLater(() -> {
       // AetherPackageLoader might have picked up new packages, so we need to do this each time
-      Set<RenjinLibrary> availablePackages = null;
+      Set<RenjinLibrary> availablePackages;
       try {
         availablePackages = LibraryUtils.getAvailableLibraries(Ride.instance().getConsoleComponent().getRenjinClassLoader());
       } catch (IOException | RuntimeException e) {

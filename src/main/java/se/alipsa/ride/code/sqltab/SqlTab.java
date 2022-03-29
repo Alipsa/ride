@@ -3,7 +3,6 @@ package se.alipsa.ride.code.sqltab;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -36,7 +35,7 @@ public class SqlTab extends TextAreaTab {
   private final Button executeButton;
   private final ComboBox<ConnectionInfo> connectionCombo;
 
-  private Logger log = LogManager.getLogger(SqlTab.class);
+  private static final Logger log = LogManager.getLogger(SqlTab.class);
 
   private static final int PRINT_QUERY_LENGTH = 30;
 
@@ -52,9 +51,7 @@ public class SqlTab extends TextAreaTab {
     connectionCombo = new ComboBox<>();
     connectionCombo.setTooltip(new Tooltip("Create connections in the Connections tab \nand select the name here"));
     connectionCombo.getSelectionModel().selectedItemProperty().addListener(
-        (options, oldValue, newValue) -> {
-          executeButton.setDisable(false);
-        }
+        (options, oldValue, newValue) -> executeButton.setDisable(false)
     );
     buttonPane.getChildren().add(connectionCombo);
     updateConnections();
@@ -108,11 +105,11 @@ public class SqlTab extends TextAreaTab {
       consoleComponent.addOutput(getTitle(), "Query contains " + batchedQry.length + " statements", false, true);
     }
 
-    Task<Void> updateTask = new Task<Void>() {
+    Task<Void> updateTask = new Task<>() {
       @Override
       protected Void call() throws Exception {
         ConnectionInfo ci = connectionCombo.getValue();
-        try(Connection con = ci.connect()) {
+        try (Connection con = ci.connect()) {
 
           AtomicInteger queryCount = new AtomicInteger(1);
 

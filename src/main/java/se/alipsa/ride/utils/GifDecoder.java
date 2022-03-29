@@ -162,7 +162,7 @@ public class GifDecoder {
         if (lastDispose == 2) {
           // fill last image rect area with background color
           Graphics2D g = image.createGraphics();
-          Color c = null;
+          Color c;
           if (transparency) {
             c = new Color(0, 0, 0, 0);  // assume background is transparent
           } else {
@@ -272,7 +272,7 @@ public class GifDecoder {
       if (is != null) {
         is.close();
       }
-    } catch (IOException e) {
+    } catch (IOException ignored) {
     }
     return status;
   }
@@ -303,7 +303,7 @@ public class GifDecoder {
       if (is != null) {
         is.close();
       }
-    } catch (IOException e) {
+    } catch (IOException ignored) {
     }
     return status;
   }
@@ -319,7 +319,7 @@ public class GifDecoder {
     status = STATUS_OK;
     try {
       name = name.trim().toLowerCase();
-      if ((name.indexOf("file:") >= 0) ||
+      if ((name.contains("file:")) ||
           (name.indexOf(":/") > 0)) {
         URL url = new URL(name);
         in = new BufferedInputStream(url.openStream());
@@ -507,14 +507,14 @@ public class GifDecoder {
     int n = 0;
     if (blockSize > 0) {
       try {
-        int count = 0;
+        int count;
         while (n < blockSize) {
           count = in.read(block, n, blockSize - n);
           if (count == -1)
             break;
           n += count;
         }
-      } catch (IOException e) {
+      } catch (IOException ignored) {
       }
 
       if (n < blockSize) {
@@ -537,7 +537,7 @@ public class GifDecoder {
     int n = 0;
     try {
       n = in.read(c);
-    } catch (IOException e) {
+    } catch (IOException ignored) {
     }
     if (n < nbytes) {
       status = STATUS_FORMAT_ERROR;

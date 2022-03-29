@@ -1,9 +1,5 @@
 package se.alipsa.ride.inout.git;
 
-
-import static se.alipsa.ride.Constants.BRIGHT_THEME;
-import static se.alipsa.ride.Constants.THEME;
-
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -17,10 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import se.alipsa.ride.Ride;
-import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.ride.utils.GuiUtils;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +24,11 @@ public class CredentialsDialog extends Dialog<Map<CredentialsDialog.KEY, String>
       NAME,
       PASSWORD,
       STORE_CREDENTIALS
-   };
+   }
 
-   private TextField nameField;
-   private PasswordField passwordField;
-   private  CheckBox storeCheckBox;
+   private final TextField nameField;
+   private final PasswordField passwordField;
+   private final CheckBox storeCheckBox;
 
    public CredentialsDialog(String title) {
       setTitle("Git credentials");

@@ -75,7 +75,7 @@ chart.addSubtitle(source)
 viewer = new ChartViewer(chart)
 inout.display(viewer)    
 ```
-![Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/GroovyPieChart.png)
+![Screenshot](https://raw.githubusercontent.com/Alipsa/ride/master/docs/GroovyPieChart.png)
 
 Just like With R code you can execute line by line by pressing ctrl+enter (ctrl+enter executes the selected code if any
 otherwise the current line). There is a session concept somewhat similar to R although in the Groovy case there

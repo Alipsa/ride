@@ -25,7 +25,7 @@ public class TxtTextArea extends CodeTextArea implements TabTextArea {
   public TxtTextArea(TxtTab parent) {
 
     plainTextChanges().subscribe(ptc -> {
-      if (parent.isChanged() == false && !blockChange) {
+      if (!parent.isChanged() && !blockChange) {
         parent.contentChanged();
       }
     });

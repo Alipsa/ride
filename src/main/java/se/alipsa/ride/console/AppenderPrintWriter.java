@@ -1,10 +1,12 @@
 package se.alipsa.ride.console;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Writer;
 
 public class AppenderPrintWriter extends Writer {
 
-    private ConsoleTextArea console;
+    private final ConsoleTextArea console;
     private StringBuilder text = null;
 
     public AppenderPrintWriter(ConsoleTextArea console, boolean... cacheText) {
@@ -15,7 +17,7 @@ public class AppenderPrintWriter extends Writer {
     }
 
     @Override
-    public void write(char[] cbuf, int off, int len) {
+    public void write(char @NotNull [] cbuf, int off, int len) {
         String content = new String(cbuf, off, len);
         console.appendFx(content);
         if (text != null) {

@@ -4,7 +4,7 @@ import java.io.Writer;
 
 public class WarningAppenderWriter extends Writer {
 
-    private ConsoleTextArea console;
+    private final ConsoleTextArea console;
 
     public WarningAppenderWriter(ConsoleTextArea console) {
         this.console = console;

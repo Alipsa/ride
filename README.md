@@ -20,7 +20,7 @@ It also has some Renjin specific features such as support for the different pack
 wizards to create Renjin projects and Renjin extensions, maven support making a very
 convenient environment for serious R development targeted for the JVM using Renjin.
 
-![Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Screenshot.png "Screenshot")
+![Screenshot](https://raw.githubusercontent.com/Alipsa/ride/master/docs/Screenshot.png "Screenshot")
 
 As Renjins support for graphics such as plotting is still somewhat limited (It just pops up an AWT window with the plot).
 An alternative way is to use the inout component that has been injected into the session to display files e.g.
@@ -42,7 +42,7 @@ library("se.alipsa:rideutils")
 display(fileName, "svgplot")
 ```
 
-![Plot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/Plot.png "Plot")
+![Plot](https://raw.githubusercontent.com/Alipsa/ride/master/docs/Plot.png "Plot")
 
 An alternative way when you just want to view the plot in Ride is to use viewPlot e.g:
 ```r
@@ -70,7 +70,7 @@ In the Packages tab you can see a list of packages loaded for the session (in ca
 call in the script but loaded it from another script - the session is shared).
 
 #### Creating R reports in Munin
-Ride also supports developing, downloading and publishing reports for the [Munin Reports server](https://github.com/perNyfelt/munin). 
+Ride also supports developing, downloading and publishing reports for the [Munin Reports server](https://github.com/Alipsa/munin). 
 Both formats (R based reports producing HTML i.e. mr files, and markdown with R enhancements (similar to rmd) i.e. mdr files) 
 are supported natively in Ride. When you edit an mr or mdr file a view button will apear in the button bar allowing 
 you to preview the report. Parameterized reports are also supported. 
@@ -112,7 +112,7 @@ The last setting (JAVA_OPTS) is a special variable to add system properties (-D 
 Showing the result of a select query in the viewer tab and the connection view that is shown when you right click 
 a connection and choose "view connection".
 
-![SQL Screenshot](https://raw.githubusercontent.com/perNyfelt/ride/master/docs/SQLScreenshot.png "SQL Screenshot")
+![SQL Screenshot](https://raw.githubusercontent.com/Alipsa/ride/master/docs/SQLScreenshot.png "SQL Screenshot")
 
 # Building and compiling
 

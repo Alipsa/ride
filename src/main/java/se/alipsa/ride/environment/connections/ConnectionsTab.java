@@ -264,7 +264,7 @@ public class ConnectionsTab extends Tab {
 
     JdbcUrlWizardDialog dialog = new JdbcUrlWizardDialog(gui);
     Optional<ConnectionInfo> result = dialog.showAndWait();
-    if (!result.isPresent()) {
+    if (result.isEmpty()) {
       return;
     }
     ConnectionInfo ci = result.get();
@@ -440,7 +440,6 @@ public class ConnectionsTab extends Tab {
            "  sqlite_master AS m\n" +
            "JOIN \n" +
            "  pragma_table_info(m.name) AS p";
-        addNaWhenBlank = false;
       } else {
         setNormalCursor();
         Alerts.info("Empty database", "This sqlite database has no tables yet");
@@ -536,7 +535,7 @@ public class ConnectionsTab extends Tab {
 
   void runScriptInThread(String rCode, ConnectionInfo con) {
     String connectionName = con.getName();
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
       @Override
       public Void call() throws Exception {
         try {

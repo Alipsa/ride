@@ -10,7 +10,6 @@ public final class JdbcUrlParser {
    *
    * @param jdbcDriver the full classname of the jdbc driver e.g. org.postgresql.Driver
    * @param jdbcUrl the jdbc url to validate e.g. jdbc:postgresql://localhost:5432/test
-   * @return true if valid, false if not valid
    */
   public static void validate(@NotNull String jdbcDriver, @NotNull String jdbcUrl) throws MalformedURLException {
     switch(jdbcDriver) {

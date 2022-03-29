@@ -7,7 +7,7 @@ import org.eclipse.aether.RepositoryEvent;
 
 public class ConsoleRepositoryEventListener extends AbstractRepositoryListener {
 
-   private Logger log = LogManager.getLogger();
+   private static final Logger log = LogManager.getLogger();
 
    @Override
    public void artifactInstalled(RepositoryEvent event) {

@@ -76,14 +76,14 @@ public class DynamicContextMenu extends ContextMenu {
    private final FileTree fileTree;
    private TreeItem<FileItem> currentNode;
    private File currentFile;
-   private Map<String, CredentialsProvider> credentialsProviders;
+   private final Map<String, CredentialsProvider> credentialsProviders;
 
    private final MenuItem createDirMI;
    private final MenuItem createFileMI;
    private final MenuItem expandAllMI;
-   private MenuItem deleteMI;
+   private final MenuItem deleteMI;
    private MenuItem gitAddMI;
-   private MenuItem renameMI;
+   private final MenuItem renameMI;
 
    MenuItem gitInitMI = new MenuItem("Initialize root as git repo");
 
@@ -148,7 +148,7 @@ public class DynamicContextMenu extends ContextMenu {
          GuiUtils.addStyle(gui, dialog);
          dialog.setTitle("Rename " + currentFile.getName());
          Optional<String> toName = dialog.showAndWait();
-         if (!toName.isPresent()) {
+         if (toName.isEmpty()) {
             return;
          }
 
@@ -214,7 +214,6 @@ public class DynamicContextMenu extends ContextMenu {
          gitInitMI.setVisible(true);
          gitInitMI.setOnAction(this::gitInit);
          gitMenu.getItems().add(gitInitMI);
-         gitInitialized = false;
       }
 
       if (gitInitialized) {
@@ -322,7 +321,7 @@ public class DynamicContextMenu extends ContextMenu {
          .replace('/', '.');
 
       StringBuilder str = new StringBuilder("package ").append(packageName).append(";\n\n")
-         .append("public class ").append(fileName.substring(0, fileName.indexOf(".java"))).append(" {\n\n}");
+         .append("public class ").append(fileName, 0, fileName.indexOf(".java")).append(" {\n\n}");
       try {
          FileUtils.writeToFile(newFile, str.toString());
       } catch (FileNotFoundException e) {
@@ -444,7 +443,7 @@ public class DynamicContextMenu extends ContextMenu {
          for (RevCommit rc : log) {
             str.append(LocalDateTime.ofEpochSecond(rc.getCommitTime(), 0, ZoneOffset.UTC))
                .append(", ")
-               .append(rc.toString())
+               .append(rc)
                .append(": ").append(rc.getFullMessage())
                .append("\n");
          }
@@ -495,7 +494,7 @@ public class DynamicContextMenu extends ContextMenu {
          StringBuilder str = new StringBuilder();
          if (diffs.size() > 0) {
             diffs.forEach(e -> str.append(e.toString()).append("\n"));
-            str.append(writer.toString());
+            str.append(writer);
          } else {
             str.append("No differences detected for ").append(path);
          }
@@ -578,7 +577,7 @@ public class DynamicContextMenu extends ContextMenu {
       String url = getRemoteGitUrl();
       gui.getInoutComponent().setStatus("Pulling from " + url);
 
-      Task<PullResult> task = new Task<PullResult>() {
+      Task<PullResult> task = new Task<>() {
          @Override
          public PullResult call() throws Exception {
             try {
@@ -679,7 +678,7 @@ public class DynamicContextMenu extends ContextMenu {
       gui.setWaitCursor();
       String url = getRemoteGitUrl();
       gui.getInoutComponent().setStatus("Pushing to " + url);
-      Task<StringBuilder> task = new Task<StringBuilder>() {
+      Task<StringBuilder> task = new Task<>() {
          @Override
          public StringBuilder call() throws Exception {
             try {
@@ -824,6 +823,7 @@ public class DynamicContextMenu extends ContextMenu {
       log.info("Deleting {}", currentPath);
       try {
          DirCache dc = git.rm().addFilepattern(currentPath).setCached(true).call();
+         // Should we do something more with dc?
          log.info("Removed {} from git dir cache", currentPath);
       } catch (GitAPIException e) {
          log.warn("Failed to delete " + currentPath, e);
@@ -921,7 +921,7 @@ public class DynamicContextMenu extends ContextMenu {
       dialog.setContentText(content);
       GuiUtils.addStyle(gui, dialog);
       Optional<String> result = dialog.showAndWait();
-      if (!result.isPresent()) {
+      if (result.isEmpty()) {
          return null;
       }
       String file = result.get();

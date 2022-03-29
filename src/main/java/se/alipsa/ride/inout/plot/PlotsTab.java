@@ -40,9 +40,7 @@ public class PlotsTab extends Tab {
 
     if (node instanceof ImageView) {
       var view = (ImageView)node;
-      item.setOnAction(a -> {
-        promptAndWriteImage(tab.getText(), view.getImage());
-      });
+      item.setOnAction(a -> promptAndWriteImage(tab.getText(), view.getImage()));
 
       view.setOnContextMenuRequested(e ->
           contextMenu.show(view, e.getScreenX(), e.getScreenY()));
@@ -58,7 +56,7 @@ public class PlotsTab extends Tab {
       view.setOnMousePressed(e -> {
         if (e.getButton() == MouseButton.SECONDARY) {
           contextMenu.show(view, e.getScreenX(), e.getScreenY());
-        } else {;
+        } else {
           contextMenu.hide();
         }
       });

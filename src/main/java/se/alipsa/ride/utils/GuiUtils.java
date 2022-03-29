@@ -7,7 +7,6 @@ import static se.alipsa.ride.Constants.THEME;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;

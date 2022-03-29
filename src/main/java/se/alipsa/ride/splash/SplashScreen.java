@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import se.alipsa.ride.utils.FileUtils;
 
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,12 +28,12 @@ public class SplashScreen extends Application {
     Label altToImage = new Label(" Loading Ride, please wait...");
     root.setTop(altToImage);
 
-    Image logo = new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm());
+    Image logo = new Image(Objects.requireNonNull(FileUtils.getResourceUrl("image/logo.png")).toExternalForm());
     ImageView imageView = new ImageView(logo);
     root.setCenter(imageView);
 
     primaryStage.setTitle("Ride, a Renjin IDE");
-    primaryStage.getIcons().add(new Image(FileUtils.getResourceUrl("image/logo.png").toExternalForm()));
+    primaryStage.getIcons().add(new Image(Objects.requireNonNull(FileUtils.getResourceUrl("image/logo.png")).toExternalForm()));
     Scene scene = new Scene(root);
     primaryStage.setScene(scene);
     primaryStage.show();

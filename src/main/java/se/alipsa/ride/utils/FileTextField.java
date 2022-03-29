@@ -12,9 +12,9 @@ import java.io.File;
 
 public class FileTextField extends HBox {
 
-  private TextField field = new TextField();
-  private Button chooseFileButton = new Button("...");
-  private Ride gui;
+  private final TextField field = new TextField();
+  private final Button chooseFileButton = new Button("...");
+  private final Ride gui;
   private File file;
 
   public FileTextField(Ride gui, File file) {

@@ -100,7 +100,7 @@ public class MdrUtil {
   private static String convertMdrToHtml(Ride gui, String textContent) {
     final ConsoleComponent consoleComponent = gui.getConsoleComponent();
     consoleComponent.running();
-    Task<String> task = new Task<String>() {
+    Task<String> task = new Task<>() {
       @Override
       public String call() throws Exception {
         try {
@@ -116,9 +116,7 @@ public class MdrUtil {
         return null;
       }
     };
-    task.setOnSucceeded(e -> {
-      consoleComponent.waiting();
-    });
+    task.setOnSucceeded(e -> consoleComponent.waiting());
 
     task.setOnFailed(e -> {
       Throwable throwable = task.getException();

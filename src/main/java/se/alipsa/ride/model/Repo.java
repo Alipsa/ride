@@ -1,6 +1,7 @@
 package se.alipsa.ride.model;
 
 import javafx.beans.property.SimpleStringProperty;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -73,10 +74,7 @@ public class Repo implements Comparable<Repo> {
   }
 
   @Override
-  public int compareTo(Repo o) {
-    if (o == null) {
-      return -1;
-    }
+  public int compareTo(@NotNull Repo o) {
     String oStr = o.getId() + o.getType() + o.getUrl();
     String tStr = getId() + getType() + getUrl();
     return tStr.compareTo(oStr);

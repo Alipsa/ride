@@ -59,9 +59,7 @@ public class JsTab extends TextAreaTab {
     buttonPane.getChildren().add(resetButton);
     restartAfterRun = new CheckBox("Restart Session after each run");
     restartAfterRun.setSelected(gui.getPrefs().getBoolean(RESTART_JS_SESSION_AFTER_RUN, false));
-    restartAfterRun.setOnAction(a -> {
-      gui.getPrefs().putBoolean(RESTART_JS_SESSION_AFTER_RUN, restartAfterRun.isSelected());
-    });
+    restartAfterRun.setOnAction(a -> gui.getPrefs().putBoolean(RESTART_JS_SESSION_AFTER_RUN, restartAfterRun.isSelected()));
     buttonPane.getChildren().add(restartAfterRun);
     jsTextArea = new JsTextArea(this);
     VirtualizedScrollPane<JsTextArea> scrollPane = new VirtualizedScrollPane<>(jsTextArea);
@@ -93,14 +91,14 @@ public class JsTab extends TextAreaTab {
     final ConsoleTextArea console = consoleComponent.getConsole();
     final String title = getTitle();
 
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
       @Override
       public Void call() throws Exception {
         try (
-                AppenderPrintWriter out = new AppenderPrintWriter(console);
-                WarningAppenderWriter err = new WarningAppenderWriter(console);
-                PrintWriter outputWriter = new PrintWriter(out);
-                PrintWriter errWriter = new PrintWriter(err)
+            AppenderPrintWriter out = new AppenderPrintWriter(console);
+            WarningAppenderWriter err = new WarningAppenderWriter(console);
+            PrintWriter outputWriter = new PrintWriter(out);
+            PrintWriter errWriter = new PrintWriter(err)
         ) {
           Platform.runLater(() -> console.append(title, true));
           ScriptContext context = engine.getContext();

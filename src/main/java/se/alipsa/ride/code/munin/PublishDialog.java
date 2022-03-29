@@ -47,7 +47,7 @@ public class PublishDialog extends Dialog<Void> {
 
   private void checkExisting() {
     gui.setWaitCursor();
-    Task<Boolean> task = new Task<Boolean>() {
+    Task<Boolean> task = new Task<>() {
       @Override
       protected Boolean call() throws Exception {
         Map<String, List<String>> reportInfo = MuninClient.fetchReportInfo(muninConnection);
@@ -94,7 +94,7 @@ public class PublishDialog extends Dialog<Void> {
     gui.setWaitCursor();
     System.out.println("Publishing report...");
     ta.appendText("\nPublishing report...");
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
       @Override
       protected Void call() throws Exception {
         MuninClient.publishReport(muninConnection, muninReport, isAddNew);

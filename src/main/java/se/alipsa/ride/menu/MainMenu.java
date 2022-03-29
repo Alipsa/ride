@@ -123,7 +123,7 @@ public class MainMenu extends MenuBar {
 
     MuninReportDialog reportDialog = new MuninReportDialog(gui);
     Optional<MuninReport> result = reportDialog.showAndWait();
-    if (!result.isPresent()) return;
+    if (result.isEmpty()) return;
     MuninReport report = result.get();
     TextAreaTab tab;
     tab = ReportType.MDR.equals(report.getReportType()) ? new MuninMdrTab(gui, report) : new MuninRTab(gui, report);
@@ -214,7 +214,7 @@ public class MainMenu extends MenuBar {
   private void cloneProject(ActionEvent actionEvent) {
     CloneProjectDialog dialog = new CloneProjectDialog(gui);
     Optional<CloneProjectDialogResult> result = dialog.showAndWait();
-    if (!result.isPresent()) {
+    if (result.isEmpty()) {
       return;
     }
     CloneProjectDialogResult res = result.get();
@@ -230,7 +230,7 @@ public class MainMenu extends MenuBar {
   private void createBasicPom(ActionEvent actionEvent) {
     CreateProjectWizardDialog dialog = new CreateProjectWizardDialog(gui, "Create basic pom", false);
     Optional<CreateProjectWizardResult> result = dialog.showAndWait();
-    if (!result.isPresent()) {
+    if (result.isEmpty()) {
       return;
     }
     CreateProjectWizardResult res = result.get();
@@ -253,7 +253,7 @@ public class MainMenu extends MenuBar {
   private void showProjectWizard(ActionEvent actionEvent) {
     CreateProjectWizardDialog dialog = new CreateProjectWizardDialog(gui);
     Optional<CreateProjectWizardResult> result = dialog.showAndWait();
-    if (!result.isPresent()) {
+    if (result.isEmpty()) {
       return;
     }
     CreateProjectWizardResult res = result.get();
@@ -327,7 +327,7 @@ public class MainMenu extends MenuBar {
   private void showPackageWizard(ActionEvent actionEvent) {
     CreatePackageWizardDialog dialog = new CreatePackageWizardDialog(gui);
     Optional<CreatePackageWizardResult> result = dialog.showAndWait();
-    if (!result.isPresent()) {
+    if (result.isEmpty()) {
       return;
     }
     CreatePackageWizardResult res = result.get();
@@ -592,7 +592,7 @@ public class MainMenu extends MenuBar {
 
       Platform.runLater(() -> {
         try {
-          URL url = new URL("https://api.github.com/repos/perNyfelt/ride/releases/latest");
+          URL url = new URL("https://api.github.com/repos/ALipsa/ride/releases/latest");
           ObjectMapper mapper = new ObjectMapper();
           JsonNode rootNode = mapper.readTree(url);
           JsonNode tagNode = rootNode.findValue("tag_name");
@@ -628,7 +628,7 @@ public class MainMenu extends MenuBar {
           if (identicalVersion) {
             sb.append("\nYou are running the latest version");
           } else if (versionDiff < 1){
-            sb.append("\nGet the latest release from https://github.com/perNyfelt/ride/releases/latest");
+            sb.append("\nGet the latest release from https://github.com/Alipsa/ride/releases/latest");
           }
           textArea.setText(sb.toString());
           gui.setNormalCursor();
@@ -663,7 +663,7 @@ public class MainMenu extends MenuBar {
         .append(System.getProperty("java.runtime.version"))
         .append(" (").append(System.getProperty("os.arch")).append(")");
 
-    content.append("\n\n See https://github.com/perNyfelt/ride/ for more info or to report issues");
+    content.append("\n\n See https://github.com/Alipsa/ride/ for more info or to report issues");
     showInfoAlert("About Ride", content,500, 200);
 
   }
@@ -727,7 +727,7 @@ public class MainMenu extends MenuBar {
     System.out.println("Console is now running the Renjin REPL, type quit() to exit");
     System.out.println();
 
-    Task<Void> task = new Task<Void>() {
+    Task<Void> task = new Task<>() {
       @Override
       public Void call() throws Exception {
         try {
@@ -751,7 +751,7 @@ public class MainMenu extends MenuBar {
     Optional<GlobalOptions> res = dialog.showAndWait();
     boolean shouldRestartR = false;
 
-    if (!res.isPresent()) {
+    if (res.isEmpty()) {
       return;
     }
 

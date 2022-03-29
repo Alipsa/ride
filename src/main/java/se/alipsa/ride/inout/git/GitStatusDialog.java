@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class GitStatusDialog extends Dialog<Status> {
 
-  private Status status;
+  private final Status status;
 
   public GitStatusDialog(Status gitStatus, String path ) {
     status = gitStatus;
