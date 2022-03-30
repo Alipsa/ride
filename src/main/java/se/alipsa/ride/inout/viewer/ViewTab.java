@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
 import se.alipsa.renjin.client.datautils.Table;
+import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.code.xmltab.XmlTextArea;
@@ -195,15 +196,19 @@ public class ViewTab extends Tab {
       }
       FileChooser fc = new FileChooser();
       fc.setTitle("Save CSV File");
-      String initialFileName = title.length == 0 ? "rideExport" : title[0];
+      String initialFileName = (title.length == 0 ? "rideExport" : title[0])
+          .replace("*", "").replace(" ", "");
       if (initialFileName.endsWith(".")) {
         initialFileName = initialFileName + "csv";
       } else {
         initialFileName = initialFileName + ".csv";
       }
+      Ride gui = Ride.instance();
+      String dir = gui.getPrefs().get(Constants.PREF_LAST_EXPORT_DIR,gui.getInoutComponent().getRootDir().getAbsolutePath());
+      fc.setInitialDirectory(new File(dir));
       fc.setInitialFileName(initialFileName);
       fc.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("CSV", "*.csv"));
-      File outFile = fc.showSaveDialog(Ride.instance().getStage());
+      File outFile = fc.showSaveDialog(gui.getStage());
       if (outFile == null ) {
         // Clicking cancel and still have an action performed is not very good UX
         // TODO: Consider changing this to an explicit action (export csv -> to clipboard) instead
@@ -213,6 +218,7 @@ public class ViewTab extends Tab {
         Alerts.info("Export to CSV", "File export cancelled, CSV copied to clipboard!");
       } else {
         FileUtils.writeToFile(outFile, sw.toString());
+        gui.getPrefs().put(Constants.PREF_LAST_EXPORT_DIR, outFile.getCanonicalFile().getParentFile().getAbsolutePath());
       }
     } catch (IOException e) {
       ExceptionAlert.showAlert("Failed to create csv", e);
