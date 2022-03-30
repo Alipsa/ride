@@ -85,6 +85,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Switch to java 11 as the main stream, merge java 11 branch into master. 1.2.8 will no longer support Java 8
 - upgrade dependencies for jgit, richtextfx, spotbugs, classgraph, groovy, jackson, log4j
 - Use openjdk standalone Nashorn instead of the deprecated, built-in, one.
+- Export to csv now remembers last location and preselects that when exporting again, also the suggested
+  file name is cleaned up a bit (* and spaces removed).
 
 ### 1.2.7, 2022-02-19
 - Add ride logo as icon on all dialogs (in Linux Mint, no icon on a dialog changes the logo of the main application)
