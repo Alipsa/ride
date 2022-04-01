@@ -79,7 +79,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
-### 1.2.8
+### 1.2.9
+
+### 1.2.8, 2022-04-01
 - Change how we update connection combo in sql tabs when adding a connection, select if only one is available
 - Add right click option to save an image in the plots tab to a file.
 - Switch to java 11 as the main stream, merge java 11 branch into master. 1.2.8 will no longer support Java 8
@@ -88,7 +90,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - Export to csv now remembers last location and preselects that when exporting again, also the suggested
   file name is cleaned up a bit (* and spaces removed).
 
-### 1.2.7, 2022-02-19
+### 1.2.7, 2022-02-19, Last version supporting Java 8
 - Add ride logo as icon on all dialogs (in Linux Mint, no icon on a dialog changes the logo of the main application)
 - Make it possible to run R code parts in a mdr document separately (evaluated as standard R, although with the r2md library loaded)
 - Change PackagesTab to contain a TableView of available packages with additional info and the currently loaded ones checked
@@ -99,6 +101,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - add "new" and "delete" buttons to connections, improve navigation
 - Add View and transpose functions to javascript code
 - Use Groovy script engine instead of GroovyShell for session support
+
 #### JDK 11 Specific changes
 - Using Renjin j11-beta1 branch (will show up as Renjin 3.5-dev)
 - Take advantage of some Java 11 syntactic improvements such as string.isBlank() instead of string.trim().isEmpty().
