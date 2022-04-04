@@ -661,24 +661,24 @@ public class MainMenu extends MenuBar {
     NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
     RenjinScriptEngineFactory renjinScriptEngineFactory = new RenjinScriptEngineFactory();
     StringBuilder content = new StringBuilder();
-    content.append("Version: ")
+    content.append("\n Version: ")
         .append(version)
-        .append("\nRelease tag: ")
+        .append("\n Release tag: ")
         .append(releaseTag)
-        .append("\nJava Runtime Version: ")
+        .append("\n Java Runtime Version: ")
         .append(System.getProperty("java.runtime.version"))
         .append(" (").append(System.getProperty("os.arch")).append(")")
-        .append("\nRenjin version: ").append(RenjinVersion.getVersionName())
+        .append("\n Renjin version: ").append(RenjinVersion.getVersionName())
         .append(" (").append(renjinScriptEngineFactory.getLanguageName())
         .append(" ").append(renjinScriptEngineFactory.getLanguageVersion())
         .append(")")
-        .append("\nGroovy version: ").append(GroovySystem.getVersion())
-        .append("\nNashorn version: ").append(nashornScriptEngineFactory.getEngineVersion())
+        .append("\n Groovy version: ").append(GroovySystem.getVersion())
+        .append("\n Nashorn version: ").append(nashornScriptEngineFactory.getEngineVersion())
         .append(" (").append(nashornScriptEngineFactory.getLanguageName())
         .append(" ").append(nashornScriptEngineFactory.getLanguageVersion()).append(")");
 
-    content.append("\n\nSee https://github.com/Alipsa/ride/ for more info or to report issues");
-    showInfoAlert("About Ride", content,500, 200);
+    content.append("\n\n See https://github.com/Alipsa/ride/ for more info or to report issues");
+    showInfoAlert("About Ride", content, 615, 220);
 
   }
 
