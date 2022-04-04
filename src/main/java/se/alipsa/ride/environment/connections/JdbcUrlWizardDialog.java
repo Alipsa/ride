@@ -35,6 +35,8 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
   private final ComboBox<String> connectMethods = new ComboBox<>();
   private final VBox optionsBox = new VBox();
   private final List<String> options = new ArrayList<>();
+  private String initialOptionsDelimiter = "?";
+  String subsequentOptionsDelimiter = "&";
 
   private static final int TF_LENGTH = 250;
 
@@ -150,6 +152,8 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
   }
 
   private void addSqlServerSpecifics() {
+    initialOptionsDelimiter = ";";
+    subsequentOptionsDelimiter = ";";
     port.setValue(1433);
     urlTemplate = "jdbc:sqlserver://{server}:{port};databaseName={database}";
     CheckboxOption readOnlyCbo = new CheckboxOption("Read-only");
@@ -284,6 +288,8 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
     String driverName = driver.getValue();
     server.setText("localhost");
     database.setText("mydatabase");
+    initialOptionsDelimiter = "?";
+    subsequentOptionsDelimiter = "?";
     switch (driverName) {
       case DRV_POSTGRES:
         addPostgresSpecifics();
@@ -327,7 +333,7 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
         .replace("{port}", port.getText())
         .replace("{database}", database.getText());
     if (options.size() > 0) {
-      urlString += "?" + String.join("&", options);
+      urlString += initialOptionsDelimiter + String.join(subsequentOptionsDelimiter, options);
     }
     url.setText(urlString);
   }

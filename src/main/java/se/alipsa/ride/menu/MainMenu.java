@@ -5,6 +5,7 @@ import static se.alipsa.ride.menu.GlobalOptions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import groovy.lang.GroovySystem;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -28,11 +29,14 @@ import org.apache.logging.log4j.core.appender.FileAppender;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngine;
+import org.openjdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.renjin.RenjinVersion;
 import org.renjin.eval.Session;
 import org.renjin.eval.SessionBuilder;
 import org.renjin.primitives.packaging.PackageLoader;
 import org.renjin.repl.JlineRepl;
+import org.renjin.script.RenjinScriptEngineFactory;
 import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.UnStyledCodeArea;
@@ -654,6 +658,8 @@ public class MainMenu extends MenuBar {
     } catch (IOException e) {
       ExceptionAlert.showAlert("Failed to load properties file", e);
     }
+    NashornScriptEngineFactory nashornScriptEngineFactory = new NashornScriptEngineFactory();
+    RenjinScriptEngineFactory renjinScriptEngineFactory = new RenjinScriptEngineFactory();
     StringBuilder content = new StringBuilder();
     content.append("Version: ")
         .append(version)
@@ -661,9 +667,17 @@ public class MainMenu extends MenuBar {
         .append(releaseTag)
         .append("\nJava Runtime Version: ")
         .append(System.getProperty("java.runtime.version"))
-        .append(" (").append(System.getProperty("os.arch")).append(")");
+        .append(" (").append(System.getProperty("os.arch")).append(")")
+        .append("\nRenjin version: ").append(RenjinVersion.getVersionName())
+        .append(" (").append(renjinScriptEngineFactory.getLanguageName())
+        .append(" ").append(renjinScriptEngineFactory.getLanguageVersion())
+        .append(")")
+        .append("\nGroovy version: ").append(GroovySystem.getVersion())
+        .append("\nNashorn version: ").append(nashornScriptEngineFactory.getEngineVersion())
+        .append(" (").append(nashornScriptEngineFactory.getLanguageName())
+        .append(" ").append(nashornScriptEngineFactory.getLanguageVersion()).append(")");
 
-    content.append("\n\n See https://github.com/Alipsa/ride/ for more info or to report issues");
+    content.append("\n\nSee https://github.com/Alipsa/ride/ for more info or to report issues");
     showInfoAlert("About Ride", content,500, 200);
 
   }
