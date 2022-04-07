@@ -335,6 +335,7 @@ public class JdbcUrlWizardDialog extends Dialog<ConnectionInfo> {
     if (options.size() > 0) {
       urlString += initialOptionsDelimiter + String.join(subsequentOptionsDelimiter, options);
     }
+    urlString = urlString.replace('\\', '/');
     url.setText(urlString);
   }
 

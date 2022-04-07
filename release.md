@@ -82,7 +82,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 ### 1.2.9
 - Fix bug in JDBC url wizard: SQl server uses ; as delimiter, not the usual url standard (?, &)
 - upgrade to groovy to use the org.apache versions (4.0.1)
-- add version info in about dialog. 
+- add version info in about dialog.
+- Fix bug in url wizard for file based databases by converting `\` in windows paths to `/`
 
 ### 1.2.8, 2022-04-01
 - Change how we update connection combo in sql tabs when adding a connection, select if only one is available
