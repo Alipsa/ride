@@ -197,12 +197,11 @@ public class ConnectionsTab extends Tab {
       }
       ConnectionInfo con = new ConnectionInfo(name.getValue(), driverText.getText(), urlText.getText(), userText.getText(), passwordField.getText());
       try {
-        Connection connection = con.connect();
-        if (connection == null) {
-          Alerts.warn("Failed to connect to database", "Failed to connect to database: " + con + ", probably something in the url that the Driver could not understand since connect() returned null.");
+        Optional<Connection> connection = con.connect();
+        if (connection.isEmpty()) {
           return;
         }
-        connection.close();
+        connection.get().close();
         log.info("Connection created successfully, all good!");
       } catch (SQLException ex) {
         Exception exceptionToShow = ex;
@@ -417,10 +416,14 @@ public class ConnectionsTab extends Tab {
     if (con.getDriver().equals(DRV_SQLLITE)) {
       boolean hasTables = false;
       try {
-        Connection jdbcCon = con.connect();
-        ResultSet rs = jdbcCon.createStatement().executeQuery("select * from sqlite_master");
+        Optional<Connection> jdbcCon = con.connect();
+        if (jdbcCon.isEmpty()) {
+          Alerts.warn("Failed to connect", "Failed to establish a connection to SQLite");
+          return;
+        }
+        ResultSet rs = jdbcCon.get().createStatement().executeQuery("select * from sqlite_master");
         if (rs.next()) hasTables = true;
-        jdbcCon.close();
+        jdbcCon.get().close();
       } catch (SQLException e) {
         ExceptionAlert.showAlert("Failed to query sqlite_master", e);
       }
@@ -472,18 +475,26 @@ public class ConnectionsTab extends Tab {
   }
 
   private void showDatabases(ConnectionInfo connectionInfo) {
-    try (Connection con = connectionInfo.connect()) {
-      DatabaseMetaData meta = con.getMetaData();
-      ResultSet res = meta.getCatalogs();
-      List<String> dbList = new ArrayList<>();
-      while (res.next()) {
-        dbList.add(res.getString("TABLE_CAT"));
-      }
-      res.close();
-      String content = String.join("\n", dbList);
-      String title = "Databases for connection " + connectionInfo.getName();
 
-      displayTextInWindow(title, content, CodeType.TXT);
+    try {
+      Optional<Connection> conOpt = connectionInfo.connect();
+      if (conOpt.isEmpty()) {
+        Alerts.warn("Failed to connect to db", "Failed to establish a connection to the database");
+        return;
+      }
+      try (Connection con = conOpt.get()) {
+        DatabaseMetaData meta = con.getMetaData();
+        ResultSet res = meta.getCatalogs();
+        List<String> dbList = new ArrayList<>();
+        while (res.next()) {
+          dbList.add(res.getString("TABLE_CAT"));
+        }
+        res.close();
+        String content = String.join("\n", dbList);
+        String title = "Databases for connection " + connectionInfo.getName();
+
+        displayTextInWindow(title, content, CodeType.TXT);
+      }
     } catch (SQLException e) {
       String msg = gui.getConsoleComponent().createMessageFromEvalException(e);
       ExceptionAlert.showAlert(msg + e.getMessage(), e);
@@ -679,16 +690,22 @@ public class ConnectionsTab extends Tab {
       tableRightClickMenu.getItems().add(sampleContent);
       sampleContent.setOnAction(event -> {
         String tableName = getTreeItem().getValue();
-        try (Connection connection = con.connect();
-             Statement stm = connection.createStatement()) {
-          stm.setMaxRows(200);
-          Table table;
-          try(ResultSet rs = stm.executeQuery("SELECT * from " + tableName)){
-            rs.setFetchSize(200);
-            table = new Table(rs);
+        try {
+          Optional<Connection> conOpt = con.connect();
+          if (conOpt.isEmpty()) {
+            Alerts.warn("Failed to connect to database", "Failed to establish a connection to the database");
+            return;
           }
-          gui.getInoutComponent().showInViewer(table, tableName);
+          try (Connection connection = conOpt.get(); Statement stm=connection.createStatement()){
+            stm.setMaxRows(200);
+            Table table;
+            try (ResultSet rs = stm.executeQuery("SELECT * from " + tableName)) {
+              rs.setFetchSize(200);
+              table = new Table(rs);
+            }
+            gui.getInoutComponent().showInViewer(table, tableName);
 
+          }
         } catch (SQLException e) {
           ExceptionAlert.showAlert("Failed to sample table", e);
         }

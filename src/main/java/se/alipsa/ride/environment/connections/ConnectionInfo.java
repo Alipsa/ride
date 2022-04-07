@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.Properties;
 
 public class ConnectionInfo implements Comparable<ConnectionInfo> {
@@ -106,7 +107,7 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
   }
 
   @SuppressWarnings("unchecked")
-  public Connection connect() throws SQLException {
+  public Optional<Connection> connect() throws SQLException {
     /*
     String user = getUser();
     String password = getPassword();
@@ -140,11 +141,12 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
       } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException classNotFoundException) {
         log.info("Failed to load and instantiate the driver class using Class.forName(\"{}\")", getDriver());
         Platform.runLater(() ->
+            // TODO add option to download driver here and autotry again after classloader update
             Alerts.showAlert("Failed to load driver",
                 "You need to add the jar with " + getDriver() + " to the classpath (pom.xml or ride lib dir)",
                 Alert.AlertType.ERROR)
         );
-        return null;
+        return Optional.empty();
       }
     }
     Properties props = new Properties();
@@ -154,11 +156,17 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
         props.put("password",  getPassword());
       }
     }
+    Connection con;
     if (driver == null) {
-      return DriverManager.getConnection(getUrl(), props);
+      con = DriverManager.getConnection(getUrl(), props);
     } else {
-      return driver.connect(getUrl(), props);
+      con = driver.connect(getUrl(), props);
     }
+    if (con == null) {
+      Alerts.warn("Failed to connect to database", "Failed to connect to database: " + getUrl() + ", probably something in the url that the Driver could not understand since connect() returned null.");
+      return Optional.empty();
+    }
+    return Optional.of(con);
   }
 
   public boolean urlContainsLogin() {
