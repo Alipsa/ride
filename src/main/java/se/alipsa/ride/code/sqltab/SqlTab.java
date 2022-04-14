@@ -110,11 +110,10 @@ public class SqlTab extends TextAreaTab {
       @Override
       protected Void call() throws Exception {
         ConnectionInfo ci = connectionCombo.getValue();
-        Optional<Connection> conOpt = ci.connect();
-        if (conOpt.isEmpty()) {
-          throw new Exception("Failed to establish a connection");
-        }
-        try (Connection con = conOpt.get()) {
+        try (Connection con = ci.connect()) {
+          if (con == null) {
+            throw new Exception("Failed to establish a connection");
+          }
           AtomicInteger queryCount = new AtomicInteger(1);
           try (Statement stm = con.createStatement()) {
             for (String qry : batchedQry) {
