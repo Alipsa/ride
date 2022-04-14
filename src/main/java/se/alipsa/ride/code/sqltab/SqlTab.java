@@ -26,6 +26,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -109,10 +110,12 @@ public class SqlTab extends TextAreaTab {
       @Override
       protected Void call() throws Exception {
         ConnectionInfo ci = connectionCombo.getValue();
-        try (Connection con = ci.connect()) {
-
+        Optional<Connection> conOpt = ci.connect();
+        if (conOpt.isEmpty()) {
+          throw new Exception("Failed to establish a connection");
+        }
+        try (Connection con = conOpt.get()) {
           AtomicInteger queryCount = new AtomicInteger(1);
-
           try (Statement stm = con.createStatement()) {
             for (String qry : batchedQry) {
               boolean hasMoreResultSets = stm.execute(qry);
