@@ -198,6 +198,11 @@ public class SqlTab extends TextAreaTab {
   }
 
   @Override
+  public void replaceContentText(String content) {
+    sqlTextArea.replaceContentText(content);
+  }
+
+  @Override
   public CodeTextArea getCodeArea() {
     return sqlTextArea;
   }

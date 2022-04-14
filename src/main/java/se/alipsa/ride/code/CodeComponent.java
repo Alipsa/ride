@@ -1,5 +1,6 @@
 package se.alipsa.ride.code;
 
+import javafx.application.Platform;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -18,6 +19,7 @@ import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.code.sqltab.SqlTab;
 import se.alipsa.ride.code.txttab.TxtTab;
 import se.alipsa.ride.code.xmltab.XmlTab;
+import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.TikaUtils;
 
@@ -147,15 +149,7 @@ public class CodeComponent extends BorderPane {
     }
     if (addContent) {
       try {
-        byte[] textBytes = FileUtils.readFileToByteArray(file);
-        String content = "";
-        if (textBytes.length != 0) {
-          Charset cs = TikaUtils.instance().detectCharset(textBytes, file.getName());
-          content = new String(textBytes, cs);
-        }
-
-        tab.setFile(file);
-        tab.replaceContentText(0, 0, content);
+        tab.loadFromFile(file);
       } catch (IOException e) {
         ExceptionAlert.showAlert("Failed to read content of file " + file, e);
       }
@@ -197,6 +191,26 @@ public class CodeComponent extends BorderPane {
       if (tab instanceof SqlTab) {
         SqlTab sqlTab = (SqlTab) tab;
         sqlTab.removeConnection(value);
+      }
+    }
+  }
+
+  public void reloadTabContent(File pomFile) {
+    for (Tab tab : pane.getTabs()) {
+      log.trace("check tab {}", tab.getText());
+      if (tab instanceof TextAreaTab) {
+        TextAreaTab codeTab = (TextAreaTab) tab;
+        var tabFile = codeTab.getFile();
+        log.trace("File is {}", tabFile);
+        if (tabFile != null && tabFile.equals(pomFile)) {
+          if (!codeTab.isChanged()) {
+            log.trace("Reloading from disk");
+            codeTab.reloadFromDisk();
+          } else {
+            Alerts.warnFx("Cannot reload when tab is not saved",
+                pomFile + " was updated but the code is changed so cannot reload it, you need to manually merge the content");
+          }
+        }
       }
     }
   }

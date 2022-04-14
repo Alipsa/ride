@@ -251,6 +251,13 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
     blockChange = false;
   }
 
+  @Override
+  public void replaceContentText(String content) {
+    blockChange = true;
+    replaceText(0, getLength(), content);
+    blockChange = false;
+  }
+
   public TextAreaTab getParentTab() {
     return parentTab;
   }

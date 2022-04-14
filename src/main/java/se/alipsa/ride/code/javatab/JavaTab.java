@@ -50,6 +50,11 @@ public class JavaTab extends TextAreaTab {
   }
 
   @Override
+  public void replaceContentText(String content) {
+    javaTextArea.replaceContentText(content);
+  }
+
+  @Override
   public CodeTextArea getCodeArea() {
     return javaTextArea;
   }

@@ -219,6 +219,11 @@ public class XmlTab extends TextAreaTab {
   }
 
   @Override
+  public void replaceContentText(String content) {
+    xmlTextArea.replaceText(content);
+  }
+
+  @Override
   public CodeTextArea getCodeArea() {
     return xmlTextArea;
   }

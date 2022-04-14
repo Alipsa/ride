@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.jetbrains.annotations.Nullable;
 import org.renjin.RenjinVersion;
 import org.renjin.aether.AetherFactory;
 import org.renjin.aether.AetherPackageLoader;
@@ -85,6 +86,7 @@ public class ConsoleComponent extends BorderPane {
   private final Ride gui;
   private List<RemoteRepository> remoteRepositories;
   private PackageLoader packageLoader;
+  private ClassLoader classLoader = ConsoleComponent.class.getClassLoader();
   private Thread runningThread;
   private File workingDir;
   private final Map<Thread, String> threadMap = new HashMap<>();
@@ -124,118 +126,31 @@ public class ConsoleComponent extends BorderPane {
     return new Repo(repo.getId(), repo.getContentType(), repo.getUrl());
   }
 
-  public void initRenjin(ClassLoader parentClassLoader) {
-    Platform.runLater(() -> initRenjin(getStoredRemoteRepositories(), parentClassLoader));
+  public void initRenjin(ClassLoader parentClassLoader, boolean... sync) {
+    if (sync.length > 0 && sync[0]) {
+      try {
+        resetClassloaderAndRenjin(getStoredRemoteRepositories(), parentClassLoader);
+        printVersionInfoToConsole();
+        updateEnvironment();
+      } catch (Exception e) {
+        ExceptionAlert.showAlert("Failed to reset classloader and Renjin, please report this!", e);
+      }
+    } else {
+      Platform.runLater(() -> initRenjin(getStoredRemoteRepositories(), parentClassLoader));
+    }
   }
 
 
   private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader, boolean... skipMavenClassloading) {
-    AtomicReference<String> version = new AtomicReference<>("unknown");
-
     Task<Void> initTask = new Task<>() {
 
       @Override
       protected Void call() throws Exception {
-        try {
-          remoteRepositories = new ArrayList<>();
-          remoteRepositories.addAll(asRemoteRepositories(repos));
-
-          if (gui.getInoutComponent() == null) {
-            log.warn("InoutComponent is null, timing is off");
-            throw new RuntimeException("intiRenjin called too soon, InoutComponent is null, timing is off");
-          }
-
-          log.info("USE_MAVEN_CLASSLOADER pref is set to {}", gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false));
-
-          ClassLoader cl = parentClassLoader;
-
-          boolean useMavenClassloader = skipMavenClassloading.length > 0
-              ? !skipMavenClassloading[0]
-              : gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false);
-
-
-          if (gui.getInoutComponent() != null && gui.getInoutComponent().getRoot() != null) {
-            File wd = gui.getInoutComponent().getRootDir();
-            if (gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true) && wd != null && wd.exists()) {
-              File classesDir = new File(wd, "target/classes");
-              List<URL> urlList = new ArrayList<>();
-              try {
-                if (classesDir.exists()) {
-                  urlList.add(classesDir.toURI().toURL());
-                }
-                File testClasses = new File(wd, "target/test-classes");
-                if (testClasses.exists()) {
-                  urlList.add(testClasses.toURI().toURL());
-                }
-              } catch (MalformedURLException e) {
-                log.warn("Failed to find classes dir", e);
-              }
-              if (urlList.size() > 0) {
-                log.info("Adding compile dirs to classloader: {}", urlList);
-                cl = new URLClassLoader(urlList.toArray(new URL[0]), cl);
-              }
-            }
-
-            if (useMavenClassloader) {
-              File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
-              if (pomFile.exists()) {
-                log.info("Parsing pom to use maven classloader");
-                console.appendFx("* Parsing pom to create maven classloader...", true);
-                try {
-                  cl = mavenUtils.getMavenDependenciesClassloader(pomFile, cl);
-                } catch (Exception e) {
-                  if (e instanceof DependenciesResolveException) {
-                    Platform.runLater(() -> ExceptionAlert.showAlert("Failed to resolve maven dependency: " + e.getMessage(), e));
-                    log.info("Initializing renjing without maven...");
-                  } else {
-                    throw e;
-                  }
-                }
-              } else {
-                log.info("Use maven class loader is set but pomfile {} does not exist", pomFile);
-              }
-            }
-          }
-
-          PackageLoader loader = getPackageLoader(cl);
-
-          // AetherPackageLoader add its own magic on top so if we use that, we need to update cl
-          if (loader instanceof AetherPackageLoader) {
-            cl = ((AetherPackageLoader) loader).getClassLoader();
-          }
-
-          SessionBuilder builder = new SessionBuilder();
-          session = builder
-              .withDefaultPackages()
-              .setPackageLoader(loader) // allows library to work without having to include in the pom
-              .setClassLoader(cl) //allows imports in r code to work
-              .build();
-
-          if (workingDir != null && workingDir.exists()) {
-            session.setWorkingDirectory(workingDir);
-          }
-          // TODO: after implementing a javafx graphics device do session.getOptions().set("device", theGraphicsDevice);
-          //GrDevice grDevice = new JfxGrDevice();
-          //session.getOptions().set("device", grDevice);
-
-          RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
-          engine = factory.getScriptEngine(session);
-          return null;
-        } catch (RuntimeException e) {
-          // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
-          // this way we can get to the original one by extracting the cause from the thrown exception
-          System.out.println("Exception caught, rethrowing as wrapped Exception");
-          throw new Exception(e);
-        }
+        return resetClassloaderAndRenjin(repos, parentClassLoader, skipMavenClassloading);
       }
     };
     initTask.setOnSucceeded(e -> {
-      version.set(RenjinVersion.getVersionName());
-      String greeting = "* Renjin " + version + " *";
-      String surround = getStars(greeting.length());
-      console.append(surround, true);
-      console.append(greeting, true);
-      console.append(surround + "\n>", false);
+      printVersionInfoToConsole();
       updateEnvironment();
     });
     initTask.setOnFailed(e -> {
@@ -251,6 +166,109 @@ public class ConsoleComponent extends BorderPane {
     Thread thread = new Thread(initTask);
     thread.setDaemon(false);
     thread.start();
+  }
+
+  private void printVersionInfoToConsole() {
+    String greeting = "* Renjin " + RenjinVersion.getVersionName() + " *";
+    String surround = getStars(greeting.length());
+    console.appendFx(surround, true);
+    console.appendFx(greeting, true);
+    console.appendFx(surround + "\n>", false);
+  }
+
+  @Nullable
+  private Void resetClassloaderAndRenjin(List<Repo> repos, ClassLoader parentClassLoader, boolean... skipMavenClassloading) throws Exception {
+    try {
+      remoteRepositories = new ArrayList<>();
+      remoteRepositories.addAll(asRemoteRepositories(repos));
+
+      if (gui.getInoutComponent() == null) {
+        log.warn("InoutComponent is null, timing is off");
+        throw new RuntimeException("intiRenjin called too soon, InoutComponent is null, timing is off");
+      }
+
+      log.info("USE_MAVEN_CLASSLOADER pref is set to {}", gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false));
+
+      classLoader = parentClassLoader;
+
+      boolean useMavenClassloader = skipMavenClassloading.length > 0
+          ? !skipMavenClassloading[0]
+          : gui.getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false);
+
+
+      if (gui.getInoutComponent() != null && gui.getInoutComponent().getRoot() != null) {
+        File wd = gui.getInoutComponent().getRootDir();
+        if (gui.getPrefs().getBoolean(ADD_BUILDDIR_TO_CLASSPATH, true) && wd != null && wd.exists()) {
+          File classesDir = new File(wd, "target/classes");
+          List<URL> urlList = new ArrayList<>();
+          try {
+            if (classesDir.exists()) {
+              urlList.add(classesDir.toURI().toURL());
+            }
+            File testClasses = new File(wd, "target/test-classes");
+            if (testClasses.exists()) {
+              urlList.add(testClasses.toURI().toURL());
+            }
+          } catch (MalformedURLException e) {
+            log.warn("Failed to find classes dir", e);
+          }
+          if (urlList.size() > 0) {
+            log.info("Adding compile dirs to classloader: {}", urlList);
+            classLoader = new URLClassLoader(urlList.toArray(new URL[0]), classLoader);
+          }
+        }
+
+        if (useMavenClassloader) {
+          File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
+          if (pomFile.exists()) {
+            log.info("Parsing pom to use maven classloader");
+            console.appendFx("* Parsing pom to create maven classloader...", true);
+            try {
+              classLoader = mavenUtils.getMavenDependenciesClassloader(pomFile, classLoader);
+            } catch (Exception e) {
+              if (e instanceof DependenciesResolveException) {
+                Platform.runLater(() -> ExceptionAlert.showAlert("Failed to resolve maven dependency: " + e.getMessage(), e));
+                log.info("Initializing renjing without maven...");
+              } else {
+                throw e;
+              }
+            }
+          } else {
+            log.info("Use maven class loader is set but pomfile {} does not exist", pomFile);
+          }
+        }
+      }
+
+      PackageLoader loader = getPackageLoader(classLoader);
+
+      // AetherPackageLoader add its own magic on top so if we use that, we need to update cl
+      if (loader instanceof AetherPackageLoader) {
+        classLoader = ((AetherPackageLoader) loader).getClassLoader();
+      }
+
+      SessionBuilder builder = new SessionBuilder();
+      session = builder
+          .withDefaultPackages()
+          .setPackageLoader(loader) // allows library to work without having to include in the pom
+          .setClassLoader(classLoader) //allows imports in r code to work
+          .build();
+
+      if (workingDir != null && workingDir.exists()) {
+        session.setWorkingDirectory(workingDir);
+      }
+      // TODO: after implementing a javafx graphics device do session.getOptions().set("device", theGraphicsDevice);
+      //GrDevice grDevice = new JfxGrDevice();
+      //session.getOptions().set("device", grDevice);
+
+      RenjinScriptEngineFactory factory = new RenjinScriptEngineFactory();
+      engine = factory.getScriptEngine(session);
+      return null;
+    } catch (RuntimeException e) {
+      // RuntimeExceptions (such as EvalExceptions is not caught so need to wrap all in an exception
+      // this way we can get to the original one by extracting the cause from the thrown exception
+      System.out.println("Exception caught, rethrowing as wrapped Exception");
+      throw new Exception(e);
+    }
   }
 
   private PackageLoader getPackageLoader(ClassLoader parentClassLoader) {
@@ -1095,8 +1113,16 @@ public class ConsoleComponent extends BorderPane {
 
   public ClassLoader getRenjinClassLoader() {
     if (session == null || session.getClassLoader() == null) {
-      return gui.getClass().getClassLoader();
+      return getClassLoader();
     }
     return session.getClassLoader();
+  }
+
+  public MavenUtils getMavenUtils() {
+    return mavenUtils;
+  }
+
+  public ClassLoader getClassLoader() {
+    return classLoader;
   }
 }

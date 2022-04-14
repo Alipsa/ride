@@ -7,15 +7,25 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.inout.FileItem;
+import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
+import se.alipsa.ride.utils.TikaUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Optional;
 
 public abstract class TextAreaTab extends Tab implements TabTextArea {
 
+  private static final Logger log = LogManager.getLogger();
   public static final Image IMG_SAVE = new Image(FileUtils
       .getResourceUrl("image/save.png").toExternalForm(), ICON_WIDTH, ICON_HEIGHT, true, true);
   public static final Image IMG_VIEW = new Image(FileUtils
@@ -123,5 +133,33 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
   public void setTreeItem(TreeItem<FileItem> treeItem) {
     this.treeItem = treeItem;
     setTooltip(new Tooltip(treeItem.getValue().getFile().getAbsolutePath()));
+  }
+
+  public void loadFromFile(@NotNull File file) throws IOException {
+    log.trace("Setting file");
+    setFile(file);
+    log.trace("Reading bytes");
+    byte[] textBytes = org.apache.commons.io.FileUtils.readFileToByteArray(file);
+    String content = "";
+    if (textBytes.length != 0) {
+      log.trace("Detecting charset");
+      Charset cs = TikaUtils.instance().detectCharset(textBytes, file.getName());
+      content = new String(textBytes, cs);
+    }
+    log.trace("Replacing content text");
+    replaceContentText(content);
+  }
+
+  public void reloadFromDisk() {
+    File file = getFile();
+    if (file != null) {
+      try {
+        loadFromFile(file);
+      } catch (IOException e) {
+        ExceptionAlert.showAlert("Failed to reload content from disk", e);
+      }
+    } else {
+      Alerts.warn("Failed to reload from disk", "Cannot reload content from disk since file is not set");
+    }
   }
 }

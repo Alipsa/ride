@@ -190,6 +190,11 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   }
 
   @Override
+  public void replaceContentText(String content) {
+    codeTextArea.replaceContentText(content);
+  }
+
+  @Override
   public void taskStarted() {
     viewButton.setDisable(true);
   }

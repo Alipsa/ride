@@ -12,5 +12,7 @@ public interface TabTextArea {
 
   String getAllTextContent();
 
+  void replaceContentText(String content);
+
   void replaceContentText(int start, int end, String content);
 }

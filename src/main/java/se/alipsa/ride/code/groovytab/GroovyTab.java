@@ -137,6 +137,11 @@ public class GroovyTab extends TextAreaTab {
   }
 
   @Override
+  public void replaceContentText(String content) {
+    groovyTextArea.replaceContentText(content);
+  }
+
+  @Override
   public CodeTextArea getCodeArea() {
     return groovyTextArea;
   }

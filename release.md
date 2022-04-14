@@ -1,4 +1,4 @@
-# This is version 1.2.7-jdk11 of Ride.
+# This is version 1.2.8-jdk11 of Ride.
 
 Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine, but
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
@@ -19,7 +19,7 @@ Pre requisites:
 Optional but recommended:
 - Maven 3.3.9 or higher with either MAVEN_HOME set or mvn available in your path
 
-Unzip ride-1.2.7-jdk11-dist.zip to a directory of choice, 
+Unzip ride-1.2.8-jdk11-dist.zip to a directory of choice, 
 note that there is no directory "inside" the zip so create the destination
 directory and unzip into that directory.
 
@@ -37,11 +37,11 @@ export PATH=$JAVA_HOME/bin:$PATH
 ```
 
 Windows: Create a shortcut to Ride on your desktop 
-Right click ride.cmd -> Send To -> Desktop (create shortcut)
-Right click the shortcut on your desktop and choose properties, change the icon to [ride installation dir]\ride-icon.ico
+Right-click ride.cmd -> Send To -> Desktop (create shortcut)
+Right-click the shortcut on your desktop and choose properties, change the icon to [ride installation dir]\ride-icon.ico
 
 Linux: Create a launcher to Ride on your desktop
-Run the createLauncher.sh script
+Run the `createLauncher.sh` script
 
 
 ## How to run:
@@ -84,6 +84,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - upgrade to groovy to use the org.apache versions (4.0.1)
 - add version info in about dialog.
 - Fix bug in url wizard for file based databases by converting `\` in windows paths to `/`
+- Prompt to add jdbc dependency to pom if missing (and add to pom if yes)
 
 ### 1.2.8, 2022-04-01
 - Change how we update connection combo in sql tabs when adding a connection, select if only one is available

@@ -124,6 +124,11 @@ public class MdrTab extends TextAreaTab implements TaskListener {
   }
 
   @Override
+  public void replaceContentText(String content) {
+    mdrTextArea.replaceContentText(content);
+  }
+
+  @Override
   public void taskStarted() {
     viewButton.setDisable(true);
     htmlButton.setDisable(true);

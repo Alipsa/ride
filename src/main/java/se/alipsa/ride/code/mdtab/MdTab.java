@@ -49,4 +49,9 @@ public class MdTab extends TextAreaTab  {
   public void replaceContentText(int start, int end, String content) {
     mdTextArea.replaceContentText(start, end, content);
   }
+
+  @Override
+  public void replaceContentText(String content) {
+    mdTextArea.replaceContentText(content);
+  }
 }

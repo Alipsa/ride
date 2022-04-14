@@ -72,6 +72,11 @@ public class RTab extends TextAreaTab implements TaskListener {
     rTextArea.replaceContentText(start, end, content);
   }
 
+  @Override
+  public void replaceContentText(String content) {
+    rTextArea.replaceContentText(content);
+  }
+
   public void enableRunTestsButton() {
     if (isRunTestButtonDisabled) {
       runTestsButton.setDisable(false);

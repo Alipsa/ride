@@ -46,6 +46,11 @@ public class TxtTab extends TextAreaTab {
   }
 
   @Override
+  public void replaceContentText(String content) {
+    txtTextArea.replaceContentText(content);
+  }
+
+  @Override
   public CodeTextArea getCodeArea() {
     return txtTextArea;
   }

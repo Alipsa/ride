@@ -166,6 +166,11 @@ public class JsTab extends TextAreaTab {
   }
 
   @Override
+  public void replaceContentText(String content) {
+    jsTextArea.replaceContentText(content);
+  }
+
+  @Override
   public CodeTextArea getCodeArea() {
     return jsTextArea;
   }
