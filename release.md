@@ -1,4 +1,4 @@
-# This is version 1.2.8-jdk11 of Ride.
+# This is version 1.2.9-jdk11 of Ride.
 
 Ride is a nice IDE for developing and testing R scripts aimed to run in the Renjin ScriptEngine, but
 it also supports SQL querying and updating as well as simple java (and Groovy) development so that complete Renjin projects and
@@ -19,7 +19,7 @@ Pre requisites:
 Optional but recommended:
 - Maven 3.3.9 or higher with either MAVEN_HOME set or mvn available in your path
 
-Unzip ride-1.2.8-jdk11-dist.zip to a directory of choice, 
+Unzip ride-1.2.9-jdk11-dist.zip to a directory of choice, 
 note that there is no directory "inside" the zip so create the destination
 directory and unzip into that directory.
 
@@ -79,7 +79,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
-### 1.2.9
+### 1.2.9, 2022-04-15
 - Fix bug in JDBC url wizard: SQl server uses ; as delimiter, not the usual url standard (?, &)
 - upgrade to groovy to use the org.apache versions (4.0.1)
 - add version info in about dialog.
