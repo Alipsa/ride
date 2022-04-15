@@ -161,7 +161,7 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
         log.debug("Loaded driver {} with Class.forName successfully", getDriver());
       } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException classNotFoundException) {
         log.info("Failed to load and instantiate the driver class using Class.forName(\"{}\")", getDriver());
-        if (Ride.instance().getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false)) {
+        if (Ride.instance().getPrefs().getBoolean(USE_MAVEN_CLASSLOADER, false) && Ride.instance().getInoutComponent().hasPomFile()) {
           var addToPom = Alerts.confirm("Failed to load driver", "The driver " + getDriver() + " is missing in the pom.xml",
               "Add dependency for " + getDriver() + " to the pom.xlm file?");
           if (addToPom) {

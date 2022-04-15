@@ -490,4 +490,8 @@ public class InoutComponent extends TabPane implements InOut {
         .call();
     changeRootDir(targetDir);
   }
+
+  public boolean hasPomFile() {
+    return getRootDir() != null && new File(getRootDir(), "pom.xml").exists();
+  }
 }
