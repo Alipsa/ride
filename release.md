@@ -79,6 +79,9 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
+### 1.2.10
+- Security workaround for xerces dependency in jdom2 (add a never version explicitly)
+
 ### 1.2.9, 2022-04-15
 - Fix bug in JDBC url wizard: SQl server uses ; as delimiter, not the usual url standard (?, &)
 - upgrade to groovy to use the org.apache versions (4.0.1)

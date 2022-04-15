@@ -6,7 +6,7 @@
 
     <groupId>se.alipsa</groupId>
     <artifactId>ride</artifactId>
-    <version>1.2.9</version>
+    <version>1.2.10-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Ride</name>
@@ -318,6 +318,18 @@
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
             <version>2.0.6.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- fix security issues in the xerces version included in jdom2-->
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.12.2</version>
         </dependency>
 
         <dependency>
