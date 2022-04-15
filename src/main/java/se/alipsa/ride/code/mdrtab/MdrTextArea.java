@@ -11,6 +11,7 @@ import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.TabTextArea;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
+import se.alipsa.ride.utils.DefaultTaskListener;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -88,10 +89,7 @@ public class MdrTextArea extends CodeTextArea implements TabTextArea {
                if (parent instanceof TaskListener) {
                   console.runScriptAsync( r2mdPreCode + rCode, codeComponent.getActiveScriptName() + r2mdPostCode, (TaskListener)parent);
                } else {
-                  console.runScriptAsync(r2mdPreCode + rCode, codeComponent.getActiveScriptName() + r2mdPostCode, new TaskListener() {
-                     @Override public void taskStarted() { }
-                     @Override public void taskEnded() { }
-                  });
+                  console.runScriptAsync(r2mdPreCode + rCode, codeComponent.getActiveScriptName() + r2mdPostCode, new DefaultTaskListener());
                }
                moveTo(getCurrentParagraph() + 1, 0);
                int totalLength = getAllTextContent().length();

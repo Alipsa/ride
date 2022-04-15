@@ -50,6 +50,7 @@
 <h3>Menu options</h3>
 <h4 id="tools-global_options">Tools -> Global options</h4>
 <div>
+    <h5>Package Loader</h5>
     <p>
     The AetherPackageLoader is used per default so libraries will be fetched automatically from
     bedatadriven or maven central repos. This can be modified in the Global Options menu.</p>
@@ -60,6 +61,30 @@
     prior to integration testing in embedded mode on e.g. an app server. In the Packages tab you can see
     a list of packages loaded for the session (in case you missed a library call in the script but loaded
     it from another script - the session is shared).</p>
+    <h5>Console Max size</h5>
+    This describes how many character that are allowed in the console. After the limit is reaches no console output will
+    be written.
+    <h5>Style theme</h5>
+    Ride comes with 3 predefined styles. Blue, Dark and Bright. The Bright Theme is more or less the Java FX default theme but
+    most care has gone into making the Blue Theme a pleasant coloring theme for R development.
+    <h5>Use pom classpath</h5>
+    Use a classpath based on the pom.xml (with the system classpath as the parent) for running R code in Ride.
+    <h5>Add build dir to classpath</h5>
+    Will also add the target/classes and target/test-classes dirs to the classpath
+    <h5>Restart session after maven build</h5>
+    Whether to restart the session after each maven build (so new classes etc. can be picked up)
+    <h5>MAVEN_HOME</h5>
+    The location of your maven installation used to run maven. Will override any system property for MAVEN_HOME.
+    <h5>Enable git integration</h5>
+    Whether to use git integration (git commands, syntax highlighting in the file view etc.) or not.
+    <h5>Run global autorun.R on session init</h5>
+    Enable to run a file called autorun.R (if it exists) from the Ride install dir each time a session (re)starts.
+    It is just a normal R script enabling you to set up session variables, define functions, read in rData files etc.
+    Note that executing the script will give no output (unless there is some problem with the script) so print, cat etc will
+    not produce anything that can be seen.
+    <h5>Run project autorun.R on session init</h5>
+    Run autorun.R from the project dir (working dir) each time a session (re)starts. Same as above but for the current project
+    dir.
 </div>
 <h4 id="tools-running_the_repl_console">Tools -> Run REPL in console</h4>
 <div>

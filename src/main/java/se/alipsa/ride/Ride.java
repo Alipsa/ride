@@ -33,6 +33,7 @@ import se.alipsa.ride.utils.Alerts;
 import se.alipsa.ride.utils.FileUtils;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.prefs.Preferences;
 
@@ -48,6 +49,7 @@ public class Ride extends Application {
   private MainMenu mainMenu;
   private Preferences preferences;
   private final Map<String, Object> sessionMap = new HashMap<>();
+  private File rideBaseDir;
 
   private FileOpener fileOpener;
 
@@ -65,6 +67,7 @@ public class Ride extends Application {
   public void start(Stage primaryStage) {
     log.info("Starting Ride...");
     instance = this;
+    rideBaseDir = Path.of("").toAbsolutePath().toFile();
     /*
     System.out.println(
         log.getName()
@@ -244,6 +247,10 @@ public class Ride extends Application {
     });
   }
 
+  public boolean isWaitCursorSet() {
+    return Cursor.WAIT.equals(scene.getCursor());
+  }
+
   public void setNormalCursor() {
     Platform.runLater(() -> {
       scene.setCursor(Cursor.DEFAULT);
@@ -266,4 +273,10 @@ public class Ride extends Application {
   public Object getSessionObject(String key) {
     return sessionMap.get(key);
   }
+
+  public File getRideBaseDir() {
+    return rideBaseDir;
+  }
+
+
 }

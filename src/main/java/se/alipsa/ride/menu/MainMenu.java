@@ -835,6 +835,16 @@ public class MainMenu extends MenuBar {
     gui.getInoutComponent().setEnableGit(enableGit);
     gui.getPrefs().putBoolean(ENABLE_GIT, enableGit);
 
+    boolean runAutoRunGLobal = result.getBoolean(AUTORUN_GLOBAL);
+    if (runAutoRunGLobal != gui.getPrefs().getBoolean(AUTORUN_GLOBAL, !runAutoRunGLobal)) {
+      gui.getPrefs().putBoolean(AUTORUN_GLOBAL, runAutoRunGLobal);
+    }
+
+    boolean runAutoRunProject = result.getBoolean(AUTORUN_PROJECT);
+    if (runAutoRunProject != gui.getPrefs().getBoolean(AUTORUN_PROJECT, !runAutoRunProject)) {
+      gui.getPrefs().putBoolean(AUTORUN_PROJECT, runAutoRunProject);
+    }
+
     if (shouldRestartR) {
       restartR();
     }

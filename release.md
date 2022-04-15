@@ -85,6 +85,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - add version info in about dialog.
 - Fix bug in url wizard for file based databases by converting `\` in windows paths to `/`
 - Prompt to add jdbc dependency to pom if missing (and add to pom if yes)
+- enable configurable run of autorun.R script in Ride install dir and/or project dir
 
 ### 1.2.8, 2022-04-01
 - Change how we update connection combo in sql tabs when adding a connection, select if only one is available

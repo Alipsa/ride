@@ -1,8 +1,7 @@
 package se.alipsa.ride.console;
 
 import static se.alipsa.ride.Constants.*;
-import static se.alipsa.ride.menu.GlobalOptions.ADD_BUILDDIR_TO_CLASSPATH;
-import static se.alipsa.ride.menu.GlobalOptions.USE_MAVEN_CLASSLOADER;
+import static se.alipsa.ride.menu.GlobalOptions.*;
 import static se.alipsa.ride.utils.StringUtils.format;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -43,12 +42,14 @@ import org.renjin.primitives.packaging.PackageLoader;
 import org.renjin.script.RenjinScriptEngine;
 import org.renjin.script.RenjinScriptEngineFactory;
 import org.renjin.sexp.*;
+import se.alipsa.ride.Constants;
 import se.alipsa.ride.Ride;
 import se.alipsa.ride.TaskListener;
 import se.alipsa.ride.code.rtab.RTab;
 import se.alipsa.ride.environment.EnvironmentComponent;
 import se.alipsa.ride.model.Repo;
 import se.alipsa.ride.utils.Alerts;
+import se.alipsa.ride.utils.DefaultTaskListener;
 import se.alipsa.ride.utils.ExceptionAlert;
 import se.alipsa.ride.utils.FileUtils;
 import se.alipsa.maven.DependenciesResolveException;
@@ -131,6 +132,7 @@ public class ConsoleComponent extends BorderPane {
       try {
         resetClassloaderAndRenjin(getStoredRemoteRepositories(), parentClassLoader);
         printVersionInfoToConsole();
+        autoRunScripts();
         updateEnvironment();
       } catch (Exception e) {
         ExceptionAlert.showAlert("Failed to reset classloader and Renjin, please report this!", e);
@@ -139,7 +141,6 @@ public class ConsoleComponent extends BorderPane {
       Platform.runLater(() -> initRenjin(getStoredRemoteRepositories(), parentClassLoader));
     }
   }
-
 
   private void initRenjin(List<Repo> repos, ClassLoader parentClassLoader, boolean... skipMavenClassloading) {
     Task<Void> initTask = new Task<>() {
@@ -151,6 +152,7 @@ public class ConsoleComponent extends BorderPane {
     };
     initTask.setOnSucceeded(e -> {
       printVersionInfoToConsole();
+      autoRunScripts();
       updateEnvironment();
     });
     initTask.setOnFailed(e -> {
@@ -268,6 +270,33 @@ public class ConsoleComponent extends BorderPane {
       // this way we can get to the original one by extracting the cause from the thrown exception
       System.out.println("Exception caught, rethrowing as wrapped Exception");
       throw new Exception(e);
+    }
+  }
+
+
+  private void autoRunScripts() {
+    File file = null;
+    boolean wasWaiting = gui.isWaitCursorSet();
+    gui.setWaitCursor();
+    try {
+      if(gui.getPrefs().getBoolean(AUTORUN_GLOBAL, false)) {
+        file = new File(gui.getRideBaseDir(), Constants.AUTORUN_FILENAME);
+        if (file.exists()) {
+          runScriptSilent(FileUtils.readContent(file));
+        }
+      }
+      if(gui.getPrefs().getBoolean(AUTORUN_PROJECT, false)) {
+        file = new File(gui.getInoutComponent().getRootDir(), Constants.AUTORUN_FILENAME);
+        if (file.exists()) {
+          runScriptSilent(FileUtils.readContent(file));
+        }
+      }
+      if (!wasWaiting) {
+        gui.setNormalCursor();
+      }
+    } catch (Exception e) {
+      String path = file == null ? "" : file.getAbsolutePath();
+      Platform.runLater(() -> ExceptionAlert.showAlert("Failed to run " + Constants.AUTORUN_FILENAME + " in " + path, e));
     }
   }
 

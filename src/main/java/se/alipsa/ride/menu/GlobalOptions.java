@@ -15,6 +15,8 @@ public class GlobalOptions extends HashMap<String, Object> {
   public static final String ADD_BUILDDIR_TO_CLASSPATH = "GlobalOptions.AddBuildDirToClasspath";
   public static final String RESTART_SESSION_AFTER_MVN_RUN = "GlobalOptions.restartSessionAfterMavenBuild";
   public static final String ENABLE_GIT = "GlobalOptions.EnableGit";
+  public static final String AUTORUN_GLOBAL = "GlobalOptions.AutoRunGlobal";
+  public static final String AUTORUN_PROJECT = "GlobalOptions.AutoRunProject";
 
   private static final long serialVersionUID = -4781261903018339389L;
 

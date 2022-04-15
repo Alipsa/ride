@@ -14,6 +14,7 @@ import se.alipsa.ride.code.CodeTextArea;
 import se.alipsa.ride.code.TextAreaTab;
 import se.alipsa.ride.console.ConsoleComponent;
 import se.alipsa.ride.environment.ContextFunctionsUpdateListener;
+import se.alipsa.ride.utils.DefaultTaskListener;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -175,10 +176,7 @@ public class RTextArea extends CodeTextArea implements ContextFunctionsUpdateLis
           if (parent instanceof TaskListener) {
             console.runScriptAsync(rCode, codeComponent.getActiveScriptName(), (TaskListener)parent);
           } else {
-            console.runScriptAsync(rCode, codeComponent.getActiveScriptName(), new TaskListener() {
-              @Override public void taskStarted() { }
-              @Override public void taskEnded() { }
-            });
+            console.runScriptAsync(rCode, codeComponent.getActiveScriptName(), new DefaultTaskListener());
           }
           moveTo(getCurrentParagraph() + 1, 0);
           int totalLength = getAllTextContent().length();

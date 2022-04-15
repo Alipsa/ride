@@ -36,6 +36,8 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
   private final CheckBox restartSessionAfterMvnRun;
   private final CheckBox addBuildDirToClasspath;
   private final CheckBox enableGit;
+  private final CheckBox autoRunGlobal;
+  private final CheckBox autoRunProject;
 
 
   GlobalOptionsDialog(Ride gui) {
@@ -203,8 +205,24 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     gitOptionPane.getChildren().add(enableGit);
     grid.add(gitOptionPane, 0, 6, 2, 1);
 
+    FlowPane autoRunPane = new FlowPane();
+    Label autoRunGlobalLabel = new Label("Run global autorun.R on session init");
+    autoRunGlobalLabel.setTooltip(new Tooltip("Run autorun.R from Ride install dir each time a session (re)starts."));
+    autoRunGlobalLabel.setPadding(new Insets(0, 20, 0, 0));
+    autoRunGlobal = new CheckBox();
+    autoRunGlobal.setSelected(gui.getPrefs().getBoolean(AUTORUN_GLOBAL, false));
+    autoRunPane.getChildren().addAll(autoRunGlobalLabel, autoRunGlobal);
 
-    getDialogPane().setPrefSize(800, 400);
+    Label autoRunProjectLabel = new Label("Run project autorun.R on session init");
+    autoRunProjectLabel.setTooltip(new Tooltip("Run autorun.R from the project dir (working dir) each time a session (re)starts"));
+    autoRunProjectLabel.setPadding(new Insets(0, 20, 0, 20));
+    autoRunProject = new CheckBox();
+    autoRunProject.setSelected(gui.getPrefs().getBoolean(AUTORUN_PROJECT, false));
+    autoRunPane.getChildren().addAll(autoRunProjectLabel, autoRunProject);
+
+    grid.add(autoRunPane, 0,7, 2, 1);
+
+    getDialogPane().setPrefSize(800, 420);
     getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     setResizable(true);
 
@@ -242,6 +260,8 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     result.put(ADD_BUILDDIR_TO_CLASSPATH, addBuildDirToClasspath.isSelected());
     result.put(RESTART_SESSION_AFTER_MVN_RUN, restartSessionAfterMvnRun.isSelected());
     result.put(ENABLE_GIT, enableGit.isSelected());
+    result.put(AUTORUN_GLOBAL, autoRunGlobal.isSelected());
+    result.put(AUTORUN_PROJECT, autoRunProject.isSelected());
     return result;
   }
 

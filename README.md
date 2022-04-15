@@ -114,9 +114,15 @@ a connection and choose "view connection".
 
 ![SQL Screenshot](https://raw.githubusercontent.com/Alipsa/ride/master/docs/SQLScreenshot.png "SQL Screenshot")
 
+# Issues and Feature requests
+For any issues or feature request etc. on Ride please use the [github issue feature](https://github.com/Alipsa/ride/issues)
+
+For questions related to Renjin please refer to the [Google discussion group](https://groups.google.com/g/renjin-dev).
+If you think you found a bug in Renjin please report that to the [Github issue pages](https://github.com/bedatadriven/renjin/issues).
+
 # Building and compiling
 
-To build Ride, simply do ` mvn clean install`
+To build Ride, simply do `mvn clean install`
 
 There are some wrapper scripts that you might find useful.  
 To create a runnable jar and run it do 
@@ -186,6 +192,9 @@ Used to run maven (run pom.xml files). Apache Software License, Version 2.0.
 
 ### org.eclipse.jgit:org.eclipse.jgit
 Used to provide git support. Eclipse Distribution License v1.0
+
+### org.jdom:jdom2
+Used to read and write xml files. [Apache style license](https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt)
 
 ### Various jdbc drivers
 These are included for convenience only. Licenced under various open source licenses. 

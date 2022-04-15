@@ -41,6 +41,7 @@ public class Constants {
   public static final String DRV_DERBY = "org.apache.derby.jdbc.ClientDriver";
   public static final String DRV_ORACLE = "oracle.jdbc.OracleDriver";
   public static final String PREF_LAST_EXPORT_DIR = "last.export.dir";
+  public static final String AUTORUN_FILENAME = "autorun.R";
 
   public enum GitStatus {
     GIT_ADDED("-fx-text-fill: #629755;"),
