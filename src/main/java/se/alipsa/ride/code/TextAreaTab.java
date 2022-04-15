@@ -147,7 +147,7 @@ public abstract class TextAreaTab extends Tab implements TabTextArea {
       content = new String(textBytes, cs);
     }
     log.trace("Replacing content text");
-    replaceContentText(content);
+    replaceContentText(content, true);
   }
 
   public void reloadFromDisk() {

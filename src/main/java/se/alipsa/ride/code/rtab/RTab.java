@@ -73,8 +73,8 @@ public class RTab extends TextAreaTab implements TaskListener {
   }
 
   @Override
-  public void replaceContentText(String content) {
-    rTextArea.replaceContentText(content);
+  public void replaceContentText(String content, boolean isReadFromFile) {
+    rTextArea.replaceContentText(content, isReadFromFile);
   }
 
   public void enableRunTestsButton() {

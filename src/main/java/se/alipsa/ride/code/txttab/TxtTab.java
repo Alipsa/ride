@@ -46,8 +46,8 @@ public class TxtTab extends TextAreaTab {
   }
 
   @Override
-  public void replaceContentText(String content) {
-    txtTextArea.replaceContentText(content);
+  public void replaceContentText(String content, boolean isReadFromFile) {
+    txtTextArea.replaceContentText(content, isReadFromFile);
   }
 
   @Override

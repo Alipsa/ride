@@ -252,10 +252,15 @@ public abstract class CodeTextArea extends UnStyledCodeArea implements TabTextAr
   }
 
   @Override
-  public void replaceContentText(String content) {
-    blockChange = true;
-    replaceText(0, getLength(), content);
-    blockChange = false;
+  public void replaceContentText(String content, boolean isReadFromFile) {
+    if (isReadFromFile) {
+      blockChange = true;
+      replaceText(0, getLength(), content);
+      blockChange = false;
+      parentTab.contentSaved();
+    } else {
+      replaceText(0, getLength(), content);
+    }
   }
 
   public TextAreaTab getParentTab() {

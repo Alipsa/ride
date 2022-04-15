@@ -124,8 +124,8 @@ public class MdrTab extends TextAreaTab implements TaskListener {
   }
 
   @Override
-  public void replaceContentText(String content) {
-    mdrTextArea.replaceContentText(content);
+  public void replaceContentText(String content, boolean isReadFromFile) {
+    mdrTextArea.replaceContentText(content, isReadFromFile);
   }
 
   @Override

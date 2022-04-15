@@ -137,8 +137,8 @@ public class GroovyTab extends TextAreaTab {
   }
 
   @Override
-  public void replaceContentText(String content) {
-    groovyTextArea.replaceContentText(content);
+  public void replaceContentText(String content, boolean isReadFromFile) {
+    groovyTextArea.replaceContentText(content, isReadFromFile);
   }
 
   @Override

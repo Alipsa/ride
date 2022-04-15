@@ -200,8 +200,8 @@ public class SqlTab extends TextAreaTab {
   }
 
   @Override
-  public void replaceContentText(String content) {
-    sqlTextArea.replaceContentText(content);
+  public void replaceContentText(String content, boolean isReadFromFile) {
+    sqlTextArea.replaceContentText(content, isReadFromFile);
   }
 
   @Override

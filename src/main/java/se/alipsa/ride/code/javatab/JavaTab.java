@@ -50,8 +50,8 @@ public class JavaTab extends TextAreaTab {
   }
 
   @Override
-  public void replaceContentText(String content) {
-    javaTextArea.replaceContentText(content);
+  public void replaceContentText(String content, boolean isReadFromFile)  {
+    javaTextArea.replaceContentText(content, isReadFromFile);
   }
 
   @Override

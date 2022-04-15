@@ -51,7 +51,7 @@ public class MdTab extends TextAreaTab  {
   }
 
   @Override
-  public void replaceContentText(String content) {
-    mdTextArea.replaceContentText(content);
+  public void replaceContentText(String content, boolean isReadFromFile) {
+    mdTextArea.replaceContentText(content, isReadFromFile);
   }
 }

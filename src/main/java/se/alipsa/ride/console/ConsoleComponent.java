@@ -213,7 +213,7 @@ public class ConsoleComponent extends BorderPane {
             log.warn("Failed to find classes dir", e);
           }
           if (urlList.size() > 0) {
-            log.info("Adding compile dirs to classloader: {}", urlList);
+            log.trace("Adding compile dirs to classloader: {}", urlList);
             classLoader = new URLClassLoader(urlList.toArray(new URL[0]), classLoader);
           }
         }
@@ -221,7 +221,7 @@ public class ConsoleComponent extends BorderPane {
         if (useMavenClassloader) {
           File pomFile = new File(gui.getInoutComponent().getRootDir(), "pom.xml");
           if (pomFile.exists()) {
-            log.info("Parsing pom to use maven classloader");
+            log.debug("Parsing pom to use maven classloader");
             console.appendFx("* Parsing pom to create maven classloader...", true);
             try {
               classLoader = mavenUtils.getMavenDependenciesClassloader(pomFile, classLoader);
@@ -364,9 +364,9 @@ public class ConsoleComponent extends BorderPane {
     String localRepoPath = System.getProperty("localRepository"); // c:/Users/blah/.m2/repository
     Repo local = new Repo("local", "default", "file:" + localRepoPath);
     list.add(local);
-    log.info("add renjin repo");
+    log.trace("add renjin repo");
     list.add(RENJIN_REPO);
-    log.info("add maven central repo");
+    log.trace("add maven central repo");
     list.add(MVN_CENTRAL_REPO);
   }
 

@@ -190,8 +190,8 @@ public abstract class MuninTab extends TextAreaTab implements TaskListener {
   }
 
   @Override
-  public void replaceContentText(String content) {
-    codeTextArea.replaceContentText(content);
+  public void replaceContentText(String content, boolean isReadFromFile) {
+    codeTextArea.replaceContentText(content, isReadFromFile);
   }
 
   @Override

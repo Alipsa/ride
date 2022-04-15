@@ -219,8 +219,11 @@ public class XmlTab extends TextAreaTab {
   }
 
   @Override
-  public void replaceContentText(String content) {
+  public void replaceContentText(String content, boolean isReadFromFile) {
     xmlTextArea.replaceText(content);
+    if(isReadFromFile) {
+      contentSaved();
+    }
   }
 
   @Override

@@ -166,8 +166,8 @@ public class JsTab extends TextAreaTab {
   }
 
   @Override
-  public void replaceContentText(String content) {
-    jsTextArea.replaceContentText(content);
+  public void replaceContentText(String content, boolean isReadFromFile) {
+    jsTextArea.replaceContentText(content, isReadFromFile);
   }
 
   @Override
