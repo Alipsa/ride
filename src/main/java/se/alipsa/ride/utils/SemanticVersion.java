@@ -25,6 +25,12 @@ public class SemanticVersion implements Comparable<SemanticVersion> {
     if (second.startsWith("v")) {
       second = second.substring(1);
     }
+    if (first.contains("-jdk")) {
+      first = first.substring(0, first.indexOf("-jdk"));
+    }
+    if (second.contains("-jdk")) {
+      second = second.substring(0, second.indexOf("-jdk"));
+    }
     //LOG.info("Comparing {} with {}" , first,  second);
     //return new SemanticVersion(first).compareTo(new SemanticVersion(second));
     return new ComparableVersion(first).compareTo(new ComparableVersion(second));

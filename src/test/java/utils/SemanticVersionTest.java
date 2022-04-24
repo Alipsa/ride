@@ -27,6 +27,7 @@ public class SemanticVersionTest {
     assertEquals(0, SemanticVersion.compare("1.2.4-beta1", "1.2.4-beta1"));
     assertEquals(0, SemanticVersion.compare("1.2.4-beta", "1.2.4-beta"));
     assertEquals(0, SemanticVersion.compare("1.2.4-GA", "1.2.4-GA"));
+    assertEquals(0, SemanticVersion.compare("1.2.9", "1.2.9-jdk11"));
   }
 
   @Test
