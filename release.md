@@ -82,6 +82,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 ### 1.2.10
 - Security workaround for xerces dependency in jdom2 (add a newer version explicitly)
 - Fix "Check version" by removing -jdk part from version names in Semantic version compare
+- upgrade dependencies for classgraph, groovy, nashorn, javafx
 
 ### 1.2.9, 2022-04-15
 - Fix bug in JDBC url wizard: SQl server uses ; as delimiter, not the usual url standard (?, &)

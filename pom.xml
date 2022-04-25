@@ -33,17 +33,17 @@
     </scm>
 
     <properties>
-        <exe.version>1.2.9.0</exe.version>
+        <exe.version>1.2.10.0</exe.version>
         <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <release.tag>1.2.9-jdk11</release.tag>
+        <release.tag>1.2.10-jdk11-beta</release.tag>
         <renjin.version>3.5-beta76</renjin.version>
         <!--renjin.version>3.5-dev</renjin.version-->
         <!--jgit 6 and up requires java 11-->
         <jgit.version>6.1.0.202203080745-r</jgit.version>
         <tika.version>2.3.0</tika.version>
-        <javafx.version>18</javafx.version>
+        <javafx.version>18.0.1</javafx.version>
         <jersey.version>3.0.4</jersey.version>
     </properties>
 
@@ -501,7 +501,7 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>4.0.1</version>
+            <version>4.0.2</version>
             <type>pom</type>
         </dependency>
         <!-- enable @Grab to work in groovy -->
@@ -514,7 +514,7 @@
         <dependency>
             <groupId>org.openjdk.nashorn</groupId>
             <artifactId>nashorn-core</artifactId>
-            <version>15.3</version>
+            <version>15.4</version>
         </dependency>
 
         <dependency>
@@ -526,7 +526,7 @@
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.145</version>
+            <version>4.8.146</version>
         </dependency>
 
         <dependency>
@@ -577,7 +577,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <phase>process-resources</phase>
@@ -733,7 +733,7 @@ release.tag=${release.tag}
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.12.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
