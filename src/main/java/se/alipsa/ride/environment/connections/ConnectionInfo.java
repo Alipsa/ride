@@ -174,7 +174,6 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
               gui.getCodeComponent().reloadTabContent(pomFile);
               log.trace("Reinitialize classloader and renjin...");
               gui.getConsoleComponent().initRenjin(gui.getClass().getClassLoader(), true);
-              gui.setNormalCursor();
               log.trace("Try to connect again");
               return connect();
             } catch (IOException | JDOMException ex) {
@@ -198,6 +197,7 @@ public class ConnectionInfo implements Comparable<ConnectionInfo> {
         props.put("password",  getPassword());
       }
     }
+    gui.setNormalCursor();
     if (driver == null) {
       return DriverManager.getConnection(getUrl(), props);
     } else {
