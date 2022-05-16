@@ -45,7 +45,7 @@ Run the `createLauncher.sh` script
 
 
 ## How to run:
-Doubleclick your desktop icon if you created one or:
+Double-click your desktop icon if you created one or:
 
 `> ./ride.sh`
 
