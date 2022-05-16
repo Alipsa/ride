@@ -85,6 +85,8 @@ In those cases just copy the native files to the lib dir, the startup script poi
 - upgrade dependencies for classgraph, groovy, nashorn, javafx
 - If adding a mssql connection and driver is missing and auto add to pom.xml 
 check for existing microsoft dll to align versions of the artifactId with the ddl version.
+- fix issue #19, ctrl+enter runs the entire content. Now ctrl enter runs the current row if no text is selected,
+otherwise it runs the selected text.
 
 ### 1.2.9, 2022-04-15
 - Fix bug in JDBC url wizard: SQl server uses ; as delimiter, not the usual url standard (?, &)
