@@ -21,7 +21,10 @@ public class RTab extends TextAreaTab implements TaskListener {
 
   Button runButton;
   private final Button runTestsButton;
+
+  private final Button checkSyntaxButton;
   private boolean isRunTestButtonDisabled = false;
+  private SyntaxChecker syntaxChecker = new SyntaxChecker();
 
   private static Logger log = LogManager.getLogger(RTab.class);
 
@@ -39,6 +42,10 @@ public class RTab extends TextAreaTab implements TaskListener {
     runTestsButton.setOnAction(evt -> console.runTests(this));
     buttonPane.getChildren().add(runTestsButton);
     disableRunTestsButton();
+
+    checkSyntaxButton = new Button("Check syntax");
+    checkSyntaxButton.setOnAction(a -> syntaxChecker.check(rTextArea.getTextContent()));
+    buttonPane.getChildren().add(checkSyntaxButton);
 
     rTextArea = new RTextArea(this);
     VirtualizedScrollPane<RTextArea> vPane = new VirtualizedScrollPane<>(rTextArea);
