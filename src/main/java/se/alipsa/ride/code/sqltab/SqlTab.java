@@ -46,7 +46,7 @@ public class SqlTab extends TextAreaTab {
 
     executeButton = new Button("Run");
     executeButton.setDisable(true);
-    executeButton.setOnAction(e -> executeQuery());
+    executeButton.setOnAction(e -> executeQuery(getTextContent()));
     buttonPane.getChildren().add(executeButton);
 
     connectionCombo = new ComboBox<>();
@@ -89,7 +89,7 @@ public class SqlTab extends TextAreaTab {
     sqlTextArea.setCursor(Cursor.WAIT);
   }
 
-  void executeQuery() {
+  void executeQuery(String sqlCode) {
     if (executeButton.isDisabled()) {
       Alerts.info("Cannot run SQL", "You  must select a database connection first!");
       return;
@@ -99,14 +99,6 @@ public class SqlTab extends TextAreaTab {
     StringBuilder parseMessage = new StringBuilder();
     // The parser will not be able to understand more complex queries in which case
     // the whole sql code will be in batchedQry[0]
-    String sqlCode = sqlTextArea.getText(sqlTextArea.getCurrentParagraph()); // current line
-
-    String selected = sqlTextArea.selectedTextProperty().getValue();
-    // if text is selected then go with that instead
-    if (selected != null && !"".equals(selected)) {
-      sqlCode = sqlTextArea.getTextContent();
-    }
-
     String[] batchedQry = SqlParser.split(sqlCode, parseMessage);
     if (parseMessage.length() > 0) {
       consoleComponent.addWarning(getTitle(), parseMessage.toString(), false);

@@ -82,11 +82,19 @@ In those cases just copy the native files to the lib dir, the startup script poi
 ### 1.2.10
 - Security workaround for xerces dependency in jdom2 (add a newer version explicitly)
 - Fix "Check version" by removing -jdk and .jdk part from version names in Semantic version compare
-- upgrade dependencies for classgraph, groovy, nashorn, javafx
+- upgrade dependencies 
+  - classgraph (4.8.145 -> 4.8.147)
+  - groovy (4.0.1 -> 4.0.3)
+  - nashorn (15.3 -> 15.4)
+  - javafx (18 -> 18.0.1)
+  - jsoup (1.14.3 -> 1.15.1)
+  - jackson (2.13.2 -> 1.13.3)
 - If adding a mssql connection and driver is missing and auto add to pom.xml 
 check for existing microsoft dll to align versions of the artifactId with the ddl version.
-- fix issue #19, ctrl+enter runs the entire content. Now ctrl enter runs the current row if no text is selected,
-otherwise it runs the selected text.
+- fix issue #19, ctrl+enter runs the entire content. Change to the following behavior:
+  - Run button: selected text or everything if nothing selected
+  - ctrl+enter: selected text or current line if nothing selected
+  
 
 ### 1.2.9, 2022-04-15
 - Fix bug in JDBC url wizard: SQl server uses ; as delimiter, not the usual url standard (?, &)

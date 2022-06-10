@@ -501,7 +501,7 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.3</version>
             <type>pom</type>
         </dependency>
         <!-- enable @Grab to work in groovy -->
@@ -526,7 +526,7 @@
         <dependency>
             <groupId>io.github.classgraph</groupId>
             <artifactId>classgraph</artifactId>
-            <version>4.8.146</version>
+            <version>4.8.147</version>
         </dependency>
 
         <dependency>
@@ -622,12 +622,11 @@ release.tag=${release.tag}
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>[3.5.2,)</version>
+                                    <version>[3.6.3,)</version>
                                     <level>ERROR</level>
-                                    <message>Please use maven version 3.5.2 or higher</message>
+                                    <message>Please use maven version 3.6.3 or higher</message>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <!--version>1.8.0</version-->
                                     <version>11</version>
                                     <level>ERROR</level>
                                     <message>Please use Java 11</message>
@@ -743,7 +742,7 @@ release.tag=${release.tag}
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.10.0</version>
+                <version>2.11.0</version>
                 <configuration>
                     <rulesUri>file://${basedir}/version-plugin-rules.xml</rulesUri>
                 </configuration>
@@ -778,7 +777,7 @@ release.tag=${release.tag}
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.6.0.0</version>
+                <version>4.7.0.0</version>
             </plugin>
         </plugins>
     </reporting>

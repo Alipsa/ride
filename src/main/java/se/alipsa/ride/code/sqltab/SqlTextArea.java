@@ -107,12 +107,20 @@ public class SqlTextArea extends CodeTextArea {
         if (KeyCode.SPACE.equals(e.getCode())) {
           autoComplete();
         } else if (KeyCode.ENTER.equals(e.getCode())) {
-          parent.executeQuery();
+          parent.executeQuery(getSelectedOrCurrentLine());
         }
       } else if (KeyCode.PERIOD.equals(e.getCode())) {
         suggestMetaData();
       }
     });
+  }
+
+  private String getSelectedOrCurrentLine() {
+    String sql = getSelectedText();
+    if (sql == null || "".equals(sql)) {
+      sql = getText(getCurrentParagraph());
+    }
+    return sql;
   }
 
   @Override
