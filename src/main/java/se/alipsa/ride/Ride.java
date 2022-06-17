@@ -127,6 +127,7 @@ public class Ride extends Application {
     SplitPane splitPane = new SplitPane();
     splitPane.setOrientation(Orientation.HORIZONTAL);
     splitPane.getItems().addAll(leftSplitPane, rightSplitPane);
+    splitPane.setDividerPositions(0.6, 0.4);
 
     main.getChildren().add(splitPane);
 
