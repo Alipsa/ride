@@ -131,7 +131,7 @@ public class Ride extends Application {
 
     main.getChildren().add(splitPane);
 
-    primaryStage.setOnCloseRequest(t -> {
+    primaryStage.setOnCloseRequest(t ->{
       if (getCodeComponent().hasUnsavedFiles()) {
         boolean exitAnyway = Alerts.confirm(
             "Are you sure you want to exit?",

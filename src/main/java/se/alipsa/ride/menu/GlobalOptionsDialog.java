@@ -69,6 +69,7 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     grid.add(reposLabel, 0, 1);
 
     reposTable = new TableView<>();
+    reposTable.setContextMenu(reposContextMenu());
     List<Repo> repos = gui.getConsoleComponent().getRemoteRepositories();
 
     TableColumn<Repo, String> idCol = new TableColumn<>("id");
@@ -97,20 +98,11 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
 
     reposTable.setRowFactory(tableView -> {
       final TableRow<Repo> row = new TableRow<>();
-      final ContextMenu contextMenu = new ContextMenu();
-      final MenuItem addMenuItem = new MenuItem("add row");
-      addMenuItem.setOnAction(event -> addRow(new Repo()));
-
-      final Menu addDefault = new Menu("add default");
-      final MenuItem addBedataDriven = new MenuItem("Renjin repo");
-      addBedataDriven.setOnAction(this::addRenjinRepo);
-      final MenuItem addMavenCentral = new MenuItem("Maven Central");
-      addMavenCentral.setOnAction(this::addMvnCentralRepo);
-      addDefault.getItems().addAll(addBedataDriven, addMavenCentral);
+      final ContextMenu contextMenu = reposContextMenu();
 
       final MenuItem removeMenuItem = new MenuItem("delete row");
       removeMenuItem.setOnAction(event -> reposTable.getItems().remove(row.getItem()));
-      contextMenu.getItems().addAll(addMenuItem, addDefault, removeMenuItem);
+      contextMenu.getItems().add(removeMenuItem);
 
       // Set context menu on row, but use a binding to make it only show for non-empty rows:
       row.contextMenuProperty().bind(
@@ -229,6 +221,22 @@ class GlobalOptionsDialog extends Dialog<GlobalOptions> {
     GuiUtils.addStyle(gui, this);
 
     setResultConverter(button -> button == ButtonType.OK ? createResult() : null);
+  }
+
+  private ContextMenu reposContextMenu() {
+    final ContextMenu contextMenu = new ContextMenu();
+    final MenuItem addMenuItem = new MenuItem("add row");
+    addMenuItem.setOnAction(event -> addRow(new Repo()));
+
+    final Menu addDefault = new Menu("add default");
+    final MenuItem addBedataDriven = new MenuItem("Renjin repo");
+    addBedataDriven.setOnAction(this::addRenjinRepo);
+    final MenuItem addMavenCentral = new MenuItem("Maven Central");
+    addMavenCentral.setOnAction(this::addMvnCentralRepo);
+    addDefault.getItems().addAll(addBedataDriven, addMavenCentral);
+
+    contextMenu.getItems().addAll(addMenuItem, addDefault);
+    return contextMenu;
   }
 
   private void addRow(Repo repo) {
