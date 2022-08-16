@@ -80,6 +80,7 @@ In those cases just copy the native files to the lib dir, the startup script poi
 # Version Descriptions
 
 ### 1.2.11
+- Upgrade to mdr 1.5.2
 
 ### 1.2.10, 2022-08-16
 - Security workaround for xerces dependency in jdom2 (add a newer version explicitly)
