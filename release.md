@@ -79,17 +79,23 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 # Version Descriptions
 
-### 1.2.10
+### 1.2.10, 2022-08-16
 - Security workaround for xerces dependency in jdom2 (add a newer version explicitly)
 - Fix "Check version" by removing -jdk and .jdk part from version names in Semantic version compare
 - upgrade dependencies 
-  - classgraph (4.8.145 -> 4.8.147)
-  - groovy (4.0.1 -> 4.0.3)
+  - classgraph (4.8.145 -> 4.8.149)
+  - groovy (4.0.1 -> 4.0.4)
   - nashorn (15.3 -> 15.4)
-  - javafx (18 -> 18.0.1)
+  - javafx (18 -> 18.0.2)
   - jsoup (1.14.3 -> 1.15.1)
   - jackson (2.13.2 -> 1.13.3)
-- If adding a mssql connection and driver is missing and auto add to pom.xml 
+  - jsqlparser (4.4 -> 4.5)
+  - tika (2.4.0 -> 2.4.1)
+  - jersey (3.0.4 -> 3.0.6)
+  - jsoup (1.15.1 -> 1.15.2)
+  - jgit (6.1.0.202203080745-r -> 6.2.0.202206071550-r)
+
+- If adding a mssql connection and driver is missing and auto add to pom.xml:
 check for existing microsoft dll to align versions of the artifactId with the ddl version.
 - fix issue #19, ctrl+enter runs the entire content. Change to the following behavior:
   - Run button: selected text or everything if nothing selected

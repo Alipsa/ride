@@ -37,7 +37,7 @@ public class MdrUtil {
 
   private static final String HIGHLIGHT_JS_CSS_PATH = "highlightJs/default.css";
   private static final String HIGHLIGHT_JS_SCRIPT_PATH = "highlightJs/highlight.pack.js";
-  private static final String BOOTSTRAP_CSS_PATH = "META-INF/resources/webjars/bootstrap/5.1.3/css/bootstrap.css";
+  private static final String BOOTSTRAP_CSS_PATH = "META-INF/resources/webjars/bootstrap/5.2.0/css/bootstrap.css";
   private static final String HIGHLIGHT_JS_INIT = "\n<script>hljs.initHighlightingOnLoad();</script>\n";
   // The highlightJs stuff is in the mdr package
   public static final String HIGHLIGHT_JS_CSS = "\n<link rel='stylesheet' href='" + resourceUrlExternalForm(HIGHLIGHT_JS_CSS_PATH) + "'>\n";
