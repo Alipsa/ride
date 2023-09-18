@@ -41,7 +41,7 @@
         <renjin.version>3.5-beta76</renjin.version>
         <!--renjin.version>3.5-dev</renjin.version-->
         <!--jgit 6 and up requires java 11-->
-        <jgit.version>6.2.0.202206071550-r</jgit.version>
+        <jgit.version>6.6.1.202309021850-r</jgit.version>
         <tika.version>2.4.1</tika.version>
         <javafx.version>18.0.2</javafx.version>
         <jersey.version>3.0.6</jersey.version>
