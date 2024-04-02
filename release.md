@@ -15,11 +15,11 @@ java application (server).
 
 ## How to install:
 Pre requisites:
-- Java JDK 11 or higher
+- Java JDK 17 or higher
 Optional but recommended:
 - Maven 3.3.9 or higher with either MAVEN_HOME set or mvn available in your path
 
-Unzip ride-1.2.9-jdk11-dist.zip to a directory of choice, 
+Unzip ride-1.2.9-jdk17-dist.zip to a directory of choice, 
 note that there is no directory "inside" the zip so create the destination
 directory and unzip into that directory.
 
@@ -27,12 +27,12 @@ If java is not in your path and JAVA_HOME is not set you can create a file calle
 env.sh on Linux and set those there e.g.
 in env.cmd:
 ```shell
-SET JAVA_HOME=C:\Programs\jdk-11.0.14
+SET JAVA_HOME=C:\Programs\jdk-17.0.10
 SET PATH=%JAVA_HOME%\bin;$PATH
 ```
 in env.sh
 ```shell
-export JAVA_HOME=/usr/local/jdk-11.0.14
+export JAVA_HOME=/usr/local/jdk-17.0.10
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
@@ -78,6 +78,10 @@ In those cases just copy the native files to the lib dir, the startup script poi
 
 
 # Version Descriptions
+
+### 1.3.0
+- Upgrade to JDK17
+- Upgrade dependencies (jackson, jgit, tika, javafx, jersey, maven plugins)
 
 ### 1.2.11
 - Upgrade to mdr 1.5.2
