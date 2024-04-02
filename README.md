@@ -86,7 +86,7 @@ Use ride.cmd or ride.sh to start ride. There is also an (experimental) executabl
 provide a slightly more "integrated" experience. To run it make sure you have JAVA_HOME and path set to 
 s java 8 version that includes javafx. I have seen some issues running with OpenJDK which seems to be
 related to not setting registry values in the same way as the Oracle JDK. The workaround to this would be to 
-bundle the entire JDK which is not something I want to do so if the exe is not working for you, use the cmd script.  
+bundle the entire JDK which is not something I want to do, so if the exe is not working for you, use the cmd script.  
 
 If you want to run the bash script from windows git bash (msys), create a shortcut with the comment
 `D:\whatever\Git\bin\bash.exe ./ride.sh`
@@ -101,8 +101,8 @@ properly, e.g.
 
 # Java is managed by SDK, load it
 source ~/.sdkman/bin/sdkman-init.sh
-# We want to run with java 11 with embedded javafx so that scaling works
-sdk use java 11.0.8.fx-librca
+# We want to run with java 17 with embedded javafx so that scaling works
+sdk use java 17.0.10.fx-librca
 # Scale the application 200% as we have a Hi-DPI screen, see https://wiki.archlinux.org/index.php/HiDPI#Java_applications
 JAVA_OPTS="-Dglass.gtk.uiScale=200%"
 ```
