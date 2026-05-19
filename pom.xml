@@ -42,7 +42,7 @@
         <!--renjin.version>3.5-dev</renjin.version-->
         <!--jgit 6 and up requires java 11-->
         <!--jgit.version>6.7.0.202309050840-r</jgit.version-->
-        <jgit.version>6.9.0.202403050737-r</jgit.version>
+        <jgit.version>6.10.1.202505221210-r</jgit.version>
         <tika.version>3.2.2</tika.version>
         <javafx.version>21.0.2</javafx.version>
         <jersey.version>3.1.5</jersey.version>
